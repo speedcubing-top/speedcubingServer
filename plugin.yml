@@ -1,0 +1,29 @@
+name: speedcubingServer
+main: cubingserver.speedcubingServer
+version: 1.0
+commands:
+  premium:
+    usage: /premium
+  resetpassword:
+    usage: /resetpassword
+  discord:
+    usage: /discord
+  skin:
+    usage: /skin
+  fly:
+    usage: /fly
+  hub:
+    usage: /hub
+    aliases:
+      - leave
+      - l
+      - lobby
+      - quit
+  end:
+    usage: /end
+  heal:
+    usage: /heal
+  reloadcoreplugin:
+    usage: /reloadcoreplugin
+  proxycommand:
+    usage: /proxycommand
