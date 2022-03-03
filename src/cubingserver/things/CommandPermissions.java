@@ -30,6 +30,10 @@ public class CommandPermissions implements Listener {
             Unknown(player, 0, Rank.YT.getId(), 10000, e);
         else if (message.startsWith("/fly ") || message.equals("/fly"))
             Unknown(player, 0, Rank.YT.getId(), 10000, e);
+        else if (message.startsWith("/nick ") || message.equals("/nick"))
+            Unknown(player, 0, Rank.OWNER.getId(), 10000, e);
+        else if (message.startsWith("/unnick ") || message.equals("/unnick"))
+            Unknown(player, 0, Rank.OWNER.getId(), 10000, e);
         else if (message.startsWith("/stats ") || message.equals("/stats"))
             Unknown(player, 0, 10000, 10000, e);
         else if (message.startsWith("/skin ") || message.equals("/skin"))

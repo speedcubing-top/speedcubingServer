@@ -10,43 +10,33 @@ public class PlayerData {
 
     public static Map<UUID, Integer> LangCache = new HashMap<>();
     public static Map<UUID, Integer> RankCache = new HashMap<>();
+    public static Map<UUID,Integer> AbilityCache = new HashMap<>();
 
     public static int getRank(UUID uuid) {
-        if (RankCache.containsKey(uuid))
-            return RankCache.get(uuid);
-        else {
-            int x = speedcubingServer.connection.selectInt("playersdata", "priority", "uuid='" + uuid + "'");
-            RankCache.put(uuid, x);
-            return x;
-        }
+        return RankCache.get(uuid);
     }
+
     public static int getRank(String uuid) {
-        UUID id = UUID.fromString(uuid);
-        if (RankCache.containsKey(id))
-            return RankCache.get(id);
-        else {
-            int x = speedcubingServer.connection.selectInt("playersdata", "priority", "uuid='" + uuid + "'");
-            RankCache.put(id, x);
-            return x;
-        }
+        return RankCache.get(UUID.fromString(uuid));
     }
 
     public static int getAbilityRank(UUID uuid) {
-        if (RankCache.containsKey(uuid))
-            return RankCache.get(uuid);
+        if (AbilityCache.containsKey(uuid))
+            return AbilityCache.get(uuid);
         else {
             int x = speedcubingServer.connection.selectInt("playersdata", "realpriority", "uuid='" + uuid + "'");
-            RankCache.put(uuid, x);
+            AbilityCache.put(uuid, x);
             return x;
         }
     }
+
     public static int getAbilityRank(String uuid) {
         UUID id = UUID.fromString(uuid);
-        if (RankCache.containsKey(id))
-            return RankCache.get(id);
+        if (AbilityCache.containsKey(id))
+            return AbilityCache.get(id);
         else {
             int x = speedcubingServer.connection.selectInt("playersdata", "realpriority", "uuid='" + uuid + "'");
-            RankCache.put(id, x);
+            AbilityCache.put(id, x);
             return x;
         }
     }

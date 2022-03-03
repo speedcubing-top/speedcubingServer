@@ -16,7 +16,7 @@ public class ServerUtils {
     public static String[] SocketEvent(String receive) {
         String[] rs = receive.split("\\|");
         switch (rs[0]) {
-            case "c":
+            case "c"://cps
                 switch (rs[1]) {
                     case "a":
                         Cps.CpsListening.add(UUID.fromString(rs[2]));
@@ -26,7 +26,7 @@ public class ServerUtils {
                         break;
                 }
                 break;
-            case "f":
+            case "f"://frosze
                 switch (rs[1]) {
                     case "a":
                         froze.frozed.add(Bukkit.getPlayerExact(rs[2]).getUniqueId());
@@ -36,7 +36,7 @@ public class ServerUtils {
                         break;
                 }
                 break;
-            case "k":
+            case "k"://kick
                 String text = "";
                 String[] hex = rs[2].split("\\\\u");
                 for (int i = 1; i < hex.length; i++) {
@@ -45,17 +45,17 @@ public class ServerUtils {
                 String t = text;
                 Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayerExact(rs[1]).kickPlayer(t));
                 break;
-            case "r":
+            case "r"://crash
                 PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
                 break;
-            case "t":
+            case "t"://run command
                 String re = receive.split("\\|", 2)[1];
                 Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), re));
                 break;
-            case "l":
+            case "l"://enable logger
                 LogListener.Listening = rs[1].equals("a");
                 break;
-            case "v":
+            case "v"://velocity
                 switch (rs[1]) {
                     case "a":
                         speedcubingServer.velocities.put(UUID.fromString(rs[2]), new Double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])});

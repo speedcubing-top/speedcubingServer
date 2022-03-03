@@ -66,12 +66,14 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginCommand("proxycommand").setTabCompleter(new proxycommand());
         Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
-        if (Bukkit.getPort() % 2 == 0) {
-            Bukkit.getPluginCommand("premium").setExecutor(new premium());
-            Bukkit.getPluginCommand("premium").setTabCompleter(new premium());
-            Bukkit.getPluginCommand("resetpassword").setExecutor(new resetpassword());
-            Bukkit.getPluginCommand("resetpassword").setTabCompleter(new resetpassword());
-        }
+        Bukkit.getPluginCommand("premium").setExecutor(new premium());
+        Bukkit.getPluginCommand("premium").setTabCompleter(new premium());
+        Bukkit.getPluginCommand("resetpassword").setExecutor(new resetpassword());
+        Bukkit.getPluginCommand("resetpassword").setTabCompleter(new resetpassword());
+        Bukkit.getPluginCommand("nick").setExecutor(new nick());
+        Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
+        Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
+        Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
         switch (Bukkit.getServerName()) {
             case "mlgrush":
             case "practice":
