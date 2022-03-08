@@ -1,12 +1,15 @@
 package cubingserver;
 
 import cubing.api.SQLConnection;
+import cubing.bukkit.Event.ServerEventManager;
 import cubingserver.Commands.*;
 import cubingserver.Commands.offline.premium;
 import cubingserver.Commands.offline.resetpassword;
 import cubingserver.ExploitFixer.ForceOp;
 import cubingserver.connection.SocketUtils;
 import cubingserver.connection.UDPSocketUtils;
+import cubingserver.customEvents.SocketEvent;
+import cubingserver.customEvents.UDPEvent;
 import cubingserver.libs.LogListener;
 import cubingserver.things.CommandPermissions;
 import cubingserver.things.Cps;
@@ -21,7 +24,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class speedcubingServer extends JavaPlugin {
-
+    public static int AllPlayers;
 
     public static Map<UUID, String> lastmsg = new HashMap<>();
     public static Map<UUID, Long> spam = new HashMap<>();
@@ -74,6 +77,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
+        ServerEventManager.createNewEvents(UDPEvent.class, SocketEvent.class);
         switch (Bukkit.getServerName()) {
             case "mlgrush":
             case "practice":

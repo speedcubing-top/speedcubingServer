@@ -19,6 +19,7 @@ public class PlayerQuit implements Listener {
         UUID uuid = e.getPlayer().getUniqueId();
         PlayerData.LangCache.remove(uuid);
         PlayerData.RankCache.remove(uuid);
+        PlayerData.AbilityCache.remove(uuid);
         Cps.Counter.remove(uuid);
         PlayerJoin.RemovePackets.remove(uuid);
         PlayerJoin.JoinPackets.remove(uuid);

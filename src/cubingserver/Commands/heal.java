@@ -12,7 +12,9 @@ import java.util.List;
 public class heal implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        ((Player) commandSender).setHealth(20);
+        if (strings.length == 0)
+            ((Player) commandSender).setHealth(20);
+        else commandSender.sendMessage("/heal");
         return true;
     }
 

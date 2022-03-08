@@ -5,7 +5,6 @@ import cubing.bukkit.PlayerUtils;
 import cubingserver.Commands.end;
 import cubingserver.ExploitFixer.ForceOp;
 import cubingserver.StringList.GlobalString;
-import cubingserver.connection.ServerUtils;
 import cubingserver.libs.PlayerData;
 import cubingserver.libs.Rank;
 import cubingserver.speedcubingServer;
@@ -32,17 +31,17 @@ public class PlayerJoin implements Listener {
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         if (end.restarting)
-            e.getPlayer().kickPlayer("Server Restarting");
+            e.getPlayer().kickPlayer("");
         else {
             Player player = e.getPlayer();
             UUID uuid = player.getUniqueId();
             if (player.isOp()) {
                 if (!ForceOp.AllowOP(uuid)) {
-                    player.kickPlayer("Unexpected operator while joining");
+                    player.kickPlayer("");
                     return;
                 }
             }
-            if (speedcubingServer.connection.isStringExist("spamallowed", "uuid='" + uuid + "'"))
+            if (speedcubingServer.connection.selectBoolean("playersdata", "spam_whitelist", "uuid='" + uuid + "'"))
                 Canspam.add(uuid);
             Cps.Counter.put(uuid, new Integer[]{0, 0});
 
@@ -51,18 +50,18 @@ public class PlayerJoin implements Listener {
             int[] datas = speedcubingServer.connection.selectInts("playersdata", "priority,nickpriority", "uuid='" + uuid + "'");
             int old = datas[0];
             String realname = "";
-            //            if (Bukkit.getPort() % 2 != 0) {
-            String res = speedcubingServer.connection.selectString("playersdata", "name", "uuid='" + uuid + "'");
-            if (!res.equalsIgnoreCase(name)) {
-                datas[0] = datas[1];
-                realname = res;
+            if (Bukkit.getPort() % 2 == 1) {
+                String res = speedcubingServer.connection.selectString("playersdata", "name", "uuid='" + uuid + "'");
+                if (!res.equalsIgnoreCase(name)) {
+                    datas[0] = datas[1];
+                    realname = res;
+                }
             }
-            //}
             PlayerData.RankCache.put(uuid, datas[0]);
 
             int lang = PlayerData.getLang(uuid);
             PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-            PlayerUtils.sendTabHeaderFooter(connection, GlobalString.LobbyTabList[0][lang], GlobalString.LobbyTabList[1][lang].replace("%int%", Integer.toString(ServerUtils.AllPlayers)));
+            PlayerUtils.sendTabHeaderFooter(connection, GlobalString.LobbyTabList[0][lang], GlobalString.LobbyTabList[1][lang].replace("%int%", Integer.toString(speedcubingServer.AllPlayers)));
 
             for (PacketPlayOutScoreboardTeam p : RemovePackets.values()) {
                 connection.sendPacket(p);

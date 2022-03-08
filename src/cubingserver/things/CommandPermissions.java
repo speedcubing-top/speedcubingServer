@@ -1,6 +1,6 @@
 package cubingserver.things;
 
-import cubingserver.StringList.CommandString;
+import cubingserver.StringList.GlobalString;
 import cubingserver.libs.PlayerData;
 import cubingserver.libs.Rank;
 import org.bukkit.Bukkit;
@@ -19,7 +19,7 @@ public class CommandPermissions implements Listener {
         if (message.startsWith("/end ") || message.equals("/end"))
             Unknown(player, 0, Rank.OWNER.getId(), Rank.OWNER.getId(), e);
         else if (message.startsWith("/cps ") || message.equals("/cps"))
-            Unknown(player, 0, Rank.OWNER.getId(), Rank.OWNER.getId(), e);
+            Unknown(player, 0, Rank.ADMIN.getId(), Rank.ADMIN.getId(), e);
         else if (message.startsWith("/heal ") || message.equals("/heal"))
             Unknown(player, 0, Rank.OWNER.getId(), Rank.OWNER.getId(), e);
         else if (message.startsWith("/map ") || message.equals("/map"))
@@ -31,9 +31,13 @@ public class CommandPermissions implements Listener {
         else if (message.startsWith("/fly ") || message.equals("/fly"))
             Unknown(player, 0, Rank.YT.getId(), 10000, e);
         else if (message.startsWith("/nick ") || message.equals("/nick"))
-            Unknown(player, 0, Rank.OWNER.getId(), 10000, e);
+            if (Bukkit.getPort() % 2 == 0)
+                Unknown(player, 0, 0, 0, e);
+            else Unknown(player, 0, Rank.OWNER.getId(), 10000, e);
         else if (message.startsWith("/unnick ") || message.equals("/unnick"))
-            Unknown(player, 0, Rank.OWNER.getId(), 10000, e);
+            if (Bukkit.getPort() % 2 == 0)
+                Unknown(player, 0, 0, 0, e);
+            else Unknown(player, 0, Rank.OWNER.getId(), 10000, e);
         else if (message.startsWith("/stats ") || message.equals("/stats"))
             Unknown(player, 0, 10000, 10000, e);
         else if (message.startsWith("/skin ") || message.equals("/skin"))
@@ -66,7 +70,7 @@ public class CommandPermissions implements Listener {
             else Unknown(player, 0, 10000, 10000, e);
         } else if (message.startsWith("/pl ") || message.equals("/pl") || message.startsWith("/plugins ") || message.equals("/plugins")) {
             e.setCancelled(true);
-            player.sendMessage("Plugins (2): §aspeedcubing§f, §aspeedcubingLib");
+            player.sendMessage("Plugins (3): §aspeedcubing§f, §aspeedcubingLib§f, §aspeedcubingServer");
         } else if (PlayerData.getAbilityRank(player.getUniqueId()) > Rank.OWNER.getId()) {
             if (player.isOp()) {
                 if (!IsEnabledforOP(message))
@@ -87,9 +91,9 @@ public class CommandPermissions implements Listener {
         int r = PlayerData.getAbilityRank(player.getUniqueId());
         if (r > HighRange || r < LowRange) {
             if (r <= visibleLimit)
-                player.sendMessage(CommandString.NoPermCommand[PlayerData.getLang(player.getUniqueId())]);
+                player.sendMessage(GlobalString.NoPermCommand[PlayerData.getLang(player.getUniqueId())]);
             else
-                player.sendMessage(CommandString.UnknownCommand[PlayerData.getLang(player.getUniqueId())]);
+                player.sendMessage(GlobalString.UnknownCommand[PlayerData.getLang(player.getUniqueId())]);
             e.setCancelled(true);
         }
     }

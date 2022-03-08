@@ -17,8 +17,8 @@ public class proxycommand implements CommandExecutor , TabCompleter {
             commandSender.sendMessage("/proxycommand <command...>");
         else {
             String comamnd = "";
-            for (int i = 0; i < strings.length; i++) {
-                comamnd += " " + strings[i];
+            for (String string : strings) {
+                comamnd += " " + string;
             }
             SocketUtils.sendData(speedcubingServer.BungeeTCPPort, "p|" + comamnd.substring(1), 100);
         }

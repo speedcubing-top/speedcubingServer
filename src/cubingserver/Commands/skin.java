@@ -4,7 +4,6 @@ import cubing.api.MojangAPI;
 import cubing.api.SessionServer;
 import cubing.api.exception.APIErrorException;
 import cubing.bukkit.PlayerUtils;
-import cubingserver.StringList.CommandString;
 import cubingserver.StringList.GlobalString;
 import cubingserver.connection.SocketUtils;
 import cubingserver.libs.PlayerData;
@@ -48,15 +47,13 @@ public class skin implements CommandExecutor, TabCompleter {
                             } catch (APIErrorException e) {
                                 id = "invalidName";
                             }
-                            if (id == null)
-                                player.sendMessage("failed connecting to sessionserver.mojang.com");
-                            else if (id.equals("invalidName"))
+                            if (id.equals("invalidName"))
                                 player.sendMessage(GlobalString.invalidName[PlayerData.getLang(player.getUniqueId())]);
                             else {
                                 String[] skin = SessionServer.getSkin(id);
-                                List<Packet>[] packets = PlayerUtils.changeSkin(((CraftPlayer) player).getHandle(), skin);
+                                List<Packet<?>>[] packets = PlayerUtils.changeSkin(((CraftPlayer) player).getHandle(), skin);
                                 PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-                                for (Packet p : packets[0]) {
+                                for (Packet<?> p : packets[0]) {
                                     connection.sendPacket(p);
                                 }
                                 String worldname = player.getWorld().getName();
@@ -65,12 +62,12 @@ public class skin implements CommandExecutor, TabCompleter {
                                 for (Player p : Bukkit.getOnlinePlayers()) {
                                     if (!p.getWorld().getName().equals(worldname)) {
                                         PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
-                                        for (Packet packet : packets[2]) {
+                                        for (Packet<?> packet : packets[2]) {
                                             c.sendPacket(packet);
                                         }
                                     } else if (p.getUniqueId() != uuid) {
                                         PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
-                                        for (Packet packet : packets[1]) {
+                                        for (Packet<?> packet : packets[1]) {
                                             c.sendPacket(packet);
                                         }
                                     }
@@ -80,14 +77,14 @@ public class skin implements CommandExecutor, TabCompleter {
                         }
                     }).start();
                 } else
-                    player.sendMessage(CommandString.OnlyInHub[PlayerData.getLang(player.getUniqueId())]);
+                    player.sendMessage(GlobalString.OnlyInHub[PlayerData.getLang(player.getUniqueId())]);
                 break;
             case "clutch":
             case "reduce":
             case "knockbackffa":
             case "fastbuilder":
             case "auth":
-                player.sendMessage(CommandString.OnlyInHub[PlayerData.getLang(player.getUniqueId())]);
+                player.sendMessage(GlobalString.OnlyInHub[PlayerData.getLang(player.getUniqueId())]);
                 break;
         }
         return true;

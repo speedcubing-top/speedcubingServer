@@ -1,10 +1,10 @@
 package cubingserver.connection;
 
-import org.bukkit.Bukkit;
+import cubing.bukkit.Event.ServerEventManager;
+import cubingserver.customEvents.UDPEvent;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
-import java.net.InetAddress;
 
 public class UDPSocketUtils {
     public static DatagramSocket socket;
@@ -15,5 +15,16 @@ public class UDPSocketUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        DatagramPacket datagramPacket = new DatagramPacket(new byte[1024], 1024);
+        new Thread(() -> {
+            while (true) {
+                try {
+                    UDPSocketUtils.socket.receive(datagramPacket);
+                    ServerEventManager.callEvent(new UDPEvent(new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("\\|")));
+                } catch (Exception e) {
+                }
+            }
+        }).start();
     }
 }

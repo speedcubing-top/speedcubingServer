@@ -1,19 +1,16 @@
 package cubingserver.Commands;
 
 import cubing.bukkit.api.BungeePluginMessage;
-import cubingserver.StringList.CommandString;
+import cubingserver.StringList.GlobalString;
 import cubingserver.libs.PlayerData;
-import net.minecraft.server.v1_8_R3.WorldData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +22,7 @@ public class hub implements CommandExecutor, TabCompleter {
             switch (Bukkit.getServerName()) {
                 case "lobby":
                 case "auth":
-                    player.sendMessage(CommandString.AlreadyInHub[PlayerData.getLang(player.getUniqueId())]);
+                    player.sendMessage(GlobalString.AlreadyInHub[PlayerData.getLang(player.getUniqueId())]);
                     break;
                 case "bedwars":
                 case "mlgrush":

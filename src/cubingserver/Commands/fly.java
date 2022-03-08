@@ -1,6 +1,6 @@
 package cubingserver.Commands;
 
-import cubingserver.StringList.CommandString;
+import cubingserver.StringList.GlobalString;
 import cubingserver.libs.PlayerData;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -26,20 +26,20 @@ public class fly implements CommandExecutor, TabCompleter {
                 case "auth":
                     if (player.getWorld().getName().equals("world"))
                         if (player.getAllowFlight()) {
-                            player.sendMessage(CommandString.FlyDisable[PlayerData.getLang(player.getUniqueId())]);
+                            player.sendMessage(GlobalString.FlyDisable[PlayerData.getLang(player.getUniqueId())]);
                             player.setAllowFlight(false);
                         } else {
-                            player.sendMessage(CommandString.FlyEnable[PlayerData.getLang(player.getUniqueId())]);
+                            player.sendMessage(GlobalString.FlyEnable[PlayerData.getLang(player.getUniqueId())]);
                             player.setAllowFlight(true);
                         }
                     else
-                        player.sendMessage(CommandString.OnlyInHub[lang]);
+                        player.sendMessage(GlobalString.OnlyInHub[lang]);
                     break;
                 case "knockbackffa":
                 case "fastbuilder":
                 case "clutch":
                 case "reduce":
-                    player.sendMessage(CommandString.OnlyInHub[lang]);
+                    player.sendMessage(GlobalString.OnlyInHub[lang]);
                     break;
             }
         } else player.sendMessage("/fly");
