@@ -1,9 +1,6 @@
 package cubingserver.Commands;
 
-import cubingserver.StringList.GlobalString;
-import cubingserver.libs.PlayerData;
 import cubingserver.speedcubingServer;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -17,14 +14,11 @@ import java.util.UUID;
 public class unnick implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (Bukkit.getPort() % 2 == 1) {
-            if (strings.length == 0) {
-                UUID uuid = ((Player) commandSender).getUniqueId();
-                String[] datas = speedcubingServer.connection.selectStrings("playersdata", "name,priority", "uuid='" + uuid + "'");
-                nick.nickPlayer(datas[0], Integer.parseInt(datas[1]), uuid);
-            } else commandSender.sendMessage("/unnick");
-        } else
-            commandSender.sendMessage(GlobalString.offlineserver[PlayerData.getLang(((Player) commandSender).getUniqueId())]);
+        if (strings.length == 0) {
+            UUID uuid = ((Player) commandSender).getUniqueId();
+            String[] datas = speedcubingServer.connection.selectStrings("playersdata", "name,priority", "uuid='" + uuid + "'");
+            nick.nickPlayer(datas[0], Integer.parseInt(datas[1]), uuid,false);
+        } else commandSender.sendMessage("/unnick");
         return true;
     }
 

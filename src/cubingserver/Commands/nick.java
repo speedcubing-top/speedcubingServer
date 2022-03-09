@@ -24,31 +24,28 @@ public class nick implements CommandExecutor, TabCompleter {
     public static Map<UUID, Integer> nicktimes = new HashMap<>();
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (Bukkit.getPort() % 2 == 1) {
-            if (strings.length == 1) {
-                String name = strings[0];
-                if (name.equals(commandSender.getName()))
-                    commandSender.sendMessage(GlobalString.nicksameusername[PlayerData.getLang(((Player) commandSender).getUniqueId())]);
-                else {
-                    UUID uuid = ((Player) commandSender).getUniqueId();
-                    if (name.matches("^\\w{3,16}$")
-                            && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'")
-                            && !speedcubingServer.connection.isStringExist("playersdata", "uuid!='" + uuid + "'AND nickname='" + name + "'")) {
-                        int rank = 95;
-                        nickPlayer(name, rank, uuid);
-                        speedcubingServer.connection.update("playersdata", "nickpriority='" + rank + "',nickname='" + name + "'", "uuid='" + uuid + "'");
-                    } else commandSender.sendMessage(GlobalString.nicknotavaliable[PlayerData.getLang(uuid)]);
-                }
-            } else if (strings.length == 0) {
+        if (strings.length == 1) {
+            String name = strings[0];
+            if (name.equals(commandSender.getName()))
+                commandSender.sendMessage(GlobalString.nicksameusername[PlayerData.getLang(((Player) commandSender).getUniqueId())]);
+            else {
                 UUID uuid = ((Player) commandSender).getUniqueId();
-                String[] datas = speedcubingServer.connection.selectStrings("playersdata", "nickname,nickpriority", "uuid='" + uuid + "'");
-                if (datas[0].equals(""))
-                    commandSender.sendMessage("/nick <nickname>");
-                else
-                    nick.nickPlayer(datas[0], Integer.parseInt(datas[1]), uuid);
-            } else commandSender.sendMessage("/nick <nickname>, /nick (use the previous nick)");
-        } else
-            commandSender.sendMessage(GlobalString.offlineserver[PlayerData.getLang(((Player) commandSender).getUniqueId())]);
+                if (name.matches("^\\w{3,16}$")
+                        && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'")
+                        && !speedcubingServer.connection.isStringExist("playersdata", "uuid!='" + uuid + "'AND nickname='" + name + "'")) {
+                    int rank = 95;
+                    nickPlayer(name, rank, uuid, true);
+                    speedcubingServer.connection.update("playersdata", "nickpriority='" + rank + "',nickname='" + name + "'", "uuid='" + uuid + "'");
+                } else commandSender.sendMessage(GlobalString.nicknotavaliable[PlayerData.getLang(uuid)]);
+            }
+        } else if (strings.length == 0) {
+            UUID uuid = ((Player) commandSender).getUniqueId();
+            String[] datas = speedcubingServer.connection.selectStrings("playersdata", "nickname,nickpriority", "uuid='" + uuid + "'");
+            if (datas[0].equals(""))
+                commandSender.sendMessage("/nick <nickname>");
+            else
+                nick.nickPlayer(datas[0], Integer.parseInt(datas[1]), uuid, true);
+        } else commandSender.sendMessage("/nick <nickname>, /nick (use the previous nick)");
         return true;
     }
 
@@ -56,7 +53,7 @@ public class nick implements CommandExecutor, TabCompleter {
         return new ArrayList<>();
     }
 
-    public static void nickPlayer(String name, int rank, UUID uuid) {
+    public static void nickPlayer(String name, int rank, UUID uuid, boolean nick) {
         Player player = Bukkit.getPlayer(uuid);
         EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         PlayerConnection connection = entityPlayer.playerConnection;
@@ -89,7 +86,7 @@ public class nick implements CommandExecutor, TabCompleter {
         }
         PlayerJoin.RemovePackets.put(uuid, leavePacket);
         PlayerJoin.JoinPackets.put(uuid, joinPacket);
-        SocketUtils.sendData(speedcubingServer.BungeeTCPPort, "n|" + uuid, 100);
+        SocketUtils.sendData(speedcubingServer.BungeeTCPPort, "n|" + uuid + (nick ? "|" + name : ""), 100);
         PlayerData.RankCache.put(uuid, rank);
     }
 }
