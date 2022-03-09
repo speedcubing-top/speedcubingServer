@@ -33,11 +33,13 @@ public class CommandPermissions implements Listener {
         else if (message.startsWith("/nick ") || message.equals("/nick"))
             if (Bukkit.getPort() % 2 == 0)
                 Unknown(player, 0, 0, 0, e);
-            else Unknown(player, 0, Rank.OWNER.getId(), 10000, e);
+            else
+                Unknown(player, 0, Rank.OWNER.getId(), 10000, e);
         else if (message.startsWith("/unnick ") || message.equals("/unnick"))
             if (Bukkit.getPort() % 2 == 0)
                 Unknown(player, 0, 0, 0, e);
-            else Unknown(player, 0, Rank.OWNER.getId(), 10000, e);
+            else
+                Unknown(player, 0, Rank.OWNER.getId(), 10000, e);
         else if (message.startsWith("/stats ") || message.equals("/stats"))
             Unknown(player, 0, 10000, 10000, e);
         else if (message.startsWith("/skin ") || message.equals("/skin"))
