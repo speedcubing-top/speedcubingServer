@@ -8,6 +8,7 @@ import cubingserver.Commands.offline.resetpassword;
 import cubingserver.ExploitFixer.ForceOp;
 import cubingserver.connection.SocketUtils;
 import cubingserver.connection.UDPSocketUtils;
+import cubingserver.customEvents.NickEvent;
 import cubingserver.customEvents.SocketEvent;
 import cubingserver.customEvents.UDPEvent;
 import cubingserver.libs.LogListener;
@@ -77,7 +78,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
-        ServerEventManager.createNewEvents(UDPEvent.class, SocketEvent.class);
+        ServerEventManager.createNewEvents(UDPEvent.class, SocketEvent.class, NickEvent.class);
         switch (Bukkit.getServerName()) {
             case "mlgrush":
             case "practice":
