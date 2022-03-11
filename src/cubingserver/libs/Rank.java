@@ -1,11 +1,14 @@
 package cubingserver.libs;
 
 
+import com.google.common.collect.Sets;
+
+import java.util.Set;
 import java.util.UUID;
 
 public enum Rank {
-    OWNER(10, new String[]{"§4", "[Owner] ", "§c"}),
-    ADMIN(20, new String[]{"§4", "[Admin] ", "§c"}),
+    OWNER(10, new String[]{"§4", "[Owner] ", "§c"}, Sets.newHashSet("cmd.*", "view.*")),
+    ADMIN(20, new String[]{"§4", "[Admin] ", "§c"}, Sets.newHashSet("cmd.fly", "cmd.reset", "cmd.heal", "cmd.map", "cmd.proxycommand", "cmd.stats")),
     MOD(30, new String[]{"§2", "[Mod] ", "§a"}),
     HELPER(40, new String[]{"§9", "[Helper] ", "§9"}),
     HEADBUILDER(50, new String[]{"§b", "[HeadBuilder] ", "§3"}),
@@ -18,8 +21,10 @@ public enum Rank {
 
     private final int id;
     private final String[] args;
+    private final Set<String> defaultPermissions;
 
-    Rank(int id, String[] args) {
+    Rank(int id, String[] args, Set<String> defaultPermissions) {
+        this.defaultPermissions = defaultPermissions;
         this.id = id;
         this.args = args;
     }
@@ -32,11 +37,11 @@ public enum Rank {
         return args;
     }
 
-    public static String[] format(UUID uuid) {
-        return Rank.values()[rankToIndex(PlayerData.getRank(uuid))].getFormat();
+    public Set<String> getPerms() {
+        return defaultPermissions;
     }
 
-    public static String[] format(String uuid) {
+    public static String[] format(UUID uuid) {
         return Rank.values()[rankToIndex(PlayerData.getRank(uuid))].getFormat();
     }
 

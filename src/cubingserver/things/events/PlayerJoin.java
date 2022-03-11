@@ -1,5 +1,6 @@
 package cubingserver.things.events;
 
+import com.google.common.collect.Sets;
 import cubing.bukkit.PacketWrapper;
 import cubing.bukkit.PlayerUtils;
 import cubingserver.Commands.end;
@@ -47,8 +48,14 @@ public class PlayerJoin implements Listener {
 
 
             String name = player.getName();
-            int[] datas = speedcubingServer.connection.selectInts("playersdata", "priority,nickpriority", "uuid='" + uuid + "'");
-            int old = datas[0];
+            String[] datas = speedcubingServer.connection.selectStrings("playersdata", "priority,nickpriority,permissions", "uuid='" + uuid + "'");
+            int old = Integer.parseInt(datas[0]);
+            Set<String> perms = Rank.values()[Rank.rankToIndex(Integer.parseInt(datas[0]))].getPerms();
+            if (datas[2] != null)
+                perms.addAll(Sets.newHashSet(datas[2].split("\\|")));
+            speedcubingServer.permissions.put(uuid, new HashSet<>());
+            speedcubingServer.permissions.get(uuid).addAll(perms);
+            PlayerData.AbilityCache.put(uuid, Integer.parseInt(datas[0]));
             String realname = "";
             if (Bukkit.getPort() % 2 == 1) {
                 String res = speedcubingServer.connection.selectString("playersdata", "name", "uuid='" + uuid + "'");
@@ -57,7 +64,7 @@ public class PlayerJoin implements Listener {
                     realname = res;
                 }
             }
-            PlayerData.RankCache.put(uuid, datas[0]);
+            PlayerData.RankCache.put(uuid, Integer.parseInt(datas[0]));
 
             int lang = PlayerData.getLang(uuid);
             PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;

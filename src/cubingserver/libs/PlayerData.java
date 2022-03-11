@@ -21,24 +21,11 @@ public class PlayerData {
     }
 
     public static int getAbilityRank(UUID uuid) {
-        if (AbilityCache.containsKey(uuid))
             return AbilityCache.get(uuid);
-        else {
-            int x = speedcubingServer.connection.selectInt("playersdata", "realpriority", "uuid='" + uuid + "'");
-            AbilityCache.put(uuid, x);
-            return x;
-        }
     }
 
     public static int getAbilityRank(String uuid) {
-        UUID id = UUID.fromString(uuid);
-        if (AbilityCache.containsKey(id))
-            return AbilityCache.get(id);
-        else {
-            int x = speedcubingServer.connection.selectInt("playersdata", "realpriority", "uuid='" + uuid + "'");
-            AbilityCache.put(id, x);
-            return x;
-        }
+            return AbilityCache.get(UUID.fromString(uuid));
     }
 
     public static int getLang(UUID uuid) {

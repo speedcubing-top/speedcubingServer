@@ -22,11 +22,13 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class speedcubingServer extends JavaPlugin {
     public static int AllPlayers;
 
+    public static Map<UUID, Set<String>> permissions = new HashMap<>();
     public static Map<UUID, String> lastmsg = new HashMap<>();
     public static Map<UUID, Long> spam = new HashMap<>();
     public static Map<UUID, Double[]> velocities = new HashMap<>();
