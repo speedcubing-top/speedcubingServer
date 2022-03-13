@@ -1,6 +1,6 @@
 package cubingserver.things.events;
 
-import cubingserver.libs.PlayerData;
+import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
 import cubingserver.things.Cps;
 import org.bukkit.Bukkit;
@@ -17,9 +17,8 @@ public class PlayerQuit implements Listener {
         e.setQuitMessage("");
         e.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         UUID uuid = e.getPlayer().getUniqueId();
-        PlayerData.LangCache.remove(uuid);
-        PlayerData.RankCache.remove(uuid);
-        PlayerData.AbilityCache.remove(uuid);
+        User.LangCache.remove(uuid);
+        User.RankCache.remove(uuid);
         Cps.Counter.remove(uuid);
         PlayerJoin.RemovePackets.remove(uuid);
         PlayerJoin.JoinPackets.remove(uuid);

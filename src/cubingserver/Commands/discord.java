@@ -1,7 +1,7 @@
 package cubingserver.Commands;
 
 import cubingserver.StringList.GlobalString;
-import cubingserver.libs.PlayerData;
+import cubingserver.libs.User;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -14,7 +14,7 @@ import java.util.List;
 public class discord implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        commandSender.sendMessage(GlobalString.discord[PlayerData.getLang(((Player) commandSender).getUniqueId())]);
+        commandSender.sendMessage(GlobalString.discord[User.getLang(((Player) commandSender).getUniqueId())]);
         return true;
     }
 

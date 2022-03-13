@@ -1,6 +1,5 @@
 package cubingserver.libs;
 
-import cubing.bukkit.ItemUtils;
 import cubing.utils.Console;
 import cubingserver.connection.SocketUtils;
 import cubingserver.speedcubingServer;
@@ -12,8 +11,6 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
 
 import java.util.Iterator;
 
@@ -34,7 +31,7 @@ public class LogListener {
                             unicode += "\\u" + Integer.toHexString(string.charAt(i));
                         }
                         try {
-                            SocketUtils.UnHandledSendData(speedcubingServer.BungeeTCPPort, "t|" + (Bukkit.getPort()+2) + "|" + unicode, 100);
+                            SocketUtils.UnHandledSendData(speedcubingServer.BungeeTCPPort, "t|" + (Bukkit.getPort() + 2) + "|" + unicode, 100);
                         } catch (Exception e) {
                         }
                     }).start();

@@ -6,8 +6,7 @@ import cubing.utils.Reflections;
 import cubingserver.StringList.GlobalString;
 import cubingserver.connection.SocketUtils;
 import cubingserver.customEvents.NickEvent;
-import cubingserver.libs.PlayerData;
-import cubingserver.libs.Rank;
+import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
 import cubingserver.things.events.PlayerJoin;
 import net.minecraft.server.v1_8_R3.*;
@@ -26,46 +25,49 @@ public class nick implements CommandExecutor, TabCompleter {
     public static Map<UUID, Integer> nicktimes = new HashMap<>();
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        Player player = (Player) commandSender;
-        switch (Bukkit.getServerName()) {
-            case "lobby":
-            case "bedwars":
-            case "mlgrush":
-            case "practice":
-            case "clutch":
-                if (player.getWorld().getName().equals("world")) {
-                    if (strings.length == 1) {
-                        String name = strings[0];
-                        if (name.equals(commandSender.getName()))
-                            commandSender.sendMessage(GlobalString.nicksameusername[PlayerData.getLang(((Player) commandSender).getUniqueId())]);
-                        else {
+        if (Bukkit.getPort() % 2 == 1) {
+            Player player = (Player) commandSender;
+            switch (Bukkit.getServerName()) {
+                case "lobby":
+                case "bedwars":
+                case "mlgrush":
+                case "practice":
+                case "clutch":
+                    if (player.getWorld().getName().equals("world")) {
+                        if (strings.length == 1) {
+                            String name = strings[0];
+                            if (name.equals(commandSender.getName()))
+                                commandSender.sendMessage(GlobalString.nicksameusername[User.getLang(((Player) commandSender).getUniqueId())]);
+                            else {
+                                UUID uuid = ((Player) commandSender).getUniqueId();
+                                if (name.matches("^\\w{3,16}$")
+                                        && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'")
+                                        && !speedcubingServer.connection.isStringExist("playersdata", "uuid!='" + uuid + "'AND nickname='" + name + "'")) {
+                                    nickPlayer(name, "default", uuid, true, player);
+                                    speedcubingServer.connection.update("playersdata", "nickpriority='default',nickname='" + name + "'", "uuid='" + uuid + "'");
+                                } else commandSender.sendMessage(GlobalString.nicknotavaliable[User.getLang(uuid)]);
+                            }
+                        } else if (strings.length == 0) {
                             UUID uuid = ((Player) commandSender).getUniqueId();
-                            if (name.matches("^\\w{3,16}$")
-                                    && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'")
-                                    && !speedcubingServer.connection.isStringExist("playersdata", "uuid!='" + uuid + "'AND nickname='" + name + "'")) {
-                                int rank = 95;
-                                nickPlayer(name, rank, uuid, true, player);
-                                speedcubingServer.connection.update("playersdata", "nickpriority='" + rank + "',nickname='" + name + "'", "uuid='" + uuid + "'");
-                            } else commandSender.sendMessage(GlobalString.nicknotavaliable[PlayerData.getLang(uuid)]);
-                        }
-                    } else if (strings.length == 0) {
-                        UUID uuid = ((Player) commandSender).getUniqueId();
-                        String[] datas = speedcubingServer.connection.selectStrings("playersdata", "nickname,nickpriority", "uuid='" + uuid + "'");
-                        if (datas[0].equals(""))
-                            commandSender.sendMessage("/nick <nickname>");
-                        else
-                            nick.nickPlayer(datas[0], Integer.parseInt(datas[1]), uuid, true,player);
-                    } else commandSender.sendMessage("/nick <nickname>, /nick (use the previous nick)");
-                } else
-                    player.sendMessage(GlobalString.OnlyInHub[PlayerData.getLang(player.getUniqueId())]);
-                break;
-            case "reduce":
-            case "knockbackffa":
-            case "fastbuilder":
-            case "auth":
-                player.sendMessage(GlobalString.OnlyInHub[PlayerData.getLang(player.getUniqueId())]);
-                break;
-        }
+                            String[] datas = speedcubingServer.connection.selectStrings("playersdata", "nickname,nickpriority", "uuid='" + uuid + "'");
+                            if (datas[0].equals(""))
+                                commandSender.sendMessage("/nick <nickname>");
+                            else if (datas[0].equals(player.getName()))
+                                commandSender.sendMessage("you are already nicked!");
+                            else nick.nickPlayer(datas[0], datas[1], uuid, true, player);
+                        } else commandSender.sendMessage("/nick <nickname>, /nick (use the previous nick)");
+                    } else
+                        player.sendMessage(GlobalString.OnlyInHub[User.getLang(player.getUniqueId())]);
+                    break;
+                case "reduce":
+                case "knockbackffa":
+                case "fastbuilder":
+                case "auth":
+                    player.sendMessage(GlobalString.OnlyInHub[User.getLang(player.getUniqueId())]);
+                    break;
+            }
+        } else
+            commandSender.sendMessage(GlobalString.UnknownCommand[User.getLang(((Player) commandSender).getUniqueId())]);
         return true;
     }
 
@@ -73,13 +75,13 @@ public class nick implements CommandExecutor, TabCompleter {
         return new ArrayList<>();
     }
 
-    public static void nickPlayer(String name, int rank, UUID uuid, boolean nick,Player player) {
-        NickEvent nickEvent = (NickEvent) ServerEventManager.callEvent(new NickEvent(name, rank, uuid, nick));
+    public static void nickPlayer(String name, String rank, UUID uuid, boolean nick, Player player) {
+        ServerEventManager.callEvent(new NickEvent(name, rank, uuid, nick));
         EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         PlayerConnection connection = entityPlayer.playerConnection;
-        String extracted2 = rank + Rank.playerNameExtract(name);
-        String[] format = Rank.values()[Rank.rankToIndex(rank)].getFormat();
-        PacketPlayOutScoreboardTeam old = PacketWrapper.packetPlayOutScreboardTeam(PlayerData.getRank(uuid) + Rank.playerNameExtract(player.getName()), null, null, null, null, 1);
+        String extracted2 = User.getCode(rank) + User.playerNameExtract(name);
+        String[] format = User.getFormat(rank);
+        PacketPlayOutScoreboardTeam old = PacketWrapper.packetPlayOutScreboardTeam(User.getCode(User.getRank(uuid)) + User.playerNameExtract(player.getName()), null, null, null, null, 1);
         PacketPlayOutScoreboardTeam leavePacket = PacketWrapper.packetPlayOutScreboardTeam(extracted2, null, null, null, null, 1);
         PacketPlayOutScoreboardTeam joinPacket = PacketWrapper.packetPlayOutScreboardTeam(extracted2, format[0] + format[1], "", ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS.e, Collections.singletonList(name), 0);
         PacketPlayOutPlayerInfo removePlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer);
@@ -108,6 +110,6 @@ public class nick implements CommandExecutor, TabCompleter {
         PlayerJoin.RemovePackets.put(uuid, leavePacket);
         PlayerJoin.JoinPackets.put(uuid, joinPacket);
         SocketUtils.sendData(speedcubingServer.BungeeTCPPort, "n|" + uuid + (nick ? "|" + name : ""), 100);
-        PlayerData.RankCache.put(uuid, rank);
+        User.RankCache.put(uuid, rank);
     }
 }

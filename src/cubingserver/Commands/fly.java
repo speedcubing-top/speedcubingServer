@@ -1,7 +1,7 @@
 package cubingserver.Commands;
 
 import cubingserver.StringList.GlobalString;
-import cubingserver.libs.PlayerData;
+import cubingserver.libs.User;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,7 +17,7 @@ public class fly implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
         if (strings.length == 0) {
-            int lang = PlayerData.getLang(player.getUniqueId());
+            int lang = User.getLang(player.getUniqueId());
             switch (Bukkit.getServerName()) {
                 case "lobby":
                 case "bedwars":
@@ -26,10 +26,10 @@ public class fly implements CommandExecutor, TabCompleter {
                 case "auth":
                     if (player.getWorld().getName().equals("world"))
                         if (player.getAllowFlight()) {
-                            player.sendMessage(GlobalString.FlyDisable[PlayerData.getLang(player.getUniqueId())]);
+                            player.sendMessage(GlobalString.FlyDisable[User.getLang(player.getUniqueId())]);
                             player.setAllowFlight(false);
                         } else {
-                            player.sendMessage(GlobalString.FlyEnable[PlayerData.getLang(player.getUniqueId())]);
+                            player.sendMessage(GlobalString.FlyEnable[User.getLang(player.getUniqueId())]);
                             player.setAllowFlight(true);
                         }
                     else

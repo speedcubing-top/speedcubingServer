@@ -1,5 +1,7 @@
 package cubingserver.Commands.offline;
 
+import cubingserver.StringList.GlobalString;
+import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -13,6 +15,7 @@ import java.util.List;
 
 public class  premium implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+        if (Bukkit.getPort() % 2 == 0) {
             if (strings.length == 0) {
                 String name = commandSender.getName();
                 if (speedcubingServer.connection.selectBoolean("playersdata", "autologin", "name='" + name + "'")) {
@@ -23,6 +26,8 @@ public class  premium implements CommandExecutor, TabCompleter {
                     speedcubingServer.connection.update("playersdata", "autologin=1", "name='" + name + "'");
                 }
             } else commandSender.sendMessage("/premium");
+        } else
+            commandSender.sendMessage(GlobalString.UnknownCommand[User.getLang(((Player) commandSender).getUniqueId())]);
         return true;
     }
 

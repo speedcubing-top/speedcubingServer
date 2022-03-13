@@ -1,6 +1,6 @@
 package cubingserver.StringList;
 
-import cubingserver.configcache;
+import cubingserver.config;
 
 public class GlobalString {
 
@@ -67,10 +67,10 @@ public class GlobalString {
 
     public static String[][] LobbyTabList = {
             {
-                    "§6" + configcache.SERVERIP,
-                    "§6" + configcache.SERVERIP,
-                    "§6" + configcache.SERVERIP,
-                    "§6" + configcache.SERVERIP},
+                    "§6" + config.SERVERIP,
+                    "§6" + config.SERVERIP,
+                    "§6" + config.SERVERIP,
+                    "§6" + config.SERVERIP},
             {
                     "§aOnline-Spieler §8- §b%int%",
                     "§aOnline players §8- §b%int%",
@@ -126,14 +126,6 @@ public class GlobalString {
             "§cThis nickname is not avaliable.",
             "§cThis nickname is not avaliable."
     };
-
-    public static String[] offlineserver = {
-            "§cThis command is not supported in offline server!",
-            "§cThis command is not supported in offline server!",
-            "§cThis command is not supported in offline server!",
-            "§cThis command is not supported in offline server!"
-    };
-
     public static String[] discord = {
             "§bOfficial discord server link: §ahttps://discord.gg/rnbRWrb",
             "§bOfficial discord server link: §ahttps://discord.gg/rnbRWrb",

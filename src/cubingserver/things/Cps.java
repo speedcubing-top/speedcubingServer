@@ -1,6 +1,6 @@
 package cubingserver.things;
 
-import cubingserver.configcache;
+import cubingserver.config;
 import cubingserver.connection.SocketUtils;
 import cubingserver.speedcubingServer;
 import org.bukkit.Bukkit;
@@ -45,7 +45,7 @@ public class Cps implements Listener {
                 }
 
                 for (Map.Entry<UUID, Integer[]> x : Counter.entrySet()) {
-                    if (x.getValue()[0] >= configcache.LeftCpsLimit || x.getValue()[1] >= configcache.RightCpsLimit)
+                    if (x.getValue()[0] >= config.LeftCpsLimit || x.getValue()[1] >= config.RightCpsLimit)
                         Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(x.getKey()).kickPlayer("You are clicking too fast !"));
                 }
 

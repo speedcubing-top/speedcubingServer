@@ -2,7 +2,7 @@ package cubingserver.Commands;
 
 import cubing.bukkit.api.BungeePluginMessage;
 import cubingserver.StringList.GlobalString;
-import cubingserver.libs.PlayerData;
+import cubingserver.libs.User;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -22,7 +22,7 @@ public class hub implements CommandExecutor, TabCompleter {
             switch (Bukkit.getServerName()) {
                 case "lobby":
                 case "auth":
-                    player.sendMessage(GlobalString.AlreadyInHub[PlayerData.getLang(player.getUniqueId())]);
+                    player.sendMessage(GlobalString.AlreadyInHub[User.getLang(player.getUniqueId())]);
                     break;
                 case "bedwars":
                 case "mlgrush":

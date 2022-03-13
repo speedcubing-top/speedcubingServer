@@ -6,7 +6,7 @@ import cubing.api.exception.APIErrorException;
 import cubing.bukkit.PlayerUtils;
 import cubingserver.StringList.GlobalString;
 import cubingserver.connection.SocketUtils;
-import cubingserver.libs.PlayerData;
+import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
@@ -48,7 +48,7 @@ public class skin implements CommandExecutor, TabCompleter {
                                 id = "invalidName";
                             }
                             if (id.equals("invalidName"))
-                                player.sendMessage(GlobalString.invalidName[PlayerData.getLang(player.getUniqueId())]);
+                                player.sendMessage(GlobalString.invalidName[User.getLang(player.getUniqueId())]);
                             else {
                                 String[] skin = SessionServer.getSkin(id);
                                 List<Packet<?>>[] packets = PlayerUtils.changeSkin(((CraftPlayer) player).getHandle(), skin);
@@ -77,14 +77,14 @@ public class skin implements CommandExecutor, TabCompleter {
                         }
                     }).start();
                 } else
-                    player.sendMessage(GlobalString.OnlyInHub[PlayerData.getLang(player.getUniqueId())]);
+                    player.sendMessage(GlobalString.OnlyInHub[User.getLang(player.getUniqueId())]);
                 break;
             case "clutch":
             case "reduce":
             case "knockbackffa":
             case "fastbuilder":
             case "auth":
-                player.sendMessage(GlobalString.OnlyInHub[PlayerData.getLang(player.getUniqueId())]);
+                player.sendMessage(GlobalString.OnlyInHub[User.getLang(player.getUniqueId())]);
                 break;
         }
         return true;

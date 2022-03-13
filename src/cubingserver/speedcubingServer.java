@@ -39,7 +39,7 @@ public class speedcubingServer extends JavaPlugin {
     public void onEnable() {
         connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
         BungeeTCPPort = 25568 - Bukkit.getPort() % 2;
-        new configcache().reload();
+        new config().reload();
         new SocketUtils().Load(2 + Bukkit.getPort());
         new UDPSocketUtils().Load(Bukkit.getPort());
         new Cps().Load();
@@ -67,8 +67,8 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("heal").setTabCompleter(new heal());
         Bukkit.getPluginCommand("end").setExecutor(new end());
         Bukkit.getPluginCommand("end").setTabCompleter(new end());
-        Bukkit.getPluginCommand("reloadcoreplugin").setExecutor(new configcache());
-        Bukkit.getPluginCommand("reloadcoreplugin").setTabCompleter(new configcache());
+        Bukkit.getPluginCommand("reloadcoreplugin").setExecutor(new config());
+        Bukkit.getPluginCommand("reloadcoreplugin").setTabCompleter(new config());
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginCommand("proxycommand").setTabCompleter(new proxycommand());
         Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
