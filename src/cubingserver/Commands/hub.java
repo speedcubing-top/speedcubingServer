@@ -3,6 +3,7 @@ package cubingserver.Commands;
 import cubing.bukkit.api.BungeePluginMessage;
 import cubingserver.StringList.GlobalString;
 import cubingserver.libs.User;
+import cubingserver.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -19,7 +20,7 @@ public class hub implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
         if (strings.length == 0) {
-            switch (Bukkit.getServerName()) {
+            switch (speedcubingServer.getServer(Bukkit.getPort())) {
                 case "lobby":
                 case "auth":
                     player.sendMessage(GlobalString.AlreadyInHub[User.getLang(player.getUniqueId())]);

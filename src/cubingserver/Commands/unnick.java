@@ -19,7 +19,7 @@ public class unnick implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (Bukkit.getPort() % 2 == 1) {
             Player player = (Player) commandSender;
-            switch (Bukkit.getServerName()) {
+            switch (speedcubingServer.getServer(Bukkit.getPort())) {
                 case "lobby":
                 case "bedwars":
                 case "mlgrush":

@@ -1,6 +1,7 @@
 package cubingserver.Commands;
 
 import cubing.bukkit.api.BungeePluginMessage;
+import cubingserver.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -17,7 +18,7 @@ public class end implements CommandExecutor, TabCompleter {
     public static boolean restarting = false;
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        switch (Bukkit.getServerName()) {
+        switch (speedcubingServer.getServer(Bukkit.getPort())) {
             case "mlgrush":
             case "practice":
             case "bedwars":

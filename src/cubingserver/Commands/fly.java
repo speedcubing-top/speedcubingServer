@@ -2,6 +2,7 @@ package cubingserver.Commands;
 
 import cubingserver.StringList.GlobalString;
 import cubingserver.libs.User;
+import cubingserver.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -18,7 +19,7 @@ public class fly implements CommandExecutor, TabCompleter {
         Player player = (Player) commandSender;
         if (strings.length == 0) {
             int lang = User.getLang(player.getUniqueId());
-            switch (Bukkit.getServerName()) {
+            switch (speedcubingServer.getServer(Bukkit.getPort())) {
                 case "lobby":
                 case "bedwars":
                 case "mlgrush":

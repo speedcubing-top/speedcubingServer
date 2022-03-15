@@ -27,11 +27,11 @@ public class nick implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (Bukkit.getPort() % 2 == 1) {
             Player player = (Player) commandSender;
-            switch (Bukkit.getServerName()) {
+            switch (speedcubingServer.getServer(Bukkit.getPort())) {
                 case "lobby":
-                case "bedwars":
                 case "mlgrush":
                 case "practice":
+                case "bedwars":
                 case "clutch":
                     if (player.getWorld().getName().equals("world")) {
                         if (strings.length == 1) {
@@ -59,10 +59,10 @@ public class nick implements CommandExecutor, TabCompleter {
                     } else
                         player.sendMessage(GlobalString.OnlyInHub[User.getLang(player.getUniqueId())]);
                     break;
-                case "reduce":
-                case "knockbackffa":
-                case "fastbuilder":
                 case "auth":
+                case "fastbuilder":
+                case "knockbackffa":
+                case "reduce":
                     player.sendMessage(GlobalString.OnlyInHub[User.getLang(player.getUniqueId())]);
                     break;
             }

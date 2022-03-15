@@ -26,7 +26,7 @@ public class skin implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
-        switch (Bukkit.getServerName()) {
+        switch (speedcubingServer.getServer(Bukkit.getPort())) {
             case "lobby":
             case "bedwars":
             case "mlgrush":

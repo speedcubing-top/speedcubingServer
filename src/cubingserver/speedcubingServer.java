@@ -81,19 +81,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
         ServerEventManager.createNewEvents(UDPEvent.class, SocketEvent.class, NickEvent.class);
-        switch (Bukkit.getServerName()) {
-            case "mlgrush":
-            case "practice":
-            case "bedwars":
-            case "knockbackffa":
-            case "fastbuilder":
-            case "clutch":
-            case "reduce":
-            case "lobby":
-            case "auth":
-                new LogListener().reloadFilter();
-                break;
-        }
+        new LogListener().reloadFilter();
     }
 
     public void onDisable() {
@@ -102,5 +90,26 @@ public class speedcubingServer extends JavaPlugin {
             for (String s : index.list())
                 new File(index.getPath(), s).delete();
         index.delete();
+    }
+
+    public static Map<String, Integer> map = new HashMap<String, Integer>() {{
+        put("auth", 25569);
+        put("lobby", 25573);
+        put("fastbuilder", 25577);
+        put("mlgrush", 25581);
+        put("knockbackffa", 25585);
+        put("practice", 25589);
+        put("bedwars", 25593);
+        put("clutch", 25597);
+        put("reduce", 25601);
+    }};
+
+    public static String getServer(int defaultport) {
+        defaultport = defaultport % 2 + defaultport;
+        for (Map.Entry<String, Integer> x : map.entrySet()) {
+            if (x.getValue() == defaultport)
+                return x.getKey();
+        }
+        return "";
     }
 }
