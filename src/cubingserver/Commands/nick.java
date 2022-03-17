@@ -1,7 +1,6 @@
 package cubingserver.Commands;
 
 import cubing.bukkit.Event.ServerEventManager;
-import cubing.bukkit.PacketWrapper;
 import cubing.utils.Reflections;
 import cubingserver.StringList.GlobalString;
 import cubingserver.connection.SocketUtils;
@@ -81,9 +80,17 @@ public class nick implements CommandExecutor, TabCompleter {
         PlayerConnection connection = entityPlayer.playerConnection;
         String extracted2 = User.getCode(rank) + User.playerNameExtract(name);
         String[] format = User.getFormat(rank);
-        PacketPlayOutScoreboardTeam old = PacketWrapper.packetPlayOutScreboardTeam(User.getCode(User.getRank(uuid)) + User.playerNameExtract(player.getName()), null, null, null, null, 1);
-        PacketPlayOutScoreboardTeam leavePacket = PacketWrapper.packetPlayOutScreboardTeam(extracted2, null, null, null, null, 1);
-        PacketPlayOutScoreboardTeam joinPacket = PacketWrapper.packetPlayOutScreboardTeam(extracted2, format[0] + format[1], "", ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS.e, Collections.singletonList(name), 0);
+        PacketPlayOutScoreboardTeam old = new PacketPlayOutScoreboardTeam();
+        old.a = User.getCode(User.getRank(uuid)) + User.playerNameExtract(player.getName());
+        old.h = 1;
+        PacketPlayOutScoreboardTeam leavePacket = new PacketPlayOutScoreboardTeam();
+        leavePacket.a = extracted2;
+        leavePacket.h = 1;
+        PacketPlayOutScoreboardTeam joinPacket = new PacketPlayOutScoreboardTeam();
+        joinPacket.a = extracted2;
+        joinPacket.c = format[0] + format[1];
+        joinPacket.g = Collections.singletonList(name);
+        joinPacket.h = 0;
         PacketPlayOutPlayerInfo removePlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer);
         PacketPlayOutPlayerInfo addPlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer);
         for (Player p : Bukkit.getOnlinePlayers()) {

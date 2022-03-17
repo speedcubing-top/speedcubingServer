@@ -1,7 +1,6 @@
 package cubingserver.things.events;
 
 import com.google.common.collect.Sets;
-import cubing.bukkit.PacketWrapper;
 import cubing.bukkit.PlayerUtils;
 import cubingserver.Commands.end;
 import cubingserver.ExploitFixer.ForceOp;
@@ -11,7 +10,6 @@ import cubingserver.speedcubingServer;
 import cubingserver.things.Cps;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
-import net.minecraft.server.v1_8_R3.ScoreboardTeamBase;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
@@ -77,9 +75,14 @@ public class PlayerJoin implements Listener {
             }
             String extracted = User.getCode(datas[0]) + User.playerNameExtract(name);
             String[] format = User.getFormat(datas[0]);
-            PacketPlayOutScoreboardTeam leavePacket = PacketWrapper.packetPlayOutScreboardTeam(extracted, null, null, null, null, 1);
-            PacketPlayOutScoreboardTeam joinPacket = PacketWrapper.packetPlayOutScreboardTeam(extracted, format[0] + format[1], "", ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS.e, Collections.singletonList(name), 0);
-
+            PacketPlayOutScoreboardTeam leavePacket = new PacketPlayOutScoreboardTeam();
+            leavePacket.a = extracted;
+            leavePacket.h = 1;
+            PacketPlayOutScoreboardTeam joinPacket = new PacketPlayOutScoreboardTeam();
+            joinPacket.a = extracted;
+            joinPacket.c = format[0] + format[1];
+            joinPacket.g = Collections.singletonList(name);
+            joinPacket.h = 0;
             for (Player p : Bukkit.getOnlinePlayers()) {
                 PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
                 c.sendPacket(leavePacket);
@@ -87,7 +90,12 @@ public class PlayerJoin implements Listener {
             }
             if (!realname.equals("")) {
                 String[] newformat = User.getFormat(old);
-                connection.sendPacket(PacketWrapper.packetPlayOutScreboardTeam(User.getCode(old) + User.playerNameExtract(realname), newformat[0] + newformat[1], "", ScoreboardTeamBase.EnumNameTagVisibility.ALWAYS.e, Collections.singletonList(realname), 0));
+                PacketPlayOutScoreboardTeam a = new PacketPlayOutScoreboardTeam();
+                a.a = User.getCode(old) + User.playerNameExtract(realname);
+                a.c = newformat[0] + newformat[1];
+                a.g = Collections.singletonList(realname);
+                a.h = 0;
+                connection.sendPacket(a);
             }
             RemovePackets.put(uuid, leavePacket);
             JoinPackets.put(uuid, joinPacket);
