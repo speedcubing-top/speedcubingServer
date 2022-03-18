@@ -1,6 +1,6 @@
 package cubingserver;
 
-import cubing.spigot.lib.api.SQLConnection;
+import cubing.lib.api.SQLConnection;
 import cubing.spigot.lib.bukkit.Event.ServerEventManager;
 import cubingserver.Commands.*;
 import cubingserver.Commands.offline.premium;

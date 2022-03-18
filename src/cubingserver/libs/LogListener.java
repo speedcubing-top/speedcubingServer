@@ -1,6 +1,6 @@
 package cubingserver.libs;
 
-import cubing.spigot.lib.utils.Console;
+import cubing.lib.utils.Console;
 import cubingserver.connection.SocketUtils;
 import cubingserver.speedcubingServer;
 import org.apache.logging.log4j.Level;
