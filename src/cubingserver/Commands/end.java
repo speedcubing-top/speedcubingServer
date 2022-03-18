@@ -1,6 +1,7 @@
 package cubingserver.Commands;
 
 import cubing.spigot.lib.bukkit.api.BungeePluginMessage;
+import cubingserver.PluginMessage;
 import cubingserver.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -27,7 +28,7 @@ public class end implements CommandExecutor, TabCompleter {
             case "clutch":
             case "reduce":
                 for (Player p : Bukkit.getOnlinePlayers()) {
-                    BungeePluginMessage.switchServer(p, "lobby",speedcubingServer.getPlugin(speedcubingServer.class));
+                    PluginMessage.switchServer(p, "lobby");
                 }
                 new Timer().schedule(new TimerTask() {
                     @Override
