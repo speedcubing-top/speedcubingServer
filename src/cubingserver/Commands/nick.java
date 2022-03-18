@@ -1,7 +1,7 @@
 package cubingserver.Commands;
 
-import cubing.bukkit.Event.ServerEventManager;
-import cubing.utils.Reflections;
+import cubing.spigot.lib.bukkit.Event.ServerEventManager;
+import cubing.spigot.lib.utils.Reflections;
 import cubingserver.StringList.GlobalString;
 import cubingserver.connection.SocketUtils;
 import cubingserver.customEvents.NickEvent;

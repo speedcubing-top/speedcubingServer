@@ -1,13 +1,14 @@
 package cubingserver.things.events;
 
 import com.google.common.collect.Sets;
-import cubing.bukkit.PlayerUtils;
+import cubing.spigot.lib.bukkit.PlayerUtils;
 import cubingserver.Commands.end;
 import cubingserver.ExploitFixer.ForceOp;
 import cubingserver.StringList.GlobalString;
 import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
 import cubingserver.things.Cps;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
@@ -65,7 +66,7 @@ public class PlayerJoin implements Listener {
 
             int lang = User.getLang(uuid);
             PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-            PlayerUtils.sendTabHeaderFooter(connection, GlobalString.LobbyTabList[0][lang], GlobalString.LobbyTabList[1][lang].replace("%int%", Integer.toString(speedcubingServer.AllPlayers)));
+            connection.sendPacket(new PacketPlayOutPlayerListHeaderFooter(GlobalString.LobbyTabList[0][lang],GlobalString.LobbyTabList[1][lang].replace("%int%", Integer.toString(speedcubingServer.AllPlayers))));
 
             for (PacketPlayOutScoreboardTeam p : RemovePackets.values()) {
                 connection.sendPacket(p);

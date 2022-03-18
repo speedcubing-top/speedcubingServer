@@ -1,7 +1,7 @@
 package cubingserver;
 
-import cubing.api.SQLConnection;
-import cubing.bukkit.Event.ServerEventManager;
+import cubing.spigot.lib.api.SQLConnection;
+import cubing.spigot.lib.bukkit.Event.ServerEventManager;
 import cubingserver.Commands.*;
 import cubingserver.Commands.offline.premium;
 import cubingserver.Commands.offline.resetpassword;
@@ -37,6 +37,7 @@ public class speedcubingServer extends JavaPlugin {
     public static SQLConnection connection;
 
     public void onEnable() {
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
         BungeeTCPPort = 25568 - Bukkit.getPort() % 2;
         new config().reload();

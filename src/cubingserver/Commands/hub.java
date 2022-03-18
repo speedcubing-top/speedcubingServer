@@ -1,6 +1,6 @@
 package cubingserver.Commands;
 
-import cubing.bukkit.api.BungeePluginMessage;
+import cubing.spigot.lib.bukkit.api.BungeePluginMessage;
 import cubingserver.StringList.GlobalString;
 import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
@@ -29,7 +29,7 @@ public class hub implements CommandExecutor, TabCompleter {
                 case "mlgrush":
                 case "practice":
                     if (player.getWorld().getName().equals("world"))
-                        BungeePluginMessage.switchServer(player, "Lobby");
+                        BungeePluginMessage.switchServer(player, "Lobby",speedcubingServer.getPlugin(speedcubingServer.class));
                     else
                         player.teleport(new Location(Bukkit.getWorld("world"), 0.5D, 100D, 0.5D, 0F, 0F));
                     break;
@@ -37,7 +37,7 @@ public class hub implements CommandExecutor, TabCompleter {
                 case "clutch":
                 case "knockbackffa":
                 case "fastbuilder":
-                    BungeePluginMessage.switchServer(player, "lobby");
+                    BungeePluginMessage.switchServer(player, "lobby",speedcubingServer.getPlugin(speedcubingServer.class));
                     break;
             }
         } else player.sendMessage("/hub, /l, /lobby");

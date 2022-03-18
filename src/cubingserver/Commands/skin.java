@@ -1,9 +1,9 @@
 package cubingserver.Commands;
 
-import cubing.api.MojangAPI;
-import cubing.api.SessionServer;
-import cubing.api.exception.APIErrorException;
-import cubing.bukkit.PlayerUtils;
+import cubing.spigot.lib.api.MojangAPI;
+import cubing.spigot.lib.api.SessionServer;
+import cubing.spigot.lib.api.exception.APIErrorException;
+import cubing.spigot.lib.bukkit.PlayerUtils;
 import cubingserver.StringList.GlobalString;
 import cubingserver.connection.SocketUtils;
 import cubingserver.libs.User;

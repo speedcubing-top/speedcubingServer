@@ -1,7 +1,7 @@
 package cubingserver.connection;
 
-import cubing.bukkit.Event.ServerEventManager;
-import cubing.bukkit.PlayerUtils;
+import cubing.spigot.lib.bukkit.Event.ServerEventManager;
+import cubing.spigot.lib.bukkit.PlayerUtils;
 import cubingserver.customEvents.SocketEvent;
 import cubingserver.libs.LogListener;
 import cubingserver.speedcubingServer;

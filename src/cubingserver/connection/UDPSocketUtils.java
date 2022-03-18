@@ -1,6 +1,6 @@
 package cubingserver.connection;
 
-import cubing.bukkit.Event.ServerEventManager;
+import cubing.spigot.lib.bukkit.Event.ServerEventManager;
 import cubingserver.customEvents.UDPEvent;
 
 import java.net.DatagramPacket;
