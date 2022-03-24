@@ -31,3 +31,5 @@ commands:
     usage: /nick
   unnick:
     usage: /unnick
+depend:
+  - speedcubingLib

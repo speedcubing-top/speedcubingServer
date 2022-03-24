@@ -106,7 +106,7 @@ public class speedcubingServer extends JavaPlugin {
     }};
 
     public static String getServer(int defaultport) {
-        defaultport = defaultport % 2 + defaultport;
+        defaultport = defaultport % 2 + defaultport - 1;
         for (Map.Entry<String, Integer> x : map.entrySet()) {
             if (x.getValue() == defaultport)
                 return x.getKey();
