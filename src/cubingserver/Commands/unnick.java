@@ -17,7 +17,7 @@ import java.util.UUID;
 public class unnick implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (Bukkit.getPort() % 2 == 1) {
+        if (speedcubingServer.isBungeeOnlineMode) {
             Player player = (Player) commandSender;
             switch (speedcubingServer.getServer(Bukkit.getPort())) {
                 case "lobby":

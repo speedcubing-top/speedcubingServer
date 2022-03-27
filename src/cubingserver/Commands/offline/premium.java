@@ -15,7 +15,7 @@ import java.util.List;
 
 public class  premium implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (Bukkit.getPort() % 2 == 0) {
+        if (!speedcubingServer.isBungeeOnlineMode) {
             if (strings.length == 0) {
                 String name = commandSender.getName();
                 if (speedcubingServer.connection.selectBoolean("playersdata", "autologin", "name='" + name + "'")) {

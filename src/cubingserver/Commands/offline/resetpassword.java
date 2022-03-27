@@ -15,7 +15,7 @@ import java.util.List;
 
 public class resetpassword implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (Bukkit.getPort() % 2 == 0) {
+        if (!speedcubingServer.isBungeeOnlineMode) {
             if (strings.length == 2) {
                 int l = strings[0].length();
                 if (l > 16)

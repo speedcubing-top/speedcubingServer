@@ -55,7 +55,7 @@ public class PlayerJoin implements Listener {
                 perms.removeAll(Sets.newHashSet(datas[3].split("\\|")));
             speedcubingServer.permissions.put(uuid, perms);
             String realname = "";
-            if (Bukkit.getPort() % 2 == 1) {
+            if (speedcubingServer.isBungeeOnlineMode) {
                 String res = speedcubingServer.connection.selectString("playersdata", "name", "uuid='" + uuid + "'");
                 if (!res.equalsIgnoreCase(name)) {
                     datas[0] = datas[1];

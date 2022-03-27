@@ -18,8 +18,10 @@ import cubingserver.things.events.*;
 import cubingserver.things.froze;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -35,10 +37,17 @@ public class speedcubingServer extends JavaPlugin {
 
     public static int BungeeTCPPort;
     public static SQLConnection connection;
+    public static boolean isBungeeOnlineMode;
 
     public void onEnable() {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
+        try {
+            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(new FileInputStream("C:\\Users\\andyt\\Desktop\\config.yml"))).get("online_mode");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
+
         BungeeTCPPort = 25568 - Bukkit.getPort() % 2;
         new config().reload();
         new SocketUtils().Load(2 + Bukkit.getPort());

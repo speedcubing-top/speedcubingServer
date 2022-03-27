@@ -24,7 +24,7 @@ public class nick implements CommandExecutor, TabCompleter {
     public static Map<UUID, Integer> nicktimes = new HashMap<>();
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (Bukkit.getPort() % 2 == 1) {
+        if (speedcubingServer.isBungeeOnlineMode) {
             Player player = (Player) commandSender;
             switch (speedcubingServer.getServer(Bukkit.getPort())) {
                 case "lobby":
