@@ -10,6 +10,7 @@ import cubingserver.connection.SocketUtils;
 import cubingserver.connection.UDPSocketUtils;
 import cubingserver.customEvents.NickEvent;
 import cubingserver.customEvents.SocketEvent;
+import cubingserver.customEvents.UDPEvent;
 import cubingserver.libs.LogListener;
 import cubingserver.things.CommandPermissions;
 import cubingserver.things.Cps;
@@ -87,7 +88,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
-        ServerEventManager.createNewEvents(SocketEvent.class, NickEvent.class);
+        ServerEventManager.createNewEvents(SocketEvent.class, NickEvent.class, UDPEvent.class);
         new LogListener().reloadFilter();
     }
 
