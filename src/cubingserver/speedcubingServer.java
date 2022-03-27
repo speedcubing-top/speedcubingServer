@@ -10,7 +10,6 @@ import cubingserver.connection.SocketUtils;
 import cubingserver.connection.UDPSocketUtils;
 import cubingserver.customEvents.NickEvent;
 import cubingserver.customEvents.SocketEvent;
-import cubingserver.customEvents.UDPEvent;
 import cubingserver.libs.LogListener;
 import cubingserver.things.CommandPermissions;
 import cubingserver.things.Cps;
@@ -22,10 +21,7 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class speedcubingServer extends JavaPlugin {
     public static int AllPlayers;
@@ -42,7 +38,8 @@ public class speedcubingServer extends JavaPlugin {
     public void onEnable() {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         try {
-            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(new FileInputStream("C:\\Users\\andyt\\Desktop\\config.yml"))).get("online_mode");
+            File file = new File("../../Proxies/FlameCord/config.yml");
+            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(new FileInputStream(file))).get("online_mode");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -90,7 +87,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
-        ServerEventManager.createNewEvents(UDPEvent.class, SocketEvent.class, NickEvent.class);
+        ServerEventManager.createNewEvents(SocketEvent.class, NickEvent.class);
         new LogListener().reloadFilter();
     }
 

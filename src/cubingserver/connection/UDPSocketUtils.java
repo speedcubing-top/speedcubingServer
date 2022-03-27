@@ -1,7 +1,7 @@
 package cubingserver.connection;
 
 import cubing.spigot.lib.bukkit.Event.ServerEventManager;
-import cubingserver.customEvents.UDPEvent;
+import cubingserver.customEvents.SocketEvent;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -21,7 +21,7 @@ public class UDPSocketUtils {
             while (true) {
                 try {
                     UDPSocketUtils.socket.receive(datagramPacket);
-                    ServerEventManager.callEvent(new UDPEvent(new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("\\|")));
+                    ServerEventManager.callEvent(new SocketEvent(new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("\\|")));
                 } catch (Exception e) {
                 }
             }
