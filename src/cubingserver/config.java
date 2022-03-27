@@ -3,12 +3,7 @@ package cubingserver;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import cubingserver.StringList.GlobalString;
 import cubingserver.libs.User;
-import org.bukkit.command.*;
-import org.bukkit.entity.Item;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
 import java.io.FileReader;
 import java.util.ArrayList;
@@ -16,13 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class config implements CommandExecutor, TabCompleter {
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        commandSender.sendMessage(GlobalString.UnknownCommand[commandSender instanceof ConsoleCommandSender ? 1 : User.getLang(((Player) commandSender).getUniqueId())]);
-        reload();
-        return true;
-    }
-
+public class config {
     public void reload() {
         try {
             JsonObject object = new JsonParser().parse(new FileReader("../../../server.json")).getAsJsonObject();
@@ -56,8 +45,4 @@ public class config implements CommandExecutor, TabCompleter {
     public static int LeftCpsLimit = Integer.MAX_VALUE;
     public static int RightCpsLimit = Integer.MAX_VALUE;
     public static String SERVERIP = "speedcubing.serveftp.net";
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return new ArrayList<>();
-    }
 }

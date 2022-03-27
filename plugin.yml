@@ -23,8 +23,6 @@ commands:
     usage: /end
   heal:
     usage: /heal
-  reloadcoreplugin:
-    usage: /reloadcoreplugin
   proxycommand:
     usage: /proxycommand
   nick:

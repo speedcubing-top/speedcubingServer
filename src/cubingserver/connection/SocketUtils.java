@@ -2,6 +2,7 @@ package cubingserver.connection;
 
 import cubing.spigot.lib.bukkit.Event.ServerEventManager;
 import cubing.spigot.lib.bukkit.PlayerUtils;
+import cubingserver.config;
 import cubingserver.customEvents.SocketEvent;
 import cubingserver.libs.LogListener;
 import cubingserver.speedcubingServer;
@@ -74,6 +75,9 @@ public class SocketUtils {
                                 froze.frozed.remove(Bukkit.getPlayerExact(rs[2]).getUniqueId());
                                 break;
                         }
+                        break;
+                    case "g":
+                        new config().reload();
                         break;
                     case "k"://kick
                         String text = "";
