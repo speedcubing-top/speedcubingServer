@@ -75,13 +75,12 @@ public class PlayerJoin implements Listener {
                 connection.sendPacket(p);
             }
             String extracted = User.getCode(datas[0]) + User.playerNameExtract(name);
-            String[] format = User.getFormat(datas[0]);
             PacketPlayOutScoreboardTeam leavePacket = new PacketPlayOutScoreboardTeam();
             leavePacket.a = extracted;
             leavePacket.h = 1;
             PacketPlayOutScoreboardTeam joinPacket = new PacketPlayOutScoreboardTeam();
             joinPacket.a = extracted;
-            joinPacket.c = format[0] + format[1];
+            joinPacket.c = User.getFormat(datas[0])[0];
             joinPacket.g = Collections.singletonList(name);
             joinPacket.h = 0;
             for (Player p : Bukkit.getOnlinePlayers()) {
@@ -90,10 +89,9 @@ public class PlayerJoin implements Listener {
                 c.sendPacket(joinPacket);
             }
             if (!realname.equals("")) {
-                String[] newformat = User.getFormat(old);
                 PacketPlayOutScoreboardTeam a = new PacketPlayOutScoreboardTeam();
                 a.a = User.getCode(old) + User.playerNameExtract(realname);
-                a.c = newformat[0] + newformat[1];
+                a.c = User.getFormat(old)[0];
                 a.g = Collections.singletonList(realname);
                 a.h = 0;
                 connection.sendPacket(a);
