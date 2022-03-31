@@ -3,7 +3,7 @@ package cubingserver.Commands;
 import cubing.lib.api.MojangAPI;
 import cubing.lib.api.SessionServer;
 import cubing.lib.api.exception.APIErrorException;
-import cubing.spigot.lib.bukkit.PlayerUtils;
+import cubing.lib.bukkit.PlayerUtils;
 import cubingserver.StringList.GlobalString;
 import cubingserver.connection.SocketUtils;
 import cubingserver.libs.User;

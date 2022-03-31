@@ -1,6 +1,6 @@
 package cubingserver;
 
-import cubing.spigot.lib.bukkit.api.BungeePluginMessage;
+import cubing.lib.bukkit.BungeePluginMessage;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 

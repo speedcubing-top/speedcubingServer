@@ -1,6 +1,7 @@
 package cubingserver.Commands;
 
-import cubing.spigot.lib.bukkit.Event.ServerEventManager;
+import cubing.lib.bukkit.Event.ServerEventManager;
+import cubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import cubing.lib.utils.Reflections;
 import cubingserver.StringList.GlobalString;
 import cubingserver.connection.SocketUtils;
@@ -79,17 +80,9 @@ public class nick implements CommandExecutor, TabCompleter {
         EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         PlayerConnection connection = entityPlayer.playerConnection;
         String extracted2 = User.getCode(rank) + User.playerNameExtract(name);
-        PacketPlayOutScoreboardTeam old = new PacketPlayOutScoreboardTeam();
-        old.a = User.getCode(User.getRank(uuid)) + User.playerNameExtract(player.getName());
-        old.h = 1;
-        PacketPlayOutScoreboardTeam leavePacket = new PacketPlayOutScoreboardTeam();
-        leavePacket.a = extracted2;
-        leavePacket.h = 1;
-        PacketPlayOutScoreboardTeam joinPacket = new PacketPlayOutScoreboardTeam();
-        joinPacket.a = extracted2;
-        joinPacket.c = User.getFormat(rank)[0];
-        joinPacket.g = Collections.singletonList(name);
-        joinPacket.h = 0;
+        PacketPlayOutScoreboardTeam old = OutScoreboardTeam.a(User.getCode(User.getRank(uuid)) + User.playerNameExtract(player.getName()),1);
+        PacketPlayOutScoreboardTeam leavePacket = OutScoreboardTeam.a(extracted2,1);
+        PacketPlayOutScoreboardTeam joinPacket = OutScoreboardTeam.a(extracted2, User.getFormat(rank)[0], Collections.singletonList(name), 0);
         PacketPlayOutPlayerInfo removePlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer);
         PacketPlayOutPlayerInfo addPlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer);
         for (Player p : Bukkit.getOnlinePlayers()) {

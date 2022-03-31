@@ -1,6 +1,5 @@
 package cubingserver.Commands;
 
-import cubing.spigot.lib.bukkit.api.BungeePluginMessage;
 import cubingserver.PluginMessage;
 import cubingserver.speedcubingServer;
 import org.bukkit.Bukkit;

@@ -1,7 +1,8 @@
 package cubingserver.things.events;
 
 import com.google.common.collect.Sets;
-import cubing.spigot.lib.bukkit.PlayerUtils;
+import cubing.lib.bukkit.packetwrapper.OutPlayerListHeaderFooter;
+import cubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import cubingserver.Commands.end;
 import cubingserver.ExploitFixer.ForceOp;
 import cubingserver.StringList.GlobalString;
@@ -66,7 +67,7 @@ public class PlayerJoin implements Listener {
 
             int lang = User.getLang(uuid);
             PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-            connection.sendPacket(new PacketPlayOutPlayerListHeaderFooter(GlobalString.LobbyTabList[0][lang],GlobalString.LobbyTabList[1][lang].replace("%int%", Integer.toString(speedcubingServer.AllPlayers))));
+            connection.sendPacket(OutPlayerListHeaderFooter.a(GlobalString.LobbyTabList[0][lang], GlobalString.LobbyTabList[1][lang].replace("%int%", Integer.toString(speedcubingServer.AllPlayers))));
 
             for (PacketPlayOutScoreboardTeam p : RemovePackets.values()) {
                 connection.sendPacket(p);
@@ -75,27 +76,15 @@ public class PlayerJoin implements Listener {
                 connection.sendPacket(p);
             }
             String extracted = User.getCode(datas[0]) + User.playerNameExtract(name);
-            PacketPlayOutScoreboardTeam leavePacket = new PacketPlayOutScoreboardTeam();
-            leavePacket.a = extracted;
-            leavePacket.h = 1;
-            PacketPlayOutScoreboardTeam joinPacket = new PacketPlayOutScoreboardTeam();
-            joinPacket.a = extracted;
-            joinPacket.c = User.getFormat(datas[0])[0];
-            joinPacket.g = Collections.singletonList(name);
-            joinPacket.h = 0;
+            PacketPlayOutScoreboardTeam leavePacket = OutScoreboardTeam.a(extracted, 1);
+            PacketPlayOutScoreboardTeam joinPacket = OutScoreboardTeam.a(extracted, User.getFormat(datas[0])[0], Collections.singletonList(name), 0);
             for (Player p : Bukkit.getOnlinePlayers()) {
                 PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
                 c.sendPacket(leavePacket);
                 c.sendPacket(joinPacket);
             }
-            if (!realname.equals("")) {
-                PacketPlayOutScoreboardTeam a = new PacketPlayOutScoreboardTeam();
-                a.a = User.getCode(old) + User.playerNameExtract(realname);
-                a.c = User.getFormat(old)[0];
-                a.g = Collections.singletonList(realname);
-                a.h = 0;
-                connection.sendPacket(a);
-            }
+            if (!realname.equals(""))
+                connection.sendPacket(OutScoreboardTeam.a(User.getCode(old) + User.playerNameExtract(realname), User.getFormat(old)[0], Collections.singletonList(realname), 0));
             RemovePackets.put(uuid, leavePacket);
             JoinPackets.put(uuid, joinPacket);
             speedcubingServer.lastmsg.put(uuid, "");

@@ -1,7 +1,7 @@
 package cubingserver;
 
 import cubing.lib.api.SQLConnection;
-import cubing.spigot.lib.bukkit.Event.ServerEventManager;
+import cubing.lib.bukkit.Event.ServerEventManager;
 import cubingserver.Commands.*;
 import cubingserver.Commands.offline.premium;
 import cubingserver.Commands.offline.resetpassword;
