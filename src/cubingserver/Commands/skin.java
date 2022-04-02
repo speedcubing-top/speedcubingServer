@@ -58,11 +58,10 @@ public class skin implements CommandExecutor, TabCompleter {
                                 UUID uuid = player.getUniqueId();
                                 player.updateInventory();
                                 for (Player p : Bukkit.getOnlinePlayers()) {
-                                    PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
                                     if (!p.getWorld().getName().equals(worldname))
-                                        packets[2].forEach(c::sendPacket);
+                                        packets[2].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
                                     else if (p.getUniqueId() != uuid)
-                                        packets[1].forEach(c::sendPacket);
+                                        packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
                                 }
                                 SocketUtils.sendData(speedcubingServer.BungeeTCPPort, "s|" + uuid + "|" + skin[0] + "|" + skin[1] + (target.equals(name) ? "|null" : ""), 100);
                             }
