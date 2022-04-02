@@ -53,24 +53,16 @@ public class skin implements CommandExecutor, TabCompleter {
                                 String[] skin = SessionServer.getSkin(id);
                                 List<Packet<?>>[] packets = PlayerUtils.changeSkin(((CraftPlayer) player).getHandle(), skin);
                                 PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-                                for (Packet<?> p : packets[0]) {
-                                    connection.sendPacket(p);
-                                }
+                                packets[0].forEach(connection::sendPacket);
                                 String worldname = player.getWorld().getName();
                                 UUID uuid = player.getUniqueId();
                                 player.updateInventory();
                                 for (Player p : Bukkit.getOnlinePlayers()) {
-                                    if (!p.getWorld().getName().equals(worldname)) {
-                                        PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
-                                        for (Packet<?> packet : packets[2]) {
-                                            c.sendPacket(packet);
-                                        }
-                                    } else if (p.getUniqueId() != uuid) {
-                                        PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
-                                        for (Packet<?> packet : packets[1]) {
-                                            c.sendPacket(packet);
-                                        }
-                                    }
+                                    PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
+                                    if (!p.getWorld().getName().equals(worldname))
+                                        packets[2].forEach(c::sendPacket);
+                                    else if (p.getUniqueId() != uuid)
+                                        packets[1].forEach(c::sendPacket);
                                 }
                                 SocketUtils.sendData(speedcubingServer.BungeeTCPPort, "s|" + uuid + "|" + skin[0] + "|" + skin[1] + (target.equals(name) ? "|null" : ""), 100);
                             }

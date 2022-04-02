@@ -80,12 +80,12 @@ public class SocketUtils {
                         new config().reload();
                         break;
                     case "k"://kick
-                        String text = "";
+                        StringBuilder text = new StringBuilder();
                         String[] hex = rs[2].split("\\\\u");
                         for (int i = 1; i < hex.length; i++) {
-                            text += (char) Integer.parseInt(hex[i], 16);
+                            text.append((char) Integer.parseInt(hex[i], 16));
                         }
-                        String t = text;
+                        String t = text.toString();
                         Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayerExact(rs[1]).kickPlayer(t));
                         break;
                     case "r"://crash

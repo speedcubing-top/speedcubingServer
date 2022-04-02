@@ -68,13 +68,8 @@ public class PlayerJoin implements Listener {
             int lang = User.getLang(uuid);
             PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
             connection.sendPacket(OutPlayerListHeaderFooter.a(GlobalString.LobbyTabList[0][lang], GlobalString.LobbyTabList[1][lang].replace("%int%", Integer.toString(speedcubingServer.AllPlayers))));
-
-            for (PacketPlayOutScoreboardTeam p : RemovePackets.values()) {
-                connection.sendPacket(p);
-            }
-            for (PacketPlayOutScoreboardTeam p : JoinPackets.values()) {
-                connection.sendPacket(p);
-            }
+            RemovePackets.values().forEach(connection::sendPacket);
+            JoinPackets.values().forEach(connection::sendPacket);
             String extracted = User.getCode(datas[0]) + User.playerNameExtract(name);
             PacketPlayOutScoreboardTeam leavePacket = OutScoreboardTeam.a(extracted, 1);
             PacketPlayOutScoreboardTeam joinPacket = OutScoreboardTeam.a(extracted, User.getFormat(datas[0])[0], Collections.singletonList(name), 0);

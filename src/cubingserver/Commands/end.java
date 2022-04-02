@@ -26,9 +26,7 @@ public class end implements CommandExecutor, TabCompleter {
             case "fastbuilder":
             case "clutch":
             case "reduce":
-                for (Player p : Bukkit.getOnlinePlayers()) {
-                    PluginMessage.switchServer(p, "lobby");
-                }
+                Bukkit.getOnlinePlayers().forEach(a -> PluginMessage.switchServer(a,"lobby"));
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {

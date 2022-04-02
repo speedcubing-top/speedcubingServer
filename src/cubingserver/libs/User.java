@@ -50,24 +50,26 @@ public class User {
     }
 
     public static String playerNameExtract(String name) {
-        String str = "";
-        while (name.length() < 16) {
-            name = name + " ";
+        StringBuilder str = new StringBuilder();
+        StringBuilder nameBuilder = new StringBuilder(name);
+        while (nameBuilder.length() < 16) {
+            nameBuilder.append(" ");
         }
+        name = nameBuilder.toString();
         for (int i = 0; i < 16; i++) {
             int c = name.charAt(i);
             c = (c == 32 ? 0 : (c <= 57 ? c - 47 : (c <= 90 ? c - 54 : (c == 95 ? 37 : c - 59))));
-            String bin = Integer.toBinaryString(c);
+            StringBuilder bin = new StringBuilder(Integer.toBinaryString(c));
             while (bin.length() < 6) {
-                bin = "0" + bin;
+                bin.insert(0, "0");
             }
-            str += bin;
+            str.append(bin);
         }
-        str += "00";
-        String string = "";
+        str.append("00");
+        StringBuilder string = new StringBuilder();
         for (int i = 0; i < 14; i++) {
-            string += (char) (Integer.parseInt(str.substring(i * 7, i * 7 + 6), 2) + 32);
+            string.append((char) (Integer.parseInt(str.substring(i * 7, i * 7 + 6), 2) + 32));
         }
-        return string;
+        return string.toString();
     }
 }

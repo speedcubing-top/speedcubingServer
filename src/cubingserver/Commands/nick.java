@@ -80,8 +80,8 @@ public class nick implements CommandExecutor, TabCompleter {
         EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         PlayerConnection connection = entityPlayer.playerConnection;
         String extracted2 = User.getCode(rank) + User.playerNameExtract(name);
-        PacketPlayOutScoreboardTeam old = OutScoreboardTeam.a(User.getCode(User.getRank(uuid)) + User.playerNameExtract(player.getName()),1);
-        PacketPlayOutScoreboardTeam leavePacket = OutScoreboardTeam.a(extracted2,1);
+        PacketPlayOutScoreboardTeam old = OutScoreboardTeam.a(User.getCode(User.getRank(uuid)) + User.playerNameExtract(player.getName()), 1);
+        PacketPlayOutScoreboardTeam leavePacket = OutScoreboardTeam.a(extracted2, 1);
         PacketPlayOutScoreboardTeam joinPacket = OutScoreboardTeam.a(extracted2, User.getFormat(rank)[0], Collections.singletonList(name), 0);
         PacketPlayOutPlayerInfo removePlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer);
         PacketPlayOutPlayerInfo addPlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer);

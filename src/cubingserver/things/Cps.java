@@ -43,15 +43,11 @@ public class Cps implements Listener {
                     if (a != null)
                         SocketUtils.sendData(speedcubingServer.BungeeTCPPort, "c|" + set + "|" + a[0] + "|" + a[1], 100);
                 }
-
-                for (Map.Entry<UUID, Integer[]> x : Counter.entrySet()) {
-                    if (x.getValue()[0] >= config.LeftCpsLimit || x.getValue()[1] >= config.RightCpsLimit)
-                        Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(x.getKey()).kickPlayer("You are clicking too fast !"));
-                }
-
-                for (UUID x : Counter.keySet()) {
-                    Counter.put(x, new Integer[]{0, 0});
-                }
+                Counter.forEach((k, v) -> {
+                    if (v[0] >= config.LeftCpsLimit || v[1] >= config.RightCpsLimit)
+                        Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(k).kickPlayer("You are clicking too fast !"));
+                });
+                Counter.replaceAll((x, v) -> new Integer[]{0, 0});
             }
         }, 0, 1000);
     }

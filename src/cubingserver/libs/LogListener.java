@@ -26,9 +26,9 @@ public class LogListener {
                 if (Listening)
                     new Thread(() -> {
                         String string = Console.ansiToColoredText(event.getMessage().getFormattedMessage());
-                        String unicode = "";
+                        StringBuilder unicode = new StringBuilder();
                         for (int i = 0; i < string.length(); i++) {
-                            unicode += "\\u" + Integer.toHexString(string.charAt(i));
+                            unicode.append("\\u").append(Integer.toHexString(string.charAt(i)));
                         }
                         try {
                             SocketUtils.UnHandledSendData(speedcubingServer.BungeeTCPPort, "t|" + (Bukkit.getPort() + 2) + "|" + unicode, 100);
