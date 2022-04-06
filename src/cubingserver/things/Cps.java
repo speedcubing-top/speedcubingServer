@@ -13,7 +13,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Cps implements Listener {
-    public static ConcurrentHashMap<UUID, Integer[]> Counter = new ConcurrentHashMap<>();
+    public static Map<UUID, Integer[]> Counter = new ConcurrentHashMap<>();
     public static Set<UUID> CpsListening = new HashSet<>();
 
     @EventHandler
@@ -44,10 +44,10 @@ public class Cps implements Listener {
                     if (a != null)
                         SocketUtils.sendData(speedcubingServer.BungeeTCPPort, "c|" + set + "|" + a[0] + "|" + a[1], 100);
                 }
-                Counter.forEach((k, v) -> {
-                    if (v[0] >= config.LeftCpsLimit || v[1] >= config.RightCpsLimit)
-                        Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(k).kickPlayer("You are clicking too fast !"));
-                });
+                for(Map.Entry<UUID,Integer[]> a : Counter.entrySet()){
+                    if (a.getValue()[0] >= config.LeftCpsLimit || a.getValue()[1] >= config.RightCpsLimit)
+                        Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(a.getKey()).kickPlayer("You are clicking too fast !"));
+                }
                 Counter.replaceAll((x, v) -> new Integer[]{0, 0});
             }
         }, 0, 1000);
