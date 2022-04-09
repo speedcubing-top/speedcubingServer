@@ -39,7 +39,7 @@ public class speedcubingServer extends JavaPlugin {
     public void onEnable() {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         try {
-            File file = new File("../../Proxies/FlameCord/config.yml");
+            File file = new File("../../Proxies/WaterFall/config.yml");
             isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(new FileInputStream(file))).get("online_mode");
         } catch (Exception e) {
             e.printStackTrace();
