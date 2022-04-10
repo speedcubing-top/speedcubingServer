@@ -17,7 +17,7 @@ public class demo implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player target = null;
         if (strings.length == 1) {
-            Player player = Bukkit.getPlayer(strings[0]);
+            Player player = Bukkit.getPlayerExact(strings[0]);
             if (player == null)
                 commandSender.sendMessage("offline or not exist.");
             else target = player;
