@@ -10,6 +10,8 @@ commands:
     usage: /discord
   skin:
     usage: /skin
+  demo:
+    usage: /demo
   fly:
     usage: /fly
   hub:
