@@ -1,6 +1,5 @@
 package cubingserver.Commands;
 
-import cubingserver.StringList.GlobalString;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
