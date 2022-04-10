@@ -8,8 +8,10 @@ import cubingserver.libs.LogListener;
 import cubingserver.speedcubingServer;
 import cubingserver.things.Cps;
 import cubingserver.things.froze;
+import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -66,7 +68,7 @@ public class SocketUtils {
                                 break;
                         }
                         break;
-                    case "f"://frosze
+                    case "f"://froze
                         switch (rs[1]) {
                             case "a":
                                 froze.frozed.add(Bukkit.getPlayerExact(rs[2]).getUniqueId());
@@ -79,17 +81,22 @@ public class SocketUtils {
                     case "g":
                         new config().reload();
                         break;
-                    case "k"://kick
-                        StringBuilder text = new StringBuilder();
-                        String[] hex = rs[2].split("\\\\u");
-                        for (int i = 1; i < hex.length; i++) {
-                            text.append((char) Integer.parseInt(hex[i], 16));
-                        }
-                        String t = text.toString();
-                        Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayerExact(rs[1]).kickPlayer(t));
+                    case "m"://demo
+                        PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
+                        if (rs[1].equals("%ALL%"))
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+                            }
+                        else
+                            ((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection.sendPacket(packet);
                         break;
                     case "r"://crash
-                        PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
+                        if (rs[1].equals("%ALL%"))
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                PlayerUtils.explosionCrash(((CraftPlayer) p).getHandle().playerConnection);
+                            }
+                        else
+                            PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
                         break;
                     case "t"://run command
                         String re = receive.split("\\|", 2)[1];
