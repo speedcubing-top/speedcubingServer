@@ -121,4 +121,8 @@ public class speedcubingServer extends JavaPlugin {
         }
         return "";
     }
+
+    public static void node(boolean add, UUID uuid) {
+        SocketUtils.sendData(speedcubingServer.BungeeTCP, "h|" + (add ? "a" : "r") + "|" + uuid, 100);
+    }
 }
