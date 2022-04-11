@@ -9,7 +9,6 @@ import cubingserver.StringList.GlobalString;
 import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
 import cubingserver.things.Cps;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerListHeaderFooter;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
@@ -82,8 +81,6 @@ public class PlayerJoin implements Listener {
                 connection.sendPacket(OutScoreboardTeam.a(User.getCode(old) + User.playerNameExtract(realname), User.getFormat(old)[0], Collections.singletonList(realname), 0));
             RemovePackets.put(uuid, leavePacket);
             JoinPackets.put(uuid, joinPacket);
-            speedcubingServer.lastmsg.put(uuid, "");
-            speedcubingServer.spam.put(uuid, 0L);
         }
     }
 }

@@ -23,8 +23,6 @@ public class PlayerQuit implements Listener {
         PlayerJoin.RemovePackets.remove(uuid);
         PlayerJoin.JoinPackets.remove(uuid);
         PlayerJoin.Canspam.remove(uuid);
-        speedcubingServer.lastmsg.remove(uuid);
-        speedcubingServer.spam.remove(uuid);
         speedcubingServer.velocities.remove(uuid);
         speedcubingServer.permissions.remove(uuid);
     }

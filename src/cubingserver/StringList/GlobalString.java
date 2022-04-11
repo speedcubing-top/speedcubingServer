@@ -24,20 +24,6 @@ public class GlobalString {
             "%text% §8» %text2%",
             "%text% §8» %text2%"}
     };
-
-    public static String[] spam = {
-            "§cBlocked excessive spam!",
-            "§cBlocked excessive spam!",
-            "§cBlocked excessive spam!",
-            "§cBlocked excessive spam!"
-    };
-
-    public static String[] samemsg = {
-            "§cYou cannnot say the same message twice!",
-            "§cYou cannnot say the same message twice!",
-            "§cYou cannnot say the same message twice!",
-            "§cYou cannnot say the same message twice!"
-    };
     public static String[] category = {
             "§eClick to see the category!",
             "§eClick to see the category!",
