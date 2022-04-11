@@ -63,7 +63,7 @@ public class skin implements CommandExecutor, TabCompleter {
                                     else if (p.getUniqueId() != uuid)
                                         packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
                                 }
-                                SocketUtils.sendData(speedcubingServer.BungeeTCPPort, "s|" + uuid + "|" + skin[0] + "|" + skin[1] + (target.equals(name) ? "|null" : ""), 100);
+                                SocketUtils.sendData(speedcubingServer.BungeeTCP, "s|" + uuid + "|" + skin[0] + "|" + skin[1] + (target.equals(name) ? "|null" : ""), 100);
                             }
                         }
                     }).start();

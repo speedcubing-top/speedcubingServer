@@ -31,7 +31,7 @@ public class LogListener {
                             unicode.append("\\u").append(Integer.toHexString(string.charAt(i)));
                         }
                         try {
-                            SocketUtils.UnHandledSendData(speedcubingServer.BungeeTCPPort, "t|" + (Bukkit.getPort() + 2) + "|" + unicode, 100);
+                            SocketUtils.UnHandledSendData(speedcubingServer.BungeeTCP, "t|" + speedcubingServer.TCP + "|" + unicode, 100);
                         } catch (Exception e) {
                         }
                     }).start();

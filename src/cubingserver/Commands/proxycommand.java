@@ -20,7 +20,7 @@ public class proxycommand implements CommandExecutor , TabCompleter {
             for (String string : strings) {
                 comamnd.append(" ").append(string);
             }
-            SocketUtils.sendData(speedcubingServer.BungeeTCPPort, "p|" + comamnd.substring(1), 100);
+            SocketUtils.sendData(speedcubingServer.BungeeTCP, "p|" + comamnd.substring(1), 100);
         }
         return true;
     }

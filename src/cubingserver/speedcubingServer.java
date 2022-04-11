@@ -22,7 +22,10 @@ import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class speedcubingServer extends JavaPlugin {
     public static int AllPlayers;
@@ -30,7 +33,8 @@ public class speedcubingServer extends JavaPlugin {
     public static Map<UUID, Set<String>> permissions = new HashMap<>();
     public static Map<UUID, Double[]> velocities = new HashMap<>();
 
-    public static int BungeeTCPPort;
+    public static int BungeeTCP;
+    public static int TCP;
     public static SQLConnection connection;
     public static boolean isBungeeOnlineMode;
 
@@ -44,9 +48,10 @@ public class speedcubingServer extends JavaPlugin {
         }
         connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
 
-        BungeeTCPPort = 25568 - Bukkit.getPort() % 2;
+        TCP = Bukkit.getPort() + 2;
+        BungeeTCP = 25568 - Bukkit.getPort() % 2;
         new config().reload();
-        new SocketUtils().Load(2 + Bukkit.getPort());
+        new SocketUtils().Load(TCP);
         new UDPSocketUtils().Load(Bukkit.getPort());
         new Cps().Load();
         new ForceOp().run();
