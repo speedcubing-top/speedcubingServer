@@ -24,7 +24,6 @@ import java.util.*;
 public class PlayerJoin implements Listener {
     public static Map<UUID, PacketPlayOutScoreboardTeam> RemovePackets = new HashMap<>();
     public static Map<UUID, PacketPlayOutScoreboardTeam> JoinPackets = new HashMap<>();
-    public static Set<UUID> Canspam = new HashSet<>();
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void PlayerJoinEvent(PlayerJoinEvent e) {
@@ -40,8 +39,6 @@ public class PlayerJoin implements Listener {
                     return;
                 }
             }
-            if (speedcubingServer.connection.selectBoolean("playersdata", "spam_whitelist", "uuid='" + uuid + "'"))
-                Canspam.add(uuid);
             Cps.Counter.put(uuid, new Integer[]{0, 0});
 
 
