@@ -2,12 +2,13 @@ package cubingserver;
 
 import cubing.lib.api.SQLConnection;
 import cubing.lib.bukkit.Event.ServerEventManager;
+import cubing.lib.bukkit.PlayerUtils;
+import cubing.lib.utils.sockets.TCP;
+import cubing.lib.utils.sockets.UDP;
 import cubingserver.Commands.*;
 import cubingserver.Commands.offline.premium;
 import cubingserver.Commands.offline.resetpassword;
 import cubingserver.ExploitFixer.ForceOp;
-import cubingserver.connection.SocketUtils;
-import cubingserver.connection.UDPSocketUtils;
 import cubingserver.customEvents.NickEvent;
 import cubingserver.customEvents.SocketEvent;
 import cubingserver.customEvents.UDPEvent;
@@ -16,12 +17,17 @@ import cubingserver.things.CommandPermissions;
 import cubingserver.things.Cps;
 import cubingserver.things.events.*;
 import cubingserver.things.froze;
+import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.yaml.snakeyaml.Yaml;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +42,8 @@ public class speedcubingServer extends JavaPlugin {
     public static int BungeeTCP;
     public static int TCP;
     public static SQLConnection connection;
+    public static TCP tcp;
+    public static UDP udp;
     public static boolean isBungeeOnlineMode;
 
     public void onEnable() {
@@ -51,8 +59,8 @@ public class speedcubingServer extends JavaPlugin {
         TCP = Bukkit.getPort() + 2;
         BungeeTCP = 25568 - Bukkit.getPort() % 2;
         new config().reload();
-        new SocketUtils().Load(TCP);
-        new UDPSocketUtils().Load(Bukkit.getPort());
+        tcp = new TCP("localhost", TCP, 100);
+        udp = new UDP("localhost", Bukkit.getPort());
         new Cps().Load();
         new ForceOp().run();
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
@@ -91,6 +99,80 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
         ServerEventManager.createNewEvents(SocketEvent.class, NickEvent.class, UDPEvent.class);
         new LogListener().reloadFilter();
+
+        new Thread(() -> {
+            while (true) {
+                String receive = "";
+                try {
+                    receive = new BufferedReader(new InputStreamReader(tcp.socket.accept().getInputStream())).readLine();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                String[] rs = receive.split("\\|");
+                switch (rs[0]) {
+                    case "c"://cps
+                        switch (rs[1]) {
+                            case "a":
+                                Cps.CpsListening.add(UUID.fromString(rs[2]));
+                                break;
+                            case "r":
+                                Cps.CpsListening.remove(UUID.fromString(rs[2]));
+                                break;
+                        }
+                        break;
+                    case "f"://froze
+                        switch (rs[1]) {
+                            case "a":
+                                froze.frozed.add(Bukkit.getPlayerExact(rs[2]).getUniqueId());
+                                break;
+                            case "r":
+                                froze.frozed.remove(Bukkit.getPlayerExact(rs[2]).getUniqueId());
+                                break;
+                        }
+                        break;
+                    case "g":
+                        new config().reload();
+                        break;
+                    case "m"://demo
+                        PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
+                        if (rs[1].equals("%ALL%"))
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+                            }
+                        else
+                            ((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection.sendPacket(packet);
+                        break;
+                    case "r"://crash
+                        if (rs[1].equals("%ALL%"))
+                            for (Player p : Bukkit.getOnlinePlayers()) {
+                                PlayerUtils.explosionCrash(((CraftPlayer) p).getHandle().playerConnection);
+                            }
+                        else
+                            PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
+                        break;
+                    case "t"://run command
+                        String re = receive.split("\\|", 2)[1];
+                        Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), re));
+                        break;
+                    case "l"://enable logger
+                        LogListener.Listening = rs[1].equals("a");
+                        break;
+                    case "v"://velocity
+                        switch (rs[1]) {
+                            case "a":
+                                speedcubingServer.velocities.put(UUID.fromString(rs[2]), new Double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])});
+                                break;
+                            case "r":
+                                speedcubingServer.velocities.remove(UUID.fromString(rs[2]));
+                                break;
+                        }
+                        break;
+                    default:
+                        ServerEventManager.callEvent(new SocketEvent(rs));
+                        break;
+                }
+            }
+        }).start();
     }
 
     public void onDisable() {
@@ -123,6 +205,6 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static void node(boolean add, UUID uuid) {
-        SocketUtils.sendData(speedcubingServer.BungeeTCP, "h|" + (add ? "a" : "r") + "|" + uuid, 100);
+        speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "h|" + (add ? "a" : "r") + "|" + uuid);
     }
 }

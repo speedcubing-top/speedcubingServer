@@ -4,7 +4,6 @@ import cubing.lib.bukkit.Event.ServerEventManager;
 import cubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import cubing.lib.utils.Reflections;
 import cubingserver.StringList.GlobalString;
-import cubingserver.connection.SocketUtils;
 import cubingserver.customEvents.NickEvent;
 import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
@@ -108,7 +107,7 @@ public class nick implements CommandExecutor, TabCompleter {
         }
         PlayerJoin.RemovePackets.put(uuid, leavePacket);
         PlayerJoin.JoinPackets.put(uuid, joinPacket);
-        SocketUtils.sendData(speedcubingServer.BungeeTCP, "n|" + uuid + (nick ? "|" + name : ""), 100);
+       speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "n|" + uuid + (nick ? "|" + name : ""));
         User.RankCache.put(uuid, rank);
     }
 }

@@ -5,7 +5,6 @@ import cubing.lib.api.SessionServer;
 import cubing.lib.api.exception.APIErrorException;
 import cubing.lib.bukkit.PlayerUtils;
 import cubingserver.StringList.GlobalString;
-import cubingserver.connection.SocketUtils;
 import cubingserver.libs.User;
 import cubingserver.speedcubingServer;
 import net.minecraft.server.v1_8_R3.Packet;
@@ -63,7 +62,7 @@ public class skin implements CommandExecutor, TabCompleter {
                                     else if (p.getUniqueId() != uuid)
                                         packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
                                 }
-                                SocketUtils.sendData(speedcubingServer.BungeeTCP, "s|" + uuid + "|" + skin[0] + "|" + skin[1] + (target.equals(name) ? "|null" : ""), 100);
+                                speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "s|" + uuid + "|" + skin[0] + "|" + skin[1] + (target.equals(name) ? "|null" : ""));
                             }
                         }
                     }).start();

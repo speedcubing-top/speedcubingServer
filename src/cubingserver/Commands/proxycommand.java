@@ -1,6 +1,5 @@
 package cubingserver.Commands;
 
-import cubingserver.connection.SocketUtils;
 import cubingserver.speedcubingServer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -20,7 +19,7 @@ public class proxycommand implements CommandExecutor , TabCompleter {
             for (String string : strings) {
                 comamnd.append(" ").append(string);
             }
-            SocketUtils.sendData(speedcubingServer.BungeeTCP, "p|" + comamnd.substring(1), 100);
+            speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "p|" + comamnd.substring(1));
         }
         return true;
     }
