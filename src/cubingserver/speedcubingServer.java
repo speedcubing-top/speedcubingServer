@@ -28,6 +28,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.net.DatagramPacket;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -173,6 +174,18 @@ public class speedcubingServer extends JavaPlugin {
                 }
             }
         }).start();
+        new Thread(()->{
+            DatagramPacket datagramPacket = new DatagramPacket(new byte[1024], 1024);
+            new Thread(() -> {
+                while (true) {
+                    try {
+                        udp.socket.receive(datagramPacket);
+                        ServerEventManager.callEvent(new UDPEvent(new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("\\|")));
+                    } catch (Exception e) {
+                    }
+                }
+            }).start();
+        });
     }
 
     public void onDisable() {
