@@ -174,18 +174,16 @@ public class speedcubingServer extends JavaPlugin {
                 }
             }
         }).start();
-        new Thread(()->{
-            DatagramPacket datagramPacket = new DatagramPacket(new byte[1024], 1024);
-            new Thread(() -> {
-                while (true) {
-                    try {
-                        udp.socket.receive(datagramPacket);
-                        ServerEventManager.callEvent(new UDPEvent(new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("\\|")));
-                    } catch (Exception e) {
-                    }
+        DatagramPacket datagramPacket = new DatagramPacket(new byte[1024], 1024);
+        new Thread(() -> {
+            while (true) {
+                try {
+                    udp.socket.receive(datagramPacket);
+                    ServerEventManager.callEvent(new UDPEvent(new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("\\|")));
+                } catch (Exception e) {
                 }
-            }).start();
-        });
+            }
+        }).start();
     }
 
     public void onDisable() {
