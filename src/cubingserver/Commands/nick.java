@@ -1,6 +1,6 @@
 package cubingserver.Commands;
 
-import cubing.lib.bukkit.Event.ServerEventManager;
+import speedcubing.spigot.Event.ServerEventManager;
 import cubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import cubing.lib.utils.Reflections;
 import cubingserver.StringList.GlobalString;

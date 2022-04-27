@@ -1,7 +1,7 @@
 package cubingserver;
 
 import cubing.lib.api.SQLConnection;
-import cubing.lib.bukkit.Event.ServerEventManager;
+import speedcubing.spigot.Event.ServerEventManager;
 import cubing.lib.bukkit.PlayerUtils;
 import cubing.lib.utils.sockets.TCP;
 import cubing.lib.utils.sockets.UDP;
@@ -98,7 +98,6 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
-        ServerEventManager.createNewEvents(SocketEvent.class, NickEvent.class, UDPEvent.class);
         new LogListener().reloadFilter();
 
         new Thread(() -> {
