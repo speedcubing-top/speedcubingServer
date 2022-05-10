@@ -1,12 +1,12 @@
 package speedcubing.server.things;
 
-import speedcubing.server.StringList.GlobalString;
-import speedcubing.server.libs.User;
-import speedcubing.server.speedcubingServer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import speedcubing.server.StringList.GlobalString;
+import speedcubing.server.libs.User;
+import speedcubing.server.speedcubingServer;
 
 import java.util.Arrays;
 import java.util.List;

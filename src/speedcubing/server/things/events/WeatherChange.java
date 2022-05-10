@@ -1,12 +1,11 @@
 package speedcubing.server.things.events;
 
-import speedcubing.lib.utils.Reflections;
 import net.minecraft.server.v1_8_R3.WorldData;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import sun.misc.Ref;
+import speedcubing.lib.utils.Reflections;
 
 public class WeatherChange implements Listener {
     @EventHandler

@@ -14,6 +14,8 @@ commands:
     usage: /fly
   hub:
     usage: /hub
+  announce:
+    usage: /announce
     aliases:
       - leave
       - l

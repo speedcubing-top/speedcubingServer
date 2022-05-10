@@ -25,9 +25,9 @@ import speedcubing.spigot.Event.ServerEventManager;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
+import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -50,7 +50,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         try {
             File file = new File("../../Proxies/WaterFall/config.yml");
-            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(new FileInputStream(file))).get("online_mode");
+            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(Files.newInputStream(file.toPath()))).get("online_mode");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -97,6 +97,8 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
+        Bukkit.getPluginCommand("announce").setExecutor(new announce());
+        Bukkit.getPluginCommand("announce").setTabCompleter(new announce());
         new LogListener().reloadFilter();
 
         new Thread(() -> {
