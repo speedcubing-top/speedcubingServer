@@ -7,7 +7,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.craftbukkit.Main;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
@@ -16,7 +15,7 @@ import speedcubing.server.events.NickEvent;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
-import speedcubing.server.things.events.PlayerJoin;
+import speedcubing.server.listeners.PlayerJoin;
 import speedcubing.spigot.Event.ServerEventManager;
 
 import java.util.*;

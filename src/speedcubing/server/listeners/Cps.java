@@ -1,4 +1,4 @@
-package speedcubing.server.things;
+package speedcubing.server.listeners;
 
 import speedcubing.server.config;
 import speedcubing.server.speedcubingServer;

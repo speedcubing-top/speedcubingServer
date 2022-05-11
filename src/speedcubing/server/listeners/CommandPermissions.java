@@ -1,4 +1,4 @@
-package speedcubing.server.things;
+package speedcubing.server.listeners;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

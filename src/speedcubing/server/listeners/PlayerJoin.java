@@ -1,4 +1,4 @@
-package speedcubing.server.things.events;
+package speedcubing.server.listeners;
 
 import com.google.common.collect.Sets;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
@@ -17,7 +17,6 @@ import speedcubing.server.ExploitFixer.ForceOp;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
-import speedcubing.server.things.Cps;
 
 import java.util.*;
 

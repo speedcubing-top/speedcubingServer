@@ -18,10 +18,7 @@ import speedcubing.server.events.SocketEvent;
 import speedcubing.server.events.UDPEvent;
 import speedcubing.server.libs.LogListener;
 import speedcubing.server.libs.User;
-import speedcubing.server.things.CommandPermissions;
-import speedcubing.server.things.Cps;
-import speedcubing.server.things.events.*;
-import speedcubing.server.things.froze;
+import speedcubing.server.listeners.*;
 import speedcubing.spigot.Event.ServerEventManager;
 
 import java.io.BufferedReader;

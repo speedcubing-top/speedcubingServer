@@ -1,4 +1,4 @@
-package speedcubing.server.things.events;
+package speedcubing.server.listeners;
 
 import net.minecraft.server.v1_8_R3.WorldData;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;

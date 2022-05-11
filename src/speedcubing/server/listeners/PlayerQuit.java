@@ -1,8 +1,6 @@
-package speedcubing.server.things.events;
+package speedcubing.server.listeners;
 
 import speedcubing.server.libs.User;
-import speedcubing.server.speedcubingServer;
-import speedcubing.server.things.Cps;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
