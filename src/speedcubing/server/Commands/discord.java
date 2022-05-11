@@ -1,6 +1,6 @@
 package speedcubing.server.Commands;
 
-import speedcubing.server.StringList.GlobalString;
+import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,7 +14,7 @@ import java.util.List;
 public class discord implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        commandSender.sendMessage(GlobalString.discord[User.getLang(((Player) commandSender).getUniqueId())]);
+        commandSender.sendMessage(GlobalString.discord[User.getUser(((Player) commandSender).getUniqueId()).lang]);
         return true;
     }
 

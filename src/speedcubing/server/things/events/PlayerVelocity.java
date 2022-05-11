@@ -1,5 +1,6 @@
 package speedcubing.server.things.events;
 
+import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,9 +15,8 @@ public class PlayerVelocity implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void PlayerVelocityEvent(PlayerVelocityEvent e) {
         Player player = e.getPlayer();
-        UUID uuid = player.getUniqueId();
-        if (speedcubingServer.velocities.containsKey(uuid)) {
-            Double[] d = speedcubingServer.velocities.get(uuid);
+        double[] d = User.getUser(player.getUniqueId()).velocities;
+        if (d != null) {
             Vector old = player.getVelocity();
             player.setVelocity(new Vector(old.getX() * d[0],old.getY() * d[1], old.getZ() * d[0]));
         }

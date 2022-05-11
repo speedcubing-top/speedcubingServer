@@ -1,7 +1,7 @@
 package speedcubing.server.Commands;
 
 import speedcubing.server.PluginMessage;
-import speedcubing.server.StringList.GlobalString;
+import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 import org.bukkit.Bukkit;
@@ -23,7 +23,7 @@ public class hub implements CommandExecutor, TabCompleter {
             switch (speedcubingServer.getServer(Bukkit.getPort())) {
                 case "lobby":
                 case "auth":
-                    player.sendMessage(GlobalString.AlreadyInHub[User.getLang(player.getUniqueId())]);
+                    player.sendMessage(GlobalString.AlreadyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
                 case "bedwars":
                 case "mlgrush":

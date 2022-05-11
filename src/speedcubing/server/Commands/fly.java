@@ -1,6 +1,6 @@
 package speedcubing.server.Commands;
 
-import speedcubing.server.StringList.GlobalString;
+import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 import org.bukkit.Bukkit;
@@ -18,7 +18,7 @@ public class fly implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
         if (strings.length == 0) {
-            int lang = User.getLang(player.getUniqueId());
+            int lang = User.getUser(player.getUniqueId()).lang;
             switch (speedcubingServer.getServer(Bukkit.getPort())) {
                 case "lobby":
                 case "bedwars":
@@ -27,10 +27,10 @@ public class fly implements CommandExecutor, TabCompleter {
                 case "auth":
                     if (player.getWorld().getName().equals("world"))
                         if (player.getAllowFlight()) {
-                            player.sendMessage(GlobalString.FlyDisable[User.getLang(player.getUniqueId())]);
+                            player.sendMessage(GlobalString.FlyDisable[lang]);
                             player.setAllowFlight(false);
                         } else {
-                            player.sendMessage(GlobalString.FlyEnable[User.getLang(player.getUniqueId())]);
+                            player.sendMessage(GlobalString.FlyEnable[lang]);
                             player.setAllowFlight(true);
                         }
                     else

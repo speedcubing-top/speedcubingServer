@@ -4,9 +4,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import speedcubing.server.StringList.GlobalString;
+import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
-import speedcubing.server.speedcubingServer;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,16 +33,17 @@ public class CommandPermissions implements Listener {
         command = command.toLowerCase();
         if (op.contains(command)) {
             if (!player.isOp()) {
-                player.sendMessage(GlobalString.UnknownCommand[User.getLang(player.getUniqueId())]);
+                player.sendMessage(GlobalString.UnknownCommand[User.getUser(player.getUniqueId()).lang]);
                 e.setCancelled(true);
             }
         } else {
-            Set<String> perms = speedcubingServer.permissions.get(player.getUniqueId());
+            User user = User.getUser(player.getUniqueId());
+            Set<String> perms = user.permissions;
             if (!(perms.contains("cmd." + command) || perms.contains("cmd.*"))) {
                 if (perms.contains("view." + command) || perms.contains("view.*"))
-                    player.sendMessage(GlobalString.NoPermCommand[User.getLang(player.getUniqueId())]);
+                    player.sendMessage(GlobalString.NoPermCommand[user.lang]);
                 else
-                    player.sendMessage(GlobalString.UnknownCommand[User.getLang(player.getUniqueId())]);
+                    player.sendMessage(GlobalString.UnknownCommand[user.lang]);
                 e.setCancelled(true);
             }
         }

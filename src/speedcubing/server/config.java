@@ -14,16 +14,16 @@ public class config {
             LeftCpsLimit = object.get("leftcpslimit").getAsInt();
             RightCpsLimit = object.get("rightcpslimit").getAsInt();
 
-            User.colors.clear();
-            User.permissions.clear();
-            User.ranks.clear();
+            speedcubingServer.colors.clear();
+            speedcubingServer.rankPermissions.clear();
+            speedcubingServer.ranks.clear();
             for (Map.Entry<String, JsonElement> c : object.getAsJsonObject("ranks").entrySet()) {
                 String[] colors = new Gson().fromJson(c.getValue().getAsJsonObject().get("texts").getAsJsonArray().toString(), new TypeToken<String[]>() {
                 }.getType());
-                User.colors.put(c.getKey(), new String[]{colors[0], colors[0].lastIndexOf('§') == -1 ? "" : ("§" + colors[0].charAt(colors[0].lastIndexOf('§') + 1)), colors[1]});
-                User.permissions.put(c.getKey(), new Gson().fromJson(c.getValue().getAsJsonObject().get("permissions2").getAsJsonArray().toString(), new TypeToken<Set<String>>() {
+                speedcubingServer.colors.put(c.getKey(), new String[]{colors[0], colors[0].lastIndexOf('§') == -1 ? "" : ("§" + colors[0].charAt(colors[0].lastIndexOf('§') + 1)), colors[1]});
+                speedcubingServer.rankPermissions.put(c.getKey(), new Gson().fromJson(c.getValue().getAsJsonObject().get("permissions2").getAsJsonArray().toString(), new TypeToken<Set<String>>() {
                 }.getType()));
-                User.ranks.add(c.getKey());
+                speedcubingServer.ranks.add(c.getKey());
             }
         } catch (Exception exception) {
             exception.printStackTrace();

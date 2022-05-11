@@ -1,6 +1,6 @@
 package speedcubing.server.Commands.offline;
 
-import speedcubing.server.StringList.GlobalString;
+import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 import org.bukkit.command.Command;
@@ -26,7 +26,7 @@ public class  premium implements CommandExecutor, TabCompleter {
                 }
             } else commandSender.sendMessage("/premium");
         } else
-            commandSender.sendMessage(GlobalString.UnknownCommand[User.getLang(((Player) commandSender).getUniqueId())]);
+            commandSender.sendMessage(GlobalString.UnknownCommand[User.getUser(((Player) commandSender).getUniqueId()).lang]);
         return true;
     }
 

@@ -17,6 +17,7 @@ import speedcubing.server.ExploitFixer.ForceOp;
 import speedcubing.server.events.SocketEvent;
 import speedcubing.server.events.UDPEvent;
 import speedcubing.server.libs.LogListener;
+import speedcubing.server.libs.User;
 import speedcubing.server.things.CommandPermissions;
 import speedcubing.server.things.Cps;
 import speedcubing.server.things.events.*;
@@ -28,17 +29,10 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 public class speedcubingServer extends JavaPlugin {
     public static int AllPlayers;
-
-    public static Map<UUID, Set<String>> permissions = new HashMap<>();
-    public static Map<UUID, Double[]> velocities = new HashMap<>();
-
     public static int BungeeTCP;
     public static int TCP;
     public static SQLConnection connection;
@@ -159,14 +153,7 @@ public class speedcubingServer extends JavaPlugin {
                         LogListener.Listening = rs[1].equals("a");
                         break;
                     case "v"://velocity
-                        switch (rs[1]) {
-                            case "a":
-                                speedcubingServer.velocities.put(UUID.fromString(rs[2]), new Double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])});
-                                break;
-                            case "r":
-                                speedcubingServer.velocities.remove(UUID.fromString(rs[2]));
-                                break;
-                        }
+                        User.users.get(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                         break;
                     default:
                         ServerEventManager.callEvent(new SocketEvent(rs));
@@ -217,5 +204,40 @@ public class speedcubingServer extends JavaPlugin {
 
     public static void node(boolean add, UUID uuid) {
         speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "h|" + (add ? "a" : "r") + "|" + uuid);
+    }
+    public static Map<String, String[]> colors = new HashMap<>();
+    public static Map<String, Set<String>> rankPermissions = new HashMap<>();
+
+    public static String[] getFormat(String rank) {
+        return colors.get(rank);
+    }
+
+    public static int getCode(String rank) {
+        return 10 + ranks.indexOf(rank);
+    }
+
+    public static List<String> ranks = new ArrayList<>();
+    public static String playerNameExtract(String name) {
+        StringBuilder str = new StringBuilder();
+        StringBuilder nameBuilder = new StringBuilder(name);
+        while (nameBuilder.length() < 16) {
+            nameBuilder.append(" ");
+        }
+        name = nameBuilder.toString();
+        for (int i = 0; i < 16; i++) {
+            int c = name.charAt(i);
+            c = (c == 32 ? 0 : (c <= 57 ? c - 47 : (c <= 90 ? c - 54 : (c == 95 ? 37 : c - 59))));
+            StringBuilder bin = new StringBuilder(Integer.toBinaryString(c));
+            while (bin.length() < 6) {
+                bin.insert(0, "0");
+            }
+            str.append(bin);
+        }
+        str.append("00");
+        StringBuilder string = new StringBuilder();
+        for (int i = 0; i < 14; i++) {
+            string.append((char) (Integer.parseInt(str.substring(i * 7, i * 7 + 6), 2) + 32));
+        }
+        return string.toString();
     }
 }

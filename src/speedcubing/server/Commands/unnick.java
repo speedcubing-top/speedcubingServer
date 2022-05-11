@@ -1,14 +1,14 @@
 package speedcubing.server.Commands;
 
-import speedcubing.server.StringList.GlobalString;
-import speedcubing.server.libs.User;
-import speedcubing.server.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import speedcubing.server.libs.GlobalString;
+import speedcubing.server.libs.User;
+import speedcubing.server.speedcubingServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,17 +34,17 @@ public class unnick implements CommandExecutor, TabCompleter {
                             nick.nickPlayer(datas[0], datas[1], uuid, false, player);
                         } else commandSender.sendMessage("/unnick");
                     } else
-                        player.sendMessage(GlobalString.OnlyInHub[User.getLang(player.getUniqueId())]);
+                        player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
                 case "reduce":
                 case "knockbackffa":
                 case "fastbuilder":
                 case "auth":
-                    player.sendMessage(GlobalString.OnlyInHub[User.getLang(player.getUniqueId())]);
+                    player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
             }
         } else
-            commandSender.sendMessage(GlobalString.UnknownCommand[User.getLang(((Player) commandSender).getUniqueId())]);
+            commandSender.sendMessage(GlobalString.UnknownCommand[User.getUser(((Player) commandSender).getUniqueId()).lang]);
         return true;
     }
 

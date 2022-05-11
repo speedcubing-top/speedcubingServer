@@ -4,7 +4,7 @@ import speedcubing.lib.api.MojangAPI;
 import speedcubing.lib.api.SessionServer;
 import speedcubing.lib.api.exception.APIErrorException;
 import speedcubing.lib.bukkit.PlayerUtils;
-import speedcubing.server.StringList.GlobalString;
+import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 import net.minecraft.server.v1_8_R3.Packet;
@@ -47,7 +47,7 @@ public class skin implements CommandExecutor, TabCompleter {
                                 id = "invalidName";
                             }
                             if (id.equals("invalidName"))
-                                player.sendMessage(GlobalString.invalidName[User.getLang(player.getUniqueId())]);
+                                player.sendMessage(GlobalString.invalidName[User.getUser(player.getUniqueId()).lang]);
                             else {
                                 String[] skin = SessionServer.getSkin(id);
                                 List<Packet<?>>[] packets = PlayerUtils.changeSkin(((CraftPlayer) player).getHandle(), skin);
@@ -67,14 +67,14 @@ public class skin implements CommandExecutor, TabCompleter {
                         }
                     }).start();
                 } else
-                    player.sendMessage(GlobalString.OnlyInHub[User.getLang(player.getUniqueId())]);
+                    player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                 break;
             case "clutch":
             case "reduce":
             case "knockbackffa":
             case "fastbuilder":
             case "auth":
-                player.sendMessage(GlobalString.OnlyInHub[User.getLang(player.getUniqueId())]);
+                player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                 break;
         }
         return true;

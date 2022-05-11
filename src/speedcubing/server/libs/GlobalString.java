@@ -1,4 +1,4 @@
-package speedcubing.server.StringList;
+package speedcubing.server.libs;
 
 import speedcubing.server.config;
 
