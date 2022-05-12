@@ -90,6 +90,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
         Bukkit.getPluginCommand("announce").setTabCompleter(new announce());
+        ServerEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
 
         new Thread(() -> {
