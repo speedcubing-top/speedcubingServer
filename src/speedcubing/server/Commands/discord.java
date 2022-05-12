@@ -14,7 +14,7 @@ import java.util.List;
 public class discord implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        commandSender.sendMessage(GlobalString.discord[User.get(((Player) commandSender).getUniqueId()).lang]);
+        commandSender.sendMessage(GlobalString.discord[User.getUser(((Player) commandSender).getUniqueId()).lang]);
         return true;
     }
 

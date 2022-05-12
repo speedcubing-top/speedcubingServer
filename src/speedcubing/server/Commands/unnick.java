@@ -34,17 +34,17 @@ public class unnick implements CommandExecutor, TabCompleter {
                             nick.nickPlayer(datas[0], datas[1], uuid, false, player);
                         } else commandSender.sendMessage("/unnick");
                     } else
-                        player.sendMessage(GlobalString.OnlyInHub[User.get(player.getUniqueId()).lang]);
+                        player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
                 case "reduce":
                 case "knockbackffa":
                 case "fastbuilder":
                 case "auth":
-                    player.sendMessage(GlobalString.OnlyInHub[User.get(player.getUniqueId()).lang]);
+                    player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
             }
         } else
-            commandSender.sendMessage(GlobalString.UnknownCommand[User.get(((Player) commandSender).getUniqueId()).lang]);
+            commandSender.sendMessage(GlobalString.UnknownCommand[User.getUser(((Player) commandSender).getUniqueId()).lang]);
         return true;
     }
 

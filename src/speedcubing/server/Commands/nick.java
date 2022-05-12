@@ -35,7 +35,7 @@ public class nick implements CommandExecutor, TabCompleter {
                         if (strings.length == 1) {
                             String name = strings[0];
                             if (name.equals(commandSender.getName()))
-                                commandSender.sendMessage(GlobalString.nicksameusername[User.get(player.getUniqueId()).lang]);
+                                commandSender.sendMessage(GlobalString.nicksameusername[User.getUser(player.getUniqueId()).lang]);
                             else {
                                 UUID uuid = ((Player) commandSender).getUniqueId();
                                 if (name.matches("^\\w{3,16}$")
@@ -43,7 +43,7 @@ public class nick implements CommandExecutor, TabCompleter {
                                         && !speedcubingServer.connection.isStringExist("playersdata", "uuid!='" + uuid + "'AND nickname='" + name + "'")) {
                                     nickPlayer(name, "default", uuid, true, player);
                                     speedcubingServer.connection.update("playersdata", "nickpriority='default',nickname='" + name + "'", "uuid='" + uuid + "'");
-                                } else commandSender.sendMessage(GlobalString.nicknotavaliable[User.get(player.getUniqueId()).lang]);
+                                } else commandSender.sendMessage(GlobalString.nicknotavaliable[User.getUser(player.getUniqueId()).lang]);
                             }
                         } else if (strings.length == 0) {
                             UUID uuid = ((Player) commandSender).getUniqueId();
@@ -55,17 +55,17 @@ public class nick implements CommandExecutor, TabCompleter {
                             else nick.nickPlayer(datas[0], datas[1], uuid, true, player);
                         } else commandSender.sendMessage("/nick <nickname>, /nick (use the previous nick)");
                     } else
-                        player.sendMessage(GlobalString.OnlyInHub[User.get(player.getUniqueId()).lang]);
+                        player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
                 case "auth":
                 case "fastbuilder":
                 case "knockbackffa":
                 case "reduce":
-                    player.sendMessage(GlobalString.OnlyInHub[User.get(player.getUniqueId()).lang]);
+                    player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
             }
         } else
-            commandSender.sendMessage(GlobalString.UnknownCommand[User.get(((Player)commandSender).getUniqueId()).lang]);
+            commandSender.sendMessage(GlobalString.UnknownCommand[User.getUser(((Player)commandSender).getUniqueId()).lang]);
         return true;
     }
 
@@ -78,7 +78,7 @@ public class nick implements CommandExecutor, TabCompleter {
         EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         PlayerConnection connection = entityPlayer.playerConnection;
         String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
-        User user = User.get(uuid);
+        User user = User.getUser(uuid);
         PacketPlayOutScoreboardTeam old = OutScoreboardTeam.a(speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(player.getName()), 1);
         PacketPlayOutScoreboardTeam leavePacket = OutScoreboardTeam.a(extracted2, 1);
         PacketPlayOutScoreboardTeam joinPacket = OutScoreboardTeam.a(extracted2, speedcubingServer.getFormat(rank)[0], Collections.singletonList(name), 0);

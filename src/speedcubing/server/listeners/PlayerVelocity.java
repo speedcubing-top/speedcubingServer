@@ -15,7 +15,7 @@ public class PlayerVelocity implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void PlayerVelocityEvent(PlayerVelocityEvent e) {
         Player player = e.getPlayer();
-        double[] d = User.get(player.getUniqueId()).velocities;
+        double[] d = User.getUser(player.getUniqueId()).velocities;
         if (d != null) {
             Vector old = player.getVelocity();
             player.setVelocity(new Vector(old.getX() * d[0],old.getY() * d[1], old.getZ() * d[0]));
