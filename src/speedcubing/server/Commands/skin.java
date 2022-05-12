@@ -47,7 +47,7 @@ public class skin implements CommandExecutor, TabCompleter {
                                 id = "invalidName";
                             }
                             if (id.equals("invalidName"))
-                                player.sendMessage(GlobalString.invalidName[User.getUser(player.getUniqueId()).lang]);
+                                player.sendMessage(GlobalString.invalidName[User.get(player.getUniqueId()).lang]);
                             else {
                                 String[] skin = SessionServer.getSkin(id);
                                 List<Packet<?>>[] packets = PlayerUtils.changeSkin(((CraftPlayer) player).getHandle(), skin);
@@ -67,14 +67,14 @@ public class skin implements CommandExecutor, TabCompleter {
                         }
                     }).start();
                 } else
-                    player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
+                    player.sendMessage(GlobalString.OnlyInHub[User.get(player.getUniqueId()).lang]);
                 break;
             case "clutch":
             case "reduce":
             case "knockbackffa":
             case "fastbuilder":
             case "auth":
-                player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
+                player.sendMessage(GlobalString.OnlyInHub[User.get(player.getUniqueId()).lang]);
                 break;
         }
         return true;

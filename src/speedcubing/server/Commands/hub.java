@@ -23,7 +23,7 @@ public class hub implements CommandExecutor, TabCompleter {
             switch (speedcubingServer.getServer(Bukkit.getPort())) {
                 case "lobby":
                 case "auth":
-                    player.sendMessage(GlobalString.AlreadyInHub[User.getUser(player.getUniqueId()).lang]);
+                    player.sendMessage(GlobalString.AlreadyInHub[User.get(player.getUniqueId()).lang]);
                     break;
                 case "bedwars":
                 case "mlgrush":

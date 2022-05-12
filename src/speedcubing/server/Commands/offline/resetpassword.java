@@ -28,7 +28,7 @@ public class resetpassword implements CommandExecutor, TabCompleter {
                 } else commandSender.sendMessage("The password and confirm password do not match.");
             } else commandSender.sendMessage("/register <password> <confirm password>");
         } else
-            commandSender.sendMessage(GlobalString.UnknownCommand[User.getUser(((Player) commandSender).getUniqueId()).lang]);
+            commandSender.sendMessage(GlobalString.UnknownCommand[User.get(((Player) commandSender).getUniqueId()).lang]);
         return true;
     }
 

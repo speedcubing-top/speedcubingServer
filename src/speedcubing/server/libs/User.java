@@ -26,7 +26,7 @@ public class User {
         users.put(uuid, this);
     }
 
-    public static User getUser(UUID uuid) {
+    public static User get(UUID uuid) {
         return users.get(uuid);
     }
 }

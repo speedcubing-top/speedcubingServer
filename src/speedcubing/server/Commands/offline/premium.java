@@ -26,7 +26,7 @@ public class  premium implements CommandExecutor, TabCompleter {
                 }
             } else commandSender.sendMessage("/premium");
         } else
-            commandSender.sendMessage(GlobalString.UnknownCommand[User.getUser(((Player) commandSender).getUniqueId()).lang]);
+            commandSender.sendMessage(GlobalString.UnknownCommand[User.get(((Player) commandSender).getUniqueId()).lang]);
         return true;
     }
 

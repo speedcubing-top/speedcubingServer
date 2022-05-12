@@ -18,7 +18,7 @@ public class fly implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
         if (strings.length == 0) {
-            int lang = User.getUser(player.getUniqueId()).lang;
+            int lang = User.get(player.getUniqueId()).lang;
             switch (speedcubingServer.getServer(Bukkit.getPort())) {
                 case "lobby":
                 case "bedwars":
