@@ -1,5 +1,6 @@
 package speedcubing.server.libs;
 
+import speedcubing.lib.utils.Reflections;
 import speedcubing.server.speedcubingServer;
 
 import java.util.HashMap;
@@ -24,6 +25,10 @@ public class User {
         this.rank = rank;
         this.permissions = permissions;
         users.put(uuid, this);
+    }
+
+    public void init(Object o, UUID uuid) {
+        Reflections.copyParentFields(o, getUser(uuid));
     }
 
     public static User getUser(UUID uuid) {
