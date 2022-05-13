@@ -61,6 +61,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new InventoryOpen(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerQuit(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerLogin(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerVelocity(), this);
         Bukkit.getPluginManager().registerEvents(new Cps(), this);
         Bukkit.getPluginManager().registerEvents(new ForceOp(), this);
