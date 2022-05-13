@@ -1,7 +1,5 @@
 package speedcubing.server.libs;
 
-import speedcubing.lib.utils.Console;
-import speedcubing.server.speedcubingServer;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
@@ -9,8 +7,15 @@ import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
+import org.bukkit.Bukkit;
+import speedcubing.lib.utils.Console;
+import speedcubing.server.speedcubingServer;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.util.Iterator;
+import java.util.regex.Pattern;
 
 public class LogListener {
     public static boolean Listening = false;
@@ -21,18 +26,24 @@ public class LogListener {
 
             @Override
             public Result filter(LogEvent event) {
-                if (Listening)
+                String msg = event.getMessage().getFormattedMessage();
+                for (Pattern p : speedcubingServer.blockedLog) {
+                    if (p.matcher(msg).matches())
+                        return Result.DENY;
+                }
+                if (Listening) {
+                    String string = Console.ansiToColoredText(msg);
+                    StringBuilder unicode = new StringBuilder();
+                    for (int i = 0; i < string.length(); i++) {
+                        unicode.append("\\u").append(Integer.toHexString(string.charAt(i)));
+                    }
                     new Thread(() -> {
-                        String string = Console.ansiToColoredText(event.getMessage().getFormattedMessage());
-                        StringBuilder unicode = new StringBuilder();
-                        for (int i = 0; i < string.length(); i++) {
-                            unicode.append("\\u").append(Integer.toHexString(string.charAt(i)));
-                        }
                         try {
                             speedcubingServer.tcp.sendUnsafe(speedcubingServer.BungeeTCP, "t|" + speedcubingServer.TCP + "|" + unicode);
                         } catch (Exception e) {
                         }
                     }).start();
+                }
                 return null;
             }
 

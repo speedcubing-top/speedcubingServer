@@ -1,11 +1,15 @@
 package speedcubing.server;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import speedcubing.server.libs.User;
 
 import java.io.FileReader;
-import java.util.*;
+import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class config {
     public void reload() {
@@ -13,10 +17,13 @@ public class config {
             JsonObject object = new JsonParser().parse(new FileReader("../../../server.json")).getAsJsonObject();
             LeftCpsLimit = object.get("leftcpslimit").getAsInt();
             RightCpsLimit = object.get("rightcpslimit").getAsInt();
-
             speedcubingServer.colors.clear();
             speedcubingServer.rankPermissions.clear();
             speedcubingServer.ranks.clear();
+            speedcubingServer.blockedLog.clear();
+            speedcubingServer.blockedTab.clear();
+            object.get("blockedlog2").getAsJsonArray().forEach(a -> speedcubingServer.blockedLog.add(Pattern.compile(a.getAsString())));
+            object.get("blockedtab2").getAsJsonArray().forEach(a -> speedcubingServer.blockedTab.add(a.getAsString()));
             for (Map.Entry<String, JsonElement> c : object.getAsJsonObject("ranks").entrySet()) {
                 String[] colors = new Gson().fromJson(c.getValue().getAsJsonObject().get("texts").getAsJsonArray().toString(), new TypeToken<String[]>() {
                 }.getType());

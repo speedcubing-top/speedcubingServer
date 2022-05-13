@@ -6,7 +6,7 @@ import speedcubing.spigot.Event.events.TabCompleteCommandEvent;
 public class ServerEvent {
     @ServerEventHandler
     public void TabCompleteCommandEvent(TabCompleteCommandEvent e) {
-        if (e.message.equals("/") || e.message.equals("/ver ") || e.message.equals("/version "))
+        if (speedcubingServer.blockedTab.contains(e.message))
             e.completions = null;
     }
 }

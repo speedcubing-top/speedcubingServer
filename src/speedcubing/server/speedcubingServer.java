@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.nio.file.Files;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
     public static int AllPlayers;
@@ -36,6 +37,8 @@ public class speedcubingServer extends JavaPlugin {
     public static TCP tcp;
     public static UDP udp;
     public static boolean isBungeeOnlineMode;
+    public static Set<Pattern> blockedLog = new HashSet<>();
+    public static Set<String> blockedTab = new HashSet<>();
 
     public void onEnable() {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
