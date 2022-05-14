@@ -21,6 +21,8 @@ commands:
       - quit
   announce:
     usage: /announce
+    aliases:
+      - ann
   end:
     usage: /end
   heal:

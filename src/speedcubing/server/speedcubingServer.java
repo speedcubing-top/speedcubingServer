@@ -21,6 +21,7 @@ import speedcubing.spigot.Event.ServerEventManager;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.util.*;
@@ -39,8 +40,18 @@ public class speedcubingServer extends JavaPlugin {
     public void onEnable() {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         try {
-            File file = new File("../../Proxies/WaterFall/config.yml");
-            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(Files.newInputStream(file.toPath()))).get("online_mode");
+//            File file = new File("../../Proxies/WaterFall/config.yml");
+//            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(Files.newInputStream(file.toPath()))).get("online_mode");
+            File file = new File("../../Proxies/Velocity/velocity.toml");
+            BufferedReader input = new BufferedReader(new FileReader(file));
+            String line = "";
+            boolean a = true;
+            while (a) {
+                line = input.readLine();
+                if (line != null && line.startsWith("online-mode = "))
+                    a = false;
+            }
+            isBungeeOnlineMode = line.equals("online-mode = true");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -192,6 +203,7 @@ public class speedcubingServer extends JavaPlugin {
     public static void node(boolean add, UUID uuid) {
         speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "h|" + (add ? "a" : "r") + "|" + uuid);
     }
+
     public static Map<String, String[]> colors = new HashMap<>();
     public static Map<String, Set<String>> rankPermissions = new HashMap<>();
 
@@ -204,6 +216,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static List<String> ranks = new ArrayList<>();
+
     public static String playerNameExtract(String name) {
         StringBuilder str = new StringBuilder();
         StringBuilder nameBuilder = new StringBuilder(name);
