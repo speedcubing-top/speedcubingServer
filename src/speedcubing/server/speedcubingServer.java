@@ -9,13 +9,11 @@ import org.yaml.snakeyaml.Yaml;
 import speedcubing.lib.api.SQLConnection;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.lib.utils.sockets.TCP;
-import speedcubing.lib.utils.sockets.UDP;
 import speedcubing.server.Commands.*;
 import speedcubing.server.Commands.offline.premium;
 import speedcubing.server.Commands.offline.resetpassword;
 import speedcubing.server.ExploitFixer.ForceOp;
 import speedcubing.server.events.SocketEvent;
-import speedcubing.server.events.UDPEvent;
 import speedcubing.server.libs.LogListener;
 import speedcubing.server.libs.User;
 import speedcubing.server.listeners.*;
@@ -24,7 +22,6 @@ import speedcubing.spigot.Event.ServerEventManager;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
-import java.net.DatagramPacket;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -35,7 +32,6 @@ public class speedcubingServer extends JavaPlugin {
     public static int TCP;
     public static SQLConnection connection;
     public static TCP tcp;
-    public static UDP udp;
     public static boolean isBungeeOnlineMode;
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<String> blockedTab = new HashSet<>();
@@ -54,7 +50,6 @@ public class speedcubingServer extends JavaPlugin {
         BungeeTCP = 25568 - Bukkit.getPort() % 2;
         new config().reload();
         tcp = new TCP("localhost", TCP, 100);
-        udp = new UDP("localhost", Bukkit.getPort());
         new Cps().Load();
         new ForceOp().run();
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
@@ -160,16 +155,6 @@ public class speedcubingServer extends JavaPlugin {
                     default:
                         ServerEventManager.callEvent(new SocketEvent(rs));
                         break;
-                }
-            }
-        }).start();
-        DatagramPacket datagramPacket = new DatagramPacket(new byte[1024], 1024);
-        new Thread(() -> {
-            while (true) {
-                try {
-                    udp.socket.receive(datagramPacket);
-                    ServerEventManager.callEvent(new UDPEvent(new String(datagramPacket.getData(), 0, datagramPacket.getLength()).split("\\|")));
-                } catch (Exception e) {
                 }
             }
         }).start();
