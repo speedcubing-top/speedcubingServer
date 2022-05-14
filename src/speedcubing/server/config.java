@@ -17,13 +17,13 @@ public class config {
             JsonObject object = new JsonParser().parse(new FileReader("../../../server.json")).getAsJsonObject();
             LeftCpsLimit = object.get("leftcpslimit").getAsInt();
             RightCpsLimit = object.get("rightcpslimit").getAsInt();
+            speedcubingServer.blockedLog.clear();
+            speedcubingServer.blockedTab.clear();
             object.get("blockedlog2").getAsJsonArray().forEach(a -> speedcubingServer.blockedLog.add(Pattern.compile(a.getAsString())));
             object.get("blockedtab2").getAsJsonArray().forEach(a -> speedcubingServer.blockedTab.add(a.getAsString()));
             speedcubingServer.colors.clear();
             speedcubingServer.rankPermissions.clear();
             speedcubingServer.ranks.clear();
-            speedcubingServer.blockedLog.clear();
-            speedcubingServer.blockedTab.clear();
             for (Map.Entry<String, JsonElement> c : object.getAsJsonObject("ranks").entrySet()) {
                 String[] colors = new Gson().fromJson(c.getValue().getAsJsonObject().get("texts").getAsJsonArray().toString(), new TypeToken<String[]>() {
                 }.getType());
