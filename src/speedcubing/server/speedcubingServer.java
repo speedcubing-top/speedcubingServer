@@ -23,6 +23,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.net.Socket;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -106,8 +107,10 @@ public class speedcubingServer extends JavaPlugin {
         new Thread(() -> {
             while (true) {
                 String receive = "";
+                Socket s = null;
                 try {
-                    receive = new BufferedReader(new InputStreamReader(tcp.socket.accept().getInputStream())).readLine();
+                    s = tcp.socket.accept();
+                    receive = new BufferedReader(new InputStreamReader(s.getInputStream())).readLine();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -164,7 +167,7 @@ public class speedcubingServer extends JavaPlugin {
                         User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                         break;
                     default:
-                        ServerEventManager.callEvent(new SocketEvent(rs));
+                        ServerEventManager.callEvent(new SocketEvent(rs, s));
                         break;
                 }
             }
