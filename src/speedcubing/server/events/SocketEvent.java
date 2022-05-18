@@ -6,8 +6,7 @@ public class SocketEvent {
     public String[] rs;
     public int localPort;
 
-    public SocketEvent(String[] rs, int localPort) {
+    public SocketEvent(String[] rs) {
         this.rs = rs;
-        this.localPort = localPort;
     }
 }
