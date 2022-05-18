@@ -167,7 +167,7 @@ public class speedcubingServer extends JavaPlugin {
                         User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                         break;
                     default:
-                        ServerEventManager.callEvent(new SocketEvent(rs, s));
+                        ServerEventManager.callEvent(new SocketEvent(rs, s.getLocalPort()));
                         break;
                 }
             }

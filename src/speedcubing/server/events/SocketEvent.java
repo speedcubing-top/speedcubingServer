@@ -4,10 +4,10 @@ import java.net.Socket;
 
 public class SocketEvent {
     public String[] rs;
-    public Socket socket;
+    public int localPort;
 
-    public SocketEvent(String[] rs, Socket socket) {
+    public SocketEvent(String[] rs, int localPort) {
         this.rs = rs;
-        this.socket = socket;
+        this.localPort = localPort;
     }
 }
