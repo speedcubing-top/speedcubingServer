@@ -30,9 +30,9 @@ public class PlayerLogin implements Listener {
         String[] datas = speedcubingServer.connection.selectStrings("playersdata", "priority,nickpriority,perms,disabledperms", "uuid='" + uuid + "'");
         String old = datas[0];
         Set<String> perms = Sets.newHashSet(speedcubingServer.rankPermissions.get(old));
-        if (datas[2] != null)
+        if (!datas[2].equals(""))
             perms.addAll(Sets.newHashSet(datas[2].split("\\|")));
-        if (datas[3] != null)
+        if (!datas[3].equals(""))
             perms.removeAll(Sets.newHashSet(datas[3].split("\\|")));
         String realname = "";
         if (speedcubingServer.isBungeeOnlineMode) {
