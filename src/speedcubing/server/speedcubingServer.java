@@ -27,7 +27,6 @@ import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
     public static int AllPlayers;
-    public static int BungeeTCP;
     public static int TCP;
     public static SQLConnection connection;
     public static TCP tcp;
@@ -56,7 +55,6 @@ public class speedcubingServer extends JavaPlugin {
         connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
 
         TCP = Bukkit.getPort() + 2;
-        BungeeTCP = 25568 - Bukkit.getPort() % 2;
         new config().reload();
         tcp = new TCP("localhost", TCP, 100);
         new Cps().Load();
@@ -111,6 +109,9 @@ public class speedcubingServer extends JavaPlugin {
                 }
                 String[] rs = receive.split("\\|");
                 switch (rs[0]) {
+                    case "b":
+                        User.tcp.put(UUID.fromString(rs[1]), Integer.parseInt(rs[2]));
+                        break;
                     case "c"://cps
                         switch (rs[1]) {
                             case "a":
@@ -151,13 +152,9 @@ public class speedcubingServer extends JavaPlugin {
                         else
                             PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
                         break;
-                    case "t"://run command
-                        String re = receive.split("\\|", 2)[1];
-                        Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), re));
-                        break;
-                    case "l"://enable logger
-                        LogListener.Listening = rs[1].equals("a");
-                        break;
+//                    case "l"://enable logger
+//                        LogListener.Listening = rs[1].equals("a");
+//                        break;
                     case "v"://velocity
                         User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                         break;
@@ -198,8 +195,8 @@ public class speedcubingServer extends JavaPlugin {
         return "";
     }
 
-    public static void node(boolean add, UUID uuid) {
-        speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "h|" + (add ? "a" : "r") + "|" + uuid);
+    public static void node(boolean add, UUID uuid,int port) {
+        speedcubingServer.tcp.send(port, "h|" + (add ? "a" : "r") + "|" + uuid);
     }
 
     public static Map<String, String[]> colors = new HashMap<>();

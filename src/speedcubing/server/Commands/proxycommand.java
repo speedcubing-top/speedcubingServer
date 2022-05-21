@@ -1,5 +1,7 @@
 package speedcubing.server.Commands;
 
+import org.bukkit.entity.Player;
+import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -9,7 +11,7 @@ import org.bukkit.command.TabCompleter;
 import java.util.ArrayList;
 import java.util.List;
 
-public class proxycommand implements CommandExecutor , TabCompleter {
+public class proxycommand implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0)
@@ -19,7 +21,7 @@ public class proxycommand implements CommandExecutor , TabCompleter {
             for (String string : strings) {
                 comamnd.append(" ").append(string);
             }
-            speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "p|" + comamnd.substring(1));
+            speedcubingServer.tcp.send(User.getUser(((Player) commandSender).getUniqueId()).tcpPort, "p|" + comamnd.substring(1));
         }
         return true;
     }

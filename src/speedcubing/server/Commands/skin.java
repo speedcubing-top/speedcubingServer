@@ -40,13 +40,12 @@ public class skin implements CommandExecutor, TabCompleter {
                             target = strings[0];
                         else player.sendMessage("/skin , /skin <player>");
                         if (!target.equals("")) {
-                            String id;
+                            String id = "";
                             try {
                                 id = MojangAPI.getUUID(target);
                             } catch (APIErrorException e) {
-                                id = "invalidName";
                             }
-                            if (id.equals("invalidName"))
+                            if (id.equals(""))
                                 player.sendMessage(GlobalString.invalidName[User.getUser(player.getUniqueId()).lang]);
                             else {
                                 String[] skin = SessionServer.getSkin(id);
@@ -62,7 +61,11 @@ public class skin implements CommandExecutor, TabCompleter {
                                     else if (p.getUniqueId() != uuid)
                                         packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
                                 }
-                                speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "s|" + uuid + "|" + skin[0] + "|" + skin[1] + (target.equals(name) ? "|null" : ""));
+                                if (!target.equalsIgnoreCase(name))
+                                    speedcubingServer.connection.update("playersdata", "skinvalue='" + skin[0] + "',skinsignature='" + skin[1] + "'", "uuid='" + uuid + "'");
+                                else
+                                    speedcubingServer.connection.update("playersdata", "skinvalue=NULL,skinsignature=NULL", "uuid='" + uuid + "'");
+                                speedcubingServer.tcp.send(User.getUser(uuid).tcpPort, "s|" + uuid + "|" + skin[0] + "|" + skin[1]);
                             }
                         }
                     }).start();

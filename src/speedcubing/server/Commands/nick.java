@@ -43,7 +43,8 @@ public class nick implements CommandExecutor, TabCompleter {
                                         && !speedcubingServer.connection.isStringExist("playersdata", "uuid!='" + uuid + "'AND nickname='" + name + "'")) {
                                     nickPlayer(name, "default", uuid, true, player);
                                     speedcubingServer.connection.update("playersdata", "nickpriority='default',nickname='" + name + "'", "uuid='" + uuid + "'");
-                                } else commandSender.sendMessage(GlobalString.nicknotavaliable[User.getUser(player.getUniqueId()).lang]);
+                                } else
+                                    commandSender.sendMessage(GlobalString.nicknotavaliable[User.getUser(player.getUniqueId()).lang]);
                             }
                         } else if (strings.length == 0) {
                             UUID uuid = ((Player) commandSender).getUniqueId();
@@ -65,7 +66,7 @@ public class nick implements CommandExecutor, TabCompleter {
                     break;
             }
         } else
-            commandSender.sendMessage(GlobalString.UnknownCommand[User.getUser(((Player)commandSender).getUniqueId()).lang]);
+            commandSender.sendMessage(GlobalString.UnknownCommand[User.getUser(((Player) commandSender).getUniqueId()).lang]);
         return true;
     }
 
@@ -107,7 +108,7 @@ public class nick implements CommandExecutor, TabCompleter {
         }
         PlayerJoin.RemovePackets.put(uuid, leavePacket);
         PlayerJoin.JoinPackets.put(uuid, joinPacket);
-       speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "n|" + uuid + (nick ? "|" + name : ""));
+        speedcubingServer.tcp.send(user.tcpPort, "n|" + uuid + (nick ? "|" + name : ""));
         user.rank = rank;
     }
 }

@@ -1,6 +1,7 @@
 package speedcubing.server.listeners;
 
 import speedcubing.server.config;
+import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
@@ -41,7 +42,7 @@ public class Cps implements Listener {
                 for (UUID set : CpsListening) {
                     Integer[] a = Counter.get(set);
                     if (a != null)
-                        speedcubingServer.tcp.send(speedcubingServer.BungeeTCP, "c|" + set + "|" + a[0] + "|" + a[1]);
+                        speedcubingServer.tcp.send(User.getUser(set).tcpPort, "c|" + set + "|" + a[0] + "|" + a[1]);
                 }
                 for(Map.Entry<UUID,Integer[]> a : Counter.entrySet()){
                     if (a.getValue()[0] >= config.LeftCpsLimit || a.getValue()[1] >= config.RightCpsLimit)

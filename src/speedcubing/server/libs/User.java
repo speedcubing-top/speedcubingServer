@@ -9,13 +9,14 @@ import java.util.Set;
 import java.util.UUID;
 
 public class User {
+    public static Map<UUID, Integer> tcp = new HashMap<>();
     public static Map<UUID, User> users = new HashMap<>();
 
     public Set<String> permissions;
     public double[] velocities;
-
     public int lang;
     public String rank;
+    public int tcpPort;
 
     public User() {
     }
@@ -24,6 +25,8 @@ public class User {
         this.lang = speedcubingServer.connection.selectInt("playersdata", "lang", "uuid='" + uuid + "'");
         this.rank = rank;
         this.permissions = permissions;
+        this.tcpPort = tcp.get(uuid);
+        tcp.remove(uuid);
         users.put(uuid, this);
     }
 
