@@ -164,7 +164,14 @@ public class speedcubingServer extends JavaPlugin {
                 }
             }
         }).start();
-        end.restarting = false;
+        System.out.println("[speedcubingServer] 5 seconds");
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                System.out.println("[speedcubingServer] finished");
+                end.restarting = false;
+            }
+        }, 5000);
     }
 
     public void onDisable() {
