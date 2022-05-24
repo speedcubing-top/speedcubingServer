@@ -164,6 +164,7 @@ public class speedcubingServer extends JavaPlugin {
                 }
             }
         }).start();
+        end.restarting = false;
     }
 
     public void onDisable() {
@@ -195,7 +196,7 @@ public class speedcubingServer extends JavaPlugin {
         return "";
     }
 
-    public static void node(boolean add, UUID uuid,int port) {
+    public static void node(boolean add, UUID uuid, int port) {
         speedcubingServer.tcp.send(port, "h|" + (add ? "a" : "r") + "|" + uuid);
     }
 
