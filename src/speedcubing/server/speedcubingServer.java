@@ -110,7 +110,7 @@ public class speedcubingServer extends JavaPlugin {
                 String[] rs = receive.split("\\|");
                 switch (rs[0]) {
                     case "b":
-                        User.tcp.put(UUID.fromString(rs[1]), Integer.parseInt(rs[2]));
+                        User.getUser(UUID.fromString(rs[1])).tcpPort = Integer.parseInt(rs[2]);
                         break;
                     case "c"://cps
                         switch (rs[1]) {
@@ -164,11 +164,11 @@ public class speedcubingServer extends JavaPlugin {
                 }
             }
         }).start();
-        System.out.println("[speedcubingServer] 5 seconds");
+        System.out.print("[speedcubingServer] 5 seconds");
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                System.out.println("[speedcubingServer] finished");
+                System.out.print("[speedcubingServer] finished");
                 end.restarting = false;
             }
         }, 5000);
