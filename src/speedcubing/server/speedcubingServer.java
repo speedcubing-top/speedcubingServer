@@ -33,6 +33,7 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean isBungeeOnlineMode;
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<String> blockedTab = new HashSet<>();
+    public static Map<UUID, Integer> tcpStorage = new HashMap<>();
 
     public void onEnable() {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -106,10 +107,10 @@ public class speedcubingServer extends JavaPlugin {
                     receive = new BufferedReader(new InputStreamReader(tcp.socket.accept().getInputStream())).readLine();
                     String[] rs = receive.split("\\|");
                     switch (rs[0]) {
-                        case "b":
+                        case "bungee":
                             User.getUser(UUID.fromString(rs[1])).tcpPort = Integer.parseInt(rs[2]);
                             break;
-                        case "c"://cps
+                        case "cps"://cps
                             switch (rs[1]) {
                                 case "a":
                                     Cps.CpsListening.add(UUID.fromString(rs[2]));
@@ -119,7 +120,7 @@ public class speedcubingServer extends JavaPlugin {
                                     break;
                             }
                             break;
-                        case "f"://froze
+                        case "froze"://froze
                             switch (rs[1]) {
                                 case "a":
                                     froze.frozed.add(Bukkit.getPlayerExact(rs[2]).getUniqueId());
@@ -129,10 +130,10 @@ public class speedcubingServer extends JavaPlugin {
                                     break;
                             }
                             break;
-                        case "g":
+                        case "cfg":
                             new config().reload();
                             break;
-                        case "m"://demo
+                        case "demo"://demo
                             PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
                             if (rs[1].equals("%ALL%"))
                                 for (Player p : Bukkit.getOnlinePlayers()) {
@@ -141,7 +142,7 @@ public class speedcubingServer extends JavaPlugin {
                             else
                                 ((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection.sendPacket(packet);
                             break;
-                        case "r"://crash
+                        case "crash"://crash
                             if (rs[1].equals("%ALL%"))
                                 for (Player p : Bukkit.getOnlinePlayers()) {
                                     PlayerUtils.explosionCrash(((CraftPlayer) p).getHandle().playerConnection);
@@ -149,10 +150,18 @@ public class speedcubingServer extends JavaPlugin {
                             else
                                 PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
                             break;
+                        case "in":
+                            switch (rs[3]) {
+                                case "bungee":
+                                    tcpStorage.put(UUID.fromString(rs[4]), Integer.parseInt(rs[5]));
+                                    tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
+                                    break;
+                            }
+                            break;
 //                    case "l"://enable logger
 //                        LogListener.Listening = rs[1].equals("a");
 //                        break;
-                        case "v"://velocity
+                        case "velo"://velocity
                             User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                             break;
                         default:
@@ -161,8 +170,8 @@ public class speedcubingServer extends JavaPlugin {
                     }
                 }
             } catch (Exception e) {
-                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "end");
                 e.printStackTrace();
+                Bukkit.getScheduler().runTask(this,()-> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "end"));
             }
         }).start();
         new Timer().schedule(new TimerTask() {
@@ -203,7 +212,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static void node(boolean add, UUID uuid, int port) {
-        speedcubingServer.tcp.send(port, "h|" + (add ? "a" : "r") + "|" + uuid);
+        speedcubingServer.tcp.send(port, "hasnode|" + (add ? "a" : "r") + "|" + uuid);
     }
 
     public static Map<String, String[]> colors = new HashMap<>();

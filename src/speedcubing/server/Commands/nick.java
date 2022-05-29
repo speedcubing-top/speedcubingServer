@@ -108,7 +108,7 @@ public class nick implements CommandExecutor, TabCompleter {
         }
         PlayerJoin.RemovePackets.put(uuid, leavePacket);
         PlayerJoin.JoinPackets.put(uuid, joinPacket);
-        speedcubingServer.tcp.send(user.tcpPort, "n|" + uuid + (nick ? "|" + name : ""));
+        speedcubingServer.tcp.send(user.tcpPort, "nick|" + uuid + (nick ? "|" + name : ""));
         user.rank = rank;
     }
 }

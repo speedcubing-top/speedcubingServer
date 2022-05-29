@@ -24,6 +24,7 @@ public class User {
         this.lang = speedcubingServer.connection.selectInt("playersdata", "lang", "uuid='" + uuid + "'");
         this.rank = rank;
         this.permissions = permissions;
+        this.tcpPort = speedcubingServer.tcpStorage.get(uuid);
         users.put(uuid, this);
     }
 

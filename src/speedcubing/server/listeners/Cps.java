@@ -42,7 +42,7 @@ public class Cps implements Listener {
                 for (UUID set : CpsListening) {
                     Integer[] a = Counter.get(set);
                     if (a != null)
-                        speedcubingServer.tcp.send(User.getUser(set).tcpPort, "c|" + set + "|" + a[0] + "|" + a[1]);
+                        speedcubingServer.tcp.send(User.getUser(set).tcpPort, "cps|" + set + "|" + a[0] + "|" + a[1]);
                 }
                 for(Map.Entry<UUID,Integer[]> a : Counter.entrySet()){
                     if (a.getValue()[0] >= config.LeftCpsLimit || a.getValue()[1] >= config.RightCpsLimit)
