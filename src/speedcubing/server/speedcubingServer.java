@@ -34,6 +34,7 @@ public class speedcubingServer extends JavaPlugin {
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<String> blockedTab = new HashSet<>();
     public static Map<UUID, Integer> tcpStorage = new HashMap<>();
+    public static Map<UUID, Double[]> veloStorage = new HashMap<>();
 
     public void onEnable() {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -157,7 +158,8 @@ public class speedcubingServer extends JavaPlugin {
                                     tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
                                     break;
                                 case "velo":
-                                    User.getUser(UUID.fromString(rs[5])).velocities = rs[4].equals("a") ? new double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])} : null;
+                                    if (rs[4].equals("a"))
+                                        veloStorage.put(UUID.fromString(rs[5]), new Double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])});
                                     break;
                             }
                             break;

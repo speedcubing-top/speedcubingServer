@@ -1,5 +1,6 @@
 package speedcubing.server.libs;
 
+import org.apache.commons.lang.ArrayUtils;
 import speedcubing.lib.utils.Reflections;
 import speedcubing.server.speedcubingServer;
 
@@ -24,6 +25,7 @@ public class User {
         this.lang = speedcubingServer.connection.selectInt("playersdata", "lang", "uuid='" + uuid + "'");
         this.rank = rank;
         this.permissions = permissions;
+        this.velocities = ArrayUtils.toPrimitive(speedcubingServer.veloStorage.get(uuid));
         this.tcpPort = speedcubingServer.tcpStorage.get(uuid);
         users.put(uuid, this);
     }
