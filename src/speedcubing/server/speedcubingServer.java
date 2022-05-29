@@ -110,7 +110,7 @@ public class speedcubingServer extends JavaPlugin {
                         case "bungee":
                             User.getUser(UUID.fromString(rs[1])).tcpPort = Integer.parseInt(rs[2]);
                             break;
-                        case "cps"://cps
+                        case "cps":
                             switch (rs[1]) {
                                 case "a":
                                     Cps.CpsListening.add(UUID.fromString(rs[2]));
@@ -120,7 +120,7 @@ public class speedcubingServer extends JavaPlugin {
                                     break;
                             }
                             break;
-                        case "froze"://froze
+                        case "froze":
                             switch (rs[1]) {
                                 case "a":
                                     froze.frozed.add(Bukkit.getPlayerExact(rs[2]).getUniqueId());
@@ -133,7 +133,7 @@ public class speedcubingServer extends JavaPlugin {
                         case "cfg":
                             new config().reload();
                             break;
-                        case "demo"://demo
+                        case "demo":
                             PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
                             if (rs[1].equals("%ALL%"))
                                 for (Player p : Bukkit.getOnlinePlayers()) {
@@ -142,7 +142,7 @@ public class speedcubingServer extends JavaPlugin {
                             else
                                 ((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection.sendPacket(packet);
                             break;
-                        case "crash"://crash
+                        case "crash":
                             if (rs[1].equals("%ALL%"))
                                 for (Player p : Bukkit.getOnlinePlayers()) {
                                     PlayerUtils.explosionCrash(((CraftPlayer) p).getHandle().playerConnection);
@@ -156,14 +156,14 @@ public class speedcubingServer extends JavaPlugin {
                                     tcpStorage.put(UUID.fromString(rs[4]), Integer.parseInt(rs[5]));
                                     tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
                                     break;
+                                case "velo":
+                                    User.getUser(UUID.fromString(rs[5])).velocities = rs[4].equals("a") ? new double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])} : null;
+                                    break;
                             }
                             break;
 //                    case "l"://enable logger
 //                        LogListener.Listening = rs[1].equals("a");
 //                        break;
-                        case "velo"://velocity
-                            User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
-                            break;
                         default:
                             ServerEventManager.callEvent(new SocketEvent(rs));
                             break;
@@ -171,7 +171,7 @@ public class speedcubingServer extends JavaPlugin {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                Bukkit.getScheduler().runTask(this,()-> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "end"));
+                Bukkit.getScheduler().runTask(this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "end"));
             }
         }).start();
         new Timer().schedule(new TimerTask() {
