@@ -157,15 +157,19 @@ public class speedcubingServer extends JavaPlugin {
                                     tcpStorage.put(UUID.fromString(rs[4]), Integer.parseInt(rs[5]));
                                     tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
                                     break;
-                                case "velo":
+                                case "bungeevelo":
                                     if (rs[4].equals("a"))
                                         veloStorage.put(UUID.fromString(rs[5]), new Double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])});
+                                    tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
                                     break;
                             }
                             break;
 //                    case "l"://enable logger
 //                        LogListener.Listening = rs[1].equals("a");
 //                        break;
+                        case "velo":
+                            User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
+                            break;
                         default:
                             ServerEventManager.callEvent(new SocketEvent(rs));
                             break;
