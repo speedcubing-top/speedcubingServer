@@ -17,7 +17,12 @@ public class PlayerLogin implements Listener {
     @EventHandler
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        if (end.restarting || player.isOp() && !ForceOp.AllowOP(player.getUniqueId())) {
+        if (end.restarting) {
+            e.setKickMessage("§cServer Restarting... Please wait for a few seconds.");
+            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            return;
+        }
+        if (player.isOp() && !ForceOp.AllowOP(player.getUniqueId())) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             return;
         }
