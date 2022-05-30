@@ -83,8 +83,8 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("fly").setTabCompleter(new fly());
         Bukkit.getPluginCommand("heal").setExecutor(new heal());
         Bukkit.getPluginCommand("heal").setTabCompleter(new heal());
-        Bukkit.getPluginCommand("end").setExecutor(new end());
-        Bukkit.getPluginCommand("end").setTabCompleter(new end());
+        Bukkit.getPluginCommand("shutdown").setExecutor(new shutdown());
+        Bukkit.getPluginCommand("shutdown").setTabCompleter(new shutdown());
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginCommand("proxycommand").setTabCompleter(new proxycommand());
         Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
@@ -183,7 +183,7 @@ public class speedcubingServer extends JavaPlugin {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                end.restarting = false;
+                shutdown.restarting = false;
             }
         }, 2000);
     }
