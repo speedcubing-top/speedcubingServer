@@ -106,74 +106,76 @@ public class speedcubingServer extends JavaPlugin {
                 String receive;
                 while (true) {
                     receive = new BufferedReader(new InputStreamReader(tcp.socket.accept().getInputStream())).readLine();
-                    String[] rs = receive.split("\\|");
-                    switch (rs[0]) {
-                        case "bungee":
-                            User.getUser(UUID.fromString(rs[1])).tcpPort = Integer.parseInt(rs[2]);
-                            break;
-                        case "cps":
-                            switch (rs[1]) {
-                                case "a":
-                                    Cps.CpsListening.add(UUID.fromString(rs[2]));
-                                    break;
-                                case "r":
-                                    Cps.CpsListening.remove(UUID.fromString(rs[2]));
-                                    break;
-                            }
-                            break;
-                        case "froze":
-                            switch (rs[1]) {
-                                case "a":
-                                    froze.frozed.add(Bukkit.getPlayerExact(rs[2]).getUniqueId());
-                                    break;
-                                case "r":
-                                    froze.frozed.remove(Bukkit.getPlayerExact(rs[2]).getUniqueId());
-                                    break;
-                            }
-                            break;
-                        case "cfg":
-                            new config().reload();
-                            break;
-                        case "demo":
-                            PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
-                            if (rs[1].equals("%ALL%"))
-                                for (Player p : Bukkit.getOnlinePlayers()) {
-                                    ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+                    if (receive != null) {
+                        String[] rs = receive.split("\\|");
+                        switch (rs[0]) {
+                            case "bungee":
+                                User.getUser(UUID.fromString(rs[1])).tcpPort = Integer.parseInt(rs[2]);
+                                break;
+                            case "cps":
+                                switch (rs[1]) {
+                                    case "a":
+                                        Cps.CpsListening.add(UUID.fromString(rs[2]));
+                                        break;
+                                    case "r":
+                                        Cps.CpsListening.remove(UUID.fromString(rs[2]));
+                                        break;
                                 }
-                            else
-                                ((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection.sendPacket(packet);
-                            break;
-                        case "crash":
-                            if (rs[1].equals("%ALL%"))
-                                for (Player p : Bukkit.getOnlinePlayers()) {
-                                    PlayerUtils.explosionCrash(((CraftPlayer) p).getHandle().playerConnection);
+                                break;
+                            case "froze":
+                                switch (rs[1]) {
+                                    case "a":
+                                        froze.frozed.add(Bukkit.getPlayerExact(rs[2]).getUniqueId());
+                                        break;
+                                    case "r":
+                                        froze.frozed.remove(Bukkit.getPlayerExact(rs[2]).getUniqueId());
+                                        break;
                                 }
-                            else
-                                PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
-                            break;
-                        case "in":
-                            switch (rs[3]) {
-                                case "bungee":
-                                    tcpStorage.put(UUID.fromString(rs[4]), Integer.parseInt(rs[5]));
-                                    tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
-                                    break;
-                                case "bungeevelo":
-                                    if (rs[4].equals("a"))
-                                        veloStorage.put(UUID.fromString(rs[5]), new Double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])});
-                                    tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
-                                    break;
-                            }
-                            break;
+                                break;
+                            case "cfg":
+                                new config().reload();
+                                break;
+                            case "demo":
+                                PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
+                                if (rs[1].equals("%ALL%"))
+                                    for (Player p : Bukkit.getOnlinePlayers()) {
+                                        ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
+                                    }
+                                else
+                                    ((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection.sendPacket(packet);
+                                break;
+                            case "crash":
+                                if (rs[1].equals("%ALL%"))
+                                    for (Player p : Bukkit.getOnlinePlayers()) {
+                                        PlayerUtils.explosionCrash(((CraftPlayer) p).getHandle().playerConnection);
+                                    }
+                                else
+                                    PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
+                                break;
+                            case "in":
+                                switch (rs[3]) {
+                                    case "bungee":
+                                        tcpStorage.put(UUID.fromString(rs[4]), Integer.parseInt(rs[5]));
+                                        tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
+                                        break;
+                                    case "bungeevelo":
+                                        if (rs[4].equals("a"))
+                                            veloStorage.put(UUID.fromString(rs[5]), new Double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])});
+                                        tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
+                                        break;
+                                }
+                                break;
 //                    case "l"://enable logger
 //                        LogListener.Listening = rs[1].equals("a");
 //                        break;
-                        case "velo":
-                            User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
-                            break;
-                        default:
-                            ServerEventManager.callEvent(new SocketEvent(rs));
-                            break;
-                    }
+                            case "velo":
+                                User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
+                                break;
+                            default:
+                                ServerEventManager.callEvent(new SocketEvent(rs));
+                                break;
+                        }
+                    } else System.out.print("[Server] received null line of socket");
                 }
             } catch (Exception e) {
                 e.printStackTrace();
