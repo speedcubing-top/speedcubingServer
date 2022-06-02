@@ -34,6 +34,7 @@ public class hub implements CommandExecutor, TabCompleter {
                         player.teleport(new Location(Bukkit.getWorld("world"), 0.5D, 100D, 0.5D, 0F, 0F));
                     break;
                 case "reducebot":
+                case "oceanliner":
                 case "clutch":
                 case "knockbackffa":
                 case "fastbuilder":
