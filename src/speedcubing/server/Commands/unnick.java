@@ -19,7 +19,7 @@ public class unnick implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (speedcubingServer.isBungeeOnlineMode) {
             Player player = (Player) commandSender;
-            switch (speedcubingServer.getServer(Bukkit.getPort())) {
+            switch (Bukkit.getServerName()) {
                 case "lobby":
                 case "bedwars":
                 case "mlgrush":
@@ -36,7 +36,7 @@ public class unnick implements CommandExecutor, TabCompleter {
                     } else
                         player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
-                case "reduce":
+                case "reducebot":
                 case "knockbackffa":
                 case "fastbuilder":
                 case "auth":

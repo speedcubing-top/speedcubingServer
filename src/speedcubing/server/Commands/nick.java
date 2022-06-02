@@ -25,7 +25,7 @@ public class nick implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (speedcubingServer.isBungeeOnlineMode) {
             Player player = (Player) commandSender;
-            switch (speedcubingServer.getServer(Bukkit.getPort())) {
+            switch (Bukkit.getServerName()) {
                 case "lobby":
                 case "mlgrush":
                 case "practice":
@@ -61,7 +61,7 @@ public class nick implements CommandExecutor, TabCompleter {
                 case "auth":
                 case "fastbuilder":
                 case "knockbackffa":
-                case "reduce":
+                case "reducebot":
                     player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
             }

@@ -17,14 +17,14 @@ public class shutdown implements CommandExecutor, TabCompleter {
     public static boolean restarting = true;
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        switch (speedcubingServer.getServer(Bukkit.getPort())) {
+        switch (Bukkit.getServerName()) {
             case "mlgrush":
             case "practice":
             case "bedwars":
             case "knockbackffa":
             case "fastbuilder":
             case "clutch":
-            case "reduce":
+            case "reducebot":
                 restarting = true;
                 Bukkit.getOnlinePlayers().forEach(a -> PluginMessage.switchServer(a,"lobby"));
                 new Timer().schedule(new TimerTask() {

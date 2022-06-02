@@ -19,7 +19,7 @@ public class fly implements CommandExecutor, TabCompleter {
         Player player = (Player) commandSender;
         if (strings.length == 0) {
             int lang = User.getUser(player.getUniqueId()).lang;
-            switch (speedcubingServer.getServer(Bukkit.getPort())) {
+            switch (Bukkit.getServerName()) {
                 case "lobby":
                 case "bedwars":
                 case "mlgrush":
@@ -39,7 +39,7 @@ public class fly implements CommandExecutor, TabCompleter {
                 case "knockbackffa":
                 case "fastbuilder":
                 case "clutch":
-                case "reduce":
+                case "reducebot":
                     player.sendMessage(GlobalString.OnlyInHub[lang]);
                     break;
             }

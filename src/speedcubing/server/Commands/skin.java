@@ -25,7 +25,7 @@ public class skin implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
-        switch (speedcubingServer.getServer(Bukkit.getPort())) {
+        switch (Bukkit.getServerName()) {
             case "lobby":
             case "bedwars":
             case "mlgrush":
@@ -73,7 +73,7 @@ public class skin implements CommandExecutor, TabCompleter {
                     player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                 break;
             case "clutch":
-            case "reduce":
+            case "reducebot":
             case "knockbackffa":
             case "fastbuilder":
             case "auth":

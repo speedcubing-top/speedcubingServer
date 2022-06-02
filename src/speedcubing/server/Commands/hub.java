@@ -20,7 +20,7 @@ public class hub implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
         if (strings.length == 0) {
-            switch (speedcubingServer.getServer(Bukkit.getPort())) {
+            switch (Bukkit.getServerName()) {
                 case "lobby":
                 case "auth":
                     player.sendMessage(GlobalString.AlreadyInHub[User.getUser(player.getUniqueId()).lang]);
@@ -33,7 +33,7 @@ public class hub implements CommandExecutor, TabCompleter {
                     else
                         player.teleport(new Location(Bukkit.getWorld("world"), 0.5D, 100D, 0.5D, 0F, 0F));
                     break;
-                case "reduce":
+                case "reducebot":
                 case "clutch":
                 case "knockbackffa":
                 case "fastbuilder":

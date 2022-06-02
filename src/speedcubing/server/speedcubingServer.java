@@ -198,27 +198,6 @@ public class speedcubingServer extends JavaPlugin {
         index.delete();
     }
 
-    public static Map<String, Integer> map = new HashMap<String, Integer>() {{
-        put("auth", 25569);
-        put("lobby", 25573);
-        put("fastbuilder", 25577);
-        put("mlgrush", 25581);
-        put("knockbackffa", 25585);
-        put("practice", 25589);
-        put("bedwars", 25593);
-        put("clutch", 25597);
-        put("reduce", 25601);
-    }};
-
-    public static String getServer(int defaultport) {
-        defaultport = defaultport % 2 + defaultport - 1;
-        for (Map.Entry<String, Integer> x : map.entrySet()) {
-            if (x.getValue() == defaultport)
-                return x.getKey();
-        }
-        return "";
-    }
-
     public static void node(boolean add, UUID uuid, int port) {
         speedcubingServer.tcp.send(port, "hasnode|" + (add ? "a" : "r") + "|" + uuid);
     }
