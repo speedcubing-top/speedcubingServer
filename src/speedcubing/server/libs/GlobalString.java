@@ -51,19 +51,6 @@ public class GlobalString {
             "§a设置已储存"
     };
 
-    public static String[][] LobbyTabList = {
-            {
-                    "§6" + config.SERVERIP,
-                    "§6" + config.SERVERIP,
-                    "§6" + config.SERVERIP,
-                    "§6" + config.SERVERIP},
-            {
-                    "§aOnline-Spieler §8- §b%int%",
-                    "§aOnline players §8- §b%int%",
-                    "§a線上玩家 §8- §b%int%",
-                    "§a线上玩家 §8- §b%int%"}
-    };
-
     public static String[] min = {
             "§cThe minimum value is %int%",
             "§cThe minimum value is %int%",

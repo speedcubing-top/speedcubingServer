@@ -32,7 +32,6 @@ public class PlayerJoin implements Listener {
         UUID uuid = player.getUniqueId();
         User user = User.getUser(uuid);
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
-        connection.sendPacket(OutPlayerListHeaderFooter.a(GlobalString.LobbyTabList[0][user.lang], GlobalString.LobbyTabList[1][user.lang].replace("%int%", Integer.toString(speedcubingServer.AllPlayers))));
         RemovePackets.values().forEach(connection::sendPacket);
         JoinPackets.values().forEach(connection::sendPacket);
         String extracted = speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(temp[0]);

@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
-    public static int AllPlayers;
     public static int TCP;
     public static SQLConnection connection;
     public static TCP tcp;
