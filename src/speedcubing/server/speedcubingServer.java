@@ -150,12 +150,12 @@ public class speedcubingServer extends JavaPlugin {
                                 switch (rs[3]) {
                                     case "bungee":
                                         tcpStorage.put(UUID.fromString(rs[4]), Integer.parseInt(rs[5]));
-                                        tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
+                                        tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "|bungee");
                                         break;
                                     case "bungeevelo":
                                         if (rs[4].equals("a"))
                                             veloStorage.put(UUID.fromString(rs[5]), new Double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])});
-                                        tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "| ");
+                                        tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "|bungeevelo");
                                         break;
                                 }
                                 break;
