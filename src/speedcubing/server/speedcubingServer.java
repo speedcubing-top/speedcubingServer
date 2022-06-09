@@ -3,7 +3,6 @@ package speedcubing.server;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import speedcubing.lib.api.SQLConnection;
 import speedcubing.lib.bukkit.PlayerUtils;
@@ -136,18 +135,14 @@ public class speedcubingServer extends JavaPlugin {
                                 break;
                             case "demo":
                                 PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
-                                if (rs[1].equals("%ALL%"))
-                                    for (Player p : Bukkit.getOnlinePlayers()) {
-                                        ((CraftPlayer) p).getHandle().playerConnection.sendPacket(packet);
-                                    }
+                                if (rs[1].equals("@a"))
+                                    Bukkit.getOnlinePlayers().forEach(a -> ((CraftPlayer) a).getHandle().playerConnection.sendPacket(packet));
                                 else
                                     ((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection.sendPacket(packet);
                                 break;
                             case "crash":
-                                if (rs[1].equals("%ALL%"))
-                                    for (Player p : Bukkit.getOnlinePlayers()) {
-                                        PlayerUtils.explosionCrash(((CraftPlayer) p).getHandle().playerConnection);
-                                    }
+                                if (rs[1].equals("@a"))
+                                    Bukkit.getOnlinePlayers().forEach(a -> PlayerUtils.explosionCrash(((CraftPlayer) a).getHandle().playerConnection));
                                 else
                                     PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
                                 break;
