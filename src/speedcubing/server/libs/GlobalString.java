@@ -93,6 +93,13 @@ public class GlobalString {
             "§cYou can't nick with the same username!"
     };
 
+    public static String[] nickdefaultusername = {
+            "§cIf you want to unnick please use /unnick",
+            "§cIf you want to unnick please use /unnick",
+            "§cIf you want to unnick please use /unnick",
+            "§cIf you want to unnick please use /unnick"
+    };
+
     public static String[] nicknotavaliable = {
             "§cThis nickname is not avaliable.",
             "§cThis nickname is not avaliable.",

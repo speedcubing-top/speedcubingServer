@@ -31,7 +31,7 @@ public class unnick implements CommandExecutor, TabCompleter {
                         commandSender.sendMessage("you are not nicked!");
                     } else if (player.getWorld().getName().equals("world")) {
                         if (strings.length == 0) {
-                            nick.nickPlayer(datas[0], datas[1], uuid, false, player);
+                            nick.nickPlayer(datas[0], datas[1], false, player);
                         } else commandSender.sendMessage("/unnick");
                     } else
                         player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
