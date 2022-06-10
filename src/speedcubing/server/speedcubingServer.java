@@ -25,7 +25,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
-    public static int TCP;
     public static SQLConnection connection;
     public static TCP tcp;
     public static boolean isBungeeOnlineMode;
@@ -53,10 +52,8 @@ public class speedcubingServer extends JavaPlugin {
             e.printStackTrace();
         }
         connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
-
-        TCP = Bukkit.getPort() + 2;
         new config().reload();
-        tcp = new TCP("localhost", TCP, 100);
+        tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
         new Cps().Load();
         new ForceOp().run();
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
