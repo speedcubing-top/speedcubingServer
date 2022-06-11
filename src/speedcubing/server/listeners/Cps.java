@@ -43,8 +43,10 @@ public class Cps implements Listener {
                     speedcubingServer.tcp.send(v.tcpPort, "cps|" + a.getKey() + "|" + v.leftClick + "|" + v.rightClick);
                     if (v.leftClick >= config.LeftCpsLimit || v.rightClick >= config.RightCpsLimit)
                         Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(a.getKey()).kickPlayer("You are clicking too fast !"));
-                    v.leftClick = 0;
-                    v.rightClick = 0;
+                    else {
+                        v.leftClick = 0;
+                        v.rightClick = 0;
+                    }
                 }
             }
         }, 0, 1000);
