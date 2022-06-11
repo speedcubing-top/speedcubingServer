@@ -1,19 +1,19 @@
 package speedcubing.server.listeners;
 
-import speedcubing.server.config;
-import speedcubing.server.libs.User;
-import speedcubing.server.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import speedcubing.server.config;
+import speedcubing.server.libs.User;
+import speedcubing.server.speedcubingServer;
 
-import java.lang.reflect.Member;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Cps implements Listener {
+    public static Set<UUID> CpsListening = new HashSet<>();
+
 
     @EventHandler
     public void dwd(FoodLevelChangeEvent e) {
@@ -38,14 +38,16 @@ public class Cps implements Listener {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                for (Map.Entry<UUID, User> a : User.users.entrySet()) {
-                    User v = a.getValue();
-                    speedcubingServer.tcp.send(v.tcpPort, "cps|" + a.getKey() + "|" + v.leftClick + "|" + v.rightClick);
-                    if (v.leftClick >= config.LeftCpsLimit || v.rightClick >= config.RightCpsLimit)
-                        Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(a.getKey()).kickPlayer("You are clicking too fast !"));
-                    else {
-                        v.leftClick = 0;
-                        v.rightClick = 0;
+                for (UUID set : CpsListening) {
+                    User a = User.getUser(set);
+                    if (a != null) {
+                        speedcubingServer.tcp.send(a.tcpPort, "cps|" + set + "|" + a.leftClick + "|" + a.rightClick);
+                        if (a.leftClick >= config.LeftCpsLimit || a.rightClick >= config.RightCpsLimit)
+                            Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(set).kickPlayer("You are clicking too fast !"));
+                        else {
+                            a.leftClick = 0;
+                            a.rightClick = 0;
+                        }
                     }
                 }
             }
