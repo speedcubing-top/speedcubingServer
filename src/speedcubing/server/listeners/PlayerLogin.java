@@ -27,7 +27,6 @@ public class PlayerLogin implements Listener {
             return;
         }
         UUID uuid = player.getUniqueId();
-        Cps.Counter.put(uuid, new Integer[]{0, 0});
         String name = player.getName();
         String[] datas = speedcubingServer.connection.selectStrings("playersdata", "priority,nickpriority,perms,disabledperms", "uuid='" + uuid + "'");
         String old = datas[0];

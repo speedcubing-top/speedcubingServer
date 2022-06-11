@@ -15,7 +15,6 @@ public class PlayerQuit implements Listener {
         e.setQuitMessage("");
         e.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
         UUID uuid = e.getPlayer().getUniqueId();
-        Cps.Counter.remove(uuid);
         PlayerJoin.RemovePackets.remove(uuid);
         PlayerJoin.JoinPackets.remove(uuid);
         User.users.remove(uuid);
