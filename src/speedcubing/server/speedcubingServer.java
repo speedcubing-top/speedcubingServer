@@ -117,6 +117,16 @@ public class speedcubingServer extends JavaPlugin {
                                         break;
                                 }
                                 break;
+                            case "cps":
+                                switch (rs[1]) {
+                                    case "a":
+                                        Cps.CpsListening.add(UUID.fromString(rs[2]));
+                                        break;
+                                    case "r":
+                                        Cps.CpsListening.remove(UUID.fromString(rs[2]));
+                                        break;
+                                }
+                                break;
                             case "cfg":
                                 new config().reload();
                                 break;
