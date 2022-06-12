@@ -9,10 +9,12 @@ import speedcubing.server.config;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.UUID;
 
 public class Cps implements Listener {
-    public static Set<UUID> CpsListening = new HashSet<>();
 
 
     @EventHandler
@@ -38,15 +40,15 @@ public class Cps implements Listener {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                for (UUID set : CpsListening) {
-                    User a = User.getUser(set);
-                    if (a != null) {
-                        speedcubingServer.tcp.send(a.tcpPort, "cps|" + set + "|" + a.leftClick + "|" + a.rightClick);
-                        if (a.leftClick >= config.LeftCpsLimit || a.rightClick >= config.RightCpsLimit)
-                            Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(set).kickPlayer("You are clicking too fast !"));
+                for (Map.Entry<UUID, User> a : User.users.entrySet()) {
+                    User user = a.getValue();
+                    if (user.listened) {
+                        speedcubingServer.tcp.send(user.tcpPort, "cps|" + a.getKey() + "|" + user.leftClick + "|" + user.rightClick);
+                        if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
+                            Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(a.getKey()).kickPlayer("You are clicking too fast !"));
                         else {
-                            a.leftClick = 0;
-                            a.rightClick = 0;
+                            user.leftClick = 0;
+                            user.rightClick = 0;
                         }
                     }
                 }

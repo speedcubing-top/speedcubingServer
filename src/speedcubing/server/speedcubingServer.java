@@ -118,14 +118,7 @@ public class speedcubingServer extends JavaPlugin {
                                 }
                                 break;
                             case "cpsrequest":
-                                switch (rs[1]) {
-                                    case "a":
-                                        Cps.CpsListening.add(UUID.fromString(rs[2]));
-                                        break;
-                                    case "r":
-                                        Cps.CpsListening.remove(UUID.fromString(rs[2]));
-                                        break;
-                                }
+                                User.getUser(UUID.fromString(rs[2])).listened = rs[1].equals("a");
                                 break;
                             case "cfg":
                                 new config().reload();
@@ -156,9 +149,6 @@ public class speedcubingServer extends JavaPlugin {
                                         break;
                                 }
                                 break;
-//                    case "l"://enable logger
-//                        LogListener.Listening = rs[1].equals("a");
-//                        break;
                             case "velo":
                                 User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                                 break;
