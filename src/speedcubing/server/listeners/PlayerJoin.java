@@ -9,9 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import speedcubing.lib.bukkit.packetwrapper.OutPlayerListHeaderFooter;
 import speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
-import speedcubing.server.libs.GlobalString;
+import speedcubing.server.PacketListener;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 
@@ -29,6 +28,7 @@ public class PlayerJoin implements Listener {
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         Player player = e.getPlayer();
+        PacketListener.inject(player);
         UUID uuid = player.getUniqueId();
         User user = User.getUser(uuid);
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;

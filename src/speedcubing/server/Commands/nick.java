@@ -10,13 +10,13 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
+import speedcubing.lib.event.LibEventManager;
 import speedcubing.lib.utils.Reflections;
 import speedcubing.server.events.NickEvent;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
 import speedcubing.server.listeners.PlayerJoin;
 import speedcubing.server.speedcubingServer;
-import speedcubing.spigot.Event.ServerEventManager;
 
 import java.util.*;
 
@@ -73,7 +73,7 @@ public class nick implements CommandExecutor, TabCompleter {
 
     public static void nickPlayer(String name, String rank, boolean nick, Player player) {
         UUID uuid = player.getUniqueId();
-        ServerEventManager.callEvent(new NickEvent(name, rank, uuid, nick));
+        LibEventManager.callEvent(new NickEvent(name, rank, uuid, nick));
         EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         PlayerConnection connection = entityPlayer.playerConnection;
         String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
