@@ -7,6 +7,6 @@ public class ServerEvent {
     @LibEventHandler
     public void PlayInTabCompleteEvent(PlayInTabCompleteEvent e) {
         if (speedcubingServer.blockedTab.contains(e.packet.a()))
-            e.isCancelled = true;
+            e.setCancelled(true);
     }
 }

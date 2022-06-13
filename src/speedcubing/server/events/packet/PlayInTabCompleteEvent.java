@@ -12,4 +12,8 @@ public class PlayInTabCompleteEvent {
         this.player = player;
         this.packet = packet;
     }
+
+    public void setCancelled(boolean b) {
+        isCancelled = b;
+    }
 }
