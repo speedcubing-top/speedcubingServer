@@ -13,6 +13,9 @@ public class User {
     public int lang;
     public String rank;
     public int tcpPort;
+    public int leftClick;
+    public int rightClick;
+    public boolean listened;
 
     public User(UUID uuid, String rank, Set<String> permissions) {
         this.lang = speedcubingServer.connection.selectInt("playersdata", "lang", "uuid='" + uuid + "'");

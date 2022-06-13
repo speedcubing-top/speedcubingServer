@@ -25,7 +25,6 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
-    public static int TCP;
     public static SQLConnection connection;
     public static TCP tcp;
     public static boolean isBungeeOnlineMode;
@@ -53,10 +52,8 @@ public class speedcubingServer extends JavaPlugin {
             e.printStackTrace();
         }
         connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
-
-        TCP = Bukkit.getPort() + 2;
         new config().reload();
-        tcp = new TCP("localhost", TCP, 100);
+        tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
         new Cps().Load();
         new ForceOp().run();
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
@@ -110,16 +107,6 @@ public class speedcubingServer extends JavaPlugin {
                             case "bungee":
                                 User.getUser(UUID.fromString(rs[1])).tcpPort = Integer.parseInt(rs[2]);
                                 break;
-                            case "cps":
-                                switch (rs[1]) {
-                                    case "a":
-                                        Cps.CpsListening.add(UUID.fromString(rs[2]));
-                                        break;
-                                    case "r":
-                                        Cps.CpsListening.remove(UUID.fromString(rs[2]));
-                                        break;
-                                }
-                                break;
                             case "froze":
                                 switch (rs[1]) {
                                     case "a":
@@ -129,6 +116,9 @@ public class speedcubingServer extends JavaPlugin {
                                         froze.frozed.remove(Bukkit.getPlayerExact(rs[2]).getUniqueId());
                                         break;
                                 }
+                                break;
+                            case "cpsrequest":
+                                User.getUser(UUID.fromString(rs[2])).listened = rs[1].equals("a");
                                 break;
                             case "cfg":
                                 new config().reload();
@@ -159,9 +149,6 @@ public class speedcubingServer extends JavaPlugin {
                                         break;
                                 }
                                 break;
-//                    case "l"://enable logger
-//                        LogListener.Listening = rs[1].equals("a");
-//                        break;
                             case "velo":
                                 User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                                 break;
