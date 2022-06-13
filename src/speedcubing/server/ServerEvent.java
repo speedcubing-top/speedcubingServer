@@ -1,12 +1,12 @@
 package speedcubing.server;
 
-import speedcubing.spigot.Event.ServerEventHandler;
-import speedcubing.spigot.Event.events.TabCompleteCommandEvent;
+import speedcubing.lib.event.LibEventHandler;
+import speedcubing.server.events.packet.PlayInTabCompleteEvent;
 
 public class ServerEvent {
-    @ServerEventHandler
-    public void TabCompleteCommandEvent(TabCompleteCommandEvent e) {
-        if (speedcubingServer.blockedTab.contains(e.message))
-            e.completions = null;
+    @LibEventHandler
+    public void TabCompleteCommandEvent(PlayInTabCompleteEvent e) {
+        if (speedcubingServer.blockedTab.contains(e.packet.a()))
+            e.isCancelled = true;
     }
 }

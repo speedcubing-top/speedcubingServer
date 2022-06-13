@@ -29,6 +29,7 @@ public class PlayerJoin implements Listener {
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         Player player = e.getPlayer();
+        PacketListener.inject(player);
         UUID uuid = player.getUniqueId();
         User user = User.getUser(uuid);
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;

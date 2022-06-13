@@ -6,6 +6,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 import speedcubing.lib.api.SQLConnection;
 import speedcubing.lib.bukkit.PlayerUtils;
+import speedcubing.lib.event.LibEventManager;
 import speedcubing.lib.utils.sockets.TCP;
 import speedcubing.server.Commands.*;
 import speedcubing.server.Commands.offline.premium;
@@ -15,7 +16,6 @@ import speedcubing.server.events.SocketEvent;
 import speedcubing.server.libs.LogListener;
 import speedcubing.server.libs.User;
 import speedcubing.server.listeners.*;
-import speedcubing.spigot.Event.ServerEventManager;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -96,7 +96,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
         Bukkit.getPluginCommand("announce").setTabCompleter(new announce());
-        ServerEventManager.registerListeners(new ServerEvent());
+        LibEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
 
         new Thread(() -> {
@@ -166,7 +166,7 @@ public class speedcubingServer extends JavaPlugin {
                                 User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                                 break;
                             default:
-                                ServerEventManager.callEvent(new SocketEvent(rs));
+                                LibEventManager.callEvent(new SocketEvent(rs));
                                 break;
                         }
                     } else System.out.print("[Server] received null line of socket");
