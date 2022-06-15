@@ -1,12 +1,11 @@
 package speedcubing.server.Commands;
 
-import speedcubing.server.PluginMessage;
-import speedcubing.server.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import speedcubing.lib.bukkit.BungeePluginMessage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +25,7 @@ public class shutdown implements CommandExecutor, TabCompleter {
             case "clutch":
             case "reducebot":
                 restarting = true;
-                Bukkit.getOnlinePlayers().forEach(a -> PluginMessage.switchServer(a,"lobby"));
+                Bukkit.getOnlinePlayers().forEach(a -> BungeePluginMessage.switchServer(a,"lobby"));
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {

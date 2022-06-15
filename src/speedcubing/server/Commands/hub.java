@@ -1,9 +1,5 @@
 package speedcubing.server.Commands;
 
-import speedcubing.server.PluginMessage;
-import speedcubing.server.libs.GlobalString;
-import speedcubing.server.libs.User;
-import speedcubing.server.speedcubingServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
@@ -11,6 +7,9 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+import speedcubing.lib.bukkit.BungeePluginMessage;
+import speedcubing.server.libs.GlobalString;
+import speedcubing.server.libs.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,7 @@ public class hub implements CommandExecutor, TabCompleter {
                 case "mlgrush":
                 case "practice":
                     if (player.getWorld().getName().equals("world"))
-                        PluginMessage.switchServer(player, "Lobby");
+                        BungeePluginMessage.switchServer(player, "Lobby");
                     else
                         player.teleport(new Location(Bukkit.getWorld("world"), 0.5D, 100D, 0.5D, 0F, 0F));
                     break;
@@ -38,7 +37,7 @@ public class hub implements CommandExecutor, TabCompleter {
                 case "clutch":
                 case "knockbackffa":
                 case "fastbuilder":
-                    PluginMessage.switchServer(player, "lobby");
+                    BungeePluginMessage.switchServer(player, "lobby");
                     break;
             }
         } else player.sendMessage("/hub, /l, /lobby");

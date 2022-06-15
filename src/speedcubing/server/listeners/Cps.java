@@ -42,15 +42,12 @@ public class Cps implements Listener {
             public void run() {
                 for (Map.Entry<UUID, User> a : User.users.entrySet()) {
                     User user = a.getValue();
-                    if (user.listened) {
+                    if (user.listened)
                         speedcubingServer.tcp.send(user.tcpPort, "cps|" + a.getKey() + "|" + user.leftClick + "|" + user.rightClick);
-                        if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
-                            Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(a.getKey()).kickPlayer("You are clicking too fast !"));
-                        else {
-                            user.leftClick = 0;
-                            user.rightClick = 0;
-                        }
-                    }
+                    if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
+                        Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> Bukkit.getPlayer(a.getKey()).kickPlayer("You are clicking too fast !"));
+                    user.leftClick = 0;
+                    user.rightClick = 0;
                 }
             }
         }, 0, 1000);

@@ -10,7 +10,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
-import speedcubing.lib.event.LibEventManager;
+import speedcubing.lib.eventbus.LibEventManager;
 import speedcubing.lib.utils.Reflections;
 import speedcubing.server.events.NickEvent;
 import speedcubing.server.libs.GlobalString;

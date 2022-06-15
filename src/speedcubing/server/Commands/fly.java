@@ -18,7 +18,6 @@ public class fly implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
         if (strings.length == 0) {
-            int lang = User.getUser(player.getUniqueId()).lang;
             switch (Bukkit.getServerName()) {
                 case "lobby":
                 case "bedwars":
@@ -27,20 +26,20 @@ public class fly implements CommandExecutor, TabCompleter {
                 case "auth":
                     if (player.getWorld().getName().equals("world"))
                         if (player.getAllowFlight()) {
-                            player.sendMessage(GlobalString.FlyDisable[lang]);
+                            player.sendMessage(GlobalString.FlyDisable[User.getUser(player.getUniqueId()).lang]);
                             player.setAllowFlight(false);
                         } else {
-                            player.sendMessage(GlobalString.FlyEnable[lang]);
+                            player.sendMessage(GlobalString.FlyEnable[User.getUser(player.getUniqueId()).lang]);
                             player.setAllowFlight(true);
                         }
                     else
-                        player.sendMessage(GlobalString.OnlyInHub[lang]);
+                        player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
                 case "knockbackffa":
                 case "fastbuilder":
                 case "clutch":
                 case "reducebot":
-                    player.sendMessage(GlobalString.OnlyInHub[lang]);
+                    player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
                     break;
             }
         } else player.sendMessage("/fly");
