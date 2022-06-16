@@ -19,8 +19,8 @@ public class config {
             RightCpsLimit = object.get("rightcpslimit").getAsInt();
             speedcubingServer.blockedLog.clear();
             speedcubingServer.blockedTab.clear();
-            object.get("blockedlog2").getAsJsonArray().forEach(a -> speedcubingServer.blockedLog.add(Pattern.compile(a.getAsString())));
-            object.get("blockedtab2").getAsJsonArray().forEach(a -> speedcubingServer.blockedTab.add(a.getAsString()));
+            object.get("spigotblockedlog").getAsJsonArray().forEach(a -> speedcubingServer.blockedLog.add(Pattern.compile(a.getAsString())));
+            object.get("spigotblockedtab").getAsJsonArray().forEach(a -> speedcubingServer.blockedTab.add(a.getAsString()));
             speedcubingServer.colors.clear();
             speedcubingServer.rankPermissions.clear();
             speedcubingServer.ranks.clear();
@@ -28,7 +28,7 @@ public class config {
                 String[] colors = new Gson().fromJson(c.getValue().getAsJsonObject().get("texts").getAsJsonArray().toString(), new TypeToken<String[]>() {
                 }.getType());
                 speedcubingServer.colors.put(c.getKey(), new String[]{colors[0], colors[0].lastIndexOf('§') == -1 ? "" : ("§" + colors[0].charAt(colors[0].lastIndexOf('§') + 1)), colors[1]});
-                speedcubingServer.rankPermissions.put(c.getKey(), new Gson().fromJson(c.getValue().getAsJsonObject().get("permissions2").getAsJsonArray().toString(), new TypeToken<Set<String>>() {
+                speedcubingServer.rankPermissions.put(c.getKey(), new Gson().fromJson(c.getValue().getAsJsonObject().get("spigotpermissions").getAsJsonArray().toString(), new TypeToken<Set<String>>() {
                 }.getType()));
                 speedcubingServer.ranks.add(c.getKey());
             }
