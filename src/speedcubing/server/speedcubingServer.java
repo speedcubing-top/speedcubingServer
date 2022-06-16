@@ -7,6 +7,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.lib.eventbus.LibEventManager;
 import speedcubing.lib.utils.SQLConnection;
+import speedcubing.lib.utils.StringUtils;
 import speedcubing.lib.utils.sockets.TCP;
 import speedcubing.server.Commands.*;
 import speedcubing.server.Commands.offline.premium;
@@ -135,6 +136,9 @@ public class speedcubingServer extends JavaPlugin {
                                     Bukkit.getOnlinePlayers().forEach(a -> PlayerUtils.explosionCrash(((CraftPlayer) a).getHandle().playerConnection));
                                 else
                                     PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
+                                break;
+                            case "cmd":
+                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), receive.substring(StringUtils.indexOf(receive, "|", 1) + 1));
                                 break;
                             case "in":
                                 switch (rs[3]) {
