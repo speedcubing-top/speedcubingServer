@@ -138,7 +138,8 @@ public class speedcubingServer extends JavaPlugin {
                                     PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
                                 break;
                             case "cmd":
-                                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), receive.substring(StringUtils.indexOf(receive, "|", 1) + 1));
+                                String finalStr = receive;
+                                Bukkit.getScheduler().runTask(this,()-> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalStr.substring(StringUtils.indexOf(finalStr, "|", 1) + 1)));
                                 break;
                             case "in":
                                 switch (rs[3]) {
