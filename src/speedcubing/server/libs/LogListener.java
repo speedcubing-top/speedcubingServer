@@ -7,6 +7,7 @@ import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
+import org.bukkit.Bukkit;
 import speedcubing.server.speedcubingServer;
 
 import java.util.Iterator;
@@ -21,11 +22,16 @@ public class LogListener {
             @Override
             public Result filter(LogEvent event) {
                 String msg = event.getMessage().getFormattedMessage();
+                boolean denied = false;
                 for (Pattern p : speedcubingServer.blockedLog) {
-                    if (p.matcher(msg).matches())
-                        return Result.DENY;
+                    if (p.matcher(msg).matches()) {
+                        denied = true;
+                        break;
+                    }
                 }
-                return null;
+                if (!denied)
+                    speedcubingServer.tcp.sendClean(20000, "log|" + Bukkit.getServerName() + "|" + msg);
+                return denied ? Result.DENY : null;
             }
 
             @Override
