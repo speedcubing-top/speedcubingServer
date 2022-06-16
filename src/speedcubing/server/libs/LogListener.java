@@ -30,7 +30,7 @@ public class LogListener {
                     }
                 }
                 if (!denied)
-                    speedcubingServer.tcp.sendClean(20000, "log|" + Bukkit.getServerName() + "|" + msg);
+                    speedcubingServer.tcp.sendClean(20000, "log|" + Bukkit.getServerName() + "|" + event.getLevel() + "|" + event.getNanoTime() + "|" + msg);
                 return denied ? Result.DENY : null;
             }
 
