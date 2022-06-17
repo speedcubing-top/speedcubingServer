@@ -68,6 +68,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new PlayerVelocity(), this);
         Bukkit.getPluginManager().registerEvents(new Cps(), this);
         Bukkit.getPluginManager().registerEvents(new ForceOp(), this);
+        Bukkit.getPluginManager().registerEvents(new ServerCommand(), this);
         Bukkit.getPluginManager().registerEvents(new CreatureSpawn(), this);
         Bukkit.getPluginCommand("discord").setExecutor(new discord());
         Bukkit.getPluginCommand("discord").setTabCompleter(new discord());
