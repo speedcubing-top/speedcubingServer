@@ -5,7 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerLoginEvent;
-import speedcubing.server.Commands.shutdown;
+import speedcubing.server.Commands.end;
 import speedcubing.server.ExploitFixer.ForceOp;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
@@ -17,7 +17,7 @@ public class PlayerLogin implements Listener {
     @EventHandler
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        if (shutdown.restarting) {
+        if (end.restarting) {
             e.setKickMessage("§cServer Restarting... Please wait for a few seconds.");
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             return;

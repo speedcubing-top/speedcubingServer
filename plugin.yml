@@ -23,8 +23,8 @@ commands:
     usage: /announce
     aliases:
       - ann
-  shutdown:
-    usage: /shutdown
+  end:
+    usage: /end
   heal:
     usage: /heal
   proxycommand:
