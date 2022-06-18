@@ -1,9 +1,9 @@
 package speedcubing.server.events;
 
-public class SocketEvent {
+public class InputEvent {
     public String receive;
 
-    public SocketEvent(String receive) {
+    public InputEvent(String receive) {
         this.receive = receive;
     }
 }

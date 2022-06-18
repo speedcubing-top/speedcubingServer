@@ -13,6 +13,7 @@ import speedcubing.server.Commands.*;
 import speedcubing.server.Commands.offline.premium;
 import speedcubing.server.Commands.offline.resetpassword;
 import speedcubing.server.ExploitFixer.ForceOp;
+import speedcubing.server.events.InputEvent;
 import speedcubing.server.events.SocketEvent;
 import speedcubing.server.libs.LogListener;
 import speedcubing.server.libs.User;
@@ -57,6 +58,12 @@ public class speedcubingServer extends JavaPlugin {
         tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
         new Cps().Load();
         new ForceOp().run();
+        if (!isBungeeOnlineMode) {
+            Bukkit.getPluginCommand("premium").setExecutor(new premium());
+            Bukkit.getPluginCommand("premium").setTabCompleter(new premium());
+            Bukkit.getPluginCommand("resetpassword").setExecutor(new resetpassword());
+            Bukkit.getPluginCommand("resetpassword").setTabCompleter(new resetpassword());
+        }
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
         Bukkit.getPluginManager().registerEvents(new froze(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDeath(), this);
@@ -85,10 +92,6 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginCommand("proxycommand").setTabCompleter(new proxycommand());
         Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
-        Bukkit.getPluginCommand("premium").setExecutor(new premium());
-        Bukkit.getPluginCommand("premium").setTabCompleter(new premium());
-        Bukkit.getPluginCommand("resetpassword").setExecutor(new resetpassword());
-        Bukkit.getPluginCommand("resetpassword").setTabCompleter(new resetpassword());
         Bukkit.getPluginCommand("nick").setExecutor(new nick());
         Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
@@ -140,26 +143,16 @@ public class speedcubingServer extends JavaPlugin {
                                 break;
                             case "cmd":
                                 String finalStr = receive;
-                                Bukkit.getScheduler().runTask(this,()-> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalStr.substring(StringUtils.indexOf(finalStr, "|", 1) + 1)));
+                                Bukkit.getScheduler().runTask(this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalStr.substring(StringUtils.indexOf(finalStr, "|", 1) + 1)));
                                 break;
                             case "in":
-                                switch (rs[3]) {
-                                    case "bungee":
-                                        tcpStorage.put(UUID.fromString(rs[4]), Integer.parseInt(rs[5]));
-                                        tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "|bungee");
-                                        break;
-                                    case "bungeevelo":
-                                        if (rs[4].equals("a"))
-                                            veloStorage.put(UUID.fromString(rs[5]), new Double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])});
-                                        tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "|bungeevelo");
-                                        break;
-                                }
+                                LibEventManager.callEvent(new InputEvent(receive));
                                 break;
                             case "velo":
                                 User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                                 break;
                             default:
-                                LibEventManager.callEvent(new SocketEvent(rs));
+                                LibEventManager.callEvent(new SocketEvent(receive));
                                 break;
                         }
                     } else System.out.print("[Server] received null line of socket");
