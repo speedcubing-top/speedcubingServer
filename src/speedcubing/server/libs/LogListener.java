@@ -8,6 +8,8 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import speedcubing.lib.utils.Console;
 import speedcubing.server.speedcubingServer;
 
 import java.util.Iterator;
@@ -21,7 +23,7 @@ public class LogListener {
 
             @Override
             public Result filter(LogEvent event) {
-                String msg = event.getMessage().getFormattedMessage();
+                String msg = Console.ansiToColoredText(event.getMessage().getFormattedMessage());
                 boolean denied = false;
                 for (Pattern p : speedcubingServer.blockedLog) {
                     if (p.matcher(msg).matches()) {
