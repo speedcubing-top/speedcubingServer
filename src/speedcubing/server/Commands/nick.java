@@ -78,9 +78,9 @@ public class nick implements CommandExecutor, TabCompleter {
         PlayerConnection connection = entityPlayer.playerConnection;
         String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
         User user = User.getUser(uuid);
-        PacketPlayOutScoreboardTeam old = OutScoreboardTeam.a(speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(player.getName()), 1);
-        PacketPlayOutScoreboardTeam leavePacket = OutScoreboardTeam.a(extracted2, 1);
-        PacketPlayOutScoreboardTeam joinPacket = OutScoreboardTeam.a(extracted2, speedcubingServer.getFormat(rank)[0], Collections.singletonList(name), 0);
+        PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
+        PacketPlayOutScoreboardTeam leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
+        PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(speedcubingServer.getFormat(rank)[0]).g(Collections.singletonList(name)).h(0).packet;
         PacketPlayOutPlayerInfo removePlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer);
         PacketPlayOutPlayerInfo addPlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer);
         for (Player p : Bukkit.getOnlinePlayers()) {

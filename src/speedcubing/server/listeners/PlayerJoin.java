@@ -33,15 +33,15 @@ public class PlayerJoin implements Listener {
         RemovePackets.values().forEach(connection::sendPacket);
         JoinPackets.values().forEach(connection::sendPacket);
         String extracted = speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(temp[0]);
-        PacketPlayOutScoreboardTeam leavePacket = OutScoreboardTeam.a(extracted, 1);
-        PacketPlayOutScoreboardTeam joinPacket = OutScoreboardTeam.a(extracted, speedcubingServer.getFormat(user.rank)[0], Collections.singletonList(temp[0]), 0);
+        PacketPlayOutScoreboardTeam leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
+        PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted).c(speedcubingServer.getFormat(user.rank)[0]).g(Collections.singletonList(temp[0])).h(0).packet;
         for (Player p : Bukkit.getOnlinePlayers()) {
             PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
             c.sendPacket(leavePacket);
             c.sendPacket(joinPacket);
         }
         if (!temp[1].equals(""))
-            connection.sendPacket(OutScoreboardTeam.a(speedcubingServer.getCode(temp[2]) + speedcubingServer.playerNameExtract(temp[1]), speedcubingServer.getFormat(temp[2])[0], Collections.singletonList(temp[1]), 0));
+            connection.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(temp[2]) + speedcubingServer.playerNameExtract(temp[1])).c(speedcubingServer.getFormat(temp[2])[0]).g(Collections.singletonList(temp[1])).h(0).packet);
         RemovePackets.put(uuid, leavePacket);
         JoinPackets.put(uuid, joinPacket);
     }
