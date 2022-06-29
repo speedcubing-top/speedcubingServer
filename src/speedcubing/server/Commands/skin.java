@@ -1,12 +1,5 @@
 package speedcubing.server.Commands;
 
-import speedcubing.lib.api.MojangAPI;
-import speedcubing.lib.api.SessionServer;
-import speedcubing.lib.api.exception.APIErrorException;
-import speedcubing.lib.bukkit.PlayerUtils;
-import speedcubing.server.libs.GlobalString;
-import speedcubing.server.libs.User;
-import speedcubing.server.speedcubingServer;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
@@ -16,6 +9,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import speedcubing.lib.api.MojangAPI;
+import speedcubing.lib.api.SessionServer;
+import speedcubing.lib.api.exception.APIErrorException;
+import speedcubing.lib.bukkit.PlayerUtils;
+import speedcubing.server.libs.GlobalString;
+import speedcubing.server.libs.User;
+import speedcubing.server.speedcubingServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,7 @@ public class skin implements CommandExecutor, TabCompleter {
                                 player.sendMessage(GlobalString.invalidName[User.getUser(player.getUniqueId()).lang]);
                             else {
                                 String[] skin = SessionServer.getSkin(id);
-                                List<Packet<?>>[] packets = PlayerUtils.changeSkin(((CraftPlayer) player).getHandle(), skin);
+                                List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, skin);
                                 PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
                                 packets[0].forEach(connection::sendPacket);
                                 String worldname = player.getWorld().getName();

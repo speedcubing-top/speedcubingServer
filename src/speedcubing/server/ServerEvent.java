@@ -1,6 +1,7 @@
 package speedcubing.server;
 
-import speedcubing.lib.bukkit.event.PlayInTabCompleteEvent;
+import net.minecraft.server.v1_8_R3.PacketPlayInTabComplete;
+import speedcubing.lib.bukkit.event.PlayInEvent;
 import speedcubing.lib.eventbus.LibEventHandler;
 import speedcubing.server.events.InputEvent;
 
@@ -8,12 +9,12 @@ import java.util.UUID;
 
 public class ServerEvent {
     @LibEventHandler
-    public void PlayInTabCompleteEvent(PlayInTabCompleteEvent e) {
-        if (speedcubingServer.blockedTab.contains(e.packet.a()))
+    public void PlayInEvent(PlayInEvent e) {
+        if (e.packet instanceof PacketPlayInTabComplete && speedcubingServer.blockedTab.contains(((PacketPlayInTabComplete) e.packet).a()))
             e.isCancelled = true;
     }
 
-    @LibEventHandler(priority = -500)
+    @LibEventHandler
     public void InputEvent(InputEvent e) {
         String[] rs = e.receive.split("\\|");
         switch (rs[3]) {

@@ -137,9 +137,9 @@ public class speedcubingServer extends JavaPlugin {
                                 break;
                             case "crash":
                                 if (rs[1].equals("@a"))
-                                    Bukkit.getOnlinePlayers().forEach(a -> PlayerUtils.explosionCrash(((CraftPlayer) a).getHandle().playerConnection));
+                                    Bukkit.getOnlinePlayers().forEach(PlayerUtils::explosionCrash);
                                 else
-                                    PlayerUtils.explosionCrash(((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection);
+                                    PlayerUtils.explosionCrash(Bukkit.getPlayerExact(rs[1]));
                                 break;
                             case "cmd":
                                 String finalStr = receive;
