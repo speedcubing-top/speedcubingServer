@@ -31,11 +31,10 @@ public class skin implements CommandExecutor, TabCompleter {
             case "mlgrush":
             case "practice":
                 if (player.getWorld().getName().equals("world")) {
-                    String name = player.getName();
                     new Thread(() -> {
                         String target = "";
                         if (strings.length == 0)
-                            target = name;
+                            target = player.getName();
                         else if (strings.length == 1)
                             target = strings[0];
                         else player.sendMessage("/skin , /skin <player>");
@@ -61,7 +60,7 @@ public class skin implements CommandExecutor, TabCompleter {
                                     else if (p.getUniqueId() != uuid)
                                         packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
                                 }
-                                if (!target.equalsIgnoreCase(name))
+                                if (!target.equalsIgnoreCase(player.getName()))
                                     speedcubingServer.connection.update("playersdata", "skinvalue='" + skin[0] + "',skinsignature='" + skin[1] + "'", "uuid='" + uuid + "'");
                                 else
                                     speedcubingServer.connection.update("playersdata", "skinvalue=NULL,skinsignature=NULL", "uuid='" + uuid + "'");

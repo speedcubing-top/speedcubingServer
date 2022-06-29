@@ -44,8 +44,7 @@ public class nick implements CommandExecutor, TabCompleter {
                             else
                                 commandSender.sendMessage(GlobalString.nicknotavaliable[User.getUser(player.getUniqueId()).lang]);
                         } else if (strings.length == 0) {
-                            UUID uuid = ((Player) commandSender).getUniqueId();
-                            String[] datas = speedcubingServer.connection.selectStrings("playersdata", "nickname,nickpriority", "uuid='" + uuid + "'");
+                            String[] datas = speedcubingServer.connection.selectStrings("playersdata", "nickname,nickpriority", "uuid='" + ((Player) commandSender).getUniqueId() + "'");
                             if (datas[0].equals(""))
                                 commandSender.sendMessage("/nick <nickname>");
                             else if (datas[0].equals(player.getName()))
