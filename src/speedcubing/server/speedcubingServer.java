@@ -32,8 +32,8 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean isBungeeOnlineMode;
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<String> blockedTab = new HashSet<>();
-    public static Map<UUID, Integer> tcpStorage = new HashMap<>();
-    public static Map<UUID, Double[]> veloStorage = new HashMap<>();
+    public static Map<Integer, Integer> tcpStorage = new HashMap<>();
+    public static Map<Integer, Double[]> veloStorage = new HashMap<>();
 
     public void onEnable() {
         Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
@@ -63,15 +63,18 @@ public class speedcubingServer extends JavaPlugin {
             Bukkit.getPluginCommand("premium").setTabCompleter(new premium());
             Bukkit.getPluginCommand("resetpassword").setExecutor(new resetpassword());
             Bukkit.getPluginCommand("resetpassword").setTabCompleter(new resetpassword());
+        } else {
+            Bukkit.getPluginCommand("nick").setExecutor(new nick());
+            Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
+            Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
+            Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
         }
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
-        Bukkit.getPluginManager().registerEvents(new froze(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDeath(), this);
         Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
         Bukkit.getPluginManager().registerEvents(new InventoryOpen(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerJoin(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerQuit(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerLogin(), this);
+        Bukkit.getPluginManager().registerEvents(new Login(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerVelocity(), this);
         Bukkit.getPluginManager().registerEvents(new Cps(), this);
         Bukkit.getPluginManager().registerEvents(new ForceOp(), this);
@@ -92,10 +95,6 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginCommand("proxycommand").setTabCompleter(new proxycommand());
         Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
-        Bukkit.getPluginCommand("nick").setExecutor(new nick());
-        Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
-        Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
-        Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
         Bukkit.getPluginCommand("announce").setTabCompleter(new announce());
         LibEventManager.registerListeners(new ServerEvent());
@@ -110,20 +109,10 @@ public class speedcubingServer extends JavaPlugin {
                         String[] rs = receive.split("\\|");
                         switch (rs[0]) {
                             case "bungee":
-                                User.getUser(UUID.fromString(rs[1])).tcpPort = Integer.parseInt(rs[2]);
-                                break;
-                            case "froze":
-                                switch (rs[1]) {
-                                    case "a":
-                                        froze.frozed.add(Bukkit.getPlayerExact(rs[2]).getUniqueId());
-                                        break;
-                                    case "r":
-                                        froze.frozed.remove(Bukkit.getPlayerExact(rs[2]).getUniqueId());
-                                        break;
-                                }
+                                User.getUser(Integer.parseInt(rs[1])).tcpPort = Integer.parseInt(rs[2]);
                                 break;
                             case "cpsrequest":
-                                User.getUser(UUID.fromString(rs[2])).listened = rs[1].equals("a");
+                                User.getUser(Integer.parseInt(rs[2])).listened = rs[1].equals("a");
                                 break;
                             case "cfg":
                                 new config().reload();
@@ -149,7 +138,7 @@ public class speedcubingServer extends JavaPlugin {
                                 LibEventManager.callEvent(new InputEvent(receive));
                                 break;
                             case "velo":
-                                User.getUser(UUID.fromString(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
+                                User.getUser(Integer.parseInt(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                                 break;
                             default:
                                 LibEventManager.callEvent(new SocketEvent(receive));
@@ -178,8 +167,8 @@ public class speedcubingServer extends JavaPlugin {
         index.delete();
     }
 
-    public static void node(boolean add, UUID uuid, int port) {
-        speedcubingServer.tcp.send(port, "hasnode|" + (add ? "a" : "r") + "|" + uuid);
+    public static void node(boolean add, int id, int port) {
+        speedcubingServer.tcp.send(port, "hasnode|" + (add ? "a" : "r") + "|" + id);
     }
 
     public static Map<String, String[]> colors = new HashMap<>();

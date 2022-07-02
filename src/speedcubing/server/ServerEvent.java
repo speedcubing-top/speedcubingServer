@@ -5,8 +5,6 @@ import speedcubing.lib.bukkit.event.PlayInEvent;
 import speedcubing.lib.eventbus.LibEventHandler;
 import speedcubing.server.events.InputEvent;
 
-import java.util.UUID;
-
 public class ServerEvent {
     @LibEventHandler
     public void PlayInEvent(PlayInEvent e) {
@@ -19,11 +17,11 @@ public class ServerEvent {
         String[] rs = e.receive.split("\\|");
         switch (rs[3]) {
             case "bungee":
-                speedcubingServer.tcpStorage.put(UUID.fromString(rs[4]), Integer.parseInt(rs[5]));
+                speedcubingServer.tcpStorage.put(Integer.parseInt(rs[4]), Integer.parseInt(rs[5]));
                 break;
             case "bungeevelo":
                 if (rs[4].equals("a"))
-                    speedcubingServer.veloStorage.put(UUID.fromString(rs[5]), new Double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])});
+                    speedcubingServer.veloStorage.put(Integer.parseInt(rs[5]), new Double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])});
                 break;
         }
     }

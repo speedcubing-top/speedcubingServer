@@ -12,57 +12,42 @@ import org.bukkit.entity.Player;
 import speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import speedcubing.lib.eventbus.LibEventManager;
 import speedcubing.lib.utils.Reflections;
-import speedcubing.server.events.NickEvent;
+import speedcubing.server.events.player.NickEvent;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
-import speedcubing.server.listeners.PlayerJoin;
 import speedcubing.server.speedcubingServer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
 
 public class nick implements CommandExecutor, TabCompleter {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (speedcubingServer.isBungeeOnlineMode) {
-            Player player = (Player) commandSender;
-            switch (Bukkit.getServerName()) {
-                case "lobby":
-                case "mlgrush":
-                case "practice":
-                case "bedwars":
-                case "clutch":
-                    if (player.getWorld().getName().equals("world")) {
-                        if (strings.length == 1) {
-                            String name = strings[0];
-                            UUID uuid = ((Player) commandSender).getUniqueId();
-                            if (name.equals(commandSender.getName()))
-                                commandSender.sendMessage(GlobalString.nicksameusername[User.getUser(player.getUniqueId()).lang]);
-                            else if (name.equals(speedcubingServer.connection.selectString("playersdata", "name", "uuid='" + uuid + "'")))
-                                commandSender.sendMessage(GlobalString.nickdefaultusername[User.getUser(player.getUniqueId()).lang]);
-                            else if (name.matches("^\\w{3,16}$") && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'") && !speedcubingServer.connection.isStringExist("playersdata", "uuid!='" + uuid + "' AND nickname='" + name + "'"))
-                                nickPlayer(name, speedcubingServer.connection.selectString("playersdata", "nickpriority", "uuid='" + uuid + "'"), true, player);
-                            else
-                                commandSender.sendMessage(GlobalString.nicknotavaliable[User.getUser(player.getUniqueId()).lang]);
-                        } else if (strings.length == 0) {
-                            String[] datas = speedcubingServer.connection.selectStrings("playersdata", "nickname,nickpriority", "uuid='" + ((Player) commandSender).getUniqueId() + "'");
-                            if (datas[0].equals(""))
-                                commandSender.sendMessage("/nick <nickname>");
-                            else if (datas[0].equals(player.getName()))
-                                commandSender.sendMessage("you are already nicked!");
-                            else nick.nickPlayer(datas[0], datas[1], true, player);
-                        } else commandSender.sendMessage("/nick <nickname>, /nick (use the previous nick)");
-                    } else
-                        player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
-                    break;
-                case "auth":
-                case "fastbuilder":
-                case "knockbackffa":
-                case "reducebot":
-                    player.sendMessage(GlobalString.OnlyInHub[User.getUser(player.getUniqueId()).lang]);
-                    break;
-            }
-        } else
-            commandSender.sendMessage(GlobalString.UnknownCommand[User.getUser(((Player) commandSender).getUniqueId()).lang]);
+        NickEvent event = new NickEvent((Player) commandSender);
+        LibEventManager.callEvent(event);
+        if (!event.isCancelled) {
+            if (strings.length == 1) {
+                String name = strings[0];
+                User user = User.getUser(commandSender);
+                if (name.equals(commandSender.getName()))
+                    commandSender.sendMessage(GlobalString.nicksameusername[user.lang]);
+                else if (name.equals(speedcubingServer.connection.selectString("playersdata", "name", "id=" + user.id)))
+                    commandSender.sendMessage(GlobalString.nickdefaultusername[user.lang]);
+                else if (name.matches("^\\w{3,16}$") && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'") && !speedcubingServer.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'"))
+                    nickPlayer(name, speedcubingServer.connection.selectString("playersdata", "nickpriority", "id=" + user.id), true, (Player) commandSender);
+                else
+                    commandSender.sendMessage(GlobalString.nicknotavaliable[user.lang]);
+            } else if (strings.length == 0) {
+                String[] datas = speedcubingServer.connection.selectStrings("playersdata", "nickname,nickpriority", "id=" + User.getUser(commandSender).id);
+                if (datas[0].equals(""))
+                    commandSender.sendMessage("/nick <nickname>");
+                else if (datas[0].equals(commandSender.getName()))
+                    commandSender.sendMessage("you are already nicked!");
+                else nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender);
+            } else commandSender.sendMessage("/nick <nickname>, /nick (use the previous nick)");
+        }
         return true;
     }
 
@@ -71,12 +56,10 @@ public class nick implements CommandExecutor, TabCompleter {
     }
 
     public static void nickPlayer(String name, String rank, boolean nick, Player player) {
-        UUID uuid = player.getUniqueId();
-        LibEventManager.callEvent(new NickEvent(name, rank, uuid, nick));
         EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
         PlayerConnection connection = entityPlayer.playerConnection;
         String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
-        User user = User.getUser(uuid);
+        User user = User.getUser(player);
         PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
         PacketPlayOutScoreboardTeam leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
         PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(speedcubingServer.getFormat(rank)[0]).g(Collections.singletonList(name)).h(0).packet;
@@ -103,10 +86,10 @@ public class nick implements CommandExecutor, TabCompleter {
             c.sendPacket(leavePacket);
             c.sendPacket(joinPacket);
         }
-        PlayerJoin.RemovePackets.put(uuid, leavePacket);
-        PlayerJoin.JoinPackets.put(uuid, joinPacket);
-        speedcubingServer.connection.update("playersdata", "nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""), "uuid='" + uuid + "'");
-        speedcubingServer.tcp.send(user.tcpPort, "nick|" + uuid + "|" + rank + "|" + name);
+        user.joinPacket = joinPacket;
+        user.leavePacket = leavePacket;
+        speedcubingServer.connection.update("playersdata", "nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""), "id=" + user.id);
+        speedcubingServer.tcp.send(user.tcpPort, "nick|" + user.id + "|" + rank + "|" + name);
         user.rank = rank;
     }
 }

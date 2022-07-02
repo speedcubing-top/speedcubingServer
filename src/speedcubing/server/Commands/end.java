@@ -16,29 +16,15 @@ public class end implements CommandExecutor, TabCompleter {
     public static boolean restarting = true;
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        switch (Bukkit.getServerName()) {
-            case "mlgrush":
-            case "practice":
-            case "bedwars":
-            case "knockbackffa":
-            case "fastbuilder":
-            case "clutch":
-            case "reducebot":
-                restarting = true;
-                Bukkit.getOnlinePlayers().forEach(a -> BungeePluginMessage.switchServer(a,"lobby"));
-                new Timer().schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        if (Bukkit.getOnlinePlayers().size() == 0)
-                            Bukkit.shutdown();
-                    }
-                }, 1000, 1000);
-                break;
-            case "lobby":
-            case "auth":
-                Bukkit.getServer().shutdown();
-                break;
-        }
+        restarting = true;
+        Bukkit.getOnlinePlayers().forEach(a -> BungeePluginMessage.switchServer(a, "lobby"));
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (Bukkit.getOnlinePlayers().size() == 0)
+                    Bukkit.shutdown();
+            }
+        }, 1000, 1000);
         return true;
     }
 

@@ -33,11 +33,11 @@ public class CommandPermissions implements Listener {
         command = command.toLowerCase();
         if (op.contains(command)) {
             if (!player.isOp()) {
-                player.sendMessage(GlobalString.UnknownCommand[User.getUser(player.getUniqueId()).lang]);
+                player.sendMessage(GlobalString.UnknownCommand[User.getUser(player).lang]);
                 e.setCancelled(true);
             }
         } else {
-            User user = User.getUser(player.getUniqueId());
+            User user = User.getUser(player);
             Set<String> perms = user.permissions;
             if (!(perms.contains("cmd." + command) || perms.contains("cmd.*"))) {
                 if (perms.contains("view." + command) || perms.contains("view.*"))

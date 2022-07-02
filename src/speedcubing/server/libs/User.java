@@ -1,32 +1,73 @@
 package speedcubing.server.libs;
 
+import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import org.apache.commons.lang.ArrayUtils;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import speedcubing.server.speedcubingServer;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 public class User {
-    public static Map<UUID, User> users = new HashMap<>();
+    public static Map<Integer, User> usersByID = new HashMap<>();
+    public static Map<UUID, User> usersByUUID = new HashMap<>();
+    public final Player player;
 
     public Set<String> permissions;
     public double[] velocities;
     public int lang;
+    public final int id;
     public String rank;
     public int tcpPort;
-    public int leftClick;
-    public int rightClick;
+    public boolean allowOp;
     public boolean listened;
 
-    public User(UUID uuid, String rank, Set<String> permissions) {
-        this.lang = speedcubingServer.connection.selectInt("playersdata", "lang", "uuid='" + uuid + "'");
-        this.rank = rank;
+    public PacketPlayOutScoreboardTeam joinPacket;
+    public PacketPlayOutScoreboardTeam leavePacket;
+    public int leftClick;
+    public int rightClick;
+
+    public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp) {
+        this.player = player;
         this.permissions = permissions;
-        this.velocities = ArrayUtils.toPrimitive(speedcubingServer.veloStorage.get(uuid));
-        this.tcpPort = speedcubingServer.tcpStorage.get(uuid);
-        users.put(uuid, this);
+        this.velocities = ArrayUtils.toPrimitive(speedcubingServer.veloStorage.get(id));
+        this.lang = lang;
+        this.id = id;
+        this.rank = rank;
+        Integer i = speedcubingServer.tcpStorage.get(id);
+        this.tcpPort = i == null ? 0 : i;
+        this.allowOp = allowOp;
+        usersByID.put(id, this);
+        usersByUUID.put(player.getUniqueId(), this);
     }
 
-    public static User getUser(UUID uuid) {
-        return users.get(uuid);
+    public User(UUID uuid) {
+        User user = usersByUUID.get(uuid);
+        this.player = user.player;
+        this.permissions = user.permissions;
+        this.velocities = user.velocities;
+        this.lang = user.lang;
+        this.id = user.id;
+        this.rank = user.rank;
+        this.tcpPort = user.tcpPort;
+        this.allowOp = user.allowOp;
+        this.listened = user.listened;
+        this.joinPacket = user.joinPacket;
+        this.leavePacket = user.leavePacket;
+    }
+
+    public static User getUser(int id) {
+        return usersByID.get(id);
+    }
+
+    public static User getUser(Player player) {
+        return usersByUUID.get(player.getUniqueId());
+    }
+
+    public static User getUser(CommandSender sender) {
+        return getUser((Player) sender);
     }
 }
