@@ -13,7 +13,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class end implements CommandExecutor, TabCompleter {
-    public static boolean restarting = true;
+    public static boolean restarting = false;
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         restarting = true;
