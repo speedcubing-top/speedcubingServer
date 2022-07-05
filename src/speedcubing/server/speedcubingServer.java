@@ -119,16 +119,16 @@ public class speedcubingServer extends JavaPlugin {
                                 break;
                             case "demo":
                                 PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
-                                if (rs[1].equals("@a"))
+                                if (rs[1].equals("-1"))
                                     Bukkit.getOnlinePlayers().forEach(a -> ((CraftPlayer) a).getHandle().playerConnection.sendPacket(packet));
                                 else
-                                    ((CraftPlayer) Bukkit.getPlayerExact(rs[1])).getHandle().playerConnection.sendPacket(packet);
+                                    ((CraftPlayer) User.getUser(Integer.parseInt(rs[1])).player).getHandle().playerConnection.sendPacket(packet);
                                 break;
                             case "crash":
-                                if (rs[1].equals("@a"))
+                                if (rs[1].equals("-1"))
                                     Bukkit.getOnlinePlayers().forEach(PlayerUtils::explosionCrash);
                                 else
-                                    PlayerUtils.explosionCrash(Bukkit.getPlayerExact(rs[1]));
+                                    PlayerUtils.explosionCrash(User.getUser(Integer.parseInt(rs[1])).player);
                                 break;
                             case "cmd":
                                 String finalStr = receive;
