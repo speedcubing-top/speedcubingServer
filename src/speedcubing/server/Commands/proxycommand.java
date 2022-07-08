@@ -19,7 +19,9 @@ public class proxycommand implements CommandExecutor, TabCompleter {
             for (String string : strings) {
                 comamnd.append(" ").append(string);
             }
-            int port = commandSender instanceof ConsoleCommandSender ? 25568 - Bukkit.getPort() % 2 : User.getUser(commandSender).tcpPort;
+            int port = commandSender instanceof ConsoleCommandSender ?
+                    (User.usersByID.values().size() != 0 ? User.usersByID.values().iterator().next().tcpPort : 25568 - Bukkit.getPort() % 2)
+                    : User.getUser(commandSender).tcpPort;
             speedcubingServer.tcp.send(port, "proxycmd|" + comamnd.substring(1));
         }
         return true;
