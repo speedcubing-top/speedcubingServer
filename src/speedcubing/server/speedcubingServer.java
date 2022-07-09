@@ -6,7 +6,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.lib.eventbus.LibEventManager;
-import speedcubing.lib.utils.SQLConnection;
+import speedcubing.lib.utils.SQL.SQLConnection;
 import speedcubing.lib.utils.StringUtils;
 import speedcubing.lib.utils.sockets.TCP;
 import speedcubing.server.Commands.*;

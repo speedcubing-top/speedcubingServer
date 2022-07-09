@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import speedcubing.lib.eventbus.LibEventManager;
 import speedcubing.lib.utils.Reflections;
+import speedcubing.lib.utils.SQL.SQLUtils;
 import speedcubing.server.events.player.NickEvent;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
@@ -33,14 +34,14 @@ public class nick implements CommandExecutor, TabCompleter {
                 User user = User.getUser(commandSender);
                 if (name.equals(commandSender.getName()))
                     commandSender.sendMessage(GlobalString.nicksameusername[user.lang]);
-                else if (name.equals(speedcubingServer.connection.selectString("playersdata", "name", "id=" + user.id)))
+                else if (name.equals(SQLUtils.getString(speedcubingServer.connection.select("playersdata", "name", "id=" + user.id))))
                     commandSender.sendMessage(GlobalString.nickdefaultusername[user.lang]);
                 else if (name.matches("^\\w{3,16}$") && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'") && !speedcubingServer.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'"))
-                    nickPlayer(name, speedcubingServer.connection.selectString("playersdata", "nickpriority", "id=" + user.id), true, (Player) commandSender);
+                    nickPlayer(name, SQLUtils.getString(speedcubingServer.connection.select("playersdata", "nickpriority", "id=" + user.id)), true, (Player) commandSender);
                 else
                     commandSender.sendMessage(GlobalString.nicknotavaliable[user.lang]);
             } else if (strings.length == 0) {
-                String[] datas = speedcubingServer.connection.selectStrings("playersdata", "nickname,nickpriority", "id=" + User.getUser(commandSender).id);
+                String[] datas = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "nickname,nickpriority", "id=" + User.getUser(commandSender).id));
                 if (datas[0].equals(""))
                     commandSender.sendMessage("/nick <nickname>");
                 else if (datas[0].equals(commandSender.getName()))

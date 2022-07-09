@@ -11,6 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
+import speedcubing.lib.utils.SQL.SQLUtils;
 import speedcubing.server.Commands.end;
 import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
@@ -27,7 +28,7 @@ public class Login implements Listener {
             return;
         }
         Player player = e.getPlayer();
-        String[] datas = speedcubingServer.connection.selectStrings("playersdata", "priority,nickpriority,perms,disabledperms,lang,id,name,allow_op", "uuid='" + player.getUniqueId() + "'");
+        String[] datas = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "priority,nickpriority,perms,disabledperms,lang,id,name,allow_op", "uuid='" + player.getUniqueId() + "'"));
         if (player.isOp() && datas[7].equals("0")) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             return;
