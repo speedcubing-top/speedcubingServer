@@ -59,7 +59,7 @@ public class skin implements CommandExecutor, TabCompleter {
                         if (!target.equalsIgnoreCase(player.getName()))
                             speedcubingServer.connection.update("playersdata", "skinvalue='" + skin[0] + "',skinsignature='" + skin[1] + "'", "id=" + user.id);
                         else
-                            speedcubingServer.connection.update("playersdata", "skinvalue=NULL,skinsignature=NULL", "id=" + user.id);
+                            speedcubingServer.connection.update("playersdata", "skinvalue='',skinsignature=''", "id=" + user.id);
                         speedcubingServer.tcp.send(User.getUser(commandSender).tcpPort, "skin|" + user.id + "|" + skin[0] + "|" + skin[1]);
                     }
                 }
