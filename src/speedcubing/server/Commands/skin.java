@@ -13,6 +13,7 @@ import speedcubing.lib.api.SessionServer;
 import speedcubing.lib.api.exception.APIErrorException;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.lib.eventbus.LibEventManager;
+import speedcubing.server.LocalMojang;
 import speedcubing.server.events.player.SkinEvent;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
@@ -38,7 +39,7 @@ public class skin implements CommandExecutor, TabCompleter {
                 if (!target.equals("")) {
                     String id = "";
                     try {
-                        id = MojangAPI.getUUID(target);
+                        id = LocalMojang.getUUID(target);
                     } catch (APIErrorException e) {
                     }
                     if (id.equals(""))
