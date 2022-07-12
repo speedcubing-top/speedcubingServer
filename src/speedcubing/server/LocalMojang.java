@@ -11,16 +11,14 @@ public class LocalMojang {
         if (datas != null) {
             if (datas[0].equals("0") || System.currentTimeMillis() - Long.parseLong(datas[0]) > 2592000000L) {
                 String uuid = MojangAPI.getUUID(name);
-                JsonArray element = MojangAPI.getNameHistory(uuid).getAsJsonArray();
-                JsonObject object = element.get(element.size() - 1).getAsJsonObject();
+                JsonObject object = a(uuid);
                 String cap = object.get("name").getAsString();
                 speedcubingServer.systemconnection.update("mojangnamedb", "at=" + (object.has("changedToAt") ? object.get("changedToAt").getAsString() : "0") + ",name='" + cap + "'", "uuid='" + uuid + "'");
                 return new String[]{uuid, cap};
             } else return new String[]{datas[1], datas[2]};
         } else {
             String uuid = MojangAPI.getUUID(name);
-            JsonArray element = MojangAPI.getNameHistory(uuid).getAsJsonArray();
-            JsonObject object = element.get(element.size() - 1).getAsJsonObject();
+            JsonObject object = a(uuid);
             String cap = object.get("name").getAsString();
             speedcubingServer.systemconnection.insert("mojangnamedb", "at,uuid,name", (object.has("changedToAt") ? object.get("changedToAt").getAsString() : "0") + ",'" + cap + "','" + uuid + "'");
             return new String[]{uuid, cap};
@@ -32,17 +30,24 @@ public class LocalMojang {
         if (datas != null) {
             if (datas[0].equals("0") || System.currentTimeMillis() - Long.parseLong(datas[0]) > 2592000000L) {
                 String uuid = MojangAPI.getUUID(name);
-                JsonArray element = MojangAPI.getNameHistory(uuid).getAsJsonArray();
-                JsonObject object = element.get(element.size() - 1).getAsJsonObject();
-                speedcubingServer.systemconnection.update("mojangnamedb", "at=" + (object.has("changedToAt") ? object.get("changedToAt").getAsString() : "0") + ",name='" + object.get("name").getAsString() + "'", "uuid='" + uuid + "'");
+                new Thread(() -> {
+                    JsonObject object = a(uuid);
+                    speedcubingServer.systemconnection.update("mojangnamedb", "at=" + (object.has("changedToAt") ? object.get("changedToAt").getAsString() : "0") + ",name='" + object.get("name").getAsString() + "'", "uuid='" + uuid + "'");
+                }).start();
                 return uuid;
             } else return datas[1];
         } else {
             String uuid = MojangAPI.getUUID(name);
-            JsonArray element = MojangAPI.getNameHistory(uuid).getAsJsonArray();
-            JsonObject object = element.get(element.size() - 1).getAsJsonObject();
-            speedcubingServer.systemconnection.insert("mojangnamedb", "at,uuid,name", (object.has("changedToAt") ? object.get("changedToAt").getAsString() : "0") + ",'" + object.get("name").getAsString() + "','" + uuid + "'");
+            new Thread(() -> {
+                JsonObject object = a(uuid);
+                speedcubingServer.systemconnection.insert("mojangnamedb", "at,uuid,name", (object.has("changedToAt") ? object.get("changedToAt").getAsString() : "0") + ",'" + object.get("name").getAsString() + "','" + uuid + "'");
+            }).start();
             return uuid;
         }
+    }
+
+    private static JsonObject a(String uuid) {
+        JsonArray element = MojangAPI.getNameHistory(uuid).getAsJsonArray();
+        return element.get(element.size() - 1).getAsJsonObject();
     }
 }
