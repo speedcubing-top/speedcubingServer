@@ -20,7 +20,7 @@ public class LocalMojang {
             String uuid = MojangAPI.getUUID(name);
             JsonObject object = a(uuid);
             String cap = object.get("name").getAsString();
-            speedcubingServer.systemconnection.insert("mojangnamedb", "at,uuid,name", (object.has("changedToAt") ? object.get("changedToAt").getAsString() : "0") + ",'" + uuid + "','" + name + "'");
+            speedcubingServer.systemconnection.insert("mojangnamedb", "at,uuid,name", (object.has("changedToAt") ? object.get("changedToAt").getAsString() : "0") + ",'" + uuid + "','" + cap + "'");
             return new String[]{uuid, cap};
         }
     }
