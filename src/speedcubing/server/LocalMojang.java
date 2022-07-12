@@ -8,7 +8,7 @@ import speedcubing.lib.utils.SQL.SQLUtils;
 public class LocalMojang {
     public static String[] getUUIDandName(String name) {
         String[] datas = SQLUtils.getStringArray(speedcubingServer.systemconnection.select("mojangnamedb", "at,uuid,name", "name='" + name + "'"));
-        if (datas != null) {
+        if (datas.length != 0) {
             if (datas[0].equals("0") || System.currentTimeMillis() - Long.parseLong(datas[0]) > 2592000000L) {
                 String uuid = MojangAPI.getUUID(name);
                 JsonObject object = a(uuid);
@@ -27,7 +27,7 @@ public class LocalMojang {
 
     public static String getUUID(String name) {
         String[] datas = SQLUtils.getStringArray(speedcubingServer.systemconnection.select("mojangnamedb", "at,uuid", "name='" + name + "'"));
-        if (datas != null) {
+        if (datas.length != 0) {
             if (datas[0].equals("0") || System.currentTimeMillis() - Long.parseLong(datas[0]) > 2592000000L) {
                 String uuid = MojangAPI.getUUID(name);
                 new Thread(() -> {
