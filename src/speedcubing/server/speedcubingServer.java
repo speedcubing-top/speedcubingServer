@@ -4,6 +4,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.messaging.Messenger;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.lib.eventbus.LibEventManager;
 import speedcubing.lib.utils.SQL.SQLConnection;
@@ -23,6 +24,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -33,6 +35,7 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean isBungeeOnlineMode;
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<String> blockedTab = new HashSet<>();
+    public static Set<String> blockedMod = new HashSet<>();
     public static Map<Integer, Integer> tcpStorage = new HashMap<>();
     public static Map<Integer, Double[]> veloStorage = new HashMap<>();
 
@@ -71,6 +74,32 @@ public class speedcubingServer extends JavaPlugin {
             Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
             Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
         }
+        Messenger messenger = Bukkit.getMessenger();
+        messenger.registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
+            String brand = (new String(bytes, StandardCharsets.UTF_8)).substring(1);
+            if (brand.length() != 1) {
+                Map<String, String> mods = new HashMap<>();
+                boolean store = false;
+                String tempName = null;
+                for (int i = 2; i < bytes.length; store = !store) {
+                    int end = i + bytes[i] + 1;
+                    byte[] range = Arrays.copyOfRange(bytes, i + 1, end);
+                    String string = new String(range);
+                    if (store) {
+                        mods.put(tempName, string);
+                    } else {
+                        tempName = string;
+                    }
+                    i = end;
+                }
+                for (String m : mods.keySet()) {
+                    if (speedcubingServer.blockedMod.contains(m.toLowerCase())) {
+                        player.kickPlayer("Invalid Modification found.");
+                    }
+                }
+                connection.update("playersdata", "forgemod='" + mods + "'", "uuid='" + player.getUniqueId() + "'");
+            }
+        });
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDeath(), this);
         Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);

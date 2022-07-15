@@ -7,6 +7,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.FileReader;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -19,8 +20,10 @@ public class config {
             RightCpsLimit = object.get("rightcpslimit").getAsInt();
             speedcubingServer.blockedLog.clear();
             speedcubingServer.blockedTab.clear();
+            speedcubingServer.blockedMod.clear();
             object.get("spigotblockedlog").getAsJsonArray().forEach(a -> speedcubingServer.blockedLog.add(Pattern.compile(a.getAsString())));
             object.get("spigotblockedtab").getAsJsonArray().forEach(a -> speedcubingServer.blockedTab.add(a.getAsString()));
+            object.get("blockedmod").getAsJsonArray().forEach(a -> speedcubingServer.blockedMod.add(a.getAsString().toLowerCase()));
             speedcubingServer.colors.clear();
             speedcubingServer.rankPermissions.clear();
             speedcubingServer.ranks.clear();
