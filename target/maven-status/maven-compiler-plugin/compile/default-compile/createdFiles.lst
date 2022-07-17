@@ -27,6 +27,7 @@ speedcubing\server\Commands\heal.class
 speedcubing\server\ExploitFixer\ForceOp.class
 speedcubing\server\listeners\Cps$2.class
 speedcubing\server\Commands\skin.class
+speedcubing\server\Commands\serverinfo.class
 speedcubing\server\listeners\CommandPermissions.class
 speedcubing\server\Commands\fly.class
 speedcubing\server\events\InputEvent.class
