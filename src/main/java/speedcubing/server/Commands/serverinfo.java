@@ -39,7 +39,7 @@ public class serverinfo implements CommandExecutor, TabExecutor {
                 + ", " + (total - free) / 1048576 + " (MB)§e (" + Math.round((total - free) * 10000D / runtime.maxMemory()) / 100 + "%)"
                 , "§6Total CPU Usage: §a" + new DecimalFormat("#.##").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getSystemCpuLoad() * 100) + "%"
                 , "§6Online: §a" + Bukkit.getOnlinePlayers().size() + "/" + Bukkit.getMaxPlayers()
-                , "§6Uptime: §a" + format(ticks / 20) + "§e (" + ticks + " ticks)"
+                , "§6Uptime: §a" + format(ticks) + "§e (" + ticks + " ticks)"
                 , "§6Entities: §a" + entities
                 , "§6Loaded Chunks: §a" + chunks
                 , "§7-----------------------------"};
