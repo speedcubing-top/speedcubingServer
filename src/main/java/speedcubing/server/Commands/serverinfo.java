@@ -37,9 +37,9 @@ public class serverinfo implements CommandExecutor, TabExecutor {
                 , "§6Server Lag: §a" + (double) Math.round(recenttps * 10000) / 10000 + "%"
                 , "§6Runtime Memory (total, free, used): §a" + total / 1048576 + ", " + free / 1048576
                 + ", " + (total - free) / 1048576 + " (MB)§e (" + Math.round((total - free) * 10000D / runtime.maxMemory()) / 100 + "%)"
-                , "§6CPU Usage: §a" + new DecimalFormat("#.##").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getSystemCpuLoad() * 100) + "%"
+                , "§6Total CPU Usage: §a" + new DecimalFormat("#.##").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getSystemCpuLoad() * 100) + "%"
                 , "§6Online: §a" + Bukkit.getOnlinePlayers().size() + "/" + Bukkit.getMaxPlayers()
-                , "§6Uptime: §a" + uptimeFormat(ticks) + "§e (" + ticks + " ticks)"
+                , "§6Uptime: §a" + format(ticks / 20) + "§e (" + ticks + " ticks)"
                 , "§6Entities: §a" + entities
                 , "§6Loaded Chunks: §a" + chunks
                 , "§7-----------------------------"};
@@ -47,8 +47,8 @@ public class serverinfo implements CommandExecutor, TabExecutor {
         return true;
     }
 
-    public static String uptimeFormat(int tick) {
-        return tick / 72000 + ":" + String.format("%02d", (tick % 72000) / 1200) + ":" + String.format("%02d", (tick % 1200) / 20) + "." + String.format("%02d", (tick % 20) * 5);
+    public static String format(long seconds) {
+        return seconds / 1728000 + "d " + String.format("%02d", (seconds / 72000) % 24) + "h " + String.format("%02d", (seconds / 1200) % 60) + "m " + String.format("%02d", (seconds / 20) % 60) + "s";
     }
 
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
