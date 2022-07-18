@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
     public static SQLConnection connection;
-    public static SQLConnection systemconnection;
     public static TCP tcp;
     public static boolean isBungeeOnlineMode;
     public static Set<Pattern> blockedLog = new HashSet<>();
@@ -57,7 +56,6 @@ public class speedcubingServer extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        systemconnection = new SQLConnection("jdbc:mysql://localhost:3306/speedcubingsystem?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
         connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
         new config().reload();
         tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);

@@ -11,6 +11,7 @@ speedcubing\server\events\player\NickEvent.class
 speedcubing\server\libs\User.class
 speedcubing\server\listeners\Cps.class
 speedcubing\server\events\player\HubEvent.class
+speedcubing\server\listeners\Login$1.class
 speedcubing\server\listeners\Login.class
 speedcubing\server\listeners\PlayerDeath.class
 speedcubing\server\events\player\PlayerEvent.class
