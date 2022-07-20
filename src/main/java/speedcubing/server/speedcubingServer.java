@@ -1,5 +1,6 @@
 package speedcubing.server;
 
+import com.google.common.collect.Sets;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -8,6 +9,7 @@ import org.bukkit.plugin.messaging.Messenger;
 import speedcubing.lib.bukkit.PlayerUtils;
 import speedcubing.lib.eventbus.LibEventManager;
 import speedcubing.lib.utils.SQL.SQLConnection;
+import speedcubing.lib.utils.SQL.SQLUtils;
 import speedcubing.lib.utils.StringUtils;
 import speedcubing.lib.utils.sockets.TCP;
 import speedcubing.server.Commands.*;
@@ -19,6 +21,7 @@ import speedcubing.server.events.SocketEvent;
 import speedcubing.server.libs.LogListener;
 import speedcubing.server.libs.User;
 import speedcubing.server.listeners.*;
+import speedcubing.system.speedcubingSystem;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -40,7 +43,6 @@ public class speedcubingServer extends JavaPlugin {
     public static Map<Integer, Double[]> veloStorage = new HashMap<>();
 
     public void onEnable() {
-        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         try {
 //            File file = new File("../../Proxies/WaterFall/config.yml");
 //            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(Files.newInputStream(file.toPath()))).get("online_mode");
@@ -59,6 +61,10 @@ public class speedcubingServer extends JavaPlugin {
         }
         systemconnection = new SQLConnection("jdbc:mysql://localhost:3306/speedcubingsystem?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
         connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
+        for (String s : SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "name", "1"))) {
+            grouppermissions.put(s, Sets.newHashSet(SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "perms", "name='" + s + "'"))));
+            grouppermissions.get(s).remove("");
+        }
         new config().reload();
         tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
         new Cps().Load();
@@ -206,6 +212,7 @@ public class speedcubingServer extends JavaPlugin {
 
     public static Map<String, String[]> colors = new HashMap<>();
     public static Map<String, Set<String>> rankPermissions = new HashMap<>();
+    public static Map<String, Set<String>> grouppermissions = new HashMap<>();
 
     public static String[] getFormat(String rank) {
         return colors.get(rank);

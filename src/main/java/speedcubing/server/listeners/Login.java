@@ -17,6 +17,7 @@ import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 
 public class Login implements Listener {
@@ -28,27 +29,26 @@ public class Login implements Listener {
             return;
         }
         Player player = e.getPlayer();
-        String[] datas = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "priority,nickpriority,perms,disabledperms,lang,id,name,allow_op", "uuid='" + player.getUniqueId() + "'"));
-        if (player.isOp() && datas[7].equals("0")) {
+        String[] datas = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "priority,nickpriority,perms,lang,id,name,allow_op", "uuid='" + player.getUniqueId() + "'"));
+        if (player.isOp() && datas[6].equals("0")) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             return;
         }
         String name = player.getName();
         String old = datas[0];
-        Set<String> perms = Sets.newHashSet(speedcubingServer.rankPermissions.get(old));
-        if (datas[2] != null)
-            perms.addAll(Sets.newHashSet(datas[2].split("\\|")));
-        if (datas[3] != null)
-            perms.removeAll(Sets.newHashSet(datas[3].split("\\|")));
         String realname = "";
         if (speedcubingServer.isBungeeOnlineMode) {
-            if (!datas[6].equalsIgnoreCase(name)) {
+            if (!datas[5].equalsIgnoreCase(name)) {
                 datas[0] = datas[1];
-                realname = datas[6];
+                realname = datas[5];
             }
         }
         temp = new String[]{name, realname, old};
-        new User(player, datas[0], perms, Integer.parseInt(datas[4]), Integer.parseInt(datas[5]), datas[7].equals("1"));
+        Set<String> a = Sets.newHashSet(datas[2].split("\\|"));
+        a.remove("");
+        new User(player, datas[0], new HashSet<>(speedcubingServer.rankPermissions.get(old)) {{
+            addAll(a);
+        }}, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"));
     }
 
     String[] temp;

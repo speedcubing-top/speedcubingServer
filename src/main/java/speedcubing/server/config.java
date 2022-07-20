@@ -31,7 +31,7 @@ public class config {
                 String[] colors = new Gson().fromJson(c.getValue().getAsJsonObject().get("texts").getAsJsonArray().toString(), new TypeToken<String[]>() {
                 }.getType());
                 speedcubingServer.colors.put(c.getKey(), new String[]{colors[0], colors[0].lastIndexOf('§') == -1 ? "" : ("§" + colors[0].charAt(colors[0].lastIndexOf('§') + 1)), colors[1]});
-                speedcubingServer.rankPermissions.put(c.getKey(), new Gson().fromJson(c.getValue().getAsJsonObject().get("spigotpermissions").getAsJsonArray().toString(), new TypeToken<Set<String>>() {
+                speedcubingServer.rankPermissions.put(c.getKey(), new Gson().fromJson(c.getValue().getAsJsonObject().get("permissions").getAsJsonArray().toString(), new TypeToken<Set<String>>() {
                 }.getType()));
                 speedcubingServer.ranks.add(c.getKey());
             }

@@ -6,10 +6,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import speedcubing.server.speedcubingServer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class User {
     public static Map<Integer, User> usersByID = new HashMap<>();
@@ -30,8 +28,16 @@ public class User {
     public int leftClick;
     public int rightClick;
 
+    public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
+
     public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp) {
         this.player = player;
+        Set<String> groups = new HashSet<>();
+        for (String s : permissions) {
+            if (group.matcher(s).matches() && speedcubingServer.grouppermissions.containsKey(s.substring(6)))
+                groups.add(s.substring(6));
+        }
+        groups.forEach(a -> permissions.addAll(speedcubingServer.grouppermissions.get(a)));
         this.permissions = permissions;
         this.velocities = ArrayUtils.toPrimitive(speedcubingServer.veloStorage.get(id));
         this.lang = lang;
