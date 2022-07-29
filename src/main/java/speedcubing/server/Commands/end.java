@@ -21,7 +21,7 @@ public class end implements CommandExecutor, TabCompleter {
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
-                if (Bukkit.getOnlinePlayers().size() == 0)
+                if (Bukkit.getOnlinePlayers().size() == 0 || Bukkit.getPort() == 25573 || Bukkit.getPort() == 25574)
                     Bukkit.shutdown();
             }
         }, 1000, 1000);
