@@ -23,7 +23,7 @@ public class LogListener {
 
             @Override
             public Result filter(LogEvent event) {
-                String msg = Console.ansiToColoredText(event.getMessage().getFormattedMessage());
+                String msg = Console.removeAnsi(event.getMessage().getFormattedMessage());
                 boolean denied = false;
                 for (Pattern p : speedcubingServer.blockedLog) {
                     if (p.matcher(msg).matches()) {
