@@ -101,6 +101,12 @@ public class speedcubingServer extends JavaPlugin {
                         player.kickPlayer("Invalid Modification found.");
                     }
                 }
+                for (String m :mods.keySet()){
+                    if(m.toLowerCase().contains("fdpc")){
+                        sleep(5);
+                        Bukkit.dispatchCommand("/proxycommand ban" + player.getName() + "0 [System] Unfair Advantages")
+                    }
+                }
                 connection.update("playersdata", "forgemod='" + mods + "'", "uuid='" + player.getUniqueId() + "'");
             }
         });
