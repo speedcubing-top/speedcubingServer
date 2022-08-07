@@ -45,7 +45,7 @@ public class speedcubingServer extends JavaPlugin {
         try {
 //            File file = new File("../../Proxies/WaterFall/config.yml");
 //            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(Files.newInputStream(file.toPath()))).get("online_mode");
-            File file = new File("../../Proxies/Velocity/velocity.toml");
+            File file = new File("../../Proxies/Velocity1/velocity.toml");
             BufferedReader input = new BufferedReader(new FileReader(file));
             String line = "";
             boolean a = true;
