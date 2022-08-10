@@ -36,7 +36,7 @@ public class nick implements CommandExecutor, TabCompleter {
                     commandSender.sendMessage(GlobalString.nicksameusername[user.lang]);
                 else if (name.equals(SQLUtils.getString(speedcubingServer.connection.select("playersdata", "name", "id=" + user.id))))
                     commandSender.sendMessage(GlobalString.nickdefaultusername[user.lang]);
-                else if (name.matches("^\\w{3,16}$") && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'") && !speedcubingServer.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'"))
+                else if (name.matches("^\\w{1,16}$") && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'") && !speedcubingServer.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'"))
                     nickPlayer(name, SQLUtils.getString(speedcubingServer.connection.select("playersdata", "nickpriority", "id=" + user.id)), true, (Player) commandSender);
                 else
                     commandSender.sendMessage(GlobalString.nicknotavaliable[user.lang]);
