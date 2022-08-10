@@ -1,7 +1,5 @@
 package speedcubing.server.libs;
 
-import speedcubing.server.config;
-
 public class GlobalString {
 
     public static String[] NoEnoughServers = {
