@@ -42,5 +42,5 @@ public class config {
 
     public static int LeftCpsLimit = Integer.MAX_VALUE;
     public static int RightCpsLimit = Integer.MAX_VALUE;
-    public static String SERVERIP = "speedcubing.serveftp.net";
+    public static String SERVERIP = "speedcubing.top";
 }
