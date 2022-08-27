@@ -10,6 +10,14 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class User {
+
+    public static User getUser(int id) {
+        return usersByID.get(id);
+    }
+
+    public static User getUser(CommandSender sender) {
+        return usersByUUID.get(((Player) sender).getUniqueId());
+    }
     public static Map<Integer, User> usersByID = new HashMap<>();
     public static Map<UUID, User> usersByUUID = new HashMap<>();
     public final Player player;
@@ -48,32 +56,5 @@ public class User {
         this.allowOp = allowOp;
         usersByID.put(id, this);
         usersByUUID.put(player.getUniqueId(), this);
-    }
-
-    public User(UUID uuid) {
-        User user = usersByUUID.get(uuid);
-        this.player = user.player;
-        this.permissions = user.permissions;
-        this.velocities = user.velocities;
-        this.lang = user.lang;
-        this.id = user.id;
-        this.rank = user.rank;
-        this.tcpPort = user.tcpPort;
-        this.allowOp = user.allowOp;
-        this.listened = user.listened;
-        this.joinPacket = user.joinPacket;
-        this.leavePacket = user.leavePacket;
-    }
-
-    public static User getUser(int id) {
-        return usersByID.get(id);
-    }
-
-    public static User getUser(Player player) {
-        return usersByUUID.get(player.getUniqueId());
-    }
-
-    public static User getUser(CommandSender sender) {
-        return getUser((Player) sender);
     }
 }
