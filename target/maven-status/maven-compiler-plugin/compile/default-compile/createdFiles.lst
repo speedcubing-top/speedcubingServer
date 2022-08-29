@@ -28,13 +28,13 @@ speedcubing\server\Commands\heal.class
 speedcubing\server\ExploitFixer\ForceOp.class
 speedcubing\server\listeners\Cps$2.class
 speedcubing\server\Commands\skin.class
-speedcubing\server\Commands\serverinfo.class
 speedcubing\server\listeners\CommandPermissions.class
 speedcubing\server\Commands\fly.class
 speedcubing\server\events\InputEvent.class
 speedcubing\server\Commands\announce.class
 speedcubing\server\listeners\ServerCommand.class
 speedcubing\server\Commands\offline\resetpassword.class
+speedcubing\server\Commands\tps.class
 speedcubing\server\listeners\PlayerQuit.class
 speedcubing\server\listeners\Cps$1.class
 speedcubing\server\listeners\PlayerKick.class

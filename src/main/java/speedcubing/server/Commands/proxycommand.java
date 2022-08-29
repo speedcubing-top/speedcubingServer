@@ -7,6 +7,7 @@ import speedcubing.server.libs.User;
 import speedcubing.server.speedcubingServer;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class proxycommand implements CommandExecutor, TabCompleter {
@@ -28,6 +29,6 @@ public class proxycommand implements CommandExecutor, TabCompleter {
     }
 
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

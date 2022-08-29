@@ -7,10 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import speedcubing.lib.bukkit.BungeePluginMessage;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class end implements CommandExecutor, TabCompleter {
     public static boolean restarting = false;
@@ -29,6 +26,6 @@ public class end implements CommandExecutor, TabCompleter {
     }
 
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

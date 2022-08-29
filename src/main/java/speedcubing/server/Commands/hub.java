@@ -14,6 +14,7 @@ import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class hub implements CommandExecutor, TabCompleter {
@@ -30,6 +31,6 @@ public class hub implements CommandExecutor, TabCompleter {
     }
 
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

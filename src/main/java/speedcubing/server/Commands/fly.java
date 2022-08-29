@@ -10,8 +10,7 @@ import speedcubing.server.events.player.ToggleFlyEvent;
 import speedcubing.server.libs.GlobalString;
 import speedcubing.server.libs.User;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class fly implements CommandExecutor, TabCompleter {
 
@@ -30,6 +29,6 @@ public class fly implements CommandExecutor, TabCompleter {
     }
 
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }

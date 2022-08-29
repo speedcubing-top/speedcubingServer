@@ -11,10 +11,10 @@ import org.bukkit.command.TabExecutor;
 
 import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-public class serverinfo implements CommandExecutor, TabExecutor {
+public class tps implements CommandExecutor, TabExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         int ticks = MinecraftServer.currentTick - MinecraftServer.firstTick;
@@ -52,7 +52,7 @@ public class serverinfo implements CommandExecutor, TabExecutor {
     }
 
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     private String format(double tps) {

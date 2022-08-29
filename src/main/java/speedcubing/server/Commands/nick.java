@@ -53,7 +53,7 @@ public class nick implements CommandExecutor, TabCompleter {
     }
 
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 
     public static void nickPlayer(String name, String rank, boolean nick, Player player) {

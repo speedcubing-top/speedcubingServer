@@ -19,6 +19,7 @@ import speedcubing.server.speedcubingServer;
 import speedcubing.system.LocalMojang;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,6 +70,6 @@ public class skin implements CommandExecutor, TabCompleter {
     }
 
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return new ArrayList<>();
+        return Collections.emptyList();
     }
 }
