@@ -12,7 +12,6 @@ C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\sr
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\libs\User.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\listeners\PlayerVelocity.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\Commands\nick.java
-C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\Commands\tps.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\Commands\end.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\listeners\CreatureSpawn.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\events\player\ToggleFlyEvent.java
@@ -25,6 +24,7 @@ C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\sr
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\ServerEvent.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\Commands\hub.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\Commands\announce.java
+C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\Commands\serverinfo.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\listeners\ServerCommand.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\listeners\PlayerQuit.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\speedcubing\server\listeners\Login.java

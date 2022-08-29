@@ -14,7 +14,7 @@ import java.text.DecimalFormat;
 import java.util.Collections;
 import java.util.List;
 
-public class tps implements CommandExecutor, TabExecutor {
+public class serverinfo implements CommandExecutor, TabExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         int ticks = MinecraftServer.currentTick - MinecraftServer.firstTick;
