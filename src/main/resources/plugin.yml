@@ -1,5 +1,5 @@
 name: speedcubingServer
-main: speedcubing.server.speedcubingServer
+main: top.speedcubing.server.speedcubingServer
 version: 1.0
 commands:
   premium:
