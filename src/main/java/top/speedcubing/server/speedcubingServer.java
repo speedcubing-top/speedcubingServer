@@ -15,7 +15,9 @@ import top.speedcubing.lib.utils.sockets.TCP;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.offline.premium;
 import top.speedcubing.server.Commands.offline.resetpassword;
+import top.speedcubing.server.Commands.override.restart;
 import top.speedcubing.server.ExploitFixer.ForceOp;
+import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.events.InputEvent;
 import top.speedcubing.server.events.SocketEvent;
 import top.speedcubing.server.libs.LogListener;
@@ -134,6 +136,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
         Bukkit.getPluginCommand("announce").setTabCompleter(new announce());
+        OverrideCommandManager.register("restart", new restart());
         LibEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
 
