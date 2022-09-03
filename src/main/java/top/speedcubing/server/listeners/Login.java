@@ -17,9 +17,9 @@ import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.*;
+import java.util.Set;
+import java.util.regex.Pattern;
 
 public class Login implements Listener {
     @EventHandler
@@ -45,11 +45,16 @@ public class Login implements Listener {
             }
         }
         temp = new String[]{name, realname, old};
-        Set<String> a = Sets.newHashSet(datas[2].split("\\|"));
-        a.remove("");
-        new User(player, datas[0], new HashSet(speedcubingServer.rankPermissions.get(old)) {{
-            addAll(a);
-        }}, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"));
+        Set<String> p = Sets.newHashSet(datas[2].split("\\|"));
+        p.addAll(speedcubingServer.rankPermissions.get(old));
+        Set<String> groups = new HashSet<>();
+        Pattern pattern = Pattern.compile("^group\\.[^|*.]+$");
+        for (String s : p) {
+            if (pattern.matcher(s).matches() && speedcubingServer.grouppermissions.containsKey(s.substring(6)))
+                groups.add(s.substring(6));
+        }
+        groups.forEach(a -> p.addAll(speedcubingServer.grouppermissions.get(a)));
+        new User(player, datas[0], p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"));
     }
 
     String[] temp;
