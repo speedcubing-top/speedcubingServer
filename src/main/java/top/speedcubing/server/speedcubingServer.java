@@ -62,10 +62,6 @@ public class speedcubingServer extends JavaPlugin {
             e.printStackTrace();
         }
         connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
-        for (String s : SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "name", "1"))) {
-            grouppermissions.put(s, Sets.newHashSet(SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "perms", "name='" + s + "'"))));
-            grouppermissions.get(s).remove("");
-        }
         new config().reload();
         tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
         new Cps().Load();

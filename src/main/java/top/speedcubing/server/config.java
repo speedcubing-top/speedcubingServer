@@ -1,11 +1,14 @@
 package top.speedcubing.server;
 
+import com.google.common.collect.Sets;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
+import top.speedcubing.lib.utils.SQL.SQLUtils;
+import top.speedcubing.system.speedcubingSystem;
 
 import java.io.FileReader;
 import java.util.Map;
@@ -34,6 +37,10 @@ public class config {
                 speedcubingServer.rankPermissions.put(c.getKey(), new Gson().fromJson(c.getValue().getAsJsonObject().get("permissions").getAsJsonArray().toString(), new TypeToken<Set<String>>() {
                 }.getType()));
                 speedcubingServer.ranks.add(c.getKey());
+            }
+            for (String s : SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "name", "1"))) {
+                speedcubingServer.grouppermissions.put(s, Sets.newHashSet(SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "perms", "name='" + s + "'"))));
+                speedcubingServer.grouppermissions.get(s).remove("");
             }
         } catch (Exception exception) {
             exception.printStackTrace();
