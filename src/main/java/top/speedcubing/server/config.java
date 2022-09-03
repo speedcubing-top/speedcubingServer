@@ -40,7 +40,6 @@ public class config {
             }
             for (String s : SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "name", "1"))) {
                 speedcubingServer.grouppermissions.put(s, Sets.newHashSet(SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "perms", "name='" + s + "'"))));
-                speedcubingServer.grouppermissions.get(s).remove("");
             }
         } catch (Exception exception) {
             exception.printStackTrace();
