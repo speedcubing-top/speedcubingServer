@@ -46,6 +46,7 @@ public class Login implements Listener {
         }
         temp = new String[]{name, realname, old};
         Set<String> p = Sets.newHashSet(datas[2].split("\\|"));
+        p.remove("");
         p.addAll(speedcubingServer.rankPermissions.get(old));
         Set<String> groups = new HashSet<>();
         Pattern pattern = Pattern.compile("^group\\.[^|*.]+$");
