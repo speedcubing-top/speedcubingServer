@@ -1,22 +1,18 @@
-package top.speedcubing.server.Commands;
+package top.speedcubing.server.Commands.overrided;
 
 import com.sun.management.OperatingSystemMXBean;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
+import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 
 import java.lang.management.ManagementFactory;
 import java.text.DecimalFormat;
-import java.util.Collections;
-import java.util.List;
 
-public class serverinfo implements CommandExecutor, TabExecutor {
+public class tps implements OverrideCommandManager.OverridedCommand {
+    public void execute(CommandSender commandSender, String message) {
 
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         int ticks = MinecraftServer.currentTick - MinecraftServer.firstTick;
         double[] tps = MinecraftServer.getServer().recentTps;
         double recenttps = (double) Math.round((1.0D - tps[0] / 20.0D) * 100.0D);
@@ -31,7 +27,7 @@ public class serverinfo implements CommandExecutor, TabExecutor {
             entities += world.getEntities().size();
             chunks += world.getLoadedChunks().length;
         }
-        String[] message = {
+        String[] result = {
                 "§7-----------------------------"
                 , "§6TPS from last 1m, 5m, 15m: " + format(tps[0]) + ", " + format(tps[1]) + ", " + format(tps[2])
                 , "§6Server Lag: §a" + (double) Math.round(recenttps * 10000) / 10000 + "%"
@@ -43,16 +39,11 @@ public class serverinfo implements CommandExecutor, TabExecutor {
                 , "§6Entities: §a" + entities
                 , "§6Loaded Chunks: §a" + chunks
                 , "§7-----------------------------"};
-        commandSender.sendMessage(message);
-        return true;
+        commandSender.sendMessage(result);
     }
 
     public static String format(long seconds) {
         return seconds / 1728000 + "d " + String.format("%02d", (seconds / 72000) % 24) + "h " + String.format("%02d", (seconds / 1200) % 60) + "m " + String.format("%02d", (seconds / 20) % 60) + "s";
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 
     private String format(double tps) {

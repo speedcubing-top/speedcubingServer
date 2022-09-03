@@ -17,11 +17,9 @@ C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\sr
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\Commands\proxycommand.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\events\player\HubEvent.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\listeners\PlayerDeath.java
-C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\Commands\override\restart.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\events\SocketEvent.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\ExploitFixer\ForceOp.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\ServerEvent.java
-C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\Commands\serverinfo.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\listeners\CreatureSpawn.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\libs\User.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\config.java
@@ -35,6 +33,7 @@ C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\sr
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\listeners\PlayerQuit.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\events\player\SkinEvent.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\Commands\announce.java
+C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\Commands\overrided\tps.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\listeners\WeatherChange.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\listeners\InventoryOpen.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\events\player\PlayerEvent.java

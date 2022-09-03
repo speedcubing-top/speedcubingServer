@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
+import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
@@ -15,7 +16,7 @@ import top.speedcubing.lib.utils.sockets.TCP;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.offline.premium;
 import top.speedcubing.server.Commands.offline.resetpassword;
-import top.speedcubing.server.Commands.override.restart;
+import top.speedcubing.server.Commands.overrided.tps;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.events.InputEvent;
@@ -117,8 +118,6 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ForceOp(), this);
         Bukkit.getPluginManager().registerEvents(new ServerCommand(), this);
         Bukkit.getPluginManager().registerEvents(new CreatureSpawn(), this);
-        Bukkit.getPluginCommand("serverinfo").setExecutor(new serverinfo());
-        Bukkit.getPluginCommand("serverinfo").setTabCompleter(new serverinfo());
         Bukkit.getPluginCommand("discord").setExecutor(new discord());
         Bukkit.getPluginCommand("discord").setTabCompleter(new discord());
         Bukkit.getPluginCommand("skin").setExecutor(new skin());
@@ -136,7 +135,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
         Bukkit.getPluginCommand("announce").setTabCompleter(new announce());
-        OverrideCommandManager.register("restart", new restart());
+        OverrideCommandManager.register("tps", new tps());
         LibEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
 
@@ -179,6 +178,9 @@ public class speedcubingServer extends JavaPlugin {
                                 break;
                             case "velo":
                                 User.getUser(Integer.parseInt(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
+                                break;
+                            case "restart":
+                                RestartCommand.restart();
                                 break;
                             default:
                                 LibEventManager.callEvent(new SocketEvent(receive));
