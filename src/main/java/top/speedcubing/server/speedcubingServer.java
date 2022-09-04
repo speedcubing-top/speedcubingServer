@@ -1,6 +1,5 @@
 package top.speedcubing.server;
 
-import com.google.common.collect.Sets;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -10,7 +9,6 @@ import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
-import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.sockets.TCP;
 import top.speedcubing.server.Commands.*;
@@ -24,7 +22,6 @@ import top.speedcubing.server.events.SocketEvent;
 import top.speedcubing.server.libs.LogListener;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.listeners.*;
-import top.speedcubing.system.speedcubingSystem;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -43,6 +40,8 @@ public class speedcubingServer extends JavaPlugin {
     public static Set<String> blockedMod = new HashSet<>();
     public static Map<Integer, Integer> tcpStorage = new HashMap<>();
     public static Map<Integer, Double[]> veloStorage = new HashMap<>();
+
+    public static boolean restartable = false;
 
     public void onEnable() {
         try {
@@ -195,6 +194,14 @@ public class speedcubingServer extends JavaPlugin {
                 end.restarting = false;
             }
         }, 2000);
+        new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                restartable = true;
+                if (Bukkit.getOnlinePlayers().size() == 0)
+                    RestartCommand.restart();
+            }
+        }, 7200000);
     }
 
     public void onDisable() {
