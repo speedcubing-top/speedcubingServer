@@ -22,6 +22,7 @@ import top.speedcubing.server.events.SocketEvent;
 import top.speedcubing.server.libs.LogListener;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.listeners.*;
+import top.speedcubing.system.speedcubingSystem;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -60,8 +61,9 @@ public class speedcubingServer extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        connection = new SQLConnection("jdbc:mysql://localhost:3306/" + (Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing") + "?useUnicode=true&characterEncoding=utf8", "cubing", "6688andy");
         new config().reload();
+        speedcubingSystem.init(config.DatabaseURL, config.DatabaseUser, config.DatabasePassword);
+        connection = Bukkit.getPort() % 2 == 1 ? speedcubingSystem.onlineServer : new SQLConnection(config.DatabaseURL.replace("%db%", "offlinecubing"), config.DatabaseUser, config.DatabasePassword);
         tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
         new Cps().Load();
         new ForceOp().run();

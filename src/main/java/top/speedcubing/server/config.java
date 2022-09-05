@@ -16,9 +16,16 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 public class config {
+    public static String DatabaseURL;
+    public static String DatabaseUser;
+    public static String DatabasePassword;
+
     public void reload() {
         try {
             JsonObject object = new JsonParser().parse(new FileReader("../../../server.json")).getAsJsonObject();
+            DatabaseURL = object.getAsJsonObject("database").get("url").getAsString();
+            DatabaseUser = object.getAsJsonObject("database").get("user").getAsString();
+            DatabasePassword = object.getAsJsonObject("database").get("password").getAsString();
             LeftCpsLimit = object.get("leftcpslimit").getAsInt();
             RightCpsLimit = object.get("rightcpslimit").getAsInt();
             speedcubingServer.blockedLog.clear();
