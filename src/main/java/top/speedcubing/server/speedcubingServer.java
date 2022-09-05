@@ -64,6 +64,7 @@ public class speedcubingServer extends JavaPlugin {
         new config().reload();
         speedcubingSystem.init(config.DatabaseURL, config.DatabaseUser, config.DatabasePassword);
         connection = Bukkit.getPort() % 2 == 1 ? speedcubingSystem.onlineServer : new SQLConnection(config.DatabaseURL.replace("%db%", "offlinecubing"), config.DatabaseUser, config.DatabasePassword);
+        new config().reloadDatabase();
         tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
         new Cps().Load();
         new ForceOp().run();
@@ -152,6 +153,7 @@ public class speedcubingServer extends JavaPlugin {
                                 break;
                             case "cfg":
                                 new config().reload();
+                                new config().reloadDatabase();
                                 break;
                             case "demo":
                                 PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);

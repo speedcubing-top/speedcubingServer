@@ -45,11 +45,14 @@ public class config {
                 }.getType()));
                 speedcubingServer.ranks.add(c.getKey());
             }
-            for (String s : SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "name", "1"))) {
-                speedcubingServer.grouppermissions.put(s, Sets.newHashSet(SQLUtils.getString(speedcubingSystem.connection.select("groups", "perms", "name='" + s + "'")).split("\\|")));
-            }
         } catch (Exception exception) {
             exception.printStackTrace();
+        }
+    }
+
+    public void reloadDatabase(){
+        for (String s : SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "name", "1"))) {
+            speedcubingServer.grouppermissions.put(s, Sets.newHashSet(SQLUtils.getString(speedcubingSystem.connection.select("groups", "perms", "name='" + s + "'")).split("\\|")));
         }
     }
 
