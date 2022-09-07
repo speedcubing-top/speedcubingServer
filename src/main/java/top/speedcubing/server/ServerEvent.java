@@ -8,7 +8,7 @@ import top.speedcubing.server.events.InputEvent;
 public class ServerEvent {
     @LibEventHandler
     public void PlayInEvent(PlayInEvent e) {
-        if (e.packet instanceof PacketPlayInTabComplete && speedcubingServer.blockedTab.contains(((PacketPlayInTabComplete) e.packet).a()))
+        if (e.packet instanceof PacketPlayInTabComplete && !speedcubingServer.blockedTab.contains(((PacketPlayInTabComplete) e.packet).a()))
             e.isCancelled = true;
     }
 
