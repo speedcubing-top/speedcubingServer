@@ -22,7 +22,6 @@ import top.speedcubing.server.events.SocketEvent;
 import top.speedcubing.server.libs.LogListener;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.listeners.*;
-import top.speedcubing.system.speedcubingSystem;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -34,6 +33,7 @@ import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
     public static SQLConnection connection;
+    public static SQLConnection systemConnection;
     public static TCP tcp;
     public static boolean isBungeeOnlineMode;
     public static Set<Pattern> blockedLog = new HashSet<>();
@@ -62,8 +62,8 @@ public class speedcubingServer extends JavaPlugin {
             e.printStackTrace();
         }
         new config().reload();
-        speedcubingSystem.init(config.DatabaseURL, config.DatabaseUser, config.DatabasePassword);
-        connection = Bukkit.getPort() % 2 == 1 ? speedcubingSystem.onlineServer : new SQLConnection(config.DatabaseURL.replace("%db%", "offlinecubing"), config.DatabaseUser, config.DatabasePassword);
+        connection = new SQLConnection(config.DatabaseURL.replace("%db%", Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing"), config.DatabaseUser, config.DatabasePassword);
+        systemConnection = new SQLConnection(config.DatabaseURL.replace("%db%", "speedcubingsystem"), config.DatabaseUser, config.DatabasePassword);
         new config().reloadDatabase();
         tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
         new Cps().Load();

@@ -8,7 +8,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
 import top.speedcubing.lib.utils.SQL.SQLUtils;
-import top.speedcubing.system.speedcubingSystem;
 
 import java.io.FileReader;
 import java.util.Map;
@@ -50,9 +49,9 @@ public class config {
         }
     }
 
-    public void reloadDatabase(){
-        for (String s : SQLUtils.getStringArray(speedcubingSystem.connection.select("groups", "name", "1"))) {
-            speedcubingServer.grouppermissions.put(s, Sets.newHashSet(SQLUtils.getString(speedcubingSystem.connection.select("groups", "perms", "name='" + s + "'")).split("\\|")));
+    public void reloadDatabase() {
+        for (String s : SQLUtils.getStringArray(speedcubingServer.systemConnection.select("groups", "name", "1"))) {
+            speedcubingServer.grouppermissions.put(s, Sets.newHashSet(SQLUtils.getString(speedcubingServer.systemConnection.select("groups", "perms", "name='" + s + "'")).split("\\|")));
         }
     }
 
