@@ -8,15 +8,15 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import top.speedcubing.server.events.player.SkinEvent;
-import top.speedcubing.server.libs.GlobalString;
-import top.speedcubing.server.libs.User;
-import top.speedcubing.server.speedcubingServer;
+import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.api.SessionServer;
 import top.speedcubing.lib.api.exception.APIErrorException;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
-import top.speedcubing.system.LocalMojang;
+import top.speedcubing.server.events.player.SkinEvent;
+import top.speedcubing.server.libs.GlobalString;
+import top.speedcubing.server.libs.User;
+import top.speedcubing.server.speedcubingServer;
 
 import java.util.Collections;
 import java.util.List;
@@ -39,7 +39,7 @@ public class skin implements CommandExecutor, TabCompleter {
                 if (!target.equals("")) {
                     UUID id = null;
                     try {
-                        id = LocalMojang.getUUID(target);
+                        id = MojangAPI.getUUID(target);
                     } catch (APIErrorException e) {
                     }
                     if (id == null)
