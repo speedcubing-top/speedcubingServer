@@ -205,7 +205,7 @@ public class speedcubingServer extends JavaPlugin {
                 if (Bukkit.getOnlinePlayers().size() == 0)
                     RestartCommand.restart();
             }
-        }, 7200000);
+        }, 43200000);
     }
 
     public void onDisable() {
