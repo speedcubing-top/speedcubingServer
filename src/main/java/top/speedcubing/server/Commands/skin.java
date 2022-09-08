@@ -8,7 +8,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.api.SessionServer;
 import top.speedcubing.lib.api.exception.APIErrorException;
 import top.speedcubing.lib.bukkit.PlayerUtils;
@@ -39,7 +38,7 @@ public class skin implements CommandExecutor, TabCompleter {
                 if (!target.equals("")) {
                     UUID id = null;
                     try {
-                        id = MojangAPI.getUUID(target);
+                        id = speedcubingServer.getUUID(target);
                     } catch (APIErrorException e) {
                     }
                     if (id == null)

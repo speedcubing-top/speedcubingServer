@@ -1,12 +1,11 @@
 package top.speedcubing.server.Commands;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.*;
-import org.bukkit.entity.Player;
-import top.speedcubing.server.libs.User;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import top.speedcubing.server.speedcubingServer;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,10 +19,7 @@ public class proxycommand implements CommandExecutor, TabCompleter {
             for (String string : strings) {
                 comamnd.append(" ").append(string);
             }
-            int port = commandSender instanceof ConsoleCommandSender ?
-                    (User.usersByID.values().size() != 0 ? User.usersByID.values().iterator().next().tcpPort : 25568 - Bukkit.getPort() % 2)
-                    : User.getUser(commandSender).tcpPort;
-            speedcubingServer.tcp.send(port, "proxycmd|" + comamnd.substring(1));
+            speedcubingServer.tcp.send(speedcubingServer.getRandomBungeePort(commandSender), "proxycmd|" + comamnd.substring(1));
         }
         return true;
     }

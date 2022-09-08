@@ -2,10 +2,13 @@ package top.speedcubing.server;
 
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.spigotmc.RestartCommand;
+import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
@@ -32,6 +35,8 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
+
+    public static final Pattern nameRegex = Pattern.compile("^\\w{1,16}$");
     public static SQLConnection connection;
     public static SQLConnection systemConnection;
     public static TCP tcp;
@@ -145,6 +150,12 @@ public class speedcubingServer extends JavaPlugin {
                     if (receive != null) {
                         String[] rs = receive.split("\\|");
                         switch (rs[0]) {
+                            case "out":
+                                waitData.put(rs[1], rs.length == 2 ? null : receive.substring(StringUtils.indexOf(receive, "|", 2) + 1));
+                                break;
+                            case "in":
+                                LibEventManager.callEvent(new InputEvent(receive));
+                                break;
                             case "bungee":
                                 User.getUser(Integer.parseInt(rs[1])).tcpPort = Integer.parseInt(rs[2]);
                                 break;
@@ -171,9 +182,6 @@ public class speedcubingServer extends JavaPlugin {
                             case "cmd":
                                 String finalStr = receive;
                                 Bukkit.getScheduler().runTask(this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalStr.substring(StringUtils.indexOf(finalStr, "|", 1) + 1)));
-                                break;
-                            case "in":
-                                LibEventManager.callEvent(new InputEvent(receive));
                                 break;
                             case "velo":
                                 User.getUser(Integer.parseInt(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
@@ -218,6 +226,37 @@ public class speedcubingServer extends JavaPlugin {
 
     public static void node(boolean add, int id, int port) {
         speedcubingServer.tcp.send(port, "hasnode|" + (add ? "a" : "r") + "|" + id);
+    }
+
+    public static Map<String, String> waitData = new HashMap<>();
+
+    public static String sendOutPut(int port, String data) {
+        String uuid = UUID.randomUUID().toString();
+        long b = System.currentTimeMillis();
+        boolean a = true;
+        try {
+            tcp.sendUnsafe(port, "in|" + tcp.socket.getLocalPort() + "|" + uuid + "|" + data);
+        } catch (Exception e) {
+            a = false;
+        }
+        while (a && !waitData.containsKey(uuid) && System.currentTimeMillis() - b < 100) {
+        }
+        String c = waitData.get(uuid);
+        waitData.remove(uuid);
+        return c;
+    }
+
+    public static int getRandomBungeePort(CommandSender sender) {
+        return (sender == null || sender instanceof ConsoleCommandSender) ?
+                (User.usersByID.values().size() != 0 ? User.usersByID.values().iterator().next().tcpPort : 25568 - Bukkit.getPort() % 2)
+                : User.getUser(sender).tcpPort;
+    }
+
+    public static UUID getUUID(String name) {
+        String s = sendOutPut(getRandomBungeePort(null), "getuuid|" + name);
+        if (s == null)
+            return MojangAPI.getUUID(name);
+        return UUID.fromString(s);
     }
 
     public static Map<String, String[]> colors = new HashMap<>();
