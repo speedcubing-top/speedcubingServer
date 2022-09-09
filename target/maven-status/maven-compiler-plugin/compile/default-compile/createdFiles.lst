@@ -16,6 +16,7 @@ top\speedcubing\server\Commands\offline\resetpassword.class
 top\speedcubing\server\events\player\HubEvent.class
 top\speedcubing\server\events\player\SkinEvent.class
 top\speedcubing\server\events\player\ToggleFlyEvent.class
+top\speedcubing\server\libs\DataIO.class
 top\speedcubing\server\listeners\WeatherChange.class
 top\speedcubing\server\Commands\end$1.class
 top\speedcubing\server\Commands\end.class

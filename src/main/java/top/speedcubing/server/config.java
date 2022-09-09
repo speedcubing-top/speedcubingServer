@@ -10,14 +10,23 @@ import org.bukkit.Bukkit;
 import top.speedcubing.lib.utils.SQL.SQLUtils;
 
 import java.io.FileReader;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class config {
     public static String DatabaseURL;
     public static String DatabaseUser;
     public static String DatabasePassword;
+
+    public static List<String> ranks = new ArrayList<>();
+    public static Set<Pattern> blockedLog = new HashSet<>();
+    public static Set<String> blockedTab = new HashSet<>();
+    public static Set<String> blockedMod = new HashSet<>();
+
+    public static Map<String, String[]> colors = new HashMap<>();
+    public static Map<String, Set<String>> rankPermissions = new HashMap<>();
+
+    public static Map<String, Set<String>> grouppermissions = new HashMap<>();
 
     public void reload() {
         try {
@@ -27,22 +36,22 @@ public class config {
             DatabasePassword = object.getAsJsonObject("database").get("password").getAsString();
             LeftCpsLimit = object.get("leftcpslimit").getAsInt();
             RightCpsLimit = object.get("rightcpslimit").getAsInt();
-            speedcubingServer.blockedLog.clear();
-            speedcubingServer.blockedTab.clear();
-            speedcubingServer.blockedMod.clear();
-            object.get("spigotblockedlog").getAsJsonArray().forEach(a -> speedcubingServer.blockedLog.add(Pattern.compile(a.getAsString())));
-            object.get("spigotblockedtab").getAsJsonArray().forEach(a -> speedcubingServer.blockedTab.add(a.getAsString()));
-            object.get("blockedmod").getAsJsonArray().forEach(a -> speedcubingServer.blockedMod.add(a.getAsString().toLowerCase()));
-            speedcubingServer.colors.clear();
-            speedcubingServer.rankPermissions.clear();
-            speedcubingServer.ranks.clear();
+            blockedLog.clear();
+            blockedTab.clear();
+            blockedMod.clear();
+            object.get("spigotblockedlog").getAsJsonArray().forEach(a -> blockedLog.add(Pattern.compile(a.getAsString())));
+            object.get("spigotblockedtab").getAsJsonArray().forEach(a -> blockedTab.add(a.getAsString()));
+            object.get("blockedmod").getAsJsonArray().forEach(a -> blockedMod.add(a.getAsString().toLowerCase()));
+            colors.clear();
+            rankPermissions.clear();
+            ranks.clear();
             for (Map.Entry<String, JsonElement> c : object.getAsJsonObject("ranks").entrySet()) {
-                String[] colors = new Gson().fromJson(c.getValue().getAsJsonObject().get("texts").getAsJsonArray().toString(), new TypeToken<String[]>() {
+                String[] color = new Gson().fromJson(c.getValue().getAsJsonObject().get("texts").getAsJsonArray().toString(), new TypeToken<String[]>() {
                 }.getType());
-                speedcubingServer.colors.put(c.getKey(), new String[]{colors[0], colors[0].lastIndexOf('§') == -1 ? "" : ("§" + colors[0].charAt(colors[0].lastIndexOf('§') + 1)), colors[1]});
-                speedcubingServer.rankPermissions.put(c.getKey(), new Gson().fromJson(c.getValue().getAsJsonObject().get("permissions").getAsJsonArray().toString(), new TypeToken<Set<String>>() {
+                colors.put(c.getKey(), new String[]{color[0], color[0].lastIndexOf('§') == -1 ? "" : ("§" + color[0].charAt(color[0].lastIndexOf('§') + 1)), color[1]});
+                rankPermissions.put(c.getKey(), new Gson().fromJson(c.getValue().getAsJsonObject().get("permissions").getAsJsonArray().toString(), new TypeToken<Set<String>>() {
                 }.getType()));
-                speedcubingServer.ranks.add(c.getKey());
+                ranks.add(c.getKey());
             }
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -51,7 +60,7 @@ public class config {
 
     public void reloadDatabase() {
         for (String s : SQLUtils.getStringArray(speedcubingServer.systemConnection.select("groups", "name", "1"))) {
-            speedcubingServer.grouppermissions.put(s, Sets.newHashSet(SQLUtils.getString(speedcubingServer.systemConnection.select("groups", "perms", "name='" + s + "'")).split("\\|")));
+            config.grouppermissions.put(s, Sets.newHashSet(SQLUtils.getString(speedcubingServer.systemConnection.select("groups", "perms", "name='" + s + "'")).split("\\|")));
         }
     }
 

@@ -1,9 +1,9 @@
 package top.speedcubing.server.libs;
 
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
-import org.apache.commons.lang.ArrayUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.server.config;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.*;
@@ -18,6 +18,7 @@ public class User {
     public static User getUser(CommandSender sender) {
         return usersByUUID.get(((Player) sender).getUniqueId());
     }
+
     public static Map<Integer, User> usersByID = new HashMap<>();
     public static Map<UUID, User> usersByUUID = new HashMap<>();
     public final Player player;
@@ -42,17 +43,20 @@ public class User {
         this.player = player;
         Set<String> groups = new HashSet<>();
         for (String s : permissions) {
-            if (group.matcher(s).matches() && speedcubingServer.grouppermissions.containsKey(s.substring(6)))
+            if (group.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6)))
                 groups.add(s.substring(6));
         }
-        groups.forEach(a -> permissions.addAll(speedcubingServer.grouppermissions.get(a)));
+        groups.forEach(a -> permissions.addAll(config.grouppermissions.get(a)));
         this.permissions = permissions;
-        this.velocities = ArrayUtils.toPrimitive(speedcubingServer.veloStorage.get(id));
+        String[] datasFromBungee = speedcubingServer.preLoginStorage.get(id);
+        System.out.println(Arrays.toString(datasFromBungee));
+        speedcubingServer.preLoginStorage.remove(id);
+        if (!datasFromBungee[6].equals("null"))
+            this.velocities = new double[]{Double.parseDouble(datasFromBungee[6]), Double.parseDouble(datasFromBungee[7])};
         this.lang = lang;
         this.id = id;
         this.rank = rank;
-        Integer i = speedcubingServer.tcpStorage.get(id);
-        this.tcpPort = i == null ? 0 : i;
+        this.tcpPort = Integer.parseInt(datasFromBungee[5]);
         this.allowOp = allowOp;
         usersByID.put(id, this);
         usersByUUID.put(player.getUniqueId(), this);

@@ -13,6 +13,7 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.server.Commands.end;
+import top.speedcubing.server.config;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -47,14 +48,14 @@ public class Login implements Listener {
         temp = new String[]{name, realname, old};
         Set<String> p = Sets.newHashSet(datas[2].split("\\|"));
         p.remove("");
-        p.addAll(speedcubingServer.rankPermissions.get(old));
+        p.addAll(config.rankPermissions.get(old));
         Set<String> groups = new HashSet<>();
         Pattern pattern = Pattern.compile("^group\\.[^|*.]+$");
         for (String s : p) {
-            if (pattern.matcher(s).matches() && speedcubingServer.grouppermissions.containsKey(s.substring(6)))
+            if (pattern.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6)))
                 groups.add(s.substring(6));
         }
-        groups.forEach(a -> p.addAll(speedcubingServer.grouppermissions.get(a)));
+        groups.forEach(a -> p.addAll(config.grouppermissions.get(a)));
         new User(player, datas[0], p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"));
     }
 

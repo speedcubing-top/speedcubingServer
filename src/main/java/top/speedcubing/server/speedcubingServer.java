@@ -9,6 +9,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.api.MojangAPI;
+import top.speedcubing.lib.api.SessionServer;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
@@ -20,8 +21,8 @@ import top.speedcubing.server.Commands.offline.resetpassword;
 import top.speedcubing.server.Commands.overrided.tps;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
-import top.speedcubing.server.events.InputEvent;
 import top.speedcubing.server.events.SocketEvent;
+import top.speedcubing.server.libs.DataIO;
 import top.speedcubing.server.libs.LogListener;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.listeners.*;
@@ -41,11 +42,7 @@ public class speedcubingServer extends JavaPlugin {
     public static SQLConnection systemConnection;
     public static TCP tcp;
     public static boolean isBungeeOnlineMode;
-    public static Set<Pattern> blockedLog = new HashSet<>();
-    public static Set<String> blockedTab = new HashSet<>();
-    public static Set<String> blockedMod = new HashSet<>();
-    public static Map<Integer, Integer> tcpStorage = new HashMap<>();
-    public static Map<Integer, Double[]> veloStorage = new HashMap<>();
+    public static Map<Integer, String[]> preLoginStorage = new HashMap<>();
 
     public static boolean restartable = false;
 
@@ -103,7 +100,7 @@ public class speedcubingServer extends JavaPlugin {
                     i = end;
                 }
                 for (String m : mods.keySet()) {
-                    if (speedcubingServer.blockedMod.contains(m.toLowerCase())) {
+                    if (config.blockedMod.contains(m.toLowerCase())) {
                         player.kickPlayer("Invalid Modification found.");
                     }
                 }
@@ -149,13 +146,8 @@ public class speedcubingServer extends JavaPlugin {
                     receive = new BufferedReader(new InputStreamReader(tcp.socket.accept().getInputStream())).readLine();
                     if (receive != null) {
                         String[] rs = receive.split("\\|");
+                        DataIO.handle(receive, rs);
                         switch (rs[0]) {
-                            case "out":
-                                waitData.put(rs[1], rs.length == 2 ? null : receive.substring(StringUtils.indexOf(receive, "|", 2) + 1));
-                                break;
-                            case "in":
-                                LibEventManager.callEvent(new InputEvent(receive));
-                                break;
                             case "bungee":
                                 User.getUser(Integer.parseInt(rs[1])).tcpPort = Integer.parseInt(rs[2]);
                                 break;
@@ -228,50 +220,19 @@ public class speedcubingServer extends JavaPlugin {
         speedcubingServer.tcp.send(port, "hasnode|" + (add ? "a" : "r") + "|" + id);
     }
 
-    public static Map<String, String> waitData = new HashMap<>();
-
-    public static String sendOutPut(int port, String data) {
-        String uuid = UUID.randomUUID().toString();
-        long b = System.currentTimeMillis();
-        boolean a = true;
-        try {
-            tcp.sendUnsafe(port, "in|" + tcp.socket.getLocalPort() + "|" + uuid + "|" + data);
-        } catch (Exception e) {
-            a = false;
-        }
-        while (a && !waitData.containsKey(uuid) && System.currentTimeMillis() - b < 100) {
-        }
-        String c = waitData.get(uuid);
-        waitData.remove(uuid);
-        return c;
-    }
-
     public static int getRandomBungeePort(CommandSender sender) {
         return (sender == null || sender instanceof ConsoleCommandSender) ?
                 (User.usersByID.values().size() != 0 ? User.usersByID.values().iterator().next().tcpPort : 25568 - Bukkit.getPort() % 2)
                 : User.getUser(sender).tcpPort;
     }
 
-    public static UUID getUUID(String name) {
-        String s = sendOutPut(getRandomBungeePort(null), "getuuid|" + name);
-        if (s == null)
-            return MojangAPI.getUUID(name);
-        return UUID.fromString(s);
-    }
-
-    public static Map<String, String[]> colors = new HashMap<>();
-    public static Map<String, Set<String>> rankPermissions = new HashMap<>();
-    public static Map<String, Set<String>> grouppermissions = new HashMap<>();
-
     public static String[] getFormat(String rank) {
-        return colors.get(rank);
+        return config.colors.get(rank);
     }
 
     public static int getCode(String rank) {
-        return 10 + ranks.indexOf(rank);
+        return 10 + config.ranks.indexOf(rank);
     }
-
-    public static List<String> ranks = new ArrayList<>();
 
     public static String playerNameExtract(String name) {
         StringBuilder str = new StringBuilder();
@@ -295,5 +256,13 @@ public class speedcubingServer extends JavaPlugin {
             string.append((char) (Integer.parseInt(str.substring(i * 7, i * 7 + 6), 2) + 32));
         }
         return string.toString();
+    }
+    public static String[] getSkin(String name) {
+        try {
+            String data = DataIO.sendOutPut(getRandomBungeePort(null), "getskin|" + name);
+            return data != null ? data.split("\\|") : SessionServer.getSkin(MojangAPI.getUUID(name));
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

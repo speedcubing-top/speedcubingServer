@@ -8,7 +8,7 @@ import top.speedcubing.server.events.InputEvent;
 public class ServerEvent {
     @LibEventHandler
     public void PlayInEvent(PlayInEvent e) {
-        if (e.packet instanceof PacketPlayInTabComplete && !speedcubingServer.blockedTab.contains(((PacketPlayInTabComplete) e.packet).a()))
+        if (e.packet instanceof PacketPlayInTabComplete && !config.blockedTab.contains(((PacketPlayInTabComplete) e.packet).a()))
             e.isCancelled = true;
     }
 
@@ -17,11 +17,7 @@ public class ServerEvent {
         String[] rs = e.receive.split("\\|");
         switch (rs[3]) {
             case "bungee":
-                speedcubingServer.tcpStorage.put(Integer.parseInt(rs[4]), Integer.parseInt(rs[5]));
-                break;
-            case "bungeevelo":
-                if (rs[4].equals("a"))
-                    speedcubingServer.veloStorage.put(Integer.parseInt(rs[5]), new Double[]{Double.parseDouble(rs[6]), Double.parseDouble(rs[7])});
+                speedcubingServer.preLoginStorage.put(Integer.parseInt(rs[4]), rs);
                 break;
         }
     }

@@ -10,6 +10,7 @@ import org.apache.logging.log4j.message.Message;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import top.speedcubing.lib.utils.Console;
+import top.speedcubing.server.config;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.Iterator;
@@ -25,7 +26,7 @@ public class LogListener {
             public Result filter(LogEvent event) {
                 String msg = Console.removeAnsi(event.getMessage().getFormattedMessage());
                 boolean denied = false;
-                for (Pattern p : speedcubingServer.blockedLog) {
+                for (Pattern p : config.blockedLog) {
                     if (p.matcher(msg).matches()) {
                         denied = true;
                         break;

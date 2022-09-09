@@ -8,18 +8,18 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
+import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.api.SessionServer;
-import top.speedcubing.lib.api.exception.APIErrorException;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
+import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.server.events.player.SkinEvent;
-import top.speedcubing.server.libs.GlobalString;
+import top.speedcubing.server.libs.DataIO;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 public class skin implements CommandExecutor, TabCompleter {
 
@@ -29,22 +29,26 @@ public class skin implements CommandExecutor, TabCompleter {
         LibEventManager.callEvent(event);
         if (!event.isCancelled)
             new Thread(() -> {
+                User user = User.getUser(commandSender);
                 String target = "";
                 if (strings.length == 0)
-                    target = player.getName();
+                    target = SQLUtils.getString(speedcubingServer.connection.select("playersdata", "name", "id=" + user.id));
                 else if (strings.length == 1)
                     target = strings[0];
                 else player.sendMessage("/skin , /skin <player>");
                 if (!target.equals("")) {
-                    UUID id = null;
-                    try {
-                        id = speedcubingServer.getUUID(target);
-                    } catch (APIErrorException e) {
-                    }
-                    if (id == null)
-                        player.sendMessage(GlobalString.invalidName[User.getUser(commandSender).lang]);
-                    else {
-                        String[] skin = SessionServer.getSkin(id);
+                    String data = DataIO.sendOutPut(user.tcpPort, "setskin|" + target + "|" + user.id);
+                    String[] skin = null;
+                    if (data == null) {
+                        try {
+                            skin = SessionServer.getSkin(MojangAPI.getUUID(target));
+                            speedcubingServer.tcp.send(user.tcpPort, "skin|" + user.id + "|" + skin[0] + "|" + skin[1]);
+                        } catch (Exception e) {
+
+                        }
+                    } else
+                        skin = data.split("\\|");
+                    if (skin != null) {
                         List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, skin);
                         packets[0].forEach(((CraftPlayer) player).getHandle().playerConnection::sendPacket);
                         String worldname = player.getWorld().getName();
@@ -55,12 +59,10 @@ public class skin implements CommandExecutor, TabCompleter {
                             else if (p != player)
                                 packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
                         }
-                        User user = User.getUser(commandSender);
                         if (!target.equalsIgnoreCase(player.getName()))
                             speedcubingServer.connection.update("playersdata", "skinvalue='" + skin[0] + "',skinsignature='" + skin[1] + "'", "id=" + user.id);
                         else
                             speedcubingServer.connection.update("playersdata", "skinvalue='',skinsignature=''", "id=" + user.id);
-                        speedcubingServer.tcp.send(User.getUser(commandSender).tcpPort, "skin|" + user.id + "|" + skin[0] + "|" + skin[1]);
                     }
                 }
             }).start();
