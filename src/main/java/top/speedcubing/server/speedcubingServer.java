@@ -257,6 +257,7 @@ public class speedcubingServer extends JavaPlugin {
         }
         return string.toString();
     }
+
     public static String[] getSkin(String name) {
         try {
             String data = DataIO.sendOutPut(getRandomBungeePort(null), "getskin|" + name);

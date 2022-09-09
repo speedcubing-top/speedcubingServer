@@ -49,7 +49,6 @@ public class User {
         groups.forEach(a -> permissions.addAll(config.grouppermissions.get(a)));
         this.permissions = permissions;
         String[] datasFromBungee = speedcubingServer.preLoginStorage.get(id);
-        System.out.println(Arrays.toString(datasFromBungee));
         speedcubingServer.preLoginStorage.remove(id);
         if (!datasFromBungee[6].equals("null"))
             this.velocities = new double[]{Double.parseDouble(datasFromBungee[6]), Double.parseDouble(datasFromBungee[7])};
