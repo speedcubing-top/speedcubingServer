@@ -15,6 +15,7 @@ import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.libs.DataIO;
+import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -38,32 +39,19 @@ public class skin implements CommandExecutor, TabCompleter {
                 else player.sendMessage("/skin , /skin <player>");
                 if (!target.equals("")) {
                     String data = DataIO.sendOutPut(user.tcpPort, "setskin|" + target + "|" + user.id);
-                    String[] skin = null;
                     if (data == null) {
                         try {
-                            skin = SessionServer.getSkin(MojangAPI.getUUID(target));
-                            speedcubingServer.tcp.send(user.tcpPort, "skin|" + user.id + "|" + skin[0] + "|" + skin[1]);
+                            String finalTarget = target;
+                            new Thread(() -> {
+                                String[] skin = SessionServer.getSkin(MojangAPI.getUUID(finalTarget));
+                                changeSkin(player, skin, finalTarget, user.id);
+                                speedcubingServer.tcp.send(user.tcpPort, "skin|" + user.id + "|" + skin[0] + "|" + skin[1]);
+                            }).start();
                         } catch (Exception e) {
-
+                            commandSender.sendMessage(GlobalString.invalidName[user.lang]);
                         }
                     } else
-                        skin = data.split("\\|");
-                    if (skin != null) {
-                        List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, skin);
-                        packets[0].forEach(((CraftPlayer) player).getHandle().playerConnection::sendPacket);
-                        String worldname = player.getWorld().getName();
-                        player.updateInventory();
-                        for (Player p : Bukkit.getOnlinePlayers()) {
-                            if (!p.getWorld().getName().equals(worldname))
-                                packets[2].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
-                            else if (p != player)
-                                packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
-                        }
-                        if (!target.equalsIgnoreCase(player.getName()))
-                            speedcubingServer.connection.update("playersdata", "skinvalue='" + skin[0] + "',skinsignature='" + skin[1] + "'", "id=" + user.id);
-                        else
-                            speedcubingServer.connection.update("playersdata", "skinvalue='',skinsignature=''", "id=" + user.id);
-                    }
+                        changeSkin(player, data.split("\\|"), target, user.id);
                 }
             }).start();
         return true;
@@ -71,5 +59,23 @@ public class skin implements CommandExecutor, TabCompleter {
 
     public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
         return Collections.emptyList();
+    }
+
+    void changeSkin(Player player, String[] skin, String target, int id) {
+        List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, skin);
+        packets[0].forEach(((CraftPlayer) player).getHandle().playerConnection::sendPacket);
+        String worldname = player.getWorld().getName();
+        player.updateInventory();
+        for (Player p : Bukkit.getOnlinePlayers()) {
+            if (!p.getWorld().getName().equals(worldname))
+                packets[2].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
+            else if (p != player)
+                packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
+        }
+        if (!target.equalsIgnoreCase(player.getName()))
+            speedcubingServer.connection.update("playersdata", "skinvalue='" + skin[0] + "',skinsignature='" + skin[1] + "'", "id=" + id);
+        else
+            speedcubingServer.connection.update("playersdata", "skinvalue='',skinsignature=''", "id=" + id);
+
     }
 }
