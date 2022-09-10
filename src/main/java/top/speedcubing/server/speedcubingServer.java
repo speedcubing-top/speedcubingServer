@@ -51,8 +51,6 @@ public class speedcubingServer extends JavaPlugin {
 
     public static boolean restartable = false;
 
-    public static boolean restarting = false;
-
     public void onEnable() {
         try {
 //            File file = new File("../../Proxies/WaterFall/config.yml");
@@ -198,12 +196,6 @@ public class speedcubingServer extends JavaPlugin {
                 Bukkit.getScheduler().runTask(this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "end"));
             }
         }).start();
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                restarting = false;
-            }
-        }, 2000);
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
