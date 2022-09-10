@@ -1,7 +1,5 @@
 package top.speedcubing.server;
 
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -9,9 +7,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
-import org.spigotmc.AsyncCatcher;
-import org.spigotmc.SpigotConfig;
-import org.spigotmc.WatchdogThread;
+import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.api.SessionServer;
 import top.speedcubing.lib.bukkit.PlayerUtils;
@@ -22,7 +18,6 @@ import top.speedcubing.lib.utils.sockets.TCP;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.offline.premium;
 import top.speedcubing.server.Commands.offline.resetpassword;
-import top.speedcubing.server.Commands.overrided.restart;
 import top.speedcubing.server.Commands.overrided.tps;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
@@ -112,6 +107,7 @@ public class speedcubingServer extends JavaPlugin {
                 connection.update("playersdata", "forgemod='" + mods + "'", "uuid='" + player.getUniqueId() + "'");
             }
         });
+        RestartCommand.customRestartArg = new String[]{"screen", "-mdS", (Bukkit.getPort() % 2 == 1 ? "online" : "offline") + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", Bukkit.getPort() % 2 == 1 ? "online" : "offline", "init"};
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDeath(), this);
         Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
@@ -139,7 +135,6 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
         Bukkit.getPluginCommand("announce").setTabCompleter(new announce());
         OverrideCommandManager.register("tps", new tps());
-        OverrideCommandManager.register("restart", new restart());
         LibEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
 
@@ -183,7 +178,7 @@ public class speedcubingServer extends JavaPlugin {
                                 User.getUser(Integer.parseInt(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
                                 break;
                             case "restart":
-                                speedcubingServer.restart();
+                                RestartCommand.restart();
                                 break;
                             default:
                                 LibEventManager.callEvent(new SocketEvent(receive));
@@ -201,7 +196,7 @@ public class speedcubingServer extends JavaPlugin {
             public void run() {
                 restartable = true;
                 if (Bukkit.getOnlinePlayers().size() == 0)
-                    restart();
+                    RestartCommand.restart();
             }
         }, 43200000);
     }
@@ -262,41 +257,6 @@ public class speedcubingServer extends JavaPlugin {
             return data != null ? data.split("\\|") : SessionServer.getSkin(MojangAPI.getUUID(name));
         } catch (Exception e) {
             return null;
-        }
-    }
-
-    public static void restart() {
-        AsyncCatcher.enabled = false;
-        try {
-            WatchdogThread.doStop();
-            for (EntityPlayer p : MinecraftServer.getServer().getPlayerList().players) {
-                p.playerConnection.disconnect(SpigotConfig.restartMessage);
-            }
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-            }
-            MinecraftServer.getServer().getServerConnection().b();
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException ex) {
-            }
-            try {
-                MinecraftServer.getServer().stop();
-            } catch (Throwable t) {
-            }
-            Thread shutdownHook = new Thread(() -> {
-                try {
-                    Runtime.getRuntime().exec(new String[]{"screen", "-mdS", (Bukkit.getPort() % 2 == 1 ? "online" : "offline") + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", Bukkit.getPort() % 2 == 1 ? "online" : "offline", "init"});
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            });
-            shutdownHook.setDaemon(true);
-            Runtime.getRuntime().addShutdownHook(shutdownHook);
-            System.exit(0);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

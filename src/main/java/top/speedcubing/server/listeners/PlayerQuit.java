@@ -6,6 +6,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.spigotmc.RestartCommand;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -17,6 +18,6 @@ public class PlayerQuit implements Listener {
         User.usersByID.remove(User.getUser(player).id);
         User.usersByUUID.remove(player.getUniqueId());
         if (Bukkit.getOnlinePlayers().size() == 1 && speedcubingServer.restartable)
-            speedcubingServer.restart();
+            RestartCommand.restart();
     }
 }
