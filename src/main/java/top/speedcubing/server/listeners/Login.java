@@ -12,7 +12,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.SQL.SQLUtils;
-import top.speedcubing.server.Commands.end;
 import top.speedcubing.server.config;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
@@ -25,17 +24,19 @@ import java.util.regex.Pattern;
 public class Login implements Listener {
     @EventHandler
     public void PlayerLoginEvent(PlayerLoginEvent e) {
-        if (end.restarting) {
-            e.setKickMessage("§cServer Restarting... Please wait for a few seconds.");
-            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            return;
-        }
         Player player = e.getPlayer();
         String[] datas = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "priority,nickpriority,perms,lang,id,name,allow_op", "uuid='" + player.getUniqueId() + "'"));
         if (player.isOp() && datas[6].equals("0")) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             return;
         }
+        String[] bungeeData = speedcubingServer.preLoginStorage.get(Integer.parseInt(datas[4]));
+        if (bungeeData == null) {
+            e.setKickMessage("§cServer Restarting... Please wait for a few seconds.");
+            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            return;
+        }
+
         String name = player.getName();
         String old = datas[0];
         String realname = "";
@@ -56,7 +57,7 @@ public class Login implements Listener {
                 groups.add(s.substring(6));
         }
         groups.forEach(a -> p.addAll(config.grouppermissions.get(a)));
-        new User(player, datas[0], p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"));
+        new User(player, datas[0], p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData);
     }
 
     String[] temp;
