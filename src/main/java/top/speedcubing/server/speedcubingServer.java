@@ -9,7 +9,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.api.MojangAPI;
-import top.speedcubing.lib.api.SessionServer;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
@@ -254,7 +253,7 @@ public class speedcubingServer extends JavaPlugin {
     public static String[] getSkin(String name) {
         try {
             String data = DataIO.sendOutPut(getRandomBungeePort(null), "getskin|" + name);
-            return data != null ? data.split("\\|") : SessionServer.getSkin(MojangAPI.getUUID(name));
+            return data != null ? data.split("\\|") : MojangAPI.getSkin(MojangAPI.getUUID(name));
         } catch (Exception e) {
             return null;
         }

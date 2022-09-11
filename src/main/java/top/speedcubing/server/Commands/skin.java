@@ -9,7 +9,6 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.api.MojangAPI;
-import top.speedcubing.lib.api.SessionServer;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.SQL.SQLUtils;
@@ -43,7 +42,7 @@ public class skin implements CommandExecutor, TabCompleter {
                         try {
                             String finalTarget = target;
                             new Thread(() -> {
-                                String[] skin = SessionServer.getSkin(MojangAPI.getUUID(finalTarget));
+                                String[] skin = MojangAPI.getSkin(MojangAPI.getUUID(finalTarget));
                                 changeSkin(player, skin, finalTarget, user.id);
                                 speedcubingServer.tcp.send(user.tcpPort, "skin|" + user.id + "|" + skin[0] + "|" + skin[1]);
                             }).start();
