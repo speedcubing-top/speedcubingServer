@@ -8,7 +8,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.spigotmc.RestartCommand;
-import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
@@ -248,14 +247,5 @@ public class speedcubingServer extends JavaPlugin {
             string.append((char) (Integer.parseInt(str.substring(i * 7, i * 7 + 6), 2) + 32));
         }
         return string.toString();
-    }
-
-    public static String[] getSkin(String name) {
-        try {
-            String data = DataIO.sendOutPut(getRandomBungeePort(null), "getskin|" + name);
-            return data != null ? data.split("\\|") : MojangAPI.getSkin(MojangAPI.getUUID(name));
-        } catch (Exception e) {
-            return null;
-        }
     }
 }
