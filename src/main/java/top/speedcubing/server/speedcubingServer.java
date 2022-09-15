@@ -200,11 +200,16 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public void onDisable() {
-        File index = new File(Bukkit.getWorlds().get(0).getWorldFolder() + "/playerdata");
+        File index = new File(Bukkit.getWorld("world").getWorldFolder() + "/playerdata");
+        File index2 = new File(Bukkit.getWorld("world").getWorldFolder() + "/stats");
         if (index.list() != null)
             for (String s : index.list())
                 new File(index.getPath(), s).delete();
+        if (index2.list() != null)
+            for (String s : index2.list())
+                new File(index2.getPath(), s).delete();
         index.delete();
+        index2.delete();
     }
 
     public static void node(boolean add, int id, int port) {
