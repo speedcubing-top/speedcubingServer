@@ -1,6 +1,7 @@
 package top.speedcubing.server;
 
 import net.minecraft.server.v1_8_R3.PacketPlayInTabComplete;
+import top.speedcubing.lib.api.event.ProfileRespondEvent;
 import top.speedcubing.lib.bukkit.event.PlayInEvent;
 import top.speedcubing.lib.eventbus.LibEventHandler;
 import top.speedcubing.server.events.InputEvent;
@@ -26,5 +27,11 @@ public class ServerEvent {
     public void InputEvent2(InputEvent e) {
         String[] rs = e.receive.split("\\|");
         speedcubingServer.tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "|" + rs[3]);
+    }
+
+    @LibEventHandler
+    public void ProfileRespondEvent(ProfileRespondEvent e) {
+        if (speedcubingServer.isBungeeOnlineMode)
+            speedcubingServer.connection.update("playersdata","name='"+e.name+"'","uuid='"+e.uuid+"'");
     }
 }
