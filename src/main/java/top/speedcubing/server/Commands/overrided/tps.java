@@ -36,7 +36,7 @@ public class tps implements OverrideCommandManager.OverridedCommand {
                 + ", " + (total - free) / 1048576 + " (MB)§e (" + Math.round((total - free) * 10000D / runtime.maxMemory()) / 100 + "%)"
                 , "§6Total CPU Usage: §a" + new DecimalFormat("#.##").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getSystemCpuLoad() * 100) + "%"
                 , "§6Online: §a" + Bukkit.getOnlinePlayers().size() + "/" + Bukkit.getMaxPlayers()
-                , "§6Launch time: §a" + TimeFormatter.unixToRealTime(MinecraftServer.firstTick * 50L, "yyyy/MM/dd/HH:mm:ss.SSS", TimeUnit.MILLISECONDS)
+                , "§6Launch time: §a" + TimeFormatter.unixToRealTime(50 * (System.currentTimeMillis() / 50) - ticks * 50L, "yyyy/MM/dd/HH:mm:ss.SSS", TimeUnit.MILLISECONDS)
                 , "§6Uptime: §a" + new TimeFormatter(ticks * 50L, TimeUnit.MILLISECONDS).format("%D%d %h%h %m%m %s%s %ms%ms", false) + "§e (" + ticks + " ticks)"
                 , "§6Entities: §a" + entities
                 , "§6Loaded Chunks: §a" + chunks
