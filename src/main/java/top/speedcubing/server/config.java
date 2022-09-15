@@ -20,8 +20,8 @@ public class config {
 
     public static List<String> ranks = new ArrayList<>();
     public static Set<Pattern> blockedLog = new HashSet<>();
-    public static Set<String> blockedTab = new HashSet<>();
-    public static Set<String> blockedMod = new HashSet<>();
+    public static Set<Pattern> blockedTab = new HashSet<>();
+    public static Set<Pattern> blockedMod = new HashSet<>();
 
     public static Map<String, String[]> colors = new HashMap<>();
     public static Map<String, Set<String>> rankPermissions = new HashMap<>();
@@ -40,8 +40,8 @@ public class config {
             blockedTab.clear();
             blockedMod.clear();
             object.get("spigotblockedlog").getAsJsonArray().forEach(a -> blockedLog.add(Pattern.compile(a.getAsString())));
-            object.get("spigotblockedtab").getAsJsonArray().forEach(a -> blockedTab.add(a.getAsString()));
-            object.get("blockedmod").getAsJsonArray().forEach(a -> blockedMod.add(a.getAsString().toLowerCase()));
+            object.get("allowtabcomplete").getAsJsonArray().forEach(a -> blockedTab.add(Pattern.compile(a.getAsString())));
+            object.get("blockedmod").getAsJsonArray().forEach(a -> blockedMod.add(Pattern.compile(a.getAsString())));
             colors.clear();
             rankPermissions.clear();
             ranks.clear();
