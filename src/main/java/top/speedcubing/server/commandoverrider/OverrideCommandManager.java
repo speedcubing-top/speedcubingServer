@@ -8,20 +8,22 @@ import java.util.Map;
 public class OverrideCommandManager {
     static Map<String, OverridedCommand> cmds = new HashMap<>();
 
-    public static void register(String command, OverridedCommand overridedCommand) {
-        cmds.put(command, overridedCommand);
+    public static void register(OverridedCommand overridedCommand, String... command) {
+        for (String s : command) {
+            cmds.put(s, overridedCommand);
+        }
     }
 
-    public static boolean dispatchOverride(CommandSender sender, String command, String message) {
+    public static boolean dispatchOverride(CommandSender sender, String command, String[] strings) {
         OverridedCommand overridedCommand = cmds.get(command);
         if (overridedCommand != null) {
-            overridedCommand.execute(sender, message);
+            overridedCommand.execute(sender, strings);
             return true;
         }
         return false;
     }
 
     public interface OverridedCommand {
-        void execute(CommandSender sender, String message);
+        void execute(CommandSender sender, String[] strings);
     }
 }

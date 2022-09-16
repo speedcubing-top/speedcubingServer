@@ -9,13 +9,16 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.bukkit.PlayerUtils;
+import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
+import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.sockets.TCP;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.offline.premium;
 import top.speedcubing.server.Commands.offline.resetpassword;
+import top.speedcubing.server.Commands.overrided.plugins;
 import top.speedcubing.server.Commands.overrided.tps;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
@@ -70,14 +73,10 @@ public class speedcubingServer extends JavaPlugin {
         new ForceOp().run();
         if (!isBungeeOnlineMode) {
             Bukkit.getPluginCommand("premium").setExecutor(new premium());
-            Bukkit.getPluginCommand("premium").setTabCompleter(new premium());
             Bukkit.getPluginCommand("resetpassword").setExecutor(new resetpassword());
-            Bukkit.getPluginCommand("resetpassword").setTabCompleter(new resetpassword());
         } else {
             Bukkit.getPluginCommand("nick").setExecutor(new nick());
-            Bukkit.getPluginCommand("nick").setTabCompleter(new nick());
             Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
-            Bukkit.getPluginCommand("unnick").setTabCompleter(new unnick());
         }
         Messenger messenger = Bukkit.getMessenger();
         messenger.registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
@@ -118,21 +117,17 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new ServerCommand(), this);
         Bukkit.getPluginManager().registerEvents(new CreatureSpawn(), this);
         Bukkit.getPluginCommand("discord").setExecutor(new discord());
-        Bukkit.getPluginCommand("discord").setTabCompleter(new discord());
         Bukkit.getPluginCommand("skin").setExecutor(new skin());
-        Bukkit.getPluginCommand("skin").setTabCompleter(new skin());
         Bukkit.getPluginCommand("hub").setExecutor(new hub());
-        Bukkit.getPluginCommand("hub").setTabCompleter(new hub());
         Bukkit.getPluginCommand("fly").setExecutor(new fly());
-        Bukkit.getPluginCommand("fly").setTabCompleter(new fly());
         Bukkit.getPluginCommand("heal").setExecutor(new heal());
-        Bukkit.getPluginCommand("heal").setTabCompleter(new heal());
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
-        Bukkit.getPluginCommand("proxycommand").setTabCompleter(new proxycommand());
         Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
-        Bukkit.getPluginCommand("announce").setTabCompleter(new announce());
-        OverrideCommandManager.register("tps", new tps());
+        OverrideCommandManager.register(new tps(), "tps");
+        OverrideCommandManager.register(new plugins(), "pl", "plugins");
+        speedcubingLibBukkit.deletePlayerFile = true;
+        TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord","nick","unnick","resetpassword","premium");
         LibEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
 
@@ -197,19 +192,6 @@ public class speedcubingServer extends JavaPlugin {
                     RestartCommand.restart();
             }
         }, 43200000);
-    }
-
-    public void onDisable() {
-        File index = new File(Bukkit.getWorld("world").getWorldFolder() + "/playerdata");
-        File index2 = new File(Bukkit.getWorld("world").getWorldFolder() + "/stats");
-        if (index.list() != null)
-            for (String s : index.list())
-                new File(index.getPath(), s).delete();
-        if (index2.list() != null)
-            for (String s : index2.list())
-                new File(index2.getPath(), s).delete();
-        index.delete();
-        index2.delete();
     }
 
     public static void node(boolean add, int id, int port) {

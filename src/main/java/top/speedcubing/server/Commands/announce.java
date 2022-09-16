@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-public class announce implements CommandExecutor, TabCompleter {
+public class announce implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length != 0) {
@@ -24,9 +24,5 @@ public class announce implements CommandExecutor, TabCompleter {
             }
         }
         return true;
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 }

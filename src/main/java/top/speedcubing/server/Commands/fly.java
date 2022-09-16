@@ -12,7 +12,7 @@ import top.speedcubing.server.libs.User;
 
 import java.util.*;
 
-public class fly implements CommandExecutor, TabCompleter {
+public class fly implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0) {
@@ -26,9 +26,5 @@ public class fly implements CommandExecutor, TabCompleter {
             }
         } else commandSender.sendMessage("/fly");
         return true;
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 }

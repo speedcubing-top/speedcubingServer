@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
-public class nick implements CommandExecutor, TabCompleter {
+public class nick implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         NickEvent event = new NickEvent((Player) commandSender);
@@ -49,10 +49,6 @@ public class nick implements CommandExecutor, TabCompleter {
             } else commandSender.sendMessage("/nick <nickname>, /nick (use the previous nick)");
         }
         return true;
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 
     public static void nickPlayer(String name, String rank, boolean nick, Player player) {

@@ -3,7 +3,6 @@ package top.speedcubing.server.Commands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.SQL.SQLUtils;
@@ -11,10 +10,7 @@ import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
-import java.util.Collections;
-import java.util.List;
-
-public class unnick implements CommandExecutor, TabCompleter {
+public class unnick implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
@@ -29,9 +25,5 @@ public class unnick implements CommandExecutor, TabCompleter {
             else commandSender.sendMessage("/unnick");
         }
         return true;
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 }

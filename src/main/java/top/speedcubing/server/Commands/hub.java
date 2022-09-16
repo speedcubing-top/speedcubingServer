@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class hub implements CommandExecutor, TabCompleter {
+public class hub implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0) {
@@ -28,9 +28,5 @@ public class hub implements CommandExecutor, TabCompleter {
                 BungeePluginMessage.switchServer(player, "lobby");
         } else commandSender.sendMessage("/hub, /l, /lobby");
         return true;
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 }

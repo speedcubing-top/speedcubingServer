@@ -9,7 +9,7 @@ import top.speedcubing.server.speedcubingServer;
 import java.util.Collections;
 import java.util.List;
 
-public class proxycommand implements CommandExecutor, TabCompleter {
+public class proxycommand implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0)
@@ -22,9 +22,5 @@ public class proxycommand implements CommandExecutor, TabCompleter {
             speedcubingServer.tcp.send(speedcubingServer.getRandomBungeePort(commandSender), "proxycmd|" + comamnd.substring(1));
         }
         return true;
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 }

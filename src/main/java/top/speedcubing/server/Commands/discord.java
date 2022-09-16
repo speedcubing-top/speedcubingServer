@@ -12,14 +12,10 @@ import java.util.List;
 import java.util.*;
 
 
-public class discord implements CommandExecutor, TabCompleter {
+public class discord implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         commandSender.sendMessage(GlobalString.discord[User.getUser(commandSender).lang]);
         return true;
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 }

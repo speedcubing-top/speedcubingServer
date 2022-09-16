@@ -13,12 +13,9 @@ import java.text.DecimalFormat;
 import java.util.concurrent.TimeUnit;
 
 public class tps implements OverrideCommandManager.OverridedCommand {
-    public void execute(CommandSender commandSender, String message) {
+    public void execute(CommandSender commandSender, String[] strings) {
         int ticks = MinecraftServer.currentTick - MinecraftServer.firstTick;
         double[] tps = MinecraftServer.getServer().recentTps;
-        double recenttps = (double) Math.round((1.0D - tps[0] / 20.0D) * 100.0D);
-        if (recenttps < 0.0D)
-            recenttps = 0.0D;
         Runtime runtime = Runtime.getRuntime();
         long total = runtime.totalMemory();
         long free = runtime.freeMemory();
@@ -31,7 +28,6 @@ public class tps implements OverrideCommandManager.OverridedCommand {
         String[] result = {
                 "§7-----------------------------"
                 , "§6TPS from last 1m, 5m, 15m: " + format(tps[0]) + ", " + format(tps[1]) + ", " + format(tps[2])
-                , "§6Server Lag: §a" + (double) Math.round(recenttps * 10000) / 10000 + "%"
                 , "§6Runtime Memory (total, free, used): §a" + total / 1048576 + ", " + free / 1048576
                 + ", " + (total - free) / 1048576 + " (MB)§e (" + Math.round((total - free) * 10000D / runtime.maxMemory()) / 100 + "%)"
                 , "§6Total CPU Usage: §a" + new DecimalFormat("#.##").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getSystemCpuLoad() * 100) + "%"

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class premium implements CommandExecutor, TabCompleter {
+public class premium implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0) {
             User user = User.getUser(commandSender);
@@ -26,9 +26,5 @@ public class premium implements CommandExecutor, TabCompleter {
             }
         } else commandSender.sendMessage("/premium");
         return true;
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 }

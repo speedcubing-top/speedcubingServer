@@ -3,16 +3,11 @@ package top.speedcubing.server.Commands.offline;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-public class resetpassword implements CommandExecutor, TabCompleter {
+public class resetpassword implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 2) {
             int l = strings[0].length();
@@ -26,9 +21,5 @@ public class resetpassword implements CommandExecutor, TabCompleter {
             } else commandSender.sendMessage("The password and confirm password do not match.");
         } else commandSender.sendMessage("/register <password> <confirm password>");
         return true;
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 }

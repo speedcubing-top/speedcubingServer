@@ -20,7 +20,7 @@ import top.speedcubing.server.speedcubingServer;
 import java.util.Collections;
 import java.util.List;
 
-public class skin implements CommandExecutor, TabCompleter {
+public class skin implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
@@ -62,9 +62,5 @@ public class skin implements CommandExecutor, TabCompleter {
                 }
             }).start();
         return true;
-    }
-
-    public List<String> onTabComplete(CommandSender commandSender, Command command, String s, String[] strings) {
-        return Collections.emptyList();
     }
 }
