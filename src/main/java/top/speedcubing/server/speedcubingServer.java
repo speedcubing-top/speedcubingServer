@@ -24,6 +24,7 @@ import top.speedcubing.server.Commands.offline.resetpassword;
 import top.speedcubing.server.Commands.overrided.plugins;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
+import top.speedcubing.server.events.CubingTickEvent;
 import top.speedcubing.server.events.SocketEvent;
 import top.speedcubing.server.libs.DataIO;
 import top.speedcubing.server.libs.LogListener;
@@ -219,6 +220,7 @@ public class speedcubingServer extends JavaPlugin {
                                 "',chunks=" + chunks,
                         "name='" + Bukkit.getServerName() + "'"
                 );
+                LibEventManager.callEvent(new CubingTickEvent());
             }
         }, 0, 1000);
     }
