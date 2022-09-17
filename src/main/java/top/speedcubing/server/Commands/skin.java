@@ -5,7 +5,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.api.MojangAPI;
@@ -17,7 +16,6 @@ import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
-import java.util.Collections;
 import java.util.List;
 
 public class skin implements CommandExecutor {
@@ -39,7 +37,13 @@ public class skin implements CommandExecutor {
                     try {
                         String finalTarget = target;
                         new Thread(() -> {
-                            String[] skin = MojangAPI.getSkin(MojangAPI.getUUID(finalTarget));
+                            String[] skin;
+                            try {
+                                skin = MojangAPI.getSkin(MojangAPI.getUUID(finalTarget));
+                            } catch (Exception e) {
+                                player.sendMessage(GlobalString.invalidName[user.lang]);
+                                return;
+                            }
                             List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, skin);
                             packets[0].forEach(((CraftPlayer) player).getHandle().playerConnection::sendPacket);
                             String worldname = player.getWorld().getName();
