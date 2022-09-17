@@ -20,7 +20,7 @@ public class CommandPermissions implements Listener {
     @EventHandler
     public void PlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();
-        CommandElement element = new CommandElement(e.getMessage());
+        CommandElement element = new CommandElement(e.getMessage(), false);
         if (op.contains(element.command)) {
             if (!player.isOp()) {
                 player.sendMessage(GlobalString.UnknownCommand[User.getUser(player).lang]);
@@ -42,16 +42,16 @@ public class CommandPermissions implements Listener {
 
     @EventHandler
     public void ServerCommandEvent(ServerCommandEvent e) {
-        CommandElement element = new CommandElement(e.getCommand());
+        CommandElement element = new CommandElement(e.getCommand(), true);
         e.setCancelled(OverrideCommandManager.dispatchOverride(e.getSender(), element.command, element.strings));
     }
 
-    class CommandElement {
+   static class CommandElement {
         public final String command;
         public final String[] strings;
 
-        public CommandElement(String message) {
-            String[] args = message.substring(1).split(" ");
+        public CommandElement(String message,boolean console) {
+            String[] args = (console ? message : message.substring(1)).split(" ");
             this.command = args[0].toLowerCase();
             this.strings = Java15Compat.Arrays_copyOfRange(args, 1, args.length);
         }

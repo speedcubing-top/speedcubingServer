@@ -1,7 +1,9 @@
 package top.speedcubing.server;
 
+import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -13,13 +15,13 @@ import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.sockets.TCP;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.offline.premium;
 import top.speedcubing.server.Commands.offline.resetpassword;
 import top.speedcubing.server.Commands.overrided.plugins;
-import top.speedcubing.server.Commands.overrided.tps;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.events.SocketEvent;
@@ -44,7 +46,6 @@ public class speedcubingServer extends JavaPlugin {
     public static TCP tcp;
     public static boolean isBungeeOnlineMode;
     public static Map<Integer, String[]> preLoginStorage = new HashMap<>();
-
     public static boolean restartable = false;
 
     public void onEnable() {
@@ -124,10 +125,9 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
-        OverrideCommandManager.register(new tps(), "tps");
         OverrideCommandManager.register(new plugins(), "pl", "plugins");
         speedcubingLibBukkit.deletePlayerFile = true;
-        TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord","nick","unnick","resetpassword","premium");
+        TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
         LibEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
 
@@ -192,6 +192,39 @@ public class speedcubingServer extends JavaPlugin {
                     RestartCommand.restart();
             }
         }, 43200000);
+
+        Runtime runtime = Runtime.getRuntime();
+        systemConnection.update("servers", "launchtime=" + (int) (System.currentTimeMillis() / 1000), "name='" + Bukkit.getServerName() + "'");
+        new Timer().schedule(new TimerTask() {
+            int entities, chunks;
+            double[] tps;
+
+            @Override
+            public void run() {
+                tps = MinecraftServer.getServer().recentTps;
+                entities = 0;
+                chunks = 0;
+                for (World world : Bukkit.getWorlds()) {
+                    entities += world.getEntities().size();
+                    chunks += world.getLoadedChunks().length;
+                }
+                systemConnection.update(
+                        "servers",
+                        "onlinecount=" + Bukkit.getOnlinePlayers().size() +
+                                ",ram_max=" + (runtime.maxMemory() / 1048576) +
+                                ",ram_free=" + (runtime.freeMemory() / 1048576) +
+                                ",tps1='" + ((tps[0] > 20.0) ? "*" : "") + Math.min(Math.round(tps[0] * 100.0) / 100.0, 20.0) +
+                                "',tps2='" + ((tps[1] > 20.0) ? "*" : "") + Math.min(Math.round(tps[1] * 100.0) / 100.0, 20.0) +
+                                "',tps3='" + ((tps[2] > 20.0) ? "*" : "") + Math.min(Math.round(tps[2] * 100.0) / 100.0, 20.0) +
+                                "',chunks=" + chunks,
+                        "name='" + Bukkit.getServerName() + "'"
+                );
+            }
+        }, 0, 1000);
+    }
+
+    public static int getOnlineCount() {
+        return SQLUtils.getInt(systemConnection.select("proxies", "SUM(onlinecount)", "1"));
     }
 
     public static void node(boolean add, int id, int port) {

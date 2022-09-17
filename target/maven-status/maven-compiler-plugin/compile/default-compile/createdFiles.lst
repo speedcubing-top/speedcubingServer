@@ -35,13 +35,13 @@ top\speedcubing\server\events\player\PlayerEvent.class
 top\speedcubing\server\libs\LogListener$1.class
 top\speedcubing\server\events\player\NickEvent.class
 top\speedcubing\server\listeners\Cps$1.class
+top\speedcubing\server\speedcubingServer$2.class
 top\speedcubing\server\listeners\PlayerVelocity.class
 top\speedcubing\server\Commands\unnick.class
 top\speedcubing\server\libs\LogListener.class
 top\speedcubing\server\libs\User.class
 top\speedcubing\server\Commands\nick.class
 top\speedcubing\server\listeners\PlayerKick.class
-top\speedcubing\server\Commands\overrided\tps.class
 top\speedcubing\server\config.class
 top\speedcubing\server\speedcubingServer.class
 top\speedcubing\server\commandoverrider\OverrideCommandManager$OverridedCommand.class

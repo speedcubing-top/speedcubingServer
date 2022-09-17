@@ -34,7 +34,6 @@ C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\sr
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\listeners\PlayerQuit.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\events\player\SkinEvent.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\Commands\announce.java
-C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\Commands\overrided\tps.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\listeners\WeatherChange.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\listeners\InventoryOpen.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\events\player\PlayerEvent.java
