@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.Messenger;
@@ -207,7 +208,7 @@ public class speedcubingServer extends JavaPlugin {
                 chunks = 0;
                 for (World world : Bukkit.getWorlds()) {
                     entities += world.getEntities().size();
-                    chunks += world.getLoadedChunks().length;
+                    chunks += ((CraftWorld) world).getHandle().chunkProviderServer.chunks.size();
                 }
                 systemConnection.update(
                         "servers",
