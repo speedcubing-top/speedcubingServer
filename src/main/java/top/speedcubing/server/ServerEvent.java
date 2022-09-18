@@ -17,8 +17,8 @@ public class ServerEvent {
                 if (p.matcher(s).matches())
                     return;
             }
+            e.isCancelled = true;
         }
-        e.isCancelled = true;
     }
 
     @LibEventHandler
