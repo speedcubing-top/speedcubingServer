@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -100,8 +101,9 @@ public class speedcubingServer extends JavaPlugin {
                     i = end;
                 }
                 for (String m : mods.keySet()) {
-                    if (config.blockedMod.contains(m.toLowerCase())) {
-                        player.kickPlayer("Invalid Modification found.");
+                    for (Pattern p : config.blockedMod) {
+                        if (p.matcher(m).matches())
+                            player.kickPlayer("Invalid Modification found.");
                     }
                 }
                 connection.update("playersdata", "forgemod='" + mods + "'", "uuid='" + player.getUniqueId() + "'");
@@ -196,7 +198,10 @@ public class speedcubingServer extends JavaPlugin {
         }, 43200000);
 
         Runtime runtime = Runtime.getRuntime();
-        systemConnection.update("servers", "launchtime=" + (int) (System.currentTimeMillis() / 1000), "name='" + Bukkit.getServerName() + "'");
+        systemConnection.update("servers",
+                "launchtime=" + (int) (System.currentTimeMillis() / 1000) +
+                        ",ram_max=" + ((runtime.maxMemory() + ManagementFactory.getMemoryPoolMXBeans().get(4).getUsage().getMax()) / 1048576)
+                , "name='" + Bukkit.getServerName() + "'");
         new Timer().schedule(new TimerTask() {
             int entities, chunks;
             double[] tps;
@@ -213,12 +218,11 @@ public class speedcubingServer extends JavaPlugin {
                 systemConnection.update(
                         "servers",
                         "onlinecount=" + Bukkit.getOnlinePlayers().size() +
-                                ",ram_max=" + (runtime.maxMemory() / 1048576) +
-                                ",ram_free=" + (runtime.freeMemory() / 1048576) +
-                                ",tps1='" + ((tps[0] > 20.0) ? "*" : "") + Math.min(Math.round(tps[0] * 100.0) / 100.0, 20.0) +
-                                "',tps2='" + ((tps[1] > 20.0) ? "*" : "") + Math.min(Math.round(tps[1] * 100.0) / 100.0, 20.0) +
-                                "',tps3='" + ((tps[2] > 20.0) ? "*" : "") + Math.min(Math.round(tps[2] * 100.0) / 100.0, 20.0) +
-                                "',chunks=" + chunks,
+                                ",ram_used=" + (runtime.totalMemory() - runtime.freeMemory()) / 1048576 +
+                                ",tps1=" + Math.round(tps[0] * 100.0) / 100.0 +
+                                ",tps2=" + Math.round(tps[1] * 100.0) / 100.0 +
+                                ",tps3=" + Math.round(tps[2] * 100.0) / 100.0 +
+                                ",chunks=" + chunks,
                         "name='" + Bukkit.getServerName() + "'"
                 );
                 LibEventManager.callEvent(new CubingTickEvent());
@@ -270,5 +274,9 @@ public class speedcubingServer extends JavaPlugin {
             string.append((char) (Integer.parseInt(str.substring(i * 7, i * 7 + 6), 2) + 32));
         }
         return string.toString();
+    }
+
+    public static long mb(long a) {
+        return a / 1048576;
     }
 }

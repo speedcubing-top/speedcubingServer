@@ -6,11 +6,19 @@ import top.speedcubing.lib.bukkit.event.PlayInEvent;
 import top.speedcubing.lib.eventbus.LibEventHandler;
 import top.speedcubing.server.events.InputEvent;
 
+import java.util.regex.Pattern;
+
 public class ServerEvent {
     @LibEventHandler
     public void PlayInEvent(PlayInEvent e) {
-        if (e.packet instanceof PacketPlayInTabComplete && !config.blockedTab.contains(((PacketPlayInTabComplete) e.packet).a()))
-            e.isCancelled = true;
+        if (e.packet instanceof PacketPlayInTabComplete) {
+            String s = ((PacketPlayInTabComplete) e.packet).a();
+            for (Pattern p : config.blockedTab) {
+                if (p.matcher(s).matches())
+                    return;
+            }
+        }
+        e.isCancelled = true;
     }
 
     @LibEventHandler
@@ -32,6 +40,6 @@ public class ServerEvent {
     @LibEventHandler
     public void ProfileRespondEvent(ProfileRespondEvent e) {
         if (speedcubingServer.isBungeeOnlineMode)
-            speedcubingServer.connection.update("playersdata","name='"+e.name+"'","uuid='"+e.uuid+"'");
+            speedcubingServer.connection.update("playersdata", "name='" + e.name + "'", "uuid='" + e.uuid + "'");
     }
 }
