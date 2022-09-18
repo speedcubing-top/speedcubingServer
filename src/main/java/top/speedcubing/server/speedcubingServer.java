@@ -9,7 +9,6 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.plugin.messaging.Messenger;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
@@ -52,6 +51,7 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean restartable = false;
 
     public void onEnable() {
+        //check proxy online mode
         try {
 //            File file = new File("../../Proxies/WaterFall/config.yml");
 //            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(Files.newInputStream(file.toPath()))).get("online_mode");
@@ -68,11 +68,21 @@ public class speedcubingServer extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        //conn
         new config().reload();
         connection = new SQLConnection(config.DatabaseURL.replace("%db%", Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing"), config.DatabaseUser, config.DatabasePassword);
         systemConnection = new SQLConnection(config.DatabaseURL.replace("%db%", "speedcubingsystem"), config.DatabaseUser, config.DatabasePassword);
         new config().reloadDatabase();
         tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
+
+        //spigot
+        RestartCommand.customRestartArg = new String[]{"screen", "-mdS", (Bukkit.getPort() % 2 == 1 ? "online" : "offline") + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", Bukkit.getPort() % 2 == 1 ? "online" : "offline", "init"};
+
+        //lib
+        speedcubingLibBukkit.deletePlayerFile = true;
+
+        //self
         new Cps().Load();
         new ForceOp().run();
         if (!isBungeeOnlineMode) {
@@ -82,8 +92,7 @@ public class speedcubingServer extends JavaPlugin {
             Bukkit.getPluginCommand("nick").setExecutor(new nick());
             Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         }
-        Messenger messenger = Bukkit.getMessenger();
-        messenger.registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
             String brand = (new String(bytes, StandardCharsets.UTF_8)).substring(1);
             if (brand.length() != 1) {
                 Map<String, String> mods = new HashMap<>();
@@ -109,7 +118,6 @@ public class speedcubingServer extends JavaPlugin {
                 connection.update("playersdata", "forgemod='" + mods + "'", "uuid='" + player.getUniqueId() + "'");
             }
         });
-        RestartCommand.customRestartArg = new String[]{"screen", "-mdS", (Bukkit.getPort() % 2 == 1 ? "online" : "offline") + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", Bukkit.getPort() % 2 == 1 ? "online" : "offline", "init"};
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerDeath(), this);
         Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
@@ -135,6 +143,7 @@ public class speedcubingServer extends JavaPlugin {
         LibEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
 
+        //socket receive
         new Thread(() -> {
             try {
                 String receive;
@@ -188,6 +197,8 @@ public class speedcubingServer extends JavaPlugin {
                 Bukkit.getScheduler().runTask(this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "end"));
             }
         }).start();
+
+        //restartable
         new Timer().schedule(new TimerTask() {
             @Override
             public void run() {
@@ -202,6 +213,8 @@ public class speedcubingServer extends JavaPlugin {
                 "launchtime=" + (int) (System.currentTimeMillis() / 1000) +
                         ",ram_max=" + ((runtime.maxMemory() + ManagementFactory.getMemoryPoolMXBeans().get(4).getUsage().getMax()) / 1048576)
                 , "name='" + Bukkit.getServerName() + "'");
+
+        //cubing tick
         new Timer().schedule(new TimerTask() {
             int entities, chunks;
             double[] tps;
