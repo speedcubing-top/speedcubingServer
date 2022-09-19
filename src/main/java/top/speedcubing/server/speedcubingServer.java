@@ -48,7 +48,8 @@ public class speedcubingServer extends JavaPlugin {
     public static TCP tcp;
     public static boolean isBungeeOnlineMode;
     public static Map<Integer, String[]> preLoginStorage = new HashMap<>();
-    public static boolean restartable = false;
+    private static Timer calcTimer;
+    public static long startTime = System.currentTimeMillis();
 
     public void onEnable() {
         //check proxy online mode
@@ -144,7 +145,7 @@ public class speedcubingServer extends JavaPlugin {
         new LogListener().reloadFilter();
 
         //socket receive
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             try {
                 String receive;
                 while (true) {
@@ -196,17 +197,9 @@ public class speedcubingServer extends JavaPlugin {
                 e.printStackTrace();
                 Bukkit.getScheduler().runTask(this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "end"));
             }
-        }).start();
-
-        //restartable
-        new Timer().schedule(new TimerTask() {
-            @Override
-            public void run() {
-                restartable = true;
-                if (Bukkit.getOnlinePlayers().size() == 0)
-                    RestartCommand.restart();
-            }
-        }, 43200000);
+        });
+        thread.setName("Cubing-Socket-Thread");
+        thread.start();
 
         Runtime runtime = Runtime.getRuntime();
         systemConnection.update("servers",
@@ -214,8 +207,17 @@ public class speedcubingServer extends JavaPlugin {
                         ",ram_max=" + ((runtime.maxMemory() + ManagementFactory.getMemoryPoolMXBeans().get(4).getUsage().getMax()) / 1048576)
                 , "name='" + Bukkit.getServerName() + "'");
 
-        //cubing tick
+        //restart
         new Timer().schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if (Bukkit.getOnlinePlayers().size() == 0)
+                    RestartCommand.restart();
+            }
+        }, 43200000);
+
+        calcTimer = new Timer("Cubing-Tick-Thread");
+        calcTimer.schedule(new TimerTask() {
             int entities, chunks;
             double[] tps;
 
@@ -241,6 +243,15 @@ public class speedcubingServer extends JavaPlugin {
                 LibEventManager.callEvent(new CubingTickEvent());
             }
         }, 0, 1000);
+    }
+
+    public void onDisable() {
+        calcTimer.cancel();
+        systemConnection.update(
+                "servers",
+                "onlinecount=0,ram_used=0,tps1=0,tps2=0,tps3=0,chunks=0",
+                "name='" + Bukkit.getServerName() + "'"
+        );
     }
 
     public static int getOnlineCount() {
