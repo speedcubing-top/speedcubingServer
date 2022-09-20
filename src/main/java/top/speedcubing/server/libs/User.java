@@ -63,4 +63,28 @@ public class User {
     public void sendLangMessage(String[] s) {
         player.sendMessage(s[lang]);
     }
+
+    public LangMessage langMessageSender(String[] s) {
+        return new LangMessage(s[lang], this);
+    }
+
+    public static class LangMessage {
+
+        private String s;
+        private final User user;
+
+        public LangMessage(String s, User user) {
+            this.s = s;
+            this.user = user;
+        }
+
+        public LangMessage replace(String s1, String s2) {
+            s = s.replace(s1, s2);
+            return this;
+        }
+
+        public void send() {
+            user.player.sendMessage(s);
+        }
+    }
 }

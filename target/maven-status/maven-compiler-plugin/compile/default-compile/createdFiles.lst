@@ -47,4 +47,5 @@ top\speedcubing\server\config.class
 top\speedcubing\server\speedcubingServer.class
 top\speedcubing\server\commandoverrider\OverrideCommandManager$OverridedCommand.class
 top\speedcubing\server\Commands\hub.class
+top\speedcubing\server\libs\User$LangMessage.class
 top\speedcubing\server\ExploitFixer\ForceOp.class
