@@ -98,6 +98,20 @@ public class GlobalString {
             "§cIf you want to unnick please use /unnick"
     };
 
+    public static String[] notNicked = {
+            "§cYou are not nicked!",
+            "§cYou are not nicked!",
+            "§cYou are not nicked!",
+            "§cYou are not nicked!"
+    };
+
+    public static String[] alreadyNicked = {
+            "§cYou are not nicked!",
+            "§cYou are not nicked!",
+            "§cYou are not nicked!",
+            "§cYou are not nicked!"
+    };
+
     public static String[] nicknotavaliable = {
             "§cThis nickname is not avaliable.",
             "§cThis nickname is not avaliable.",

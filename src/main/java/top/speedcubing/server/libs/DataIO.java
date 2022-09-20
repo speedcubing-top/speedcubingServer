@@ -36,7 +36,7 @@ public class DataIO {
                 waitData.put(rs[1], rs.length == 2 ? null : receive.substring(StringUtils.indexOf(receive, "|", 2) + 1));
                 break;
             case "in":
-                LibEventManager.callEvent(new InputEvent(receive));
+                new InputEvent(receive).call();
                 break;
         }
     }

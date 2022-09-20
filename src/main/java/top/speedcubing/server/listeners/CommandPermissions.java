@@ -23,15 +23,15 @@ public class CommandPermissions implements Listener {
         CommandElement element = new CommandElement(e.getMessage(), false);
         if (op.contains(element.command)) {
             if (!player.isOp()) {
-                player.sendMessage(GlobalString.UnknownCommand[User.getUser(player).lang]);
+                User.getUser(player).sendLangMessage(GlobalString.UnknownCommand);
                 e.setCancelled(true);
             }
         } else {
             User user = User.getUser(player);
             Set<String> perms = user.permissions;
             if (!(perms.contains("cmd." + element.command) || perms.contains("cmd.*"))) {
-                player.sendMessage(perms.contains("view." + element.command) || perms.contains("view.*") ?
-                        GlobalString.NoPermCommand[user.lang] : GlobalString.UnknownCommand[user.lang]);
+                user.sendLangMessage(perms.contains("view." + element.command) || perms.contains("view.*") ?
+                        GlobalString.NoPermCommand : GlobalString.UnknownCommand);
                 e.setCancelled(true);
             }
             if (!e.isCancelled()) {
@@ -46,11 +46,11 @@ public class CommandPermissions implements Listener {
         e.setCancelled(OverrideCommandManager.dispatchOverride(e.getSender(), element.command, element.strings));
     }
 
-   static class CommandElement {
+    static class CommandElement {
         public final String command;
         public final String[] strings;
 
-        public CommandElement(String message,boolean console) {
+        public CommandElement(String message, boolean console) {
             String[] args = (console ? message : message.substring(1)).split(" ");
             this.command = args[0].toLowerCase();
             this.strings = Java15Compat.Arrays_copyOfRange(args, 1, args.length);

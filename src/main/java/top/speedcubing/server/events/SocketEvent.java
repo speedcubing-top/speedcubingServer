@@ -1,6 +1,8 @@
 package top.speedcubing.server.events;
 
-public class SocketEvent {
+import top.speedcubing.lib.eventbus.LibEventManager;
+
+public class SocketEvent extends LibEventManager {
     public String receive;
 
     public SocketEvent(String receive) {

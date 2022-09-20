@@ -9,7 +9,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.PlayerUtils;
-import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.libs.GlobalString;
@@ -22,9 +21,7 @@ public class skin implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
-        SkinEvent event = new SkinEvent(player);
-        LibEventManager.callEvent(event);
-        if (!event.isCancelled)
+        if (!((SkinEvent) new SkinEvent(player).call()).isCancelled)
             new Thread(() -> {
                 User user = User.getUser(commandSender);
                 String target = "";
@@ -41,7 +38,7 @@ public class skin implements CommandExecutor {
                             try {
                                 skin = MojangAPI.getSkin(MojangAPI.getUUID(finalTarget));
                             } catch (Exception e) {
-                                player.sendMessage(GlobalString.invalidName[user.lang]);
+                                user.sendLangMessage(GlobalString.invalidName);
                                 return;
                             }
                             List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, skin);
@@ -61,7 +58,7 @@ public class skin implements CommandExecutor {
                             speedcubingServer.tcp.send(user.tcpPort, "skin|" + user.id + "|" + skin[0] + "|" + skin[1]);
                         }).start();
                     } catch (Exception e) {
-                        commandSender.sendMessage(GlobalString.invalidName[user.lang]);
+                        user.sendLangMessage(GlobalString.invalidName);
                     }
                 }
             }).start();

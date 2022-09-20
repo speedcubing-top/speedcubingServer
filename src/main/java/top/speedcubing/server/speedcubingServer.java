@@ -188,7 +188,7 @@ public class speedcubingServer extends JavaPlugin {
                                 RestartCommand.restart();
                                 break;
                             default:
-                                LibEventManager.callEvent(new SocketEvent(receive));
+                                new SocketEvent(receive).call();
                                 break;
                         }
                     } else System.out.print("[Server] received null line of socket");
@@ -220,7 +220,7 @@ public class speedcubingServer extends JavaPlugin {
         calcTimer.schedule(new TimerTask() {
             int entities, chunks;
             double[] tps;
-
+            final CubingTickEvent event = new CubingTickEvent();
             @Override
             public void run() {
                 tps = MinecraftServer.getServer().recentTps;
@@ -240,7 +240,7 @@ public class speedcubingServer extends JavaPlugin {
                                 ",chunks=" + chunks,
                         "name='" + Bukkit.getServerName() + "'"
                 );
-                LibEventManager.callEvent(new CubingTickEvent());
+                event.call();
             }
         }, 0, 1000);
     }

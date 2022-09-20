@@ -6,7 +6,6 @@ import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
@@ -20,31 +19,28 @@ import top.speedcubing.server.speedcubingServer;
 
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.List;
 
 public class nick implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        NickEvent event = new NickEvent((Player) commandSender);
-        LibEventManager.callEvent(event);
-        if (!event.isCancelled) {
+        if (!((NickEvent) new NickEvent((Player) commandSender).call()).isCancelled) {
             if (strings.length == 1) {
                 String name = strings[0];
                 User user = User.getUser(commandSender);
                 if (name.equals(commandSender.getName()))
-                    commandSender.sendMessage(GlobalString.nicksameusername[user.lang]);
+                    user.sendLangMessage(GlobalString.nicksameusername);
                 else if (name.equals(SQLUtils.getString(speedcubingServer.connection.select("playersdata", "name", "id=" + user.id))))
-                    commandSender.sendMessage(GlobalString.nickdefaultusername[user.lang]);
+                    user.sendLangMessage(GlobalString.nickdefaultusername);
                 else if (speedcubingServer.nameRegex.matcher(name).matches() && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'") && !speedcubingServer.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'"))
                     nickPlayer(name, SQLUtils.getString(speedcubingServer.connection.select("playersdata", "nickpriority", "id=" + user.id)), true, (Player) commandSender);
                 else
-                    commandSender.sendMessage(GlobalString.nicknotavaliable[user.lang]);
+                    user.sendLangMessage(GlobalString.nicknotavaliable);
             } else if (strings.length == 0) {
                 String[] datas = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "nickname,nickpriority", "id=" + User.getUser(commandSender).id));
                 if (datas[0].equals(""))
                     commandSender.sendMessage("/nick <nickname>");
                 else if (datas[0].equals(commandSender.getName()))
-                    commandSender.sendMessage("you are already nicked!");
+                    User.getUser(commandSender).sendLangMessage(GlobalString.alreadyNicked);
                 else nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender);
             } else commandSender.sendMessage("/nick <nickname>, /nick (use the previous nick)");
         }

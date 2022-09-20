@@ -39,7 +39,7 @@ public class User {
 
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
-    public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp,String[] bungeeData) {
+    public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, String[] bungeeData) {
         this.player = player;
         Set<String> groups = new HashSet<>();
         for (String s : permissions) {
@@ -58,5 +58,9 @@ public class User {
         this.allowOp = allowOp;
         usersByID.put(id, this);
         usersByUUID.put(player.getUniqueId(), this);
+    }
+
+    public void sendLangMessage(String[] s) {
+        player.sendMessage(s[lang]);
     }
 }
