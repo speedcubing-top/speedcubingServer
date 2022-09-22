@@ -3,10 +3,8 @@ package top.speedcubing.server;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
@@ -200,15 +198,14 @@ public class speedcubingServer extends JavaPlugin {
         });
         thread.setName("Cubing-Socket-Thread");
         thread.start();
-
         Runtime runtime = Runtime.getRuntime();
         systemConnection.update("servers",
                 "launchtime=" + (int) (System.currentTimeMillis() / 1000) +
-                        ",ram_max=" + ((runtime.maxMemory() + ManagementFactory.getMemoryPoolMXBeans().get(4).getUsage().getMax()) / 1048576)
+                        ",ram_max=" + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getInit() / 1048576
                 , "name='" + Bukkit.getServerName() + "'");
 
         //restart
-        new Timer().schedule(new TimerTask() {
+        new Timer("Cubing-Restart-Thread").schedule(new TimerTask() {
             @Override
             public void run() {
                 if (Bukkit.getOnlinePlayers().size() == 0)
@@ -218,26 +215,19 @@ public class speedcubingServer extends JavaPlugin {
 
         calcTimer = new Timer("Cubing-Tick-Thread");
         calcTimer.schedule(new TimerTask() {
-            int entities, chunks;
             double[] tps;
             final CubingTickEvent event = new CubingTickEvent();
+
             @Override
             public void run() {
                 tps = MinecraftServer.getServer().recentTps;
-                entities = 0;
-                chunks = 0;
-                for (World world : Bukkit.getWorlds()) {
-                    entities += world.getEntities().size();
-                    chunks += ((CraftWorld) world).getHandle().chunkProviderServer.chunks.size();
-                }
                 systemConnection.update(
                         "servers",
                         "onlinecount=" + Bukkit.getOnlinePlayers().size() +
                                 ",ram_used=" + (runtime.totalMemory() - runtime.freeMemory()) / 1048576 +
                                 ",tps1=" + Math.round(tps[0] * 100.0) / 100.0 +
                                 ",tps2=" + Math.round(tps[1] * 100.0) / 100.0 +
-                                ",tps3=" + Math.round(tps[2] * 100.0) / 100.0 +
-                                ",chunks=" + chunks,
+                                ",tps3=" + Math.round(tps[2] * 100.0) / 100.0,
                         "name='" + Bukkit.getServerName() + "'"
                 );
                 event.call();
@@ -298,9 +288,5 @@ public class speedcubingServer extends JavaPlugin {
             string.append((char) (Integer.parseInt(str.substring(i * 7, i * 7 + 6), 2) + 32));
         }
         return string.toString();
-    }
-
-    public static long mb(long a) {
-        return a / 1048576;
     }
 }
