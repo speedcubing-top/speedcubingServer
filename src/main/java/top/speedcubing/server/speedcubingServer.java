@@ -218,15 +218,16 @@ public class speedcubingServer extends JavaPlugin {
         calcTimer.schedule(new TimerTask() {
             double[] tps;
             final CubingTickEvent event = new CubingTickEvent();
-            final MemoryUsage usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
+            MemoryUsage usage;
 
             @Override
             public void run() {
+                usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
                 tps = MinecraftServer.getServer().recentTps;
                 systemConnection.update(
                         "servers",
                         "onlinecount=" + Bukkit.getOnlinePlayers().size() +
-                                "ram_heap=" + usage.getCommitted() / 1048576 +
+                                ",ram_heap=" + usage.getCommitted() / 1048576 +
                                 ",ram_used=" + usage.getUsed() / 1048576 +
                                 ",tps1=" + Math.round(tps[0] * 100.0) / 100.0 +
                                 ",tps2=" + Math.round(tps[1] * 100.0) / 100.0 +
@@ -242,7 +243,7 @@ public class speedcubingServer extends JavaPlugin {
         calcTimer.cancel();
         systemConnection.update(
                 "servers",
-                "onlinecount=0,ram_used=0,tps1=0,tps2=0,tps3=0,chunks=0",
+                "onlinecount=0,ram_heap=0,ram_used=0,tps1=0,tps2=0,tps3=0",
                 "name='" + Bukkit.getServerName() + "'"
         );
     }
