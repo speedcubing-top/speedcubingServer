@@ -15,6 +15,7 @@ import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.lib.utils.StringUtils;
+import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.sockets.TCP;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.offline.premium;
@@ -33,7 +34,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
-import java.lang.management.ManagementFactory;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -200,8 +200,8 @@ public class speedcubingServer extends JavaPlugin {
         thread.start();
         Runtime runtime = Runtime.getRuntime();
         systemConnection.update("servers",
-                "launchtime=" + (int) (System.currentTimeMillis() / 1000) +
-                        ",ram_max=" + ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getInit() / 1048576
+                "launchtime=" + System.currentTimeMillis() / 1000 +
+                        ",ram_max=" + SystemUtils.getXmx() / 1048576
                 , "name='" + Bukkit.getServerName() + "'");
 
         //restart
@@ -224,6 +224,7 @@ public class speedcubingServer extends JavaPlugin {
                 systemConnection.update(
                         "servers",
                         "onlinecount=" + Bukkit.getOnlinePlayers().size() +
+                                ",ram_heap=" + runtime.totalMemory() / 1048576 +
                                 ",ram_used=" + (runtime.totalMemory() - runtime.freeMemory()) / 1048576 +
                                 ",tps1=" + Math.round(tps[0] * 100.0) / 100.0 +
                                 ",tps2=" + Math.round(tps[1] * 100.0) / 100.0 +
