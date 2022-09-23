@@ -34,6 +34,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryUsage;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -198,7 +200,6 @@ public class speedcubingServer extends JavaPlugin {
         });
         thread.setName("Cubing-Socket-Thread");
         thread.start();
-        Runtime runtime = Runtime.getRuntime();
         systemConnection.update("servers",
                 "launchtime=" + System.currentTimeMillis() / 1000 +
                         ",ram_max=" + SystemUtils.getXmx() / 1048576
@@ -217,6 +218,7 @@ public class speedcubingServer extends JavaPlugin {
         calcTimer.schedule(new TimerTask() {
             double[] tps;
             final CubingTickEvent event = new CubingTickEvent();
+            final MemoryUsage usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
 
             @Override
             public void run() {
@@ -224,8 +226,8 @@ public class speedcubingServer extends JavaPlugin {
                 systemConnection.update(
                         "servers",
                         "onlinecount=" + Bukkit.getOnlinePlayers().size() +
-                                ",ram_heap=" + runtime.totalMemory() / 1048576 +
-                                ",ram_used=" + (runtime.totalMemory() - runtime.freeMemory()) / 1048576 +
+                                "ram_heap=" + usage.getCommitted() / 1048576 +
+                                ",ram_used=" + usage.getUsed() / 1048576 +
                                 ",tps1=" + Math.round(tps[0] * 100.0) / 100.0 +
                                 ",tps2=" + Math.round(tps[1] * 100.0) / 100.0 +
                                 ",tps3=" + Math.round(tps[2] * 100.0) / 100.0,
