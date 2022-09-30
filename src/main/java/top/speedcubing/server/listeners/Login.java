@@ -25,7 +25,7 @@ public class Login implements Listener {
     @EventHandler
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        String[] datas = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "priority,nickpriority,perms,lang,id,name,allow_op", "uuid='" + player.getUniqueId() + "'"));
+        String[] datas = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "priority,nickpriority,perms,lang,id,name,allow_op,opped", "uuid='" + player.getUniqueId() + "'"));
         if (player.isOp() && datas[6].equals("0")) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             return;
@@ -37,19 +37,19 @@ public class Login implements Listener {
             return;
         }
 
-        String name = player.getName();
-        String old = datas[0];
-        String realname = "";
+        String displayName = player.getName();
+        String realRank = datas[0];
+        String nickedRealName = "";
         if (speedcubingServer.isBungeeOnlineMode) {
-            if (!datas[5].equalsIgnoreCase(name)) {
+            if (!datas[5].equals(displayName)) {
                 datas[0] = datas[1];
-                realname = datas[5];
+                nickedRealName = datas[5];
             }
         }
-        temp = new String[]{name, realname, old};
+        temp = new String[]{displayName, nickedRealName, realRank, datas[7]};
         Set<String> p = Sets.newHashSet(datas[2].split("\\|"));
         p.remove("");
-        p.addAll(config.rankPermissions.get(old));
+        p.addAll(config.rankPermissions.get(realRank));
         Set<String> groups = new HashSet<>();
         Pattern pattern = Pattern.compile("^group\\.[^|*.]+$");
         for (String s : p) {
@@ -66,6 +66,7 @@ public class Login implements Listener {
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         Player player = e.getPlayer();
+        player.setOp(temp[3].equals("1"));
         User user = User.getUser(player);
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
         for (User u : User.usersByID.values()) {

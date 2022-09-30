@@ -28,6 +28,8 @@ public class config {
 
     public static Map<String, Set<String>> grouppermissions = new HashMap<>();
 
+    public static boolean debugMode;
+
     public void reload() {
         try {
             JsonObject object = new JsonParser().parse(new FileReader("../../../server.json")).getAsJsonObject();
@@ -36,6 +38,7 @@ public class config {
             DatabasePassword = object.getAsJsonObject("database").get("password").getAsString();
             LeftCpsLimit = object.get("leftcpslimit").getAsInt();
             RightCpsLimit = object.get("rightcpslimit").getAsInt();
+            debugMode = object.get("debug").getAsBoolean();
             blockedLog.clear();
             blockedTab.clear();
             blockedMod.clear();

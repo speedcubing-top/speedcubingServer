@@ -9,7 +9,6 @@ import top.speedcubing.server.config;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 

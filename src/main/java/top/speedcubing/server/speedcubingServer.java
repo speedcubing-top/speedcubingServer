@@ -1,6 +1,5 @@
 package top.speedcubing.server;
 
-import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -238,6 +237,20 @@ public class speedcubingServer extends JavaPlugin {
                 event.call();
             }
         }, 0, 1000);
+
+        if (!config.debugMode) {
+            //delete logs
+            for (File f : new File("logs").listFiles()) {
+                if (!f.getName().equals("latest.log"))
+                    f.delete();
+            }
+
+            //delete hs_err
+            for (File f : new File("./").listFiles()) {
+                if (f.getName().startsWith("hs_err_pid"))
+                    f.delete();
+            }
+        }
     }
 
     public void onDisable() {
