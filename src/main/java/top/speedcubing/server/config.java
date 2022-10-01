@@ -8,12 +8,15 @@ import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
 import top.speedcubing.lib.utils.SQL.SQLUtils;
+import top.speedcubing.server.events.ConfigReloadEvent;
 
 import java.io.FileReader;
 import java.util.*;
 import java.util.regex.Pattern;
 
 public class config {
+    public static ConfigReloadEvent event = new ConfigReloadEvent();
+    public static JsonObject config;
     public static String DatabaseURL;
     public static String DatabaseUser;
     public static String DatabasePassword;
@@ -32,23 +35,23 @@ public class config {
 
     public void reload() {
         try {
-            JsonObject object = new JsonParser().parse(new FileReader("../../../server.json")).getAsJsonObject();
-            DatabaseURL = object.getAsJsonObject("database").get("url").getAsString();
-            DatabaseUser = object.getAsJsonObject("database").get("user").getAsString();
-            DatabasePassword = object.getAsJsonObject("database").get("password").getAsString();
-            LeftCpsLimit = object.get("leftcpslimit").getAsInt();
-            RightCpsLimit = object.get("rightcpslimit").getAsInt();
-            debugMode = object.get("debug").getAsBoolean();
+            config = new JsonParser().parse(new FileReader("../../../server.json")).getAsJsonObject();
+            DatabaseURL = config.getAsJsonObject("database").get("url").getAsString();
+            DatabaseUser = config.getAsJsonObject("database").get("user").getAsString();
+            DatabasePassword = config.getAsJsonObject("database").get("password").getAsString();
+            LeftCpsLimit = config.get("leftcpslimit").getAsInt();
+            RightCpsLimit = config.get("rightcpslimit").getAsInt();
+            debugMode = config.get("debug").getAsBoolean();
             blockedLog.clear();
             blockedTab.clear();
             blockedMod.clear();
-            object.get("spigotblockedlog").getAsJsonArray().forEach(a -> blockedLog.add(Pattern.compile(a.getAsString())));
-            object.get("allowtabcomplete").getAsJsonArray().forEach(a -> blockedTab.add(Pattern.compile(a.getAsString())));
-            object.get("blockedmod").getAsJsonArray().forEach(a -> blockedMod.add(Pattern.compile(a.getAsString())));
+            config.get("spigotblockedlog").getAsJsonArray().forEach(a -> blockedLog.add(Pattern.compile(a.getAsString())));
+            config.get("allowtabcomplete").getAsJsonArray().forEach(a -> blockedTab.add(Pattern.compile(a.getAsString())));
+            config.get("blockedmod").getAsJsonArray().forEach(a -> blockedMod.add(Pattern.compile(a.getAsString())));
             colors.clear();
             rankPermissions.clear();
             ranks.clear();
-            for (Map.Entry<String, JsonElement> c : object.getAsJsonObject("ranks").entrySet()) {
+            for (Map.Entry<String, JsonElement> c : config.getAsJsonObject("ranks").entrySet()) {
                 String[] color = new Gson().fromJson(c.getValue().getAsJsonObject().get("texts").getAsJsonArray().toString(), new TypeToken<String[]>() {
                 }.getType());
                 colors.put(c.getKey(), new String[]{color[0], color[0].lastIndexOf('§') == -1 ? "" : ("§" + color[0].charAt(color[0].lastIndexOf('§') + 1)), color[1]});
@@ -56,6 +59,7 @@ public class config {
                 }.getType()));
                 ranks.add(c.getKey());
             }
+            event.call();
         } catch (Exception exception) {
             exception.printStackTrace();
         }
@@ -63,7 +67,7 @@ public class config {
 
     public void reloadDatabase() {
         for (String s : SQLUtils.getStringArray(speedcubingServer.systemConnection.select("groups", "name", "1"))) {
-            config.grouppermissions.put(s, Sets.newHashSet(SQLUtils.getString(speedcubingServer.systemConnection.select("groups", "perms", "name='" + s + "'")).split("\\|")));
+            grouppermissions.put(s, Sets.newHashSet(SQLUtils.getString(speedcubingServer.systemConnection.select("groups", "perms", "name='" + s + "'")).split("\\|")));
         }
     }
 

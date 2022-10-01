@@ -28,6 +28,7 @@ C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\sr
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\commandoverrider\OverrideCommandManager.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\listeners\Login.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\libs\DataIO.java
+C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\events\ConfigReloadEvent.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\Commands\heal.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\Commands\fly.java
 C:\Users\andyt\Desktop\MinecraftServer\Development\Projects\speedcubingServer\src\main\java\top\speedcubing\server\listeners\CommandPermissions.java

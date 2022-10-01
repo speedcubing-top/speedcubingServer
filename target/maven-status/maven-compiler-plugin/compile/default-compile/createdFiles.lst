@@ -30,6 +30,7 @@ top\speedcubing\server\ServerEvent.class
 top\speedcubing\server\commandoverrider\OverrideCommandManager.class
 top\speedcubing\server\listeners\Login.class
 top\speedcubing\server\Commands\heal.class
+top\speedcubing\server\events\ConfigReloadEvent.class
 top\speedcubing\server\events\InputEvent.class
 top\speedcubing\server\listeners\ServerCommand.class
 top\speedcubing\server\events\player\PlayerEvent.class
