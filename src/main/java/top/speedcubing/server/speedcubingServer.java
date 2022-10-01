@@ -1,5 +1,6 @@
 package top.speedcubing.server;
 
+import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -78,8 +79,12 @@ public class speedcubingServer extends JavaPlugin {
         tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
 
         //spigot
-        CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", (Bukkit.getPort() % 2 == 1 ? "online" : "offline") + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", Bukkit.getPort() % 2 == 1 ? "online" : "offline", "init"};
-
+        try {
+            Class.forName("top.speedcubing.CubingPaperConfig");
+            CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", (Bukkit.getPort() % 2 == 1 ? "online" : "offline") + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", Bukkit.getPort() % 2 == 1 ? "online" : "offline", "init"};
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         //lib
         speedcubingLibBukkit.deletePlayerFile = true;
 
@@ -223,7 +228,7 @@ public class speedcubingServer extends JavaPlugin {
             @Override
             public void run() {
                 usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
-                tps = Bukkit.spigot().getTPS();
+                tps = MinecraftServer.getServer().recentTps;
                 systemConnection.update(
                         "servers",
                         "onlinecount=" + Bukkit.getOnlinePlayers().size() +
