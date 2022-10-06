@@ -49,6 +49,8 @@ public class speedcubingServer extends JavaPlugin {
     public static TCP tcp;
     public static boolean isBungeeOnlineMode;
     public static Map<Integer, String[]> preLoginStorage = new HashMap<>();
+
+    public static boolean canRestart = true;
     private static Timer calcTimer;
     public static long startTime = System.currentTimeMillis();
 
@@ -215,7 +217,7 @@ public class speedcubingServer extends JavaPlugin {
             @Override
             public void run() {
                 if (Bukkit.getOnlinePlayers().size() == 0)
-                    RestartCommand.restart();
+                    restart();
             }
         }, 43200000);
 
@@ -311,5 +313,10 @@ public class speedcubingServer extends JavaPlugin {
             string.append((char) (Integer.parseInt(str.substring(i * 7, i * 7 + 6), 2) + 32));
         }
         return string.toString();
+    }
+
+    public static void restart() {
+        if (canRestart)
+            RestartCommand.restart();
     }
 }

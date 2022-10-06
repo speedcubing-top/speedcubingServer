@@ -18,6 +18,6 @@ public class PlayerQuit implements Listener {
         User.usersByID.remove(User.getUser(player).id);
         User.usersByUUID.remove(player.getUniqueId());
         if (Bukkit.getOnlinePlayers().size() == 1 && System.currentTimeMillis() - speedcubingServer.startTime > 43200000)
-            RestartCommand.restart();
+            speedcubingServer.restart();
     }
 }
