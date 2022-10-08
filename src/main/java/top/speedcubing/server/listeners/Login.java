@@ -11,7 +11,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
-import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.server.config;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
@@ -25,7 +24,7 @@ public class Login implements Listener {
     @EventHandler
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        String[] datas = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "priority,nickpriority,perms,lang,id,name,allow_op,opped", "uuid='" + player.getUniqueId() + "'"));
+        String[] datas = speedcubingServer.connection.select("priority,nickpriority,perms,lang,id,name,allow_op,opped").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
         if (player.isOp() && datas[6].equals("0")) {
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             return;

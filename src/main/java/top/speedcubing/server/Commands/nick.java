@@ -9,9 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
-import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.utils.Reflections;
-import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.libs.User;
@@ -29,14 +27,14 @@ public class nick implements CommandExecutor {
                 User user = User.getUser(commandSender);
                 if (name.equals(commandSender.getName()))
                     user.sendLangMessage(GlobalString.nicksameusername);
-                else if (name.equals(SQLUtils.getString(speedcubingServer.connection.select("playersdata", "name", "id=" + user.id))))
+                else if (name.equals(speedcubingServer.connection.select("name").from("playersdata").where("id=" + user.id).getString()))
                     user.sendLangMessage(GlobalString.nickdefaultusername);
                 else if (speedcubingServer.nameRegex.matcher(name).matches() && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'") && !speedcubingServer.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'"))
-                    nickPlayer(name, SQLUtils.getString(speedcubingServer.connection.select("playersdata", "nickpriority", "id=" + user.id)), true, (Player) commandSender);
+                    nickPlayer(name, speedcubingServer.connection.select("nickpriority").from("playersdata").where("id=" + user.id).getString(), true, (Player) commandSender);
                 else
                     user.sendLangMessage(GlobalString.nicknotavaliable);
             } else if (strings.length == 0) {
-                String[] datas = SQLUtils.getStringArray(speedcubingServer.connection.select("playersdata", "nickname,nickpriority", "id=" + User.getUser(commandSender).id));
+                String[] datas = speedcubingServer.connection.select("nickname,nickpriority").from("playersdata").where("id=" + User.getUser(commandSender).id).getStringArray();
                 if (datas[0].equals(""))
                     commandSender.sendMessage("/nick <nickname>");
                 else if (datas[0].equals(commandSender.getName()))

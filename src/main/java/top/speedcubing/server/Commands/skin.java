@@ -8,8 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.api.MojangAPI;
+import top.speedcubing.lib.api.mojang.ProfileSkin;
 import top.speedcubing.lib.bukkit.PlayerUtils;
-import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.libs.User;
@@ -26,7 +26,7 @@ public class skin implements CommandExecutor {
                 User user = User.getUser(commandSender);
                 String target = "";
                 if (strings.length == 0)
-                    target = SQLUtils.getString(speedcubingServer.connection.select("playersdata", "name", "id=" + user.id));
+                    target = speedcubingServer.connection.select("name").from("playersdata").where("id=" + user.id).getString();
                 else if (strings.length == 1)
                     target = strings[0];
                 else player.sendMessage("/skin , /skin <player>");
@@ -34,14 +34,14 @@ public class skin implements CommandExecutor {
                     try {
                         String finalTarget = target;
                         new Thread(() -> {
-                            String[] skin;
+                            ProfileSkin skin;
                             try {
-                                skin = MojangAPI.getSkin(MojangAPI.getUUID(finalTarget));
+                                skin = MojangAPI.getSkinByName(finalTarget);
                             } catch (Exception e) {
                                 user.sendLangMessage(GlobalString.invalidName);
                                 return;
                             }
-                            List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, skin);
+                            List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, new String[]{skin.getValue(), skin.getSignature()});
                             packets[0].forEach(((CraftPlayer) player).getHandle().playerConnection::sendPacket);
                             String worldname = player.getWorld().getName();
                             player.updateInventory();
@@ -52,10 +52,10 @@ public class skin implements CommandExecutor {
                                     packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
                             }
                             if (!finalTarget.equalsIgnoreCase(player.getName()))
-                                speedcubingServer.connection.update("playersdata", "skinvalue='" + skin[0] + "',skinsignature='" + skin[1] + "'", "id=" + user.id);
+                                speedcubingServer.connection.update("playersdata", "skinvalue='" + skin.getValue() + "',skinsignature='" + skin.getSignature() + "'", "id=" + user.id);
                             else
                                 speedcubingServer.connection.update("playersdata", "skinvalue='',skinsignature=''", "id=" + user.id);
-                            speedcubingServer.tcp.send(user.tcpPort, "skin|" + user.id + "|" + skin[0] + "|" + skin[1]);
+                            speedcubingServer.tcp.send(user.tcpPort, "skin|" + user.id + "|" + skin.getValue() + "|" + skin.getSignature());
                         }).start();
                     } catch (Exception e) {
                         user.sendLangMessage(GlobalString.invalidName);

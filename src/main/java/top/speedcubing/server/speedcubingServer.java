@@ -14,7 +14,6 @@ import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
-import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.sockets.TCP;
@@ -270,7 +269,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static int getOnlineCount() {
-        return SQLUtils.getInt(systemConnection.select("proxies", "SUM(onlinecount)", "1"));
+        return systemConnection.select("SUM(onlinecount)").from("proxies").getInt();
     }
 
     public static void node(boolean add, int id, int port) {

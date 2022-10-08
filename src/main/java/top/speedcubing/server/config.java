@@ -7,7 +7,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import org.bukkit.Bukkit;
-import top.speedcubing.lib.utils.SQL.SQLUtils;
 import top.speedcubing.server.events.ConfigReloadEvent;
 
 import java.io.FileReader;
@@ -66,8 +65,8 @@ public class config {
     }
 
     public void reloadDatabase() {
-        for (String s : SQLUtils.getStringArray(speedcubingServer.systemConnection.select("groups", "name", "1"))) {
-            grouppermissions.put(s, Sets.newHashSet(SQLUtils.getString(speedcubingServer.systemConnection.select("groups", "perms", "name='" + s + "'")).split("\\|")));
+        for (String s : speedcubingServer.systemConnection.select("name").from("groups").getStringArray()) {
+            grouppermissions.put(s, Sets.newHashSet(speedcubingServer.systemConnection.select("perms").from("groups").where("name='" + s + "'").getString().split("\\|")));
         }
     }
 

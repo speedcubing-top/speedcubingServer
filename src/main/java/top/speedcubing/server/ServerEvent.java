@@ -40,6 +40,6 @@ public class ServerEvent {
     @LibEventHandler
     public void ProfileRespondEvent(ProfileRespondEvent e) {
         if (speedcubingServer.isBungeeOnlineMode)
-            speedcubingServer.connection.update("playersdata", "name='" + e.name + "'", "uuid='" + e.uuid + "'");
+            speedcubingServer.connection.update("playersdata", "name='" + e.profile.getName() + "'", "uuid='" + e.profile.getUUIDString() + "'");
     }
 }
