@@ -320,7 +320,7 @@ public class speedcubingServer extends JavaPlugin {
             RestartCommand.restart();
     }
 
-    public static void globalChat(Collection<Player> players, Player sender, String[] msg) {
+    public static void globalChat(Collection<? extends Player> players, Player sender, String[] msg) {
         String[] ignores = connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;
         for (Player p : players) {
