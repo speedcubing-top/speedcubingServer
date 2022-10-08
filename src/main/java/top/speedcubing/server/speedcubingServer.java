@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.CubingPaperConfig;
@@ -317,5 +318,21 @@ public class speedcubingServer extends JavaPlugin {
     public static void restart() {
         if (canRestart)
             RestartCommand.restart();
+    }
+
+    public static void globalChat(Collection<Player> players, Player sender, String[] msg) {
+        String[] ignores = connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
+        User user;
+        for (Player p : players) {
+            user = User.getUser(p);
+            boolean ignored = false;
+            for (String s : ignores) {
+                if (user.player.getUniqueId().toString().equals(s)) {
+                    ignored = true;
+                }
+            }
+            if (!ignored)
+                user.sendLangMessage(msg);
+        }
     }
 }
