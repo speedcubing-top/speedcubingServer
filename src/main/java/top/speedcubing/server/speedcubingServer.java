@@ -1,5 +1,6 @@
 package top.speedcubing.server;
 
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
@@ -318,6 +319,22 @@ public class speedcubingServer extends JavaPlugin {
     public static void restart() {
         if (canRestart)
             RestartCommand.restart();
+    }
+
+    public static void globalChat(Collection<? extends Player> players, Player sender, TextComponent[] msg) {
+        String[] ignores = connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
+        User user;
+        for (Player p : players) {
+            user = User.getUser(p);
+            boolean ignored = false;
+            for (String s : ignores) {
+                if (user.player.getUniqueId().toString().equals(s)) {
+                    ignored = true;
+                }
+            }
+            if (!ignored)
+                user.player.spigot().sendMessage(msg[user.lang]);
+        }
     }
 
     public static void globalChat(Collection<? extends Player> players, Player sender, String[] msg) {
