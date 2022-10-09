@@ -54,6 +54,7 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean canRestart = true;
     private static Timer calcTimer;
     public static long startTime = System.currentTimeMillis();
+    public static String onlineOroFfline;
 
     public void onEnable() {
         //check proxy online mode
@@ -76,7 +77,7 @@ public class speedcubingServer extends JavaPlugin {
 
         //conn
         new config().reload();
-        String onlineOroFfline = (Bukkit.getPort() % 2 == 1 ? "online" : "offline");
+        onlineOroFfline = (Bukkit.getPort() % 2 == 1 ? "online" : "offline");
         connection = new SQLConnection(config.DatabaseURL.replace("%db%", Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing"), config.DatabaseUser, config.DatabasePassword);
         systemConnection = new SQLConnection(config.DatabaseURL.replace("%db%", "speedcubingsystem"), config.DatabaseUser, config.DatabasePassword);
         new config().reloadDatabase();
@@ -85,7 +86,7 @@ public class speedcubingServer extends JavaPlugin {
         //spigot
         try {
             Class.forName("top.speedcubing.CubingPaperConfig");
-            CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", onlineOroFfline + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", Bukkit.getPort() % 2 == 1 ? "online" : "offline", "init"};
+            CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", onlineOroFfline + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", onlineOroFfline, "init"};
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -272,7 +273,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static int getOnlineCount() {
-        return systemConnection.select("SUM(onlinecount)").from("proxies").getInt();
+        return systemConnection.select("SUM(onlinecount)").from("proxies").where("`name` LIKE '%" + onlineOroFfline + "'").getInt();
     }
 
     public static void node(boolean add, int id, int port) {
