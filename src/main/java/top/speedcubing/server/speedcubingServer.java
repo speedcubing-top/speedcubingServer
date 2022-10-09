@@ -273,7 +273,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static int getOnlineCount() {
-        return systemConnection.select("SUM(onlinecount)").from("proxies").where("`name` LIKE '%" + onlineOroFfline + "'").getInt();
+        return systemConnection.select("SUM(onlinecount)").from("proxies").where("`name` LIKE '%" + onlineOroFfline + "%'").getInt();
     }
 
     public static void node(boolean add, int id, int port) {
