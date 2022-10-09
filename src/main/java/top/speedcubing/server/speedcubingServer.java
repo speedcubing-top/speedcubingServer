@@ -76,6 +76,7 @@ public class speedcubingServer extends JavaPlugin {
 
         //conn
         new config().reload();
+        String onlineOroFfline = (Bukkit.getPort() % 2 == 1 ? "online" : "offline");
         connection = new SQLConnection(config.DatabaseURL.replace("%db%", Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing"), config.DatabaseUser, config.DatabasePassword);
         systemConnection = new SQLConnection(config.DatabaseURL.replace("%db%", "speedcubingsystem"), config.DatabaseUser, config.DatabasePassword);
         new config().reloadDatabase();
@@ -84,7 +85,7 @@ public class speedcubingServer extends JavaPlugin {
         //spigot
         try {
             Class.forName("top.speedcubing.CubingPaperConfig");
-            CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", (Bukkit.getPort() % 2 == 1 ? "online" : "offline") + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", Bukkit.getPort() % 2 == 1 ? "online" : "offline", "init"};
+            CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", onlineOroFfline + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", Bukkit.getPort() % 2 == 1 ? "online" : "offline", "init"};
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -211,7 +212,7 @@ public class speedcubingServer extends JavaPlugin {
         systemConnection.update("servers",
                 "launchtime=" + System.currentTimeMillis() / 1000 +
                         ",ram_max=" + SystemUtils.getXmx() / 1048576
-                , "name='" + Bukkit.getServerName() + "'");
+                , "name='" + onlineOroFfline + Bukkit.getServerName() + "'");
 
         //restart
         new Timer("Cubing-Restart-Thread").schedule(new TimerTask() {
@@ -240,7 +241,7 @@ public class speedcubingServer extends JavaPlugin {
                                 ",tps1=" + Math.round(tps[0] * 100.0) / 100.0 +
                                 ",tps2=" + Math.round(tps[1] * 100.0) / 100.0 +
                                 ",tps3=" + Math.round(tps[2] * 100.0) / 100.0,
-                        "name='" + Bukkit.getServerName() + "'"
+                        "name='" + onlineOroFfline + Bukkit.getServerName() + "'"
                 );
                 event.call();
             }
