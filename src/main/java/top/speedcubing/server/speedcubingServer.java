@@ -268,7 +268,7 @@ public class speedcubingServer extends JavaPlugin {
         systemConnection.update(
                 "servers",
                 "onlinecount=0,ram_max=0,ram_heap=0,ram_used=0,tps1=0,tps2=0,tps3=0",
-                "name='" + Bukkit.getServerName() + "'"
+                "name='" + onlineOroFfline + Bukkit.getServerName() + "'"
         );
     }
 
