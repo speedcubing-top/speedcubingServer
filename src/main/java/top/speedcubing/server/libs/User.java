@@ -3,6 +3,7 @@ package top.speedcubing.server.libs;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.config;
 import top.speedcubing.server.speedcubingServer;
 
@@ -66,6 +67,14 @@ public class User {
 
     public LangMessage langMessageSender(String[] s) {
         return new LangMessage(s[lang], this);
+    }
+
+    public SQLConnection.SQLBuilder dbSelect(String field) {
+        return speedcubingServer.connection.select(field).from("playersdata").where("id=" + id);
+    }
+
+    public void dbUpdate(String field) {
+        speedcubingServer.connection.update("playersdata", field, "id=" + id);
     }
 
     public static class LangMessage {
