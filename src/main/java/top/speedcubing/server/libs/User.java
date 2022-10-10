@@ -7,10 +7,7 @@ import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.config;
 import top.speedcubing.server.speedcubingServer;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
 
 public class User {
@@ -45,11 +42,12 @@ public class User {
 
     public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, String[] bungeeData) {
         this.player = player;
-        permissions.forEach(a -> {
-            String s = a.substring(6);
-            if (group.matcher(a).matches() && config.grouppermissions.containsKey(s))
-                permissions.addAll(config.grouppermissions.get(s));
-        });
+        Set<String> groups = new HashSet<>();
+        for (String s : permissions) {
+            if (group.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6)))
+                groups.add(s.substring(6));
+        }
+        groups.forEach(a -> permissions.addAll(config.grouppermissions.get(a)));
         this.permissions = permissions;
         speedcubingServer.preLoginStorage.remove(id);
         if (!bungeeData[6].equals("null"))
