@@ -51,9 +51,9 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean isBungeeOnlineMode;
     public static Map<Integer, String[]> preLoginStorage = new HashMap<>();
 
-    public static boolean canRestart = true;
-    private static Timer calcTimer;
-    public static long startTime = System.currentTimeMillis();
+    public static boolean canRestart = true; //can Timer/Quit restart server?
+    public static boolean restartable = false; //is it time to restart ?
+    private static Timer calcTimer = new Timer("Cubing-Tick-Thread");
     public static String onlineOroFfline;
 
     public void onEnable() {
@@ -216,15 +216,17 @@ public class speedcubingServer extends JavaPlugin {
                 , "name='" + onlineOroFfline + Bukkit.getServerName() + "'");
 
         //restart
+        Calendar tomorrow = new GregorianCalendar();
+        tomorrow.add(Calendar.DATE, 1);
         new Timer("Cubing-Restart-Thread").schedule(new TimerTask() {
             @Override
             public void run() {
+                restartable = true;
                 if (Bukkit.getOnlinePlayers().size() == 0)
                     restart();
             }
-        }, 43200000);
+        }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis());
 
-        calcTimer = new Timer("Cubing-Tick-Thread");
         calcTimer.schedule(new TimerTask() {
             double[] tps;
             final CubingTickEvent event = new CubingTickEvent();

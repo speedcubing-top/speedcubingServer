@@ -17,7 +17,7 @@ public class PlayerQuit implements Listener {
         Player player = e.getPlayer();
         User.usersByID.remove(User.getUser(player).id);
         User.usersByUUID.remove(player.getUniqueId());
-        if (Bukkit.getOnlinePlayers().size() == 1 && System.currentTimeMillis() - speedcubingServer.startTime > 43200000)
+        if (Bukkit.getOnlinePlayers().size() == 1 && speedcubingServer.restartable)
             speedcubingServer.restart();
     }
 }

@@ -1,6 +1,11 @@
 package top.speedcubing.server.libs;
 
 public class GlobalString {
+    public static String[] LobbyJoinMessage = {
+            "%t% has joined the Lobby!",
+            "%t% has joined the Lobby!",
+            "%t% has joined the Lobby!",
+            "%t% has joined the Lobby!"};
 
     public static String[] NoEnoughServers = {
             "§cTheres no enough servers!",
@@ -77,11 +82,11 @@ public class GlobalString {
             "§cThe number is out of range! (%min% ~ %max%)"
     };
 
-    public static String[] invalidInteger = {
-            "§cInvalid integer format.",
-            "§cInvalid integer format.",
-            "§cInvalid integer format.",
-            "§cInvalid integer format."
+    public static String[] invalidNumber = {
+            "§cInvalid number format.",
+            "§cInvalid number format.",
+            "§cInvalid number format.",
+            "§cInvalid number format."
     };
 
     public static String[] nicksameusername = {
@@ -131,11 +136,6 @@ public class GlobalString {
     public static String[] FlyDisable = {
             "disabled", "disabled", "disabled", "disabled"
     };
-    public static String[] AlreadyInHub = {
-            "§cDu befindest dich bereits in der hub.",
-            "§cYou are already in hub.",
-            "§c你已經在主大廳了",
-            "§c你已经在主大厅了"};
     public static String[] OnlyInHub = {
             "§cYou can only do this in lobby.",
             "§cYou can only do this in lobby.",
@@ -153,4 +153,6 @@ public class GlobalString {
             "§c你沒有權限使用此指令",
             "§c您没有使用此命令的权限"
     };
+
+    public static String[] CantSetItemhere = new String[]{"§4Sie können die Elemente hier nicht einstellen!", "§4You can't set the items here!", "§4你不能將物品設定於此處!", "§4你不能将物品设定于此处!"};
 }

@@ -35,7 +35,7 @@ public class Cps implements Listener {
     }
 
     public void Load() {
-        new Timer().schedule(new TimerTask() {
+        new Timer("Cubing-CPS-Thread").schedule(new TimerTask() {
             @Override
             public void run() {
                 for (User user : User.usersByID.values()) {
