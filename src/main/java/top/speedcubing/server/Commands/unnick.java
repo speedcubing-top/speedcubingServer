@@ -18,7 +18,7 @@ public class unnick implements CommandExecutor {
             if (datas[0].equals(player.getName()))
                 User.getUser(commandSender).sendLangMessage(GlobalString.notNicked);
             else if (strings.length == 0)
-                nick.nickPlayer(datas[0], datas[1], false, player);
+                nick.nickPlayer(datas[0], speedcubingServer.getRank(datas[1], player.getUniqueId().toString()), false, player);
             else commandSender.sendMessage("/unnick");
         }
         return true;

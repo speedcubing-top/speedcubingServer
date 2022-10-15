@@ -1,5 +1,6 @@
 package top.speedcubing.server;
 
+import com.google.common.collect.Sets;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
@@ -355,5 +356,17 @@ public class speedcubingServer extends JavaPlugin {
             if (!ignored)
                 user.sendLangMessage(msg);
         }
+    }
+
+    public static String getRank(String priority, String uuid) {
+        return priority.equals("default") && connection.select("COUNT(*)").from("champ").where("uuid='" + uuid + "'").getInt() > 0 ? "champ" : priority;
+    }
+
+    public static String getRank(String priority, String uuid, Set<String> champs) {
+        return priority.equals("default") && champs.contains(uuid) ? "champ" : priority;
+    }
+
+    public static Set<String> getChamps() {
+        return Sets.newHashSet(connection.select("uuid").from("champ").getStringArray());
     }
 }
