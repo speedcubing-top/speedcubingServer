@@ -54,7 +54,7 @@ public class speedcubingServer extends JavaPlugin {
 
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
-    private static Timer calcTimer = new Timer("Cubing-Tick-Thread");
+    private static final Timer calcTimer = new Timer("Cubing-Tick-Thread");
     public static String onlineOroFfline;
 
     public void onEnable() {
