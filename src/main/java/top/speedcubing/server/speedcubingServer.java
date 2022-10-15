@@ -226,7 +226,7 @@ public class speedcubingServer extends JavaPlugin {
                 if (Bukkit.getOnlinePlayers().size() == 0)
                     restart();
             }
-        }, new GregorianCalendar(tomorrow.get(Calendar.YEAR), tomorrow.get(Calendar.MONTH), tomorrow.get(Calendar.DATE), 0, 0).getTime().getTime() - System.currentTimeMillis());
+        }, 28800000);
 
         calcTimer.schedule(new TimerTask() {
             double[] tps;
