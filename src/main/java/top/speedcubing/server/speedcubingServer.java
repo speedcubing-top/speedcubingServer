@@ -335,6 +335,7 @@ public class speedcubingServer extends JavaPlugin {
             for (String s : ignores) {
                 if (user.player.getUniqueId().toString().equals(s)) {
                     ignored = true;
+                    break;
                 }
             }
             if (!ignored)
@@ -351,6 +352,7 @@ public class speedcubingServer extends JavaPlugin {
             for (String s : ignores) {
                 if (user.player.getUniqueId().toString().equals(s)) {
                     ignored = true;
+                    break;
                 }
             }
             if (!ignored)
