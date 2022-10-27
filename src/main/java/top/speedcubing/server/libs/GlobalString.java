@@ -124,10 +124,10 @@ public class GlobalString {
             "§cThis nickname is not avaliable."
     };
     public static String[] discord = {
-            "§bOfficial discord server link: §ahttps://discord.gg/rnbRWrb",
-            "§bOfficial discord server link: §ahttps://discord.gg/rnbRWrb",
-            "§bOfficial discord server link: §ahttps://discord.gg/rnbRWrb",
-            "§bOfficial discord server link: §ahttps://discord.gg/rnbRWrb"
+            "§bOfficial discord server link: §aspeedcubing.top/discord",
+            "§bOfficial discord server link: §aspeedcubing.top/discord",
+            "§bOfficial discord server link: §aspeedcubing.top/discord",
+            "§bOfficial discord server link: §aspeedcubing.top/discord"
     };
 
     public static String[] FlyEnable = {
