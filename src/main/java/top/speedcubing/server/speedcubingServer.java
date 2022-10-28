@@ -11,7 +11,7 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
-import top.speedcubing.CubingPaperConfig;
+import top.speedcubing.server.CubingPaperConfig;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
