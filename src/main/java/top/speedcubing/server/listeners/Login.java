@@ -53,7 +53,7 @@ public class Login implements Listener {
                 groups.add(s.substring(6));
         }
         groups.forEach(a -> p.addAll(config.grouppermissions.get(a)));
-        new User(player,displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[5].equals("1"), bungeeData);
+        new User(player,displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData);
     }
 
     String[] temp;

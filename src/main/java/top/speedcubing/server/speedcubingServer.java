@@ -11,7 +11,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
-import top.speedcubing.server.CubingPaperConfig;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
@@ -157,9 +156,9 @@ public class speedcubingServer extends JavaPlugin {
 
         //socket receive
         Thread thread = new Thread(() -> {
-            try {
-                String receive;
-                while (true) {
+            String receive;
+            while (true) {
+                try {
                     receive = new BufferedReader(new InputStreamReader(tcp.socket.accept().getInputStream())).readLine();
                     if (receive != null) {
                         String[] rs = receive.split("\\|");
@@ -203,10 +202,9 @@ public class speedcubingServer extends JavaPlugin {
                                 break;
                         }
                     } else System.out.print("[Server] received null line of socket");
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
-                Bukkit.getScheduler().runTask(this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "end"));
             }
         });
         thread.setName("Cubing-Socket-Thread");
