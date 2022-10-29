@@ -215,8 +215,6 @@ public class speedcubingServer extends JavaPlugin {
                 , "name='" + onlineOroFfline + Bukkit.getServerName() + "'");
 
         //restart
-        Calendar tomorrow = new GregorianCalendar();
-        tomorrow.add(Calendar.DATE, 1);
         new Timer("Cubing-Restart-Thread").schedule(new TimerTask() {
             @Override
             public void run() {
