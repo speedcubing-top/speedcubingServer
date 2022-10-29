@@ -24,11 +24,7 @@ public class Login implements Listener {
     @EventHandler
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        String[] datas = speedcubingServer.connection.select("priority,nickpriority,perms,lang,id,name,allow_op,opped").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
-        if (player.isOp() && datas[6].equals("0")) {
-            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            return;
-        }
+        String[] datas = speedcubingServer.connection.select("priority,nickpriority,perms,lang,id,name,opped").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
         String[] bungeeData = speedcubingServer.preLoginStorage.get(Integer.parseInt(datas[4]));
         if (bungeeData == null) {
             e.setKickMessage("§cServer Restarting... Please wait for a few seconds.");
@@ -46,7 +42,7 @@ public class Login implements Listener {
                 nickedRealName = datas[5];
             }
         }
-        temp = new String[]{displayName, nickedRealName, realRank, datas[7]};
+        temp = new String[]{displayName, nickedRealName, realRank, datas[6]};
         Set<String> p = Sets.newHashSet(datas[2].split("\\|"));
         p.remove("");
         p.addAll(config.rankPermissions.get(realRank));
@@ -57,7 +53,7 @@ public class Login implements Listener {
                 groups.add(s.substring(6));
         }
         groups.forEach(a -> p.addAll(config.grouppermissions.get(a)));
-        new User(player,displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData);
+        new User(player,displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[5].equals("1"), bungeeData);
     }
 
     String[] temp;
