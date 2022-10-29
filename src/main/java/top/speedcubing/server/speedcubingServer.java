@@ -85,7 +85,7 @@ public class speedcubingServer extends JavaPlugin {
 
         //spigot
         try {
-            Class.forName("top.speedcubing.CubingPaperConfig");
+            Class.forName("top.speedcubing.server.CubingPaperConfig");
             CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", onlineOroFfline + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", onlineOroFfline, "init"};
         } catch (Exception e) {
             e.printStackTrace();
