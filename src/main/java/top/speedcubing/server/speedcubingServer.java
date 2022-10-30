@@ -104,29 +104,21 @@ public class speedcubingServer extends JavaPlugin {
             Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         }
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
-            String brand = (new String(bytes, StandardCharsets.UTF_8)).substring(1);
-            if (brand.length() != 1) {
-                Map<String, String> mods = new HashMap<>();
+            if (bytes.length != 2) {
                 boolean store = false;
                 String tempName = null;
                 for (int i = 2; i < bytes.length; store = !store) {
                     int end = i + bytes[i] + 1;
-                    byte[] range = Arrays.copyOfRange(bytes, i + 1, end);
-                    String string = new String(range);
                     if (store) {
-                        mods.put(tempName, string);
-                    } else {
-                        tempName = string;
-                    }
+                        for (Pattern p : config.blockedMod) {
+                            if (p.matcher(tempName).matches())
+                                player.kickPlayer("Invalid Modification found.");
+                        }
+                    } else
+                        tempName = new String(Arrays.copyOfRange(bytes, i + 1, end));
                     i = end;
                 }
-                for (String m : mods.keySet()) {
-                    for (Pattern p : config.blockedMod) {
-                        if (p.matcher(m).matches())
-                            player.kickPlayer("Invalid Modification found.");
-                    }
-                }
-                connection.update("playersdata", "forgemod='" + mods + "'", "uuid='" + player.getUniqueId() + "'");
+                connection.update("playersdata", "forgemod='" + new String(bytes, StandardCharsets.UTF_8) + "'", "uuid='" + player.getUniqueId() + "'");
             }
         });
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
