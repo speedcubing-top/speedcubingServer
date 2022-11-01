@@ -34,7 +34,7 @@ public class ServerEvent {
     @LibEventHandler(priority = 1000)
     public void InputEvent2(InputEvent e) {
         String[] rs = e.receive.split("\\|");
-        speedcubingServer.tcp.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "|" + rs[3]);
+        speedcubingServer.tcpClient.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "|" + rs[3]);
     }
 
     @LibEventHandler

@@ -79,7 +79,7 @@ public class nick implements CommandExecutor {
         user.joinPacket = joinPacket;
         user.leavePacket = leavePacket;
         speedcubingServer.connection.update("playersdata", "nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""), "id=" + user.id);
-        speedcubingServer.tcp.send(user.tcpPort, "nick|" + user.id + "|" + rank + "|" + name);
+        speedcubingServer.tcpClient.send(user.tcpPort, "nick|" + user.id + "|" + rank + "|" + name);
         user.rank = rank;
     }
 }

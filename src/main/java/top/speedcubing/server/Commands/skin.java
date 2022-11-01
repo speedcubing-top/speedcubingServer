@@ -55,7 +55,7 @@ public class skin implements CommandExecutor {
                                 speedcubingServer.connection.update("playersdata", "skinvalue='" + skin.getValue() + "',skinsignature='" + skin.getSignature() + "'", "id=" + user.id);
                             else
                                 speedcubingServer.connection.update("playersdata", "skinvalue='',skinsignature=''", "id=" + user.id);
-                            speedcubingServer.tcp.send(user.tcpPort, "skin|" + user.id + "|" + skin.getValue() + "|" + skin.getSignature());
+                            speedcubingServer.tcpClient.send(user.tcpPort, "skin|" + user.id + "|" + skin.getValue() + "|" + skin.getSignature());
                         }).start();
                     } catch (Exception e) {
                         user.sendLangMessage(GlobalString.invalidName);

@@ -19,7 +19,7 @@ public class proxycommand implements CommandExecutor {
             for (String string : strings) {
                 comamnd.append(" ").append(string);
             }
-            speedcubingServer.tcp.send(speedcubingServer.getRandomBungeePort(commandSender), "proxycmd|" + comamnd.substring(1));
+            speedcubingServer.tcpClient.send(speedcubingServer.getRandomBungeePort(commandSender), "proxycmd|" + comamnd.substring(1));
         }
         return true;
     }

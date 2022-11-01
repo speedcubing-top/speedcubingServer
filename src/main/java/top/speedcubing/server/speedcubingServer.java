@@ -18,7 +18,7 @@ import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.SystemUtils;
-import top.speedcubing.lib.utils.sockets.TCP;
+import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.offline.premium;
 import top.speedcubing.server.Commands.offline.resetpassword;
@@ -32,12 +32,10 @@ import top.speedcubing.server.libs.LogListener;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.listeners.*;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
+import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -47,7 +45,8 @@ public class speedcubingServer extends JavaPlugin {
     public static final Pattern nameRegex = Pattern.compile("^\\w{1,16}$");
     public static SQLConnection connection;
     public static SQLConnection systemConnection;
-    public static TCP tcp;
+    public static ServerSocket tcpServer;
+    public static TCPClient tcpClient;
     public static boolean isBungeeOnlineMode;
     public static Map<Integer, String[]> preLoginStorage = new HashMap<>();
 
@@ -81,7 +80,12 @@ public class speedcubingServer extends JavaPlugin {
         connection = new SQLConnection(config.DatabaseURL.replace("%db%", Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing"), config.DatabaseUser, config.DatabasePassword);
         systemConnection = new SQLConnection(config.DatabaseURL.replace("%db%", "speedcubingsystem"), config.DatabaseUser, config.DatabasePassword);
         new config().reloadDatabase();
-        tcp = new TCP("localhost", Bukkit.getPort() + 2, 100);
+        try {
+            tcpServer = new ServerSocket(Bukkit.getPort() + 2);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        tcpClient = new TCPClient("localhost", 100);
 
         //spigot
         try {
@@ -151,7 +155,7 @@ public class speedcubingServer extends JavaPlugin {
             String receive;
             while (true) {
                 try {
-                    receive = new BufferedReader(new InputStreamReader(tcp.socket.accept().getInputStream())).readLine();
+                    receive = new BufferedReader(new InputStreamReader(tcpServer.accept().getInputStream())).readLine();
                     if (receive != null) {
                         String[] rs = receive.split("\\|");
                         DataIO.handle(receive, rs);
@@ -268,7 +272,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static void node(boolean add, int id, int port) {
-        speedcubingServer.tcp.send(port, "hasnode|" + (add ? "a" : "r") + "|" + id);
+        tcpClient.send(port, "hasnode|" + (add ? "a" : "r") + "|" + id);
     }
 
     public static int getRandomBungeePort(CommandSender sender) {

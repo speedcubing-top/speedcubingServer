@@ -18,7 +18,7 @@ public class DataIO {
         long b = System.currentTimeMillis();
         boolean a = true;
         try {
-            speedcubingServer.tcp.sendUnsafe(port, "in|" + speedcubingServer.tcp.socket.getLocalPort() + "|" + uuid + "|" + data);
+            speedcubingServer.tcpClient.sendUnsafe(port, "in|" + speedcubingServer.tcpServer.getLocalPort() + "|" + uuid + "|" + data);
         } catch (Exception e) {
             a = false;
         }
