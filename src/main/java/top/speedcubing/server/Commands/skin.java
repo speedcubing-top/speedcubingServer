@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.api.mojang.ProfileSkin;
 import top.speedcubing.lib.bukkit.PlayerUtils;
+import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.libs.User;
@@ -51,11 +52,8 @@ public class skin implements CommandExecutor {
                                 else if (p != player)
                                     packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
                             }
-                            if (!finalTarget.equalsIgnoreCase(player.getName()))
-                                speedcubingServer.connection.update("playersdata", "skinvalue='" + skin.getValue() + "',skinsignature='" + skin.getSignature() + "'", "id=" + user.id);
-                            else
-                                speedcubingServer.connection.update("playersdata", "skinvalue='',skinsignature=''", "id=" + user.id);
-                            speedcubingServer.tcpClient.send(user.tcpPort, "skin|" + user.id + "|" + skin.getValue() + "|" + skin.getSignature());
+                            user.dbUpdate(finalTarget.equalsIgnoreCase(player.getName()) ? "skinvalue='',skinsignature=''" : ("skinvalue='" + skin.getValue() + "',skinsignature='" + skin.getSignature() + "'"));
+                            speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("skin").writeInt(user.id).writeUTF(skin.getValue()).writeUTF(skin.getSignature()).toByteArray());
                         }).start();
                     } catch (Exception e) {
                         user.sendLangMessage(GlobalString.invalidName);

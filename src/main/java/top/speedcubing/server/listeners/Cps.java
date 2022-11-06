@@ -5,6 +5,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.server.config;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
@@ -38,13 +39,17 @@ public class Cps implements Listener {
         new Timer("Cubing-CPS-Thread").schedule(new TimerTask() {
             @Override
             public void run() {
-                for (User user : User.usersByID.values()) {
-                    if (user.listened)
-                        speedcubingServer.tcpClient.send(user.tcpPort, "cps|" + user.id + "|" + user.leftClick + "|" + user.rightClick);
-                    if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
-                        Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> user.player.kickPlayer("You are clicking too fast !"));
-                    user.leftClick = 0;
-                    user.rightClick = 0;
+                try {
+                    for (User user : User.usersByID.values()) {
+                        if (user.listened)
+                            speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("cps").writeInt(user.id).writeInt(user.leftClick).writeInt(user.rightClick).toByteArray());
+                        if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
+                            Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> user.player.kickPlayer("You are clicking too fast !"));
+                        user.leftClick = 0;
+                        user.rightClick = 0;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }, 0, 1000);

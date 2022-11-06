@@ -1,42 +1,51 @@
 package top.speedcubing.server.libs;
 
-import top.speedcubing.lib.eventbus.LibEventManager;
-import top.speedcubing.lib.utils.StringUtils;
+import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.server.events.InputEvent;
 import top.speedcubing.server.speedcubingServer;
 
+import java.io.DataInputStream;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
 public class DataIO {
 
-    static Map<String, String> waitData = new HashMap<>();
+    static Map<String, DataInputStream> waitData = new HashMap<>();
 
-    public static String sendOutPut(int port, String data) {
+    public static DataInputStream sendOutPut(int port, byte[] data) {
         String uuid = UUID.randomUUID().toString();
         long b = System.currentTimeMillis();
         boolean a = true;
         try {
-            speedcubingServer.tcpClient.sendUnsafe(port, "in|" + speedcubingServer.tcpServer.getLocalPort() + "|" + uuid + "|" + data);
+            speedcubingServer.tcpClient.sendUnsafe(port, new ByteArrayDataBuilder().writeUTF("in").writeInt(speedcubingServer.tcpServer.getLocalPort()).writeUTF(uuid).write(data).toByteArray());
         } catch (Exception e) {
             a = false;
         }
         while (a && !waitData.containsKey(uuid) && System.currentTimeMillis() - b < 100) {
         }
-        String c = waitData.get(uuid);
+        DataInputStream c = waitData.get(uuid);
         waitData.remove(uuid);
         return c;
     }
 
 
-    public static void handle(String receive, String[] rs) {
-        switch (rs[0]) {
+    public static void handle(DataInputStream in, String header) throws IOException {
+        switch (header) {
             case "out":
-                waitData.put(rs[1], rs.length == 2 ? null : receive.substring(StringUtils.indexOf(receive, "|", 2) + 1));
+                DataIO.waitData.put(in.readUTF(), in);
                 break;
             case "in":
-                new InputEvent(receive).call();
+                new Thread(() -> {
+                    try {
+                        int port = in.readInt();
+                        InputEvent inputEvent = (InputEvent) new InputEvent(in, in.readUTF(), in.readUTF()).call();
+                        speedcubingServer.tcpClient.send(port, inputEvent.respond.toByteArray());
+                    } catch (IOException exception) {
+                        exception.printStackTrace();
+                    }
+                }).start();
                 break;
         }
     }

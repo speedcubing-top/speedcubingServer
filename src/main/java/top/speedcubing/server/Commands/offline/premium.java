@@ -11,10 +11,10 @@ public class premium implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0) {
             User user = User.getUser(commandSender);
-            String[] datas = speedcubingServer.connection.select("name,autologin").from("playersdata").where("id=" + user.id).getStringArray();
+            String[] datas = user.dbSelect("name,autologin").getStringArray();
             boolean disable = datas[0].equals("1");
             ((Player) commandSender).kickPlayer((disable ? "§cDisabled" : "§aEnabled") + "§6Premium Check for user \"§b" + datas[0] + "§6\".");
-            speedcubingServer.connection.update("playersdata", "autologin=" + (disable ? 0 : 1), "id=" + user.id);
+            user.dbUpdate("autologin=" + (disable ? 0 : 1));
         } else commandSender.sendMessage("/premium");
         return true;
     }

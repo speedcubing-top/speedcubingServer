@@ -15,9 +15,11 @@ import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.speedcubingLibBukkit;
+import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
-import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.SystemUtils;
+import top.speedcubing.lib.utils.Threads;
+import top.speedcubing.lib.utils.sockets.ByteUtils;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.offline.premium;
@@ -29,6 +31,7 @@ import top.speedcubing.server.events.CubingTickEvent;
 import top.speedcubing.server.events.SocketEvent;
 import top.speedcubing.server.libs.DataIO;
 import top.speedcubing.server.libs.LogListener;
+import top.speedcubing.server.libs.PreLoginData;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.listeners.*;
 
@@ -48,7 +51,7 @@ public class speedcubingServer extends JavaPlugin {
     public static ServerSocket tcpServer;
     public static TCPClient tcpClient;
     public static boolean isBungeeOnlineMode;
-    public static Map<Integer, String[]> preLoginStorage = new HashMap<>();
+    public static Map<Integer, PreLoginData> preLoginStorage = new HashMap<>();
 
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
@@ -122,7 +125,7 @@ public class speedcubingServer extends JavaPlugin {
                         tempName = new String(Arrays.copyOfRange(bytes, i + 1, end));
                     i = end;
                 }
-                connection.update("playersdata", "forgemod='" + new String(bytes, StandardCharsets.UTF_8) + "'", "uuid='" + player.getUniqueId() + "'");
+                User.getUser(player).dbUpdate("forgemod='" + new String(bytes, StandardCharsets.UTF_8) + "'");
             }
         });
         Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
@@ -151,62 +154,55 @@ public class speedcubingServer extends JavaPlugin {
         new LogListener().reloadFilter();
 
         //socket receive
-        Thread thread = new Thread(() -> {
-            String receive;
+        Threads.newThread("Cubing-Socket-Thread", () -> {
             while (true) {
                 try {
-                    receive = new BufferedReader(new InputStreamReader(tcpServer.accept().getInputStream())).readLine();
-                    if (receive != null) {
-                        String[] rs = receive.split("\\|");
-                        DataIO.handle(receive, rs);
-                        switch (rs[0]) {
-                            case "bungee":
-                                User.getUser(Integer.parseInt(rs[1])).tcpPort = Integer.parseInt(rs[2]);
-                                break;
-                            case "cpsrequest":
-                                User.getUser(Integer.parseInt(rs[2])).listened = rs[1].equals("a");
-                                break;
-                            case "cfg":
-                                new config().reload();
-                                new config().reloadDatabase();
-                                break;
-                            case "demo":
-                                PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
-                                if (rs[1].equals("-1"))
-                                    Bukkit.getOnlinePlayers().forEach(a -> ((CraftPlayer) a).getHandle().playerConnection.sendPacket(packet));
-                                else
-                                    ((CraftPlayer) User.getUser(Integer.parseInt(rs[1])).player).getHandle().playerConnection.sendPacket(packet);
-                                break;
-                            case "crash":
-                                if (rs[1].equals("-1"))
-                                    Bukkit.getOnlinePlayers().forEach(PlayerUtils::explosionCrash);
-                                else
-                                    PlayerUtils.explosionCrash(User.getUser(Integer.parseInt(rs[1])).player);
-                                break;
-                            case "cmd":
-                                String finalStr = receive;
-                                Bukkit.getScheduler().runTask(this, () -> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), finalStr.substring(StringUtils.indexOf(finalStr, "|", 1) + 1)));
-                                break;
-                            case "velo":
-                                User.getUser(Integer.parseInt(rs[2])).velocities = rs[1].equals("a") ? new double[]{Double.parseDouble(rs[3]), Double.parseDouble(rs[4])} : null;
-                                break;
-                            case "restart":
-                                RestartCommand.restart();
-                                break;
-                            default:
-                                new SocketEvent(receive).call();
-                                break;
-                        }
-                    } else System.out.print("[Server] received null line of socket");
+                    DataInputStream in = ByteUtils.inputStreamToDataInputStream(1024, tcpServer.accept().getInputStream());
+                    String header = in.readUTF();
+                    DataIO.handle(in, header);
+                    switch (header) {
+                        case "bungee":
+                            User.getUser(in.readInt()).tcpPort = in.readInt();
+                            break;
+                        case "cpsrequest":
+                            User.getUser(in.readInt()).listened = in.readBoolean();
+                            break;
+                        case "cfg":
+                            new config().reload();
+                            new config().reloadDatabase();
+                            break;
+                        case "demo":
+                            PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
+                            int id = in.readInt();
+                            if (id == 0)
+                                Bukkit.getOnlinePlayers().forEach(a -> ((CraftPlayer) a).getHandle().playerConnection.sendPacket(packet));
+                            else
+                                ((CraftPlayer) User.getUser(id).player).getHandle().playerConnection.sendPacket(packet);
+                            break;
+                        case "crash":
+                            id = in.readInt();
+                            if (id == 0)
+                                Bukkit.getOnlinePlayers().forEach(PlayerUtils::explosionCrash);
+                            else
+                                PlayerUtils.explosionCrash(User.getUser(id).player);
+                            break;
+                        case "velo":
+                            User.getUser(in.readInt()).velocities = in.readBoolean() ? new double[]{in.readDouble(), in.readDouble()} : null;
+                            break;
+                        case "restart":
+                            RestartCommand.restart();
+                            break;
+                        default:
+                            new SocketEvent(in, header).call();
+                            break;
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-        });
-        thread.setName("Cubing-Socket-Thread");
-        thread.start();
+        }).start();
         systemConnection.update("servers",
-                "launchtime=" + System.currentTimeMillis() / 1000 +
+                "launchtime=" + SystemUtils.getCurrentSecond() +
                         ",ram_max=" + SystemUtils.getXmx() / 1048576
                 , "name='" + onlineOroFfline + Bukkit.getServerName() + "'");
 
@@ -272,7 +268,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static void node(boolean add, int id, int port) {
-        tcpClient.send(port, "hasnode|" + (add ? "a" : "r") + "|" + id);
+        tcpClient.send(port, new ByteArrayDataBuilder().writeUTF("hasnode").writeInt(id).writeBoolean(add).toByteArray());
     }
 
     public static int getRandomBungeePort(CommandSender sender) {

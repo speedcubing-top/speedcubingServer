@@ -4,6 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.Collections;
@@ -19,7 +20,7 @@ public class proxycommand implements CommandExecutor {
             for (String string : strings) {
                 comamnd.append(" ").append(string);
             }
-            speedcubingServer.tcpClient.send(speedcubingServer.getRandomBungeePort(commandSender), "proxycmd|" + comamnd.substring(1));
+            speedcubingServer.tcpClient.send(speedcubingServer.getRandomBungeePort(commandSender), new ByteArrayDataBuilder().writeUTF("proxycmd").writeUTF(comamnd.substring(1)).toByteArray());
         }
         return true;
     }

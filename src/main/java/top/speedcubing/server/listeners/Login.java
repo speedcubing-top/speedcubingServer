@@ -12,20 +12,20 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.server.config;
+import top.speedcubing.server.libs.PreLoginData;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 public class Login implements Listener {
     @EventHandler
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
         String[] datas = speedcubingServer.connection.select("priority,nickpriority,perms,lang,id,name,opped").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
-        String[] bungeeData = speedcubingServer.preLoginStorage.get(Integer.parseInt(datas[4]));
+        PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(Integer.parseInt(datas[4]));
         if (bungeeData == null) {
             e.setKickMessage("§cServer Restarting... Please wait for a few seconds.");
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
@@ -47,13 +47,12 @@ public class Login implements Listener {
         p.remove("");
         p.addAll(config.rankPermissions.get(realRank));
         Set<String> groups = new HashSet<>();
-        Pattern pattern = Pattern.compile("^group\\.[^|*.]+$");
         for (String s : p) {
-            if (pattern.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6)))
+            if (User.group.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6)))
                 groups.add(s.substring(6));
         }
         groups.forEach(a -> p.addAll(config.grouppermissions.get(a)));
-        new User(player,displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData);
+        new User(player, displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData);
     }
 
     String[] temp;

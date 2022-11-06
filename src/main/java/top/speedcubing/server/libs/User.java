@@ -40,7 +40,7 @@ public class User {
 
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
-    public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, String[] bungeeData) {
+    public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData) {
         this.player = player;
         Set<String> groups = new HashSet<>();
         for (String s : permissions) {
@@ -50,12 +50,12 @@ public class User {
         groups.forEach(a -> permissions.addAll(config.grouppermissions.get(a)));
         this.permissions = permissions;
         speedcubingServer.preLoginStorage.remove(id);
-        if (!bungeeData[6].equals("null"))
-            this.velocities = new double[]{Double.parseDouble(bungeeData[6]), Double.parseDouble(bungeeData[7])};
+        if (!bungeeData.hor.equals("null"))
+            this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         this.lang = lang;
         this.id = id;
         this.rank = rank;
-        this.tcpPort = Integer.parseInt(bungeeData[5]);
+        this.tcpPort = bungeeData.port;
         this.allowOp = allowOp;
         usersByID.put(id, this);
         usersByUUID.put(player.getUniqueId(), this);

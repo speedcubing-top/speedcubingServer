@@ -5,7 +5,9 @@ import top.speedcubing.lib.api.event.ProfileRespondEvent;
 import top.speedcubing.lib.bukkit.event.PlayInEvent;
 import top.speedcubing.lib.eventbus.LibEventHandler;
 import top.speedcubing.server.events.InputEvent;
+import top.speedcubing.server.libs.PreLoginData;
 
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 public class ServerEvent {
@@ -23,18 +25,16 @@ public class ServerEvent {
 
     @LibEventHandler
     public void InputEvent(InputEvent e) {
-        String[] rs = e.receive.split("\\|");
-        switch (rs[3]) {
-            case "bungee":
-                speedcubingServer.preLoginStorage.put(Integer.parseInt(rs[4]), rs);
-                break;
+        try {
+            switch (e.header) {
+                case "bungee":
+                    int i = e.receive.readInt();
+                    speedcubingServer.preLoginStorage.put(i, new PreLoginData(e.receive.readInt(), e.receive.readUTF(), e.receive.readUTF()));
+                    break;
+            }
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
-    }
-
-    @LibEventHandler(priority = 1000)
-    public void InputEvent2(InputEvent e) {
-        String[] rs = e.receive.split("\\|");
-        speedcubingServer.tcpClient.send(Integer.parseInt(rs[1]), "out|" + rs[2] + "|" + rs[3]);
     }
 
     @LibEventHandler

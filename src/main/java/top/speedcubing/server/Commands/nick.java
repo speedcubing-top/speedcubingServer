@@ -9,6 +9,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
+import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.Reflections;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.libs.GlobalString;
@@ -78,8 +79,8 @@ public class nick implements CommandExecutor {
         }
         user.joinPacket = joinPacket;
         user.leavePacket = leavePacket;
-        speedcubingServer.connection.update("playersdata", "nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""), "id=" + user.id);
-        speedcubingServer.tcpClient.send(user.tcpPort, "nick|" + user.id + "|" + rank + "|" + name);
+        user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""));
+        speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).writeBoolean(true).toByteArray());
         user.rank = rank;
     }
 }
