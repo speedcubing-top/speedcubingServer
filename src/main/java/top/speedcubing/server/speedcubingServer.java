@@ -165,7 +165,11 @@ public class speedcubingServer extends JavaPlugin {
                             User.getUser(in.readInt()).tcpPort = in.readInt();
                             break;
                         case "cpsrequest":
-                            User.getUser(in.readInt()).listened = in.readBoolean();
+                            int id = in.readInt();
+                            User user = User.getUser(id);
+                            if (user != null)
+                                user.listened = in.readBoolean();
+                            else preLoginStorage.get(id).cps = true;
                             break;
                         case "cfg":
                             new config().reload();
@@ -173,7 +177,7 @@ public class speedcubingServer extends JavaPlugin {
                             break;
                         case "demo":
                             PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
-                            int id = in.readInt();
+                            id = in.readInt();
                             if (id == 0)
                                 Bukkit.getOnlinePlayers().forEach(a -> ((CraftPlayer) a).getHandle().playerConnection.sendPacket(packet));
                             else

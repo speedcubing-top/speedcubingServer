@@ -50,6 +50,7 @@ public class User {
         groups.forEach(a -> permissions.addAll(config.grouppermissions.get(a)));
         this.permissions = permissions;
         speedcubingServer.preLoginStorage.remove(id);
+        this.listened = bungeeData.cps;
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         this.lang = lang;
