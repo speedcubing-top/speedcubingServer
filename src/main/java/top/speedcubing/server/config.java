@@ -24,6 +24,7 @@ public class config {
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<Pattern> blockedTab = new HashSet<>();
     public static Set<Pattern> blockedMod = new HashSet<>();
+    public static Set<Pattern> blacklistedMod = new HashSet<>();
 
     public static Map<String, String[]> colors = new HashMap<>();
     public static Map<String, Set<String>> rankPermissions = new HashMap<>();
@@ -44,9 +45,11 @@ public class config {
             blockedLog.clear();
             blockedTab.clear();
             blockedMod.clear();
+            blacklistedMod.clear();
             config.get("spigotblockedlog").getAsJsonArray().forEach(a -> blockedLog.add(Pattern.compile(a.getAsString())));
             config.get("allowtabcomplete").getAsJsonArray().forEach(a -> blockedTab.add(Pattern.compile(a.getAsString())));
             config.get("blockedmod").getAsJsonArray().forEach(a -> blockedMod.add(Pattern.compile(a.getAsString())));
+            config.get("blacklistedmod").getAsJsonArray().forEach(a -> blacklistedMod.add(Pattern.compile(a.getAsString())));
             colors.clear();
             rankPermissions.clear();
             ranks.clear();

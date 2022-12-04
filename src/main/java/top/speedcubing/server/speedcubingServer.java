@@ -114,13 +114,26 @@ public class speedcubingServer extends JavaPlugin {
             if (bytes.length != 2) {
                 boolean store = false;
                 String tempName = null;
+                boolean punished = false;
                 for (int i = 2; i < bytes.length; store = !store) {
                     int end = i + bytes[i] + 1;
                     if (store) {
-                        for (Pattern p : config.blockedMod) {
-                            if (p.matcher(tempName).matches())
-                                player.kickPlayer("Invalid Modification found.");
-                        }
+                        if (!punished)
+                            for (Pattern p : config.blacklistedMod) {
+                                if (p.matcher(tempName).matches()) {
+                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "proxycommand ban " + player.getName() + " 0 Suspicious activities detected on your account.");
+                                    punished = true;
+                                    break;
+                                }
+                            }
+                        if (!punished)
+                            for (Pattern p : config.blockedMod) {
+                                if (p.matcher(tempName).matches()) {
+                                    player.kickPlayer("Invalid Modification found.");
+                                    punished = true;
+                                    break;
+                                }
+                            }
                     } else
                         tempName = new String(Arrays.copyOfRange(bytes, i + 1, end));
                     i = end;
