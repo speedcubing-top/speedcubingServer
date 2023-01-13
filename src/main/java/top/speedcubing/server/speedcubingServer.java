@@ -112,15 +112,16 @@ public class speedcubingServer extends JavaPlugin {
         }
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
             if (bytes.length != 2) {
-                boolean store = false;
-                String tempName = null;
-                boolean punished = false;
+                boolean store = false, punished = false;
+                String name = null, a2, string;
                 for (int i = 2; i < bytes.length; store = !store) {
                     int end = i + bytes[i] + 1;
+                    string = new String(Arrays.copyOfRange(bytes, i + 1, end));
+                    a2 = name + " " + string;
                     if (store) {
                         if (!punished)
                             for (Pattern p : config.blacklistedMod) {
-                                if (p.matcher(tempName).matches()) {
+                                if (p.matcher(a2).matches()) {
                                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "proxycommand ban " + player.getName() + " 0 Suspicious activities detected on your account.");
                                     punished = true;
                                     break;
@@ -128,14 +129,13 @@ public class speedcubingServer extends JavaPlugin {
                             }
                         if (!punished)
                             for (Pattern p : config.blockedMod) {
-                                if (p.matcher(tempName).matches()) {
+                                if (p.matcher(a2).matches()) {
                                     player.kickPlayer("Invalid Modification found.");
                                     punished = true;
                                     break;
                                 }
                             }
-                    } else
-                        tempName = new String(Arrays.copyOfRange(bytes, i + 1, end));
+                    } else name = string;
                     i = end;
                 }
                 User.getUser(player).dbUpdate("forgemod='" + new String(bytes, StandardCharsets.UTF_8) + "'");
