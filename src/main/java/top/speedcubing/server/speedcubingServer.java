@@ -334,34 +334,28 @@ public class speedcubingServer extends JavaPlugin {
     public static void globalChat(Collection<? extends Player> players, Player sender, TextComponent[] msg) {
         String[] ignores = connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;
+        c:
         for (Player p : players) {
             user = User.getUser(p);
-            boolean ignored = false;
             for (String s : ignores) {
-                if (user.player.getUniqueId().toString().equals(s)) {
-                    ignored = true;
-                    break;
-                }
+                if (user.player.getUniqueId().toString().equals(s))
+                    continue c;
             }
-            if (!ignored)
-                user.player.spigot().sendMessage(msg[user.lang]);
+            user.player.spigot().sendMessage(msg[user.lang]);
         }
     }
 
-    public static void globalChat(Collection<? extends Player> players, Player sender, String[] msg) {
+    public static void globalChat(Collection<? extends Player> players, Player sender, String[] msg,String[] filteredmsg) {
         String[] ignores = connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;
+        c:
         for (Player p : players) {
             user = User.getUser(p);
-            boolean ignored = false;
             for (String s : ignores) {
-                if (user.player.getUniqueId().toString().equals(s)) {
-                    ignored = true;
-                    break;
-                }
+                if (user.player.getUniqueId().toString().equals(s))
+                    continue c;
             }
-            if (!ignored)
-                user.sendLangMessage(msg);
+            user.sendLangMessage(msg);
         }
     }
 

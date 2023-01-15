@@ -21,11 +21,11 @@ public class GlobalString {
             "§c取消物品栏设置"
     };
 
-    public static final String[][] MessageFormat = {{
+    public static final String[] MessageFormat = {
             "%text% §8» %text2%",
             "%text% §8» %text2%",
             "%text% §8» %text2%",
-            "%text% §8» %text2%"}
+            "%text% §8» %text2%"
     };
     public static String[] category = {
             "§eClick to see the category!",

@@ -21,6 +21,7 @@ public class config {
     public static String DatabasePassword;
 
     public static List<String> ranks = new ArrayList<>();
+    public static Set<Pattern> blockedText = new HashSet<>();
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<Pattern> blockedTab = new HashSet<>();
     public static Set<Pattern> blockedMod = new HashSet<>();
@@ -42,13 +43,15 @@ public class config {
             LeftCpsLimit = config.get("leftcpslimit").getAsInt();
             RightCpsLimit = config.get("rightcpslimit").getAsInt();
             debugMode = config.get("debug").getAsBoolean();
+            blockedText.clear();
+            config.get("blockedtext").getAsJsonArray().forEach(a -> blockedText.add(Pattern.compile(a.getAsString())));
             blockedLog.clear();
-            blockedTab.clear();
-            blockedMod.clear();
-            blacklistedMod.clear();
             config.get("spigotblockedlog").getAsJsonArray().forEach(a -> blockedLog.add(Pattern.compile(a.getAsString())));
+            blockedTab.clear();
             config.get("allowtabcomplete").getAsJsonArray().forEach(a -> blockedTab.add(Pattern.compile(a.getAsString())));
+            blockedMod.clear();
             config.get("blockedmod").getAsJsonArray().forEach(a -> blockedMod.add(Pattern.compile(a.getAsString())));
+            blacklistedMod.clear();
             config.get("blacklistedmod").getAsJsonArray().forEach(a -> blacklistedMod.add(Pattern.compile(a.getAsString())));
             colors.clear();
             rankPermissions.clear();

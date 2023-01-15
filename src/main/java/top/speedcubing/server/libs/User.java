@@ -31,6 +31,7 @@ public class User {
     public String rank;
     public int tcpPort;
     public boolean allowOp;
+    public boolean chatFilt;
     public boolean listened;
 
     public PacketPlayOutScoreboardTeam joinPacket;
@@ -40,7 +41,7 @@ public class User {
 
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
-    public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData) {
+    public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData,boolean chatFilt) {
         this.player = player;
         Set<String> groups = new HashSet<>();
         for (String s : permissions) {
@@ -55,6 +56,7 @@ public class User {
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         this.lang = lang;
         this.id = id;
+        this.chatFilt = chatFilt;
         this.rank = rank;
         this.tcpPort = bungeeData.port;
         this.allowOp = allowOp;
