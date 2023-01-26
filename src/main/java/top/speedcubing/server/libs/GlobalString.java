@@ -22,10 +22,10 @@ public class GlobalString {
     };
 
     public static final String[] MessageFormat = {
-            "%text% §8» %text2%",
-            "%text% §8» %text2%",
-            "%text% §8» %text2%",
-            "%text% §8» %text2%"
+            "%0% §8» %1%%msg%",
+            "%0% §8» %1%%msg%",
+            "%0% §8» %1%%msg%",
+            "%0% §8» %1%%msg%"
     };
     public static String[] category = {
             "§eClick to see the category!",

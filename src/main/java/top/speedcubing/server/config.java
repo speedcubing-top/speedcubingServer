@@ -22,6 +22,7 @@ public class config {
 
     public static List<String> ranks = new ArrayList<>();
     public static Set<Pattern> blockedText = new HashSet<>();
+    public static Set<String> filteredText = new HashSet<>();
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<Pattern> blockedTab = new HashSet<>();
     public static Set<Pattern> blockedMod = new HashSet<>();
@@ -43,6 +44,8 @@ public class config {
             LeftCpsLimit = config.get("leftcpslimit").getAsInt();
             RightCpsLimit = config.get("rightcpslimit").getAsInt();
             debugMode = config.get("debug").getAsBoolean();
+            filteredText.clear();
+            config.get("filteredtext").getAsJsonArray().forEach(a -> filteredText.add(a.getAsString()));
             blockedText.clear();
             config.get("blockedtext").getAsJsonArray().forEach(a -> blockedText.add(Pattern.compile(a.getAsString())));
             blockedLog.clear();
@@ -71,9 +74,8 @@ public class config {
     }
 
     public void reloadDatabase() {
-        for (String s : speedcubingServer.systemConnection.select("name").from("groups").getStringArray()) {
+        for (String s : speedcubingServer.systemConnection.select("name").from("groups").getStringArray())
             grouppermissions.put(s, Sets.newHashSet(speedcubingServer.systemConnection.select("perms").from("groups").where("name='" + s + "'").getString().split("\\|")));
-        }
     }
 
     public static int LeftCpsLimit = Integer.MAX_VALUE;

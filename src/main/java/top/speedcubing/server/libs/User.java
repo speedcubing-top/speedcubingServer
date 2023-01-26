@@ -1,5 +1,6 @@
 package top.speedcubing.server.libs;
 
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -7,6 +8,7 @@ import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.config;
 import top.speedcubing.server.speedcubingServer;
 
+import java.awt.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -41,7 +43,7 @@ public class User {
 
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
-    public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData,boolean chatFilt) {
+    public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt) {
         this.player = player;
         Set<String> groups = new HashSet<>();
         for (String s : permissions) {
@@ -66,6 +68,10 @@ public class User {
 
     public void sendLangMessage(String[] s) {
         player.sendMessage(s[lang]);
+    }
+
+    public void sendLangTextComp(TextComponent[] s) {
+        player.spigot().sendMessage(s[lang]);
     }
 
     public LangMessage langMessageSender(String[] s) {

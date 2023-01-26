@@ -331,34 +331,6 @@ public class speedcubingServer extends JavaPlugin {
             RestartCommand.restart();
     }
 
-    public static void globalChat(Collection<? extends Player> players, Player sender, TextComponent[] msg) {
-        String[] ignores = connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
-        User user;
-        c:
-        for (Player p : players) {
-            user = User.getUser(p);
-            for (String s : ignores) {
-                if (user.player.getUniqueId().toString().equals(s))
-                    continue c;
-            }
-            user.player.spigot().sendMessage(msg[user.lang]);
-        }
-    }
-
-    public static void globalChat(Collection<? extends Player> players, Player sender, String[] msg,String[] filteredmsg) {
-        String[] ignores = connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
-        User user;
-        c:
-        for (Player p : players) {
-            user = User.getUser(p);
-            for (String s : ignores) {
-                if (user.player.getUniqueId().toString().equals(s))
-                    continue c;
-            }
-            user.sendLangMessage(msg);
-        }
-    }
-
     public static String getRank(String priority, String uuid) {
         return priority.equals("default") && connection.select("COUNT(*)").from("champ").where("uuid='" + uuid + "'").getInt() > 0 ? "champ" : priority;
     }
