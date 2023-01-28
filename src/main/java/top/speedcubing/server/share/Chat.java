@@ -1,5 +1,6 @@
 package top.speedcubing.server.share;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.utils.Console;
@@ -28,7 +29,7 @@ public class Chat {
         return string;
     }
 
-    public static void globalChat(Collection<? extends Player> players, Player sender, TextComponent[] comp, TextComponent[] filteredcomp) {
+    public static void globalChat(Collection<? extends Player> players, Player sender, BaseComponent[][] comp, BaseComponent[][] filteredcomp) {
         String[] ignores = speedcubingServer.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;
         c:

@@ -1,6 +1,6 @@
 package top.speedcubing.server.libs;
 
-import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -8,7 +8,6 @@ import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.config;
 import top.speedcubing.server.speedcubingServer;
 
-import java.awt.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -70,7 +69,7 @@ public class User {
         player.sendMessage(s[lang]);
     }
 
-    public void sendLangTextComp(TextComponent[] s) {
+    public void sendLangTextComp(BaseComponent[][] s) {
         player.spigot().sendMessage(s[lang]);
     }
 
