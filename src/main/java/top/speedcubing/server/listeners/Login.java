@@ -1,6 +1,7 @@
 package top.speedcubing.server.listeners;
 
 import com.google.common.collect.Sets;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -52,7 +53,7 @@ public class Login implements Listener {
                 groups.add(s.substring(6));
         }
         groups.forEach(a -> p.addAll(config.grouppermissions.get(a)));
-        new User(player, displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData,datas[7].equals("1"));
+        new User(player, displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[7].equals("1"));
     }
 
     String[] temp;
@@ -64,6 +65,8 @@ public class Login implements Listener {
         player.setOp(temp[3].equals("1"));
         User user = User.getUser(player);
         PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
+
+        //formatting
         for (User u : User.usersByID.values()) {
             connection.sendPacket(u.leavePacket);
             connection.sendPacket(u.joinPacket);
@@ -76,6 +79,17 @@ public class Login implements Listener {
             c.sendPacket(user.leavePacket);
             c.sendPacket(user.joinPacket);
         }
+
+        //vanish
+        System.out.println(user.player.getName() + " " + user.vanished);
+        if (user.vanished)
+            for (Player p : Bukkit.getOnlinePlayers())
+                p.hidePlayer(player);
+        for (Player p : Bukkit.getOnlinePlayers())
+            if (User.getUser(p).vanished)
+                player.hidePlayer(p);
+
+        //nick
         if (!temp[1].equals(""))
             connection.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(temp[2]) + speedcubingServer.playerNameExtract(temp[1])).c(speedcubingServer.getFormat(temp[2])[0]).g(Collections.singletonList(temp[1])).h(0).packet);
     }

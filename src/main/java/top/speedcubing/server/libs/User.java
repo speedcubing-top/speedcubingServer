@@ -39,6 +39,7 @@ public class User {
     public PacketPlayOutScoreboardTeam leavePacket;
     public int leftClick;
     public int rightClick;
+    public boolean vanished;
 
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
@@ -59,6 +60,7 @@ public class User {
         this.id = id;
         this.chatFilt = chatFilt;
         this.rank = rank;
+        this.vanished = bungeeData.vanished;
         this.tcpPort = bungeeData.port;
         this.allowOp = allowOp;
         usersByID.put(id, this);

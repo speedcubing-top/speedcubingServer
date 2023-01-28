@@ -1,7 +1,6 @@
 package top.speedcubing.server;
 
 import com.google.common.collect.Sets;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
@@ -205,6 +204,19 @@ public class speedcubingServer extends JavaPlugin {
                             break;
                         case "velo":
                             User.getUser(in.readInt()).velocities = in.readBoolean() ? new double[]{in.readDouble(), in.readDouble()} : null;
+                            break;
+                        case "vanish":
+                            user = User.getUser(in.readInt());
+                            if (in.readBoolean())
+                                Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> {
+                                    for (Player p : Bukkit.getOnlinePlayers())
+                                        p.showPlayer(user.player);
+                                });
+                            else
+                                Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> {
+                                    for (Player p : Bukkit.getOnlinePlayers())
+                                        p.hidePlayer(user.player);
+                                });
                             break;
                         case "restart":
                             RestartCommand.restart();

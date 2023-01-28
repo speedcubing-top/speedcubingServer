@@ -29,7 +29,5 @@ commands:
     usage: /nick
   unnick:
     usage: /unnick
-  serverinfo:
-    usage: /serverinfo
 depend:
   - speedcubingLib
