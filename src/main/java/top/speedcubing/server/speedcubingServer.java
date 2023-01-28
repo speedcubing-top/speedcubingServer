@@ -210,12 +210,12 @@ public class speedcubingServer extends JavaPlugin {
                             if (in.readBoolean())
                                 Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> {
                                     for (Player p : Bukkit.getOnlinePlayers())
-                                        p.showPlayer(user.player);
+                                        p.hidePlayer(user.player);
                                 });
                             else
                                 Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> {
                                     for (Player p : Bukkit.getOnlinePlayers())
-                                        p.hidePlayer(user.player);
+                                        p.showPlayer(user.player);
                                 });
                             break;
                         case "restart":
