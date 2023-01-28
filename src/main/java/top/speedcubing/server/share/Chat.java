@@ -3,6 +3,7 @@ package top.speedcubing.server.share;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
+import top.speedcubing.lib.bungee.TextBuilder;
 import top.speedcubing.lib.utils.Console;
 import top.speedcubing.server.config;
 import top.speedcubing.server.libs.User;
@@ -29,7 +30,7 @@ public class Chat {
         return string;
     }
 
-    public static void globalChat(Collection<? extends Player> players, Player sender, BaseComponent[][] comp, BaseComponent[][] filteredcomp) {
+    public static void globalChat(Collection<? extends Player> players, Player sender, TextBuilder[] text, TextBuilder[] filteredtext) {
         String[] ignores = speedcubingServer.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;
         c:
@@ -38,7 +39,7 @@ public class Chat {
             for (String s : ignores)
                 if (user.player.getUniqueId().toString().equals(s))
                     continue c;
-            user.sendLangTextComp(user.chatFilt ? filteredcomp : comp);
+            user.sendLangTextComp(user.chatFilt ? text : filteredtext);
         }
     }
 
