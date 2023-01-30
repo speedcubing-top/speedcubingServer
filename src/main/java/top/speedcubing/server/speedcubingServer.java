@@ -113,11 +113,12 @@ public class speedcubingServer extends JavaPlugin {
             if (bytes.length != 2) {
                 boolean store = false, punished = false;
                 String name = null, a2, string;
+                Boolean bypass = connection.select("blacklistedmodbypass").from("playersdata").where("id=" + User.getUser(player).id).getBoolean();
                 for (int i = 2; i < bytes.length; store = !store) {
                     int end = i + bytes[i] + 1;
                     string = new String(Arrays.copyOfRange(bytes, i + 1, end));
                     a2 = name + " " + string;
-                    if (store) {
+                    if (store && !bypass) {
                         if (!punished)
                             for (Pattern p : config.blacklistedMod) {
                                 if (p.matcher(a2).matches()) {

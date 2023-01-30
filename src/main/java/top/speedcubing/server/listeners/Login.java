@@ -1,7 +1,6 @@
 package top.speedcubing.server.listeners;
 
 import com.google.common.collect.Sets;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -81,7 +80,6 @@ public class Login implements Listener {
         }
 
         //vanish
-        System.out.println(user.player.getName() + " " + user.vanished);
         if (user.vanished)
             for (Player p : Bukkit.getOnlinePlayers())
                 p.hidePlayer(player);
