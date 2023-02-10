@@ -29,5 +29,7 @@ commands:
     usage: /nick
   unnick:
     usage: /unnick
+  testkb:
+    usage: /testkb
 depend:
   - speedcubingLib

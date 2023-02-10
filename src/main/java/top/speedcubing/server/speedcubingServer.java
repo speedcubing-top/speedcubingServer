@@ -156,6 +156,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("skin").setExecutor(new skin());
         Bukkit.getPluginCommand("hub").setExecutor(new hub());
         Bukkit.getPluginCommand("fly").setExecutor(new fly());
+        Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
         Bukkit.getPluginCommand("heal").setExecutor(new heal());
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
