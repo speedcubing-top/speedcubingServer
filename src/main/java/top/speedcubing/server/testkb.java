@@ -39,6 +39,6 @@ public class testkb implements CommandExecutor {
 
     private void test(double x, double y,double z, Player player, CommandSender commandSender) {
         player.setVelocity(new Vector(x, y, z));
-        commandSender.sendMessage("§bTested '" + User.getUser(commandSender).realName + "' for anti kb! (" + x + "," + y + "," + z + ")");
+        commandSender.sendMessage("§bTested '" + User.getUser(player).realName + "' for anti kb! (" + x + "," + y + "," + z + ")");
     }
 }
