@@ -172,8 +172,14 @@ public class speedcubingServer extends JavaPlugin {
             while (true) {
                 try {
                     DataInputStream in = ByteUtils.inputStreamToDataInputStream(1024, tcpServer.accept().getInputStream());
-                    String header = in.readUTF();
+                    String header;
+                    try {
+                        header = in.readUTF();
+                    } catch (Exception e) {
+                        continue;
+                    }
                     DataIO.handle(in, header);
+                    System.out.println("[Socket] received " + header + " " + in);
                     switch (header) {
                         case "bungee":
                             User.getUser(in.readInt()).tcpPort = in.readInt();
