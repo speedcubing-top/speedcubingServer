@@ -28,7 +28,7 @@ public class nick implements CommandExecutor {
                 User user = User.getUser(commandSender);
                 if (name.equals(commandSender.getName()))
                     user.sendLangMessage(GlobalString.nicksameusername);
-                else if (name.equals(speedcubingServer.connection.select("name").from("playersdata").where("id=" + user.id).getString()))
+                else if (name.equals(user.realName))
                     user.sendLangMessage(GlobalString.nickdefaultusername);
                 else if (speedcubingServer.nameRegex.matcher(name).matches() && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'") && !speedcubingServer.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'"))
                     nickPlayer(name, speedcubingServer.connection.select("nickpriority").from("playersdata").where("id=" + user.id).getString(), true, (Player) commandSender);
@@ -54,8 +54,6 @@ public class nick implements CommandExecutor {
         PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
         PacketPlayOutScoreboardTeam leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
         PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(speedcubingServer.getFormat(rank)[0]).g(Collections.singletonList(name)).h(0).packet;
-        PacketPlayOutPlayerInfo removePlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer);
-        PacketPlayOutPlayerInfo addPlayerPacket = new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer);
         for (Player p : Bukkit.getOnlinePlayers()) {
             if (p != player)
                 ((CraftPlayer) p).getHandle().playerConnection.sendPacket(old);
@@ -66,8 +64,8 @@ public class nick implements CommandExecutor {
             p.showPlayer(player);
         }
         Location l = player.getLocation();
-        connection.sendPacket(removePlayerPacket);
-        connection.sendPacket(addPlayerPacket);
+        connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer));
+        connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer));
         connection.sendPacket(new PacketPlayOutRespawn(entityPlayer.world.getWorld().getEnvironment().getId(), entityPlayer.world.getDifficulty(), entityPlayer.world.getWorldData().getType(), entityPlayer.playerInteractManager.getGameMode()));
         connection.sendPacket(new PacketPlayOutPosition(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>()));
         connection.sendPacket(new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot()));

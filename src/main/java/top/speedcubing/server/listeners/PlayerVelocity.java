@@ -12,10 +12,11 @@ public class PlayerVelocity implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void PlayerVelocityEvent(PlayerVelocityEvent e) {
         Player player = e.getPlayer();
-        double[] d = User.getUser(player).velocities;
-        if (d != null) {
-            Vector old = player.getVelocity();
-            player.setVelocity(new Vector(old.getX() * d[0],old.getY() * d[1], old.getZ() * d[0]));
-        }
+        player.setVelocity(applyKnockback(player.getVelocity(), User.getUser(player)));
+    }
+
+    public static Vector applyKnockback(Vector v, User user) {
+        double[] d = user.velocities;
+        return d == null ? v : v.setX(v.getX() * d[0]).setY(v.getY() * d[1]).setZ(v.getZ() * d[0]);
     }
 }

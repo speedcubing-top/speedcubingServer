@@ -16,50 +16,44 @@ import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.util.List;
 
 public class skin implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
-        if (!((SkinEvent) new SkinEvent(player).call()).isCancelled)
-            new Thread(() -> {
-                User user = User.getUser(commandSender);
-                String target = "";
-                if (strings.length == 0)
-                    target = speedcubingServer.connection.select("name").from("playersdata").where("id=" + user.id).getString();
-                else if (strings.length == 1)
-                    target = strings[0];
-                else player.sendMessage("/skin , /skin <player>");
-                if (!target.equals("")) {
-                    try {
-                        String finalTarget = target;
-                        new Thread(() -> {
-                            ProfileSkin skin;
-                            try {
-                                skin = MojangAPI.getSkinByName(finalTarget);
-                            } catch (Exception e) {
-                                user.sendLangMessage(GlobalString.invalidName);
-                                return;
-                            }
-                            List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, new String[]{skin.getValue(), skin.getSignature()});
-                            packets[0].forEach(((CraftPlayer) player).getHandle().playerConnection::sendPacket);
-                            String worldname = player.getWorld().getName();
-                            player.updateInventory();
-                            for (Player p : Bukkit.getOnlinePlayers()) {
-                                if (!p.getWorld().getName().equals(worldname))
-                                    packets[2].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
-                                else if (p != player)
-                                    packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
-                            }
-                            user.dbUpdate(finalTarget.equalsIgnoreCase(player.getName()) ? "skinvalue='',skinsignature=''" : ("skinvalue='" + skin.getValue() + "',skinsignature='" + skin.getSignature() + "'"));
-                            speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("skin").writeInt(user.id).writeUTF(skin.getValue()).writeUTF(skin.getSignature()).toByteArray());
-                        }).start();
-                    } catch (Exception e) {
-                        user.sendLangMessage(GlobalString.invalidName);
-                    }
+        if (!((SkinEvent) new SkinEvent(player).call()).isCancelled) {
+            User user = User.getUser(commandSender);
+            String target = "";
+            if (strings.length == 0)
+                target = user.realName;
+            else if (strings.length == 1)
+                target = strings[0];
+            else player.sendMessage("/skin , /skin <player>");
+            if (!target.equals("")) {
+                ProfileSkin skin;
+                try {
+                    skin = MojangAPI.getSkinByName(target);
+                } catch (Exception e) {
+                    user.sendLangMessage(GlobalString.invalidName);
+                    return true;
                 }
-            }).start();
+                List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, new String[]{skin.getValue(), skin.getSignature()});
+                packets[0].forEach(((CraftPlayer) player).getHandle().playerConnection::sendPacket);
+                String worldname = player.getWorld().getName();
+                player.updateInventory();
+                for (Player p : Bukkit.getOnlinePlayers()) {
+                    if (!p.getWorld().getName().equals(worldname))
+                        packets[2].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
+                    else if (p != player)
+                        packets[1].forEach(((CraftPlayer) p).getHandle().playerConnection::sendPacket);
+                }
+                user.dbUpdate(target.equalsIgnoreCase(user.realName) ? "skinvalue='',skinsignature=''" : ("skinvalue='" + skin.getValue() + "',skinsignature='" + skin.getSignature() + "'"));
+                speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("skin").writeInt(user.id).writeUTF(skin.getValue()).writeUTF(skin.getSignature()).toByteArray());
+            }
+        }
         return true;
     }
 }

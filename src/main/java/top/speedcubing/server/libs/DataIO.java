@@ -40,8 +40,7 @@ public class DataIO {
                 new Thread(() -> {
                     try {
                         int port = in.readInt();
-                        InputEvent inputEvent = (InputEvent) new InputEvent(in, in.readUTF(), in.readUTF()).call();
-                        speedcubingServer.tcpClient.send(port, inputEvent.respond.toByteArray());
+                        speedcubingServer.tcpClient.send(port, ((InputEvent) new InputEvent(in, in.readUTF(), in.readUTF()).call()).respond.toByteArray());
                     } catch (IOException exception) {
                         exception.printStackTrace();
                     }

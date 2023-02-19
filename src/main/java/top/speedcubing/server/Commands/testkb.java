@@ -1,4 +1,4 @@
-package top.speedcubing.server;
+package top.speedcubing.server.Commands;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -23,13 +23,12 @@ public class testkb implements CommandExecutor {
                 player = Bukkit.getPlayer(strings[0]);
                 if (player == null)
                     commandSender.sendMessage("player not found in this server");
-                else {
+                else
                     try {
                         test(Double.parseDouble(strings[1]), Double.parseDouble(strings[2]), Double.parseDouble(strings[3]),player, commandSender);
                     } catch (Exception e) {
                         commandSender.sendMessage("invalid number");
                     }
-                }
             default:
                 commandSender.sendMessage("/testkb <player> <x> <y> <z>\n/testkb <player>");
                 break;
