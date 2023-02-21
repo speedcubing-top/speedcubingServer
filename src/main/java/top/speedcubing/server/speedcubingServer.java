@@ -6,7 +6,6 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.ConsoleCommandSender;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
@@ -199,9 +198,9 @@ public class speedcubingServer extends JavaPlugin {
                             PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
                             id = in.readInt();
                             if (id == 0)
-                                Bukkit.getOnlinePlayers().forEach(a -> ((CraftPlayer) a).getHandle().playerConnection.sendPacket(packet));
+                                User.getUsers().forEach(a -> a.sendPacket(packet));
                             else
-                                ((CraftPlayer) User.getUser(id).player).getHandle().playerConnection.sendPacket(packet);
+                                User.getUser(id).sendPacket(packet);
                             break;
                         case "crash":
                             id = in.readInt();

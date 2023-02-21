@@ -1,9 +1,7 @@
 package top.speedcubing.server.listeners;
 
 import com.google.common.collect.Sets;
-import net.minecraft.server.v1_8_R3.PlayerConnection;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -52,7 +50,7 @@ public class Login implements Listener {
                 groups.add(s.substring(6));
         }
         groups.forEach(a -> p.addAll(config.grouppermissions.get(a)));
-        new User(player, displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[7].equals("1"),datas[5]);
+        new User(player, displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[7].equals("1"), datas[5]);
     }
 
     String[] temp;
@@ -63,32 +61,25 @@ public class Login implements Listener {
         Player player = e.getPlayer();
         player.setOp(temp[3].equals("1"));
         User user = User.getUser(player);
-        PlayerConnection connection = ((CraftPlayer) player).getHandle().playerConnection;
 
         //formatting
-        for (User u : User.usersByID.values()) {
-            connection.sendPacket(u.leavePacket);
-            connection.sendPacket(u.joinPacket);
-        }
+        for (User u : User.getUsers())
+            user.sendPacket(u.leavePacket, u.joinPacket);
         String extracted = speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(temp[0]);
         user.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
         user.joinPacket = new OutScoreboardTeam().a(extracted).c(speedcubingServer.getFormat(user.rank)[0]).g(Collections.singletonList(temp[0])).h(0).packet;
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
-            c.sendPacket(user.leavePacket);
-            c.sendPacket(user.joinPacket);
-        }
+        for (User u : User.getUsers())
+            u.sendPacket(user.leavePacket, user.joinPacket);
 
         //vanish
         if (user.vanished)
             for (Player p : Bukkit.getOnlinePlayers())
                 p.hidePlayer(player);
-        for (Player p : Bukkit.getOnlinePlayers())
-            if (User.getUser(p).vanished)
-                player.hidePlayer(p);
+        for (User u : User.getUsers())
+            if (u.vanished) player.hidePlayer(u.player);
 
         //nick
         if (!temp[1].equals(""))
-            connection.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(temp[2]) + speedcubingServer.playerNameExtract(temp[1])).c(speedcubingServer.getFormat(temp[2])[0]).g(Collections.singletonList(temp[1])).h(0).packet);
+            user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(temp[2]) + speedcubingServer.playerNameExtract(temp[1])).c(speedcubingServer.getFormat(temp[2])[0]).g(Collections.singletonList(temp[1])).h(0).packet);
     }
 }

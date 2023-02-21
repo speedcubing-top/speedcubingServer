@@ -1,12 +1,10 @@
 package top.speedcubing.server.Commands;
 
 import net.minecraft.server.v1_8_R3.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
@@ -47,34 +45,31 @@ public class nick implements CommandExecutor {
     }
 
     public static void nickPlayer(String name, String rank, boolean nick, Player player) {
-        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-        PlayerConnection connection = entityPlayer.playerConnection;
-        String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
         User user = User.getUser(player);
+        EntityPlayer entityPlayer = user.toNMS();
+        String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
         PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
         PacketPlayOutScoreboardTeam leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
         PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(speedcubingServer.getFormat(rank)[0]).g(Collections.singletonList(name)).h(0).packet;
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            if (p != player)
-                ((CraftPlayer) p).getHandle().playerConnection.sendPacket(old);
+        for (User u : User.getUsers()) {
+            if (u != user)
+                u.sendPacket(old);
         }
         Reflections.setField(entityPlayer.getProfile(), "name", name);
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            p.hidePlayer(player);
-            p.showPlayer(player);
+        for (User u : User.getUsers()) {
+            u.bHidePlayer(player);
+            u.bShowPlayer(player);
         }
         Location l = player.getLocation();
-        connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer));
-        connection.sendPacket(new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer));
-        connection.sendPacket(new PacketPlayOutRespawn(entityPlayer.world.getWorld().getEnvironment().getId(), entityPlayer.world.getDifficulty(), entityPlayer.world.getWorldData().getType(), entityPlayer.playerInteractManager.getGameMode()));
-        connection.sendPacket(new PacketPlayOutPosition(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>()));
-        connection.sendPacket(new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot()));
+        user.sendPacket(
+                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer),
+                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer),
+                new PacketPlayOutRespawn(player.getWorld().getEnvironment().getId(), entityPlayer.world.getDifficulty(), entityPlayer.world.getWorldData().getType(), entityPlayer.playerInteractManager.getGameMode()),
+                new PacketPlayOutPosition(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>()));
+        new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
         player.updateInventory();
-        for (Player p : Bukkit.getOnlinePlayers()) {
-            PlayerConnection c = ((CraftPlayer) p).getHandle().playerConnection;
-            c.sendPacket(leavePacket);
-            c.sendPacket(joinPacket);
-        }
+        for (User u : User.getUsers())
+            u.sendPacket(leavePacket, joinPacket);
         user.joinPacket = joinPacket;
         user.leavePacket = leavePacket;
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""));
