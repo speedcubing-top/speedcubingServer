@@ -102,7 +102,7 @@ public class User {
         return new LangMessage(s[lang], this);
     }
 
-    public SQLConnection.SQLBuilder dbSelect(String field) {
+    public SQLConnection.SQLPrepare dbSelect(String field) {
         return speedcubingServer.connection.select(field).from("playersdata").where("id=" + id);
     }
 
