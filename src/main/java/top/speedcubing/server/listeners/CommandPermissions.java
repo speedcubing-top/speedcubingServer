@@ -2,6 +2,7 @@ package top.speedcubing.server.listeners;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -17,7 +18,7 @@ import java.util.Set;
 public class CommandPermissions implements Listener {
     List<String> op = Arrays.asList("clear", "clone", "fill", "effect", "gamemode", "give", "kill", "pardon", "say", "setblock", "tell", "tellraw", "title", "tp");
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void PlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();
         CommandElement element = new CommandElement(e.getMessage(), false);
@@ -40,7 +41,7 @@ public class CommandPermissions implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void ServerCommandEvent(ServerCommandEvent e) {
         CommandElement element = new CommandElement(e.getCommand(), true);
         e.setCancelled(OverrideCommandManager.dispatchOverride(e.getSender(), element.command, element.strings));

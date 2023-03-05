@@ -1,14 +1,24 @@
 package top.speedcubing.server.listeners;
 
 import com.google.common.collect.Sets;
+import net.minecraft.server.v1_8_R3.WorldData;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
+import org.bukkit.event.player.PlayerVelocityEvent;
+import org.bukkit.event.server.ServerCommandEvent;
+import org.bukkit.event.weather.WeatherChangeEvent;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
+import top.speedcubing.lib.utils.Reflections;
 import top.speedcubing.server.config;
 import top.speedcubing.server.libs.PreLoginData;
 import top.speedcubing.server.libs.User;
@@ -18,8 +28,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-public class Login implements Listener {
-    @EventHandler
+public class FrontListen implements Listener {
+    @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
         String[] datas = speedcubingServer.connection.select("priority,nickpriority,perms,lang,id,name,opped,chatfilt").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
@@ -55,7 +65,7 @@ public class Login implements Listener {
 
     String[] temp;
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.LOW)
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         Player player = e.getPlayer();
@@ -81,5 +91,56 @@ public class Login implements Listener {
         //nick
         if (!temp[1].equals(""))
             user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(temp[2]) + speedcubingServer.playerNameExtract(temp[1])).c(speedcubingServer.getFormat(temp[2])[0]).g(Collections.singletonList(temp[1])).h(0).packet);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void PlayerVelocityEvent(PlayerVelocityEvent e) {
+        Player player = e.getPlayer();
+        player.setVelocity(User.getUser(player).applyKnockback(player.getVelocity()));
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void InventoryOpenEvent(InventoryOpenEvent e) {
+        InventoryType type = e.getInventory().getType();
+        if (type == InventoryType.BEACON || type == InventoryType.HOPPER || type == InventoryType.ANVIL)
+            e.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void InventoryClickEvent(InventoryClickEvent e) {
+        User user = User.getUser(e.getWhoClicked());
+        long l = System.currentTimeMillis();
+        if (l - user.lastInvClick < 100)
+            e.setCancelled(true);
+        else user.lastInvClick = l;
+    }
+
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void PlayerInteractEvent(PlayerInteractEvent e) {
+        switch (e.getAction()) {
+            case LEFT_CLICK_AIR:
+            case LEFT_CLICK_BLOCK:
+                User.getUser(e.getPlayer()).leftClick += 1;
+                break;
+            case RIGHT_CLICK_AIR:
+            case RIGHT_CLICK_BLOCK:
+                User.getUser(e.getPlayer()).rightClick += 1;
+                break;
+        }
+    }
+
+    @EventHandler
+    public void ServerCommandEvent(ServerCommandEvent e) {
+        System.out.print("[CONSOLE] " + e.getCommand());
+    }
+
+    @EventHandler
+    public void WeatherChangeEvent(WeatherChangeEvent e) {
+        if (e.getWorld().hasStorm()) {
+            WorldData worldData = ((CraftWorld) e.getWorld()).getHandle().worldData;
+            worldData.setWeatherDuration(0);
+            Reflections.setField(worldData, "q", false);
+        } else e.setCancelled(true);
     }
 }

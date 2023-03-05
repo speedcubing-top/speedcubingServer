@@ -31,7 +31,9 @@ import top.speedcubing.server.libs.DataIO;
 import top.speedcubing.server.libs.LogListener;
 import top.speedcubing.server.libs.PreLoginData;
 import top.speedcubing.server.libs.User;
-import top.speedcubing.server.listeners.*;
+import top.speedcubing.server.listeners.BackListen;
+import top.speedcubing.server.listeners.CommandPermissions;
+import top.speedcubing.server.listeners.FrontListen;
 
 import java.io.*;
 import java.lang.management.ManagementFactory;
@@ -99,7 +101,24 @@ public class speedcubingServer extends JavaPlugin {
         speedcubingLibBukkit.deletePlayerFile = true;
 
         //self
-        new Cps().Load();
+        new Timer("Cubing-CPS-Thread").schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    for (User user : User.usersByID.values()) {
+                        if (user.listened)
+                            speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("cps").writeInt(user.id).writeInt(user.leftClick).writeInt(user.rightClick).toByteArray());
+                        if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
+                            Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> user.player.kickPlayer("You are clicking too fast !"));
+                        user.leftClick = 0;
+                        user.rightClick = 0;
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 1000);
+
         new ForceOp().run();
         if (!isBungeeOnlineMode) {
             Bukkit.getPluginCommand("premium").setExecutor(new premium());
@@ -140,17 +159,9 @@ public class speedcubingServer extends JavaPlugin {
                 User.getUser(player).dbUpdate("forgemod='" + new String(bytes, StandardCharsets.UTF_8) + "'");
             }
         });
-        Bukkit.getPluginManager().registerEvents(new PlayerKick(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerDeath(), this);
         Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
-        Bukkit.getPluginManager().registerEvents(new InventoryOpen(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerQuit(), this);
-        Bukkit.getPluginManager().registerEvents(new Login(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerVelocity(), this);
-        Bukkit.getPluginManager().registerEvents(new Cps(), this);
-        Bukkit.getPluginManager().registerEvents(new ForceOp(), this);
-        Bukkit.getPluginManager().registerEvents(new ServerCommand(), this);
-        Bukkit.getPluginManager().registerEvents(new CreatureSpawn(), this);
+        Bukkit.getPluginManager().registerEvents(new FrontListen(), this);
+        Bukkit.getPluginManager().registerEvents(new BackListen(), this);
         Bukkit.getPluginCommand("discord").setExecutor(new discord());
         Bukkit.getPluginCommand("skin").setExecutor(new skin());
         Bukkit.getPluginCommand("hub").setExecutor(new hub());
@@ -158,7 +169,6 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
         Bukkit.getPluginCommand("heal").setExecutor(new heal());
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
-        Bukkit.getPluginManager().registerEvents(new WeatherChange(), this);
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
         OverrideCommandManager.register(new plugins(), "pl", "plugins");
         speedcubingLibBukkit.deletePlayerFile = true;

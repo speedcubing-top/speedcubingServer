@@ -16,6 +16,7 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.util.Vector;
 import top.speedcubing.lib.bungee.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.config;
@@ -58,7 +59,7 @@ public class User {
     public int leftClick;
     public int rightClick;
     public boolean vanished;
-
+    public long lastInvClick;
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
     public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
@@ -84,6 +85,12 @@ public class User {
         this.allowOp = allowOp;
         usersByID.put(id, this);
         usersByUUID.put(bGetUniqueId(), this);
+    }
+
+
+    public Vector applyKnockback(Vector v) {
+        double[] d = velocities;
+        return d == null ? v : v.setX(v.getX() * d[0]).setY(v.getY() * d[1]).setZ(v.getZ() * d[0]);
     }
 
     public void sendLangMessage(String[] s) {
