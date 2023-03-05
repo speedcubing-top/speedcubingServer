@@ -31,16 +31,25 @@ import java.util.Set;
 public class FrontListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
-        System.out.println("3");
         Player player = e.getPlayer();
         String[] datas = speedcubingServer.connection.select("priority,nickpriority,perms,lang,id,name,opped,chatfilt").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
         PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(Integer.parseInt(datas[4]));
         if (bungeeData == null) {
             e.setKickMessage("§cServer Restarting... Please wait for a few seconds.");
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            return;
+        } else {
+            this.datas = datas;
+            this.bungeeData = bungeeData;
         }
+    }
 
+    String[] datas;
+    PreLoginData bungeeData;
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void PlayerJoinEvent(PlayerJoinEvent e) {
+        e.setJoinMessage("");
+        Player player = e.getPlayer();
         String displayName = player.getName();
         String realRank = speedcubingServer.getRank(datas[0], player.getUniqueId().toString());
         String displayRank = realRank;
@@ -51,40 +60,29 @@ public class FrontListen implements Listener {
                 nickedRealName = datas[5];
             }
         }
-        temp = new String[]{displayName, nickedRealName, realRank, datas[6]};
-        Set<String> p = Sets.newHashSet(datas[2].split("\\|"));
-        p.remove("");
-        p.addAll(config.rankPermissions.get(realRank));
+        Set<String> perms = Sets.newHashSet(datas[2].split("\\|"));
+        perms.remove("");
+        perms.addAll(config.rankPermissions.get(realRank));
         Set<String> groups = new HashSet<>();
-        for (String s : p) {
+        for (String s : perms) {
             if (User.group.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6)))
                 groups.add(s.substring(6));
         }
-        groups.forEach(a -> p.addAll(config.grouppermissions.get(a)));
-        new User(player, displayRank, p, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[7].equals("1"), datas[5]);
-    }
+        groups.forEach(a -> perms.addAll(config.grouppermissions.get(a)));
+        new User(player, displayRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[7].equals("1"), datas[5]);
 
-    String[] temp;
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void PlayerJoinEvent(PlayerJoinEvent e) {
-        System.out.println("2");
-        e.setJoinMessage("");
-        Player player = e.getPlayer();
-        player.setOp(temp[3].equals("1"));
+        player.setOp(datas[6].equals("1"));
         User user = User.getUser(player);
 
-        String extracted = speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(temp[0]);
+        String extracted = speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(displayName);
         user.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
-        user.joinPacket = new OutScoreboardTeam().a(extracted).c(speedcubingServer.getFormat(user.rank)[0]).g(Collections.singletonList(temp[0])).h(0).packet;
+        user.joinPacket = new OutScoreboardTeam().a(extracted).c(speedcubingServer.getFormat(user.rank)[0]).g(Collections.singletonList(displayName)).h(0).packet;
         //formatting
-        for (User u : User.getUsers()) {
+        for (User u : User.getUsers())
             user.sendPacket(u.leavePacket, u.joinPacket);
-        }
-        for (User u : User.getUsers()) {
+        for (User u : User.getUsers())
             if (u != user)
                 u.sendPacket(user.leavePacket, user.joinPacket);
-        }
         //vanish
         if (user.vanished)
             for (Player p : Bukkit.getOnlinePlayers())
@@ -93,8 +91,8 @@ public class FrontListen implements Listener {
             if (u.vanished) player.hidePlayer(u.player);
 
         //nick
-        if (!temp[1].equals(""))
-            user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(temp[2]) + speedcubingServer.playerNameExtract(temp[1])).c(speedcubingServer.getFormat(temp[2])[0]).g(Collections.singletonList(temp[1])).h(0).packet);
+        if (!nickedRealName.equals(""))
+            user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(realRank) + speedcubingServer.playerNameExtract(nickedRealName)).c(speedcubingServer.getFormat(realRank)[0]).g(Collections.singletonList(nickedRealName)).h(0).packet);
     }
 
     @EventHandler(priority = EventPriority.LOW)
