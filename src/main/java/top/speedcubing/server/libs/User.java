@@ -190,11 +190,11 @@ public class User {
     }
 
     public void bHidePlayer(Player player) {
-        player.hidePlayer(player);
+        this.player.hidePlayer(player);
     }
 
     public void bShowPlayer(Player player) {
-        player.showPlayer(player);
+        this.player.showPlayer(player);
     }
 
     public void bSetGameMode(GameMode mode) {
