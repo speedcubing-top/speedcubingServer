@@ -31,6 +31,7 @@ import java.util.Set;
 public class FrontListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
+        System.out.println("3");
         Player player = e.getPlayer();
         String[] datas = speedcubingServer.connection.select("priority,nickpriority,perms,lang,id,name,opped,chatfilt").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
         PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(Integer.parseInt(datas[4]));
@@ -67,20 +68,23 @@ public class FrontListen implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerJoinEvent(PlayerJoinEvent e) {
+        System.out.println("2");
         e.setJoinMessage("");
         Player player = e.getPlayer();
         player.setOp(temp[3].equals("1"));
         User user = User.getUser(player);
 
-        //formatting
-        for (User u : User.getUsers())
-            user.sendPacket(u.leavePacket, u.joinPacket);
         String extracted = speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(temp[0]);
         user.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
         user.joinPacket = new OutScoreboardTeam().a(extracted).c(speedcubingServer.getFormat(user.rank)[0]).g(Collections.singletonList(temp[0])).h(0).packet;
-        for (User u : User.getUsers())
-            u.sendPacket(user.leavePacket, user.joinPacket);
-
+        //formatting
+        for (User u : User.getUsers()) {
+            user.sendPacket(u.leavePacket, u.joinPacket);
+        }
+        for (User u : User.getUsers()) {
+            if (u != user)
+                u.sendPacket(user.leavePacket, user.joinPacket);
+        }
         //vanish
         if (user.vanished)
             for (Player p : Bukkit.getOnlinePlayers())
