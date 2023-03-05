@@ -144,6 +144,10 @@ public class User {
         return player.teleport(location);
     }
 
+    public boolean bTeleport(Player player) {
+        return this.player.teleport(player);
+    }
+
     public void bCloseInventory() {
         player.closeInventory();
     }
