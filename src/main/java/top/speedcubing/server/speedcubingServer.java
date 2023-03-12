@@ -64,7 +64,7 @@ public class speedcubingServer extends JavaPlugin {
         systemConnection = new SQLConnection(config.DatabaseURL.replace("%db%", "speedcubingsystem"), config.DatabaseUser, config.DatabasePassword);
         new config().reloadDatabase();
         try {
-            tcpServer = new ServerSocket(Bukkit.getPort() + 2);
+            tcpServer = new ServerSocket(Bukkit.getPort() + 1);
         } catch (IOException e) {
             e.printStackTrace();
         }
