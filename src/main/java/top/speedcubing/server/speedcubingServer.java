@@ -20,8 +20,6 @@ import top.speedcubing.lib.utils.Threads;
 import top.speedcubing.lib.utils.sockets.ByteUtils;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.Commands.*;
-import top.speedcubing.server.Commands.offline.premium;
-import top.speedcubing.server.Commands.offline.resetpassword;
 import top.speedcubing.server.Commands.overrided.plugins;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
@@ -35,7 +33,9 @@ import top.speedcubing.server.listeners.BackListen;
 import top.speedcubing.server.listeners.CommandPermissions;
 import top.speedcubing.server.listeners.FrontListen;
 
-import java.io.*;
+import java.io.DataInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
 import java.net.ServerSocket;
@@ -50,36 +50,16 @@ public class speedcubingServer extends JavaPlugin {
     public static SQLConnection systemConnection;
     public static ServerSocket tcpServer;
     public static TCPClient tcpClient;
-    public static boolean isBungeeOnlineMode;
     public static Map<Integer, PreLoginData> preLoginStorage = new HashMap<>();
 
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
     private static final Timer calcTimer = new Timer("Cubing-Tick-Thread");
-    public static String onlineOroFfline;
 
     public void onEnable() {
-        //check proxy online mode
-        try {
-//            File file = new File("../../Proxies/WaterFall/config.yml");
-//            isBungeeOnlineMode = (Boolean) ((HashMap<?, ?>) new Yaml().load(Files.newInputStream(file.toPath()))).get("online_mode");
-            File file = new File("../../Proxies/Velocity1/velocity.toml");
-            BufferedReader input = new BufferedReader(new FileReader(file));
-            String line = "";
-            boolean a = true;
-            while (a) {
-                line = input.readLine();
-                if (line != null && line.startsWith("online-mode = "))
-                    a = false;
-            }
-            isBungeeOnlineMode = line.equals("online-mode = true");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         //conn
         new config().reload();
-        onlineOroFfline = (Bukkit.getPort() % 2 == 1 ? "online" : "offline");
         connection = new SQLConnection(config.DatabaseURL.replace("%db%", Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing"), config.DatabaseUser, config.DatabasePassword);
         systemConnection = new SQLConnection(config.DatabaseURL.replace("%db%", "speedcubingsystem"), config.DatabaseUser, config.DatabasePassword);
         new config().reloadDatabase();
@@ -93,7 +73,7 @@ public class speedcubingServer extends JavaPlugin {
         //spigot
         try {
             Class.forName("top.speedcubing.server.CubingPaperConfig");
-            CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", onlineOroFfline + Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", onlineOroFfline, "init"};
+            CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", "init"};
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,13 +100,6 @@ public class speedcubingServer extends JavaPlugin {
         }, 0, 1000);
 
         new ForceOp().run();
-        if (!isBungeeOnlineMode) {
-            Bukkit.getPluginCommand("premium").setExecutor(new premium());
-            Bukkit.getPluginCommand("resetpassword").setExecutor(new resetpassword());
-        } else {
-            Bukkit.getPluginCommand("nick").setExecutor(new nick());
-            Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
-        }
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
             if (bytes.length != 2) {
                 boolean store = false, punished = false;
@@ -162,6 +135,8 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
         Bukkit.getPluginManager().registerEvents(new FrontListen(), this);
         Bukkit.getPluginManager().registerEvents(new BackListen(), this);
+        Bukkit.getPluginCommand("nick").setExecutor(new nick());
+        Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("discord").setExecutor(new discord());
         Bukkit.getPluginCommand("skin").setExecutor(new skin());
         Bukkit.getPluginCommand("hub").setExecutor(new hub());
@@ -250,7 +225,7 @@ public class speedcubingServer extends JavaPlugin {
         systemConnection.update("servers",
                 "launchtime=" + SystemUtils.getCurrentSecond() +
                         ",ram_max=" + SystemUtils.getXmx() / 1048576
-                , "name='" + onlineOroFfline + Bukkit.getServerName() + "'");
+                , "name='" + Bukkit.getServerName() + "'");
 
         //restart
         new Timer("Cubing-Restart-Thread").schedule(new TimerTask() {
@@ -279,7 +254,7 @@ public class speedcubingServer extends JavaPlugin {
                                 ",tps1=" + Math.round(tps[0] * 100.0) / 100.0 +
                                 ",tps2=" + Math.round(tps[1] * 100.0) / 100.0 +
                                 ",tps3=" + Math.round(tps[2] * 100.0) / 100.0,
-                        "name='" + onlineOroFfline + Bukkit.getServerName() + "'"
+                        "name='" + Bukkit.getServerName() + "'"
                 );
                 event.call();
             }
@@ -305,12 +280,12 @@ public class speedcubingServer extends JavaPlugin {
         systemConnection.update(
                 "servers",
                 "onlinecount=0,ram_max=0,ram_heap=0,ram_used=0,tps1=0,tps2=0,tps3=0",
-                "name='" + onlineOroFfline + Bukkit.getServerName() + "'"
+                "name='" + Bukkit.getServerName() + "'"
         );
     }
 
     public static int getOnlineCount() {
-        return systemConnection.select("SUM(onlinecount)").from("proxies").where("`name` LIKE '%" + onlineOroFfline + "%'").getInt();
+        return systemConnection.select("SUM(onlinecount)").from("proxies").getInt();
     }
 
     public static void node(boolean add, int id, int port) {

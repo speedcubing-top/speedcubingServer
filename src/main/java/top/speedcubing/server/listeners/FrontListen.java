@@ -54,11 +54,9 @@ public class FrontListen implements Listener {
         String realRank = speedcubingServer.getRank(datas[0], player.getUniqueId().toString());
         String displayRank = realRank;
         String nickedRealName = "";
-        if (speedcubingServer.isBungeeOnlineMode) {
-            if (!datas[5].equals(displayName)) {
-                displayRank = datas[1];
-                nickedRealName = datas[5];
-            }
+        if (!datas[5].equals(displayName)) {
+            displayRank = datas[1];
+            nickedRealName = datas[5];
         }
         Set<String> perms = Sets.newHashSet(datas[2].split("\\|"));
         perms.remove("");
