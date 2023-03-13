@@ -20,6 +20,7 @@ import org.bukkit.util.Vector;
 import top.speedcubing.lib.bungee.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.config;
+import top.speedcubing.server.database.Database;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.*;
@@ -110,7 +111,7 @@ public class User {
     }
 
     public SQLConnection.SQLPrepare dbSelect(String field) {
-        return speedcubingServer.connection.select(field).from("playersdata").where("id=" + id);
+        return Database.connection.select(field).from("playersdata").where("id=" + id);
     }
 
     public PlayerConnection playerConn() {
@@ -131,7 +132,7 @@ public class User {
     }
 
     public void dbUpdate(String field) {
-        speedcubingServer.connection.update("playersdata", field, "id=" + id);
+        Database.connection.update("playersdata", field, "id=" + id);
     }
 
     //bukkit

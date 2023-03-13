@@ -4,6 +4,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayInTabComplete;
 import top.speedcubing.lib.api.event.ProfileRespondEvent;
 import top.speedcubing.lib.bukkit.event.PlayInEvent;
 import top.speedcubing.lib.eventbus.LibEventHandler;
+import top.speedcubing.server.database.Database;
 import top.speedcubing.server.events.InputEvent;
 import top.speedcubing.server.libs.PreLoginData;
 
@@ -39,6 +40,6 @@ public class ServerEvent {
 
     @LibEventHandler
     public void ProfileRespondEvent(ProfileRespondEvent e) {
-        speedcubingServer.connection.update("playersdata", "requestname='" + e.profile.getName() + "'", "uuid='" + e.profile.getUUIDString() + "'");
+        Database.connection.update("playersdata", "requestname='" + e.profile.getName() + "'", "uuid='" + e.profile.getUUIDString() + "'");
     }
 }

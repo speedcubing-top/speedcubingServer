@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import top.speedcubing.lib.bungee.TextBuilder;
 import top.speedcubing.lib.utils.Console;
 import top.speedcubing.server.config;
+import top.speedcubing.server.database.Database;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -31,7 +32,7 @@ public class Chat {
     }
 
     public static void globalChat(Collection<? extends Player> players, Player sender, TextBuilder[] text, TextBuilder[] filteredtext) {
-        String[] ignores = speedcubingServer.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
+        String[] ignores = Database.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;
         c:
         for (Player p : players) {
@@ -59,7 +60,7 @@ public class Chat {
             out2[i] = out2[i].replace("%msg%", filtered);
         }
         if (!blocked) {
-            String[] ignores = speedcubingServer.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
+            String[] ignores = Database.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
             User user;
             c:
             for (Player pp : players) {

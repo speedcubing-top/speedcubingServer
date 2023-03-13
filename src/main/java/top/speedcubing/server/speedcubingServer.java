@@ -1,7 +1,6 @@
 package top.speedcubing.server;
 
 import com.google.common.collect.Sets;
-import net.minecraft.server.v1_8_R3.MinecraftServer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -14,7 +13,6 @@ import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.Threads;
 import top.speedcubing.lib.utils.sockets.ByteUtils;
@@ -23,7 +21,7 @@ import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.overrided.plugins;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
-import top.speedcubing.server.events.CubingTickEvent;
+import top.speedcubing.server.database.Database;
 import top.speedcubing.server.events.SocketEvent;
 import top.speedcubing.server.libs.DataIO;
 import top.speedcubing.server.libs.LogListener;
@@ -36,8 +34,6 @@ import top.speedcubing.server.listeners.FrontListen;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryUsage;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -46,22 +42,17 @@ import java.util.regex.Pattern;
 public class speedcubingServer extends JavaPlugin {
 
     public static final Pattern nameRegex = Pattern.compile("^\\w{1,16}$");
-    public static SQLConnection connection;
-    public static SQLConnection systemConnection;
     public static ServerSocket tcpServer;
     public static TCPClient tcpClient;
     public static Map<Integer, PreLoginData> preLoginStorage = new HashMap<>();
 
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
-    private static final Timer calcTimer = new Timer("Cubing-Tick-Thread");
 
     public void onEnable() {
-
         //conn
         new config().reload();
-        connection = new SQLConnection(config.DatabaseURL.replace("%db%", Bukkit.getPort() % 2 == 1 ? "speedcubing" : "offlinecubing"), config.DatabaseUser, config.DatabasePassword);
-        systemConnection = new SQLConnection(config.DatabaseURL.replace("%db%", "speedcubingsystem"), config.DatabaseUser, config.DatabasePassword);
+        Database.init();
         new config().reloadDatabase();
         try {
             tcpServer = new ServerSocket(Bukkit.getPort() + 1);
@@ -79,32 +70,12 @@ public class speedcubingServer extends JavaPlugin {
         }
         //lib
         speedcubingLibBukkit.deletePlayerFile = true;
-
-        //self
-        new Timer("Cubing-CPS-Thread").schedule(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    for (User user : User.usersByID.values()) {
-                        if (user.listened)
-                            speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("cps").writeInt(user.id).writeInt(user.leftClick).writeInt(user.rightClick).toByteArray());
-                        if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
-                            Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> user.player.kickPlayer("You are clicking too fast !"));
-                        user.leftClick = 0;
-                        user.rightClick = 0;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 0, 1000);
-
         new ForceOp().run();
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
             if (bytes.length != 2) {
                 boolean store = false, punished = false;
                 String name = null, a2, string;
-                Boolean bypass = connection.select("modbypass").from("playersdata").where("id=" + User.getUser(player).id).getBoolean();
+                Boolean bypass = Database.connection.select("modbypass").from("playersdata").where("id=" + User.getUser(player).id).getBoolean();
                 for (int i = 2; i < bytes.length; store = !store) {
                     int end = i + bytes[i] + 1;
                     string = new String(Arrays.copyOfRange(bytes, i + 1, end));
@@ -222,7 +193,7 @@ public class speedcubingServer extends JavaPlugin {
                 }
             }
         }).start();
-        systemConnection.update("servers",
+        Database.systemConnection.update("servers",
                 "launchtime=" + SystemUtils.getCurrentSecond() +
                         ",ram_max=" + SystemUtils.getXmx() / 1048576
                 , "name='" + Bukkit.getServerName() + "'");
@@ -237,28 +208,6 @@ public class speedcubingServer extends JavaPlugin {
             }
         }, 28800000);
 
-        calcTimer.schedule(new TimerTask() {
-            double[] tps;
-            final CubingTickEvent event = new CubingTickEvent();
-            MemoryUsage usage;
-
-            @Override
-            public void run() {
-                usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
-                tps = MinecraftServer.getServer().recentTps;
-                systemConnection.update(
-                        "servers",
-                        "onlinecount=" + Bukkit.getOnlinePlayers().size() +
-                                ",ram_heap=" + usage.getCommitted() / 1048576 +
-                                ",ram_used=" + usage.getUsed() / 1048576 +
-                                ",tps1=" + Math.round(tps[0] * 100.0) / 100.0 +
-                                ",tps2=" + Math.round(tps[1] * 100.0) / 100.0 +
-                                ",tps3=" + Math.round(tps[2] * 100.0) / 100.0,
-                        "name='" + Bukkit.getServerName() + "'"
-                );
-                event.call();
-            }
-        }, 0, 1000);
 
         if (!config.debugMode) {
             //delete logs
@@ -276,16 +225,12 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public void onDisable() {
-        calcTimer.cancel();
-        systemConnection.update(
+        CubingTick.calcTimer.cancel();
+        Database.systemConnection.update(
                 "servers",
                 "onlinecount=0,ram_max=0,ram_heap=0,ram_used=0,tps1=0,tps2=0,tps3=0",
                 "name='" + Bukkit.getServerName() + "'"
         );
-    }
-
-    public static int getOnlineCount() {
-        return systemConnection.select("SUM(onlinecount)").from("proxies").getInt();
     }
 
     public static void node(boolean add, int id, int port) {
@@ -336,7 +281,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static String getRank(String priority, String uuid) {
-        return priority.equals("default") && connection.select("COUNT(*)").from("champ").where("uuid='" + uuid + "'").getInt() > 0 ? "champ" : priority;
+        return priority.equals("default") && Database.connection.select("COUNT(*)").from("champ").where("uuid='" + uuid + "'").getInt() > 0 ? "champ" : priority;
     }
 
     public static String getRank(String priority, String uuid, Set<String> champs) {
@@ -344,6 +289,6 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static Set<String> getChamps() {
-        return Sets.newHashSet(connection.select("uuid").from("champ").getStringArray());
+        return Sets.newHashSet(Database.connection.select("uuid").from("champ").getStringArray());
     }
 }

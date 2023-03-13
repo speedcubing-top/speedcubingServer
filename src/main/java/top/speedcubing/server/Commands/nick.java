@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.Reflections;
+import top.speedcubing.server.database.Database;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.libs.User;
@@ -28,12 +29,12 @@ public class nick implements CommandExecutor {
                     user.sendLangMessage(GlobalString.nicksameusername);
                 else if (name.equals(user.realName))
                     user.sendLangMessage(GlobalString.nickdefaultusername);
-                else if (speedcubingServer.nameRegex.matcher(name).matches() && !speedcubingServer.connection.isStringExist("playersdata", "name='" + name + "'") && !speedcubingServer.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'"))
-                    nickPlayer(name, speedcubingServer.connection.select("nickpriority").from("playersdata").where("id=" + user.id).getString(), true, (Player) commandSender);
+                else if (speedcubingServer.nameRegex.matcher(name).matches() && !Database.connection.isStringExist("playersdata", "name='" + name + "'") && !Database.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'"))
+                    nickPlayer(name, Database.connection.select("nickpriority").from("playersdata").where("id=" + user.id).getString(), true, (Player) commandSender);
                 else
                     user.sendLangMessage(GlobalString.nicknotavaliable);
             } else if (strings.length == 0) {
-                String[] datas = speedcubingServer.connection.select("nickname,nickpriority").from("playersdata").where("id=" + User.getUser(commandSender).id).getStringArray();
+                String[] datas = Database.connection.select("nickname,nickpriority").from("playersdata").where("id=" + User.getUser(commandSender).id).getStringArray();
                 if (datas[0].equals(""))
                     commandSender.sendMessage("/nick <nickname>");
                 else if (datas[0].equals(commandSender.getName()))
