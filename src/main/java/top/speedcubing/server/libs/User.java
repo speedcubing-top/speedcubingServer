@@ -61,6 +61,8 @@ public class User {
     public int rightClick;
     public boolean vanished;
     public long lastInvClick;
+
+    public long lastMove = System.currentTimeMillis();
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
     public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {

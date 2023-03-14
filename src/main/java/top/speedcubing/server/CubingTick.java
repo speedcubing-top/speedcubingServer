@@ -2,6 +2,7 @@ package top.speedcubing.server;
 
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
+import top.speedcubing.lib.bukkit.pluginMessage.BungeePluginMessage;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.server.database.DataCenter;
 import top.speedcubing.server.database.Database;
@@ -28,6 +29,7 @@ public class CubingTick {
             @Override
             public void run() {
                 try {
+                    long t = System.currentTimeMillis();
                     usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
                     tps = MinecraftServer.getServer().recentTps;
                     Database.systemConnection.update(
@@ -47,6 +49,8 @@ public class CubingTick {
                             Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> user.player.kickPlayer("You are clicking too fast !"));
                         user.leftClick = 0;
                         user.rightClick = 0;
+                        if (t - user.lastMove > 300000)
+                            BungeePluginMessage.switchServer(user.player, "lobby");
                     }
                     DataCenter.onlineCount = Database.systemConnection.select("SUM(onlinecount)").from("proxies").getInt();
                     event.call();

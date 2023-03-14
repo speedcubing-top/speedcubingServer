@@ -11,10 +11,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerVelocityEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
@@ -143,5 +140,10 @@ public class FrontListen implements Listener {
             worldData.setWeatherDuration(0);
             Reflections.setField(worldData, "q", false);
         } else e.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void PlayerMoveEvent(PlayerMoveEvent e) {
+        User.getUser(e.getPlayer()).lastMove = System.currentTimeMillis();
     }
 }

@@ -53,6 +53,7 @@ public class speedcubingServer extends JavaPlugin {
         //conn
         new config().reload();
         Database.init();
+        CubingTick.init();
         new config().reloadDatabase();
         try {
             tcpServer = new ServerSocket(Bukkit.getPort() + 1);
