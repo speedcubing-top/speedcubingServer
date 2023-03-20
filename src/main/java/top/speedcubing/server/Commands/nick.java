@@ -10,6 +10,7 @@ import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.Reflections;
 import top.speedcubing.server.database.Database;
+import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.libs.User;
@@ -51,7 +52,7 @@ public class nick implements CommandExecutor {
         String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
         PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
         PacketPlayOutScoreboardTeam leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
-        PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(speedcubingServer.getFormat(rank)[0]).g(Collections.singletonList(name)).h(0).packet;
+        PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank)[0]).g(Collections.singletonList(name)).h(0).packet;
         for (User u : User.getUsers()) {
             if (u != user)
                 u.sendPacket(old);
@@ -74,7 +75,8 @@ public class nick implements CommandExecutor {
         user.joinPacket = joinPacket;
         user.leavePacket = leavePacket;
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""));
-        speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).writeBoolean(true).toByteArray());
+        Database.connection.update("onlineplayer", "displayname='" + rank + "',displayrank='" + name + "'", "id=" + user.id);
+        speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
         user.rank = rank;
     }
 }

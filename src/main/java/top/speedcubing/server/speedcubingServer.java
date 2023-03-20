@@ -244,10 +244,6 @@ public class speedcubingServer extends JavaPlugin {
                 : User.getUser(sender).tcpPort;
     }
 
-    public static String[] getFormat(String rank) {
-        return config.colors.get(rank);
-    }
-
     public static int getCode(String rank) {
         return 10 + config.ranks.indexOf(rank);
     }
@@ -279,17 +275,5 @@ public class speedcubingServer extends JavaPlugin {
     public static void restart() {
         if (canRestart)
             RestartCommand.restart();
-    }
-
-    public static String getRank(String priority, String uuid) {
-        return priority.equals("default") && Database.connection.select("COUNT(*)").from("champ").where("uuid='" + uuid + "'").getInt() > 0 ? "champ" : priority;
-    }
-
-    public static String getRank(String priority, String uuid, Set<String> champs) {
-        return priority.equals("default") && champs.contains(uuid) ? "champ" : priority;
-    }
-
-    public static Set<String> getChamps() {
-        return Sets.newHashSet(Database.connection.select("uuid").from("champ").getStringArray());
     }
 }

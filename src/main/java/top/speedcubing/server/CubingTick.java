@@ -1,5 +1,6 @@
 package top.speedcubing.server;
 
+import com.google.common.collect.Sets;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
 import top.speedcubing.lib.bukkit.pluginMessage.BungeePluginMessage;
@@ -53,7 +54,9 @@ public class CubingTick {
                             if (t - user.lastMove > 300000)
                                 BungeePluginMessage.switchServer(user.player, "lobby");
                     }
+                    DataCenter.champs = Sets.newHashSet(Database.connection.select("uuid").from("champ").getIntArray());
                     DataCenter.onlineCount = Database.systemConnection.select("SUM(onlinecount)").from("proxies").getInt();
+
                     event.call();
                 } catch (Exception e) {
                     e.printStackTrace();

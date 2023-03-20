@@ -18,6 +18,7 @@ import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.Reflections;
 import top.speedcubing.server.config;
 import top.speedcubing.server.database.Database;
+import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.libs.PreLoginData;
 import top.speedcubing.server.libs.User;
 import top.speedcubing.server.speedcubingServer;
@@ -49,7 +50,7 @@ public class FrontListen implements Listener {
         e.setJoinMessage("");
         Player player = e.getPlayer();
         String displayName = player.getName();
-        String realRank = speedcubingServer.getRank(datas[0], player.getUniqueId().toString());
+        String realRank = Rank.getRank(datas[0], Integer.parseInt(datas[4]));
         String displayRank = realRank;
         String nickedRealName = "";
         if (!datas[5].equals(displayName)) {
@@ -72,7 +73,7 @@ public class FrontListen implements Listener {
 
         String extracted = speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(displayName);
         user.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
-        user.joinPacket = new OutScoreboardTeam().a(extracted).c(speedcubingServer.getFormat(user.rank)[0]).g(Collections.singletonList(displayName)).h(0).packet;
+        user.joinPacket = new OutScoreboardTeam().a(extracted).c(Rank.getFormat(user.rank)[0]).g(Collections.singletonList(displayName)).h(0).packet;
         //formatting
         for (User u : User.getUsers())
             user.sendPacket(u.leavePacket, u.joinPacket);
@@ -88,7 +89,7 @@ public class FrontListen implements Listener {
 
         //nick
         if (!nickedRealName.equals(""))
-            user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(realRank) + speedcubingServer.playerNameExtract(nickedRealName)).c(speedcubingServer.getFormat(realRank)[0]).g(Collections.singletonList(nickedRealName)).h(0).packet);
+            user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(realRank) + speedcubingServer.playerNameExtract(nickedRealName)).c(Rank.getFormat(realRank)[0]).g(Collections.singletonList(nickedRealName)).h(0).packet);
     }
 
     @EventHandler(priority = EventPriority.LOW)

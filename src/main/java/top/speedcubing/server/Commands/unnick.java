@@ -5,6 +5,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.server.database.Database;
+import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.libs.GlobalString;
 import top.speedcubing.server.libs.User;
@@ -19,7 +20,7 @@ public class unnick implements CommandExecutor {
             if (datas[0].equals(player.getName()))
                 User.getUser(commandSender).sendLangMessage(GlobalString.notNicked);
             else if (strings.length == 0)
-                nick.nickPlayer(datas[0], speedcubingServer.getRank(datas[1], player.getUniqueId().toString()), false, player);
+                nick.nickPlayer(datas[0], Rank.getRank(datas[1], User.getUser(commandSender).id), false, player);
             else commandSender.sendMessage("/unnick");
         }
         return true;
