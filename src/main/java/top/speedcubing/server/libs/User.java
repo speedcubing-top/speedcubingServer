@@ -21,6 +21,7 @@ import top.speedcubing.lib.bungee.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.config;
 import top.speedcubing.server.database.Database;
+import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.*;
@@ -90,6 +91,17 @@ public class User {
         usersByUUID.put(bGetUniqueId(), this);
     }
 
+    public String[] getFormat() {
+        return Rank.getFormat(rank,id);
+    }
+
+    public String getFormatName(boolean realName) {
+        return getFormat()[1] + (realName ? this.realName : bGetName());
+    }
+
+    public String getPrefixName(boolean realName) {
+        return getFormat()[0] + (realName ? this.realName : bGetName());
+    }
 
     public Vector applyKnockback(Vector v) {
         double[] d = velocities;

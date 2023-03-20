@@ -8,11 +8,7 @@ public class Rank {
         return rank.equals("default") && DataCenter.champs.contains(id) ? "champ" : rank;
     }
 
-    public static String[] getFormat(String rank) {
-        return config.colors.get(rank);
-    }
-
     public static String[] getFormat(String rank, int id) {
-        return getFormat(getRank(rank, id));
+        return config.colors.get(getRank(rank, id));
     }
 }

@@ -52,7 +52,7 @@ public class nick implements CommandExecutor {
         String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
         PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
         PacketPlayOutScoreboardTeam leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
-        PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank)[0]).g(Collections.singletonList(name)).h(0).packet;
+        PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank, user.id)[0]).g(Collections.singletonList(name)).h(0).packet;
         for (User u : User.getUsers()) {
             if (u != user)
                 u.sendPacket(old);

@@ -54,7 +54,7 @@ public class CubingTick {
                             if (t - user.lastMove > 300000)
                                 BungeePluginMessage.switchServer(user.player, "lobby");
                     }
-                    DataCenter.champs = Sets.newHashSet(Database.connection.select("uuid").from("champ").getIntArray());
+                    DataCenter.champs = Sets.newHashSet(Database.connection.select("id").from("champ").getIntArray());
                     DataCenter.onlineCount = Database.systemConnection.select("SUM(onlinecount)").from("proxies").getInt();
 
                     event.call();
