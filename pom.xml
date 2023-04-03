@@ -28,6 +28,11 @@
             <systemPath>${basedir}\..\..\Projects\speedcubingLib\out\artifacts\speedcubingLib\speedcubingLib.jar
             </systemPath>
         </dependency>
+        <dependency>
+            <groupId>top.speedcubing</groupId>
+            <artifactId>NameDb</artifactId>
+            <version>1.0.0</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
