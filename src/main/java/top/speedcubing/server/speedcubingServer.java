@@ -1,39 +1,25 @@
 package top.speedcubing.server;
 
-import com.google.common.collect.Sets;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
-import top.speedcubing.lib.bukkit.PlayerUtils;
-import top.speedcubing.lib.bukkit.TabCompleteUtils;
+import top.speedcubing.lib.bukkit.*;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.speedcubingLibBukkit;
-import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-import top.speedcubing.lib.utils.SystemUtils;
-import top.speedcubing.lib.utils.Threads;
-import top.speedcubing.lib.utils.sockets.ByteUtils;
-import top.speedcubing.lib.utils.sockets.TCPClient;
+import top.speedcubing.lib.utils.*;
+import top.speedcubing.lib.utils.sockets.*;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.overrided.plugins;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.events.SocketEvent;
-import top.speedcubing.server.libs.DataIO;
-import top.speedcubing.server.libs.LogListener;
-import top.speedcubing.server.libs.PreLoginData;
-import top.speedcubing.server.libs.User;
-import top.speedcubing.server.listeners.BackListen;
-import top.speedcubing.server.listeners.CommandPermissions;
-import top.speedcubing.server.listeners.FrontListen;
+import top.speedcubing.server.libs.*;
+import top.speedcubing.server.listeners.*;
 
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.ServerSocket;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
@@ -238,10 +224,8 @@ public class speedcubingServer extends JavaPlugin {
         tcpClient.send(port, new ByteArrayDataBuilder().writeUTF("hasnode").writeInt(id).writeBoolean(add).toByteArray());
     }
 
-    public static int getRandomBungeePort(CommandSender sender) {
-        return (sender == null || sender instanceof ConsoleCommandSender) ?
-                (User.usersByID.values().size() != 0 ? User.usersByID.values().iterator().next().tcpPort : 25568 - Bukkit.getPort() % 2)
-                : User.getUser(sender).tcpPort;
+    public static int getRandomBungeePort() {
+        return (User.usersByID.values().size() != 0 ? User.usersByID.values().iterator().next().tcpPort : 25566);
     }
 
     public static int getCode(String rank) {

@@ -81,5 +81,5 @@ public class config {
 
     public static int LeftCpsLimit = Integer.MAX_VALUE;
     public static int RightCpsLimit = Integer.MAX_VALUE;
-    public static String SERVERIP = Bukkit.getPort() % 2 == 0 ? "cracked.speedcubing.top" : "speedcubing.top";
+    public static String SERVERIP = "speedcubing.top";
 }
