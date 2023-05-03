@@ -1,15 +1,18 @@
 package top.speedcubing.server;
 
+import net.minecraft.server.v1_8_R3.PacketPlayInClientCommand;
 import net.minecraft.server.v1_8_R3.PacketPlayInTabComplete;
-import top.speedcubing.lib.api.event.ProfileRespondEvent;
+import net.minecraft.server.v1_8_R3.PacketPlayOutStatistic;
+import net.minecraft.server.v1_8_R3.Statistic;
 import top.speedcubing.lib.bukkit.event.PlayInEvent;
+import top.speedcubing.lib.bukkit.event.PlayOutEvent;
 import top.speedcubing.lib.eventbus.LibEventHandler;
-import top.speedcubing.namedb.NameDb;
-import top.speedcubing.server.database.Database;
+import top.speedcubing.lib.utils.Reflections;
 import top.speedcubing.server.events.InputEvent;
 import top.speedcubing.server.libs.PreLoginData;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.regex.Pattern;
 
 public class ServerEvent {
@@ -22,6 +25,15 @@ public class ServerEvent {
                     return;
             }
             e.isCancelled = true;
+        } else if (e.packet instanceof PacketPlayInClientCommand) {
+            System.out.println(Reflections.getField(e.packet, "a"));
+        }
+    }
+
+    @LibEventHandler
+    public void PlayOutEvent(PlayOutEvent e) {
+        if (e.packet instanceof PacketPlayOutStatistic) {
+            ((Map<Statistic, Integer>) Reflections.getField(e.packet, "a")).replaceAll((k, v) -> 0);
         }
     }
 
@@ -37,10 +49,5 @@ public class ServerEvent {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-    }
-
-    @LibEventHandler
-    public void ProfileRespondEvent(ProfileRespondEvent e) {
-        NameDb.received(e.profile.getUUIDString(), e.profile.getName(), Database.systemConnection);
     }
 }

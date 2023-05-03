@@ -10,6 +10,7 @@ import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.*;
 import top.speedcubing.lib.utils.sockets.*;
+import top.speedcubing.namedb.NameDb;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.overrided.plugins;
 import top.speedcubing.server.ExploitFixer.ForceOp;
@@ -36,6 +37,7 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean restartable = false; //is it time to restart ?
 
     public void onEnable() {
+        NameDb.init();
         //conn
         new config().reload();
         Database.init();
