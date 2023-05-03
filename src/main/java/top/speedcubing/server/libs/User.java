@@ -49,7 +49,7 @@ public class User {
     public double[] velocities;
     public int lang;
     public final int id;
-    public String rank;
+    public String displayRank;
     public int tcpPort;
     public boolean allowOp;
     public boolean chatFilt;
@@ -61,12 +61,13 @@ public class User {
     public int leftClick;
     public int rightClick;
     public boolean vanished;
+    public final boolean isStaff;
     public long lastInvClick;
-
+    public final String realRank;
     public long lastMove = System.currentTimeMillis();
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
-    public User(Player player, String rank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
+    public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
         this.player = player;
         Set<String> groups = new HashSet<>();
         for (String s : permissions) {
@@ -83,16 +84,18 @@ public class User {
         this.id = id;
         this.chatFilt = chatFilt;
         this.realName = realName;
-        this.rank = rank;
+        this.realRank = realRank;
+        this.displayRank = displayRank;
         this.vanished = bungeeData.vanished;
         this.tcpPort = bungeeData.port;
         this.allowOp = allowOp;
+        this.isStaff = this.realRank.equals("builder") || this.realRank.equals("helper") || this.realRank.equals("admin") || this.realRank.equals("owner") || this.realRank.equals("mod");
         usersByID.put(id, this);
         usersByUUID.put(bGetUniqueId(), this);
     }
 
     public String[] getFormat() {
-        return Rank.getFormat(rank,id);
+        return Rank.getFormat(displayRank, id);
     }
 
     public String getFormatName(boolean realName) {

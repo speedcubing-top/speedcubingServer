@@ -66,11 +66,11 @@ public class FrontListen implements Listener {
                 groups.add(s.substring(6));
         }
         groups.forEach(a -> perms.addAll(config.grouppermissions.get(a)));
-      User user =  new User(player, displayRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[7].equals("1"), datas[5]);
+        User user = new User(player, displayRank,realRank ,perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[7].equals("1"), datas[5]);
 
         player.setOp(datas[6].equals("1"));
 
-        String extracted = speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(displayName);
+        String extracted = speedcubingServer.getCode(user.displayRank) + speedcubingServer.playerNameExtract(displayName);
         user.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
         user.joinPacket = new OutScoreboardTeam().a(extracted).c(user.getFormat()[0]).g(Collections.singletonList(displayName)).h(0).packet;
         //formatting
@@ -88,7 +88,7 @@ public class FrontListen implements Listener {
 
         //nick
         if (!nickedRealName.equals(""))
-            user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(realRank) + speedcubingServer.playerNameExtract(nickedRealName)).c(Rank.getFormat(realRank,user.id)[0]).g(Collections.singletonList(nickedRealName)).h(0).packet);
+            user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(realRank) + speedcubingServer.playerNameExtract(nickedRealName)).c(Rank.getFormat(realRank, user.id)[0]).g(Collections.singletonList(nickedRealName)).h(0).packet);
     }
 
     @EventHandler(priority = EventPriority.LOW)

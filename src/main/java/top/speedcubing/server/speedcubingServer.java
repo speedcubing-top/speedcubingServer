@@ -28,7 +28,9 @@ import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
 
-    public static final Pattern nameRegex = Pattern.compile("^\\w{1,16}$");
+    public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
+
+    public static final Pattern legacyNameRegex = Pattern.compile("^\\w{1,16}$");
     public static ServerSocket tcpServer;
     public static TCPClient tcpClient;
     public static Map<Integer, PreLoginData> preLoginStorage = new HashMap<>();

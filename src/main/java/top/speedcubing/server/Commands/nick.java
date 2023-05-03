@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.Reflections;
@@ -30,10 +31,22 @@ public class nick implements CommandExecutor {
                     user.sendLangMessage(GlobalString.nicksameusername);
                 else if (name.equals(user.realName))
                     user.sendLangMessage(GlobalString.nickdefaultusername);
-                else if (speedcubingServer.nameRegex.matcher(name).matches() && !Database.connection.isStringExist("playersdata", "name='" + name + "'") && !Database.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'"))
-                    nickPlayer(name, Database.connection.select("nickpriority").from("playersdata").where("id=" + user.id).getString(), true, (Player) commandSender);
-                else
-                    user.sendLangMessage(GlobalString.nicknotavaliable);
+                else {
+                    boolean allow = (user.isStaff ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.connection.isStringExist("playersdata", "name='" + name + "'") && !Database.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'");
+                    if (allow) {
+                        if (!user.isStaff) {
+                            try {
+                                MojangAPI.getByName(name);
+                                allow = false;
+                            } catch (Exception e) {
+                            }
+                        }
+                    }
+                    if (allow)
+                        nickPlayer(name, Database.connection.select("nickpriority").from("playersdata").where("id=" + user.id).getString(), true, (Player) commandSender);
+                    else
+                        user.sendLangMessage(GlobalString.nicknotavaliable);
+                }
             } else if (strings.length == 0) {
                 String[] datas = Database.connection.select("nickname,nickpriority").from("playersdata").where("id=" + User.getUser(commandSender).id).getStringArray();
                 if (datas[0].equals(""))
@@ -50,7 +63,7 @@ public class nick implements CommandExecutor {
         User user = User.getUser(player);
         EntityPlayer entityPlayer = user.toNMS();
         String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
-        PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.rank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
+        PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.displayRank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
         PacketPlayOutScoreboardTeam leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
         PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank, user.id)[0]).g(Collections.singletonList(name)).h(0).packet;
         for (User u : User.getUsers()) {
@@ -77,6 +90,6 @@ public class nick implements CommandExecutor {
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""));
         Database.connection.update("onlineplayer", "displayname='" + rank + "',displayrank='" + name + "'", "id=" + user.id);
         speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
-        user.rank = rank;
+        user.displayRank = rank;
     }
 }
