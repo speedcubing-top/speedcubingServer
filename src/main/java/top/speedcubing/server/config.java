@@ -22,7 +22,6 @@ public class config {
     public static String DatabasePassword;
 
     public static List<String> ranks = new ArrayList<>();
-    public static Set<Pattern> blockedText = new HashSet<>();
     public static Set<String> filteredText = new HashSet<>();
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<Pattern> blockedTab = new HashSet<>();
@@ -47,8 +46,6 @@ public class config {
             debugMode = config.get("debug").getAsBoolean();
             filteredText.clear();
             config.get("filteredtext").getAsJsonArray().forEach(a -> filteredText.add(a.getAsString()));
-            blockedText.clear();
-            config.get("blockedtext").getAsJsonArray().forEach(a -> blockedText.add(Pattern.compile(a.getAsString())));
             blockedLog.clear();
             config.get("spigotblockedlog").getAsJsonArray().forEach(a -> blockedLog.add(Pattern.compile(a.getAsString())));
             blockedTab.clear();

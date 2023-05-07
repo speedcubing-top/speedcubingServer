@@ -1,35 +1,15 @@
 package top.speedcubing.server.share;
 
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.bungee.TextBuilder;
-import top.speedcubing.lib.utils.Console;
+import top.speedcubing.lib.utils.*;
 import top.speedcubing.server.config;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.libs.User;
-import top.speedcubing.server.speedcubingServer;
 
 import java.util.Collection;
-import java.util.regex.Pattern;
 
 public class Chat {
-    public static boolean checkBlockedText(String string) {
-        for (Pattern p : config.blockedText)
-            if (p.matcher(string).matches())
-                return true;
-        return false;
-    }
-
-    public static String filter(String string) {
-        for (String s : config.filteredText) {
-            StringBuilder b = new StringBuilder();
-            for (int i = 0; i < s.length(); i++)
-                b.append("*");
-            string = string.replace(s, b.toString());
-        }
-        return string;
-    }
 
     public static void globalChat(Collection<? extends Player> players, Player sender, TextBuilder[] text, TextBuilder[] filteredtext) {
         String[] ignores = Database.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
@@ -45,8 +25,12 @@ public class Chat {
     }
 
     public static void globalChat(Collection<? extends Player> players, Player sender, String[] format, String message, String... replace) {
-        boolean blocked = checkBlockedText(message);
-        String filtered = Chat.filter(message);
+        String filtered = message;
+
+
+        for (String s : config.filteredText)
+            filtered = filtered.replace(s, StringUtils.repeat("*", s.length()));
+
         String[] out = new String[format.length];
         String[] out2 = new String[format.length];
         for (int i = 0; i < format.length; i++) {
@@ -59,18 +43,16 @@ public class Chat {
             out[i] = out[i].replace("%msg%", message);
             out2[i] = out2[i].replace("%msg%", filtered);
         }
-        if (!blocked) {
-            String[] ignores = Database.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
-            User user;
-            c:
-            for (Player pp : players) {
-                user = User.getUser(pp);
-                for (String s : ignores)
-                    if (user.player.getUniqueId().toString().equals(s))
-                        continue c;
-                user.sendLangMessage(user.chatFilt ? out2 : out);
-            }
+        String[] ignores = Database.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
+        User user;
+        c:
+        for (Player pp : players) {
+            user = User.getUser(pp);
+            for (String s : ignores)
+                if (user.player.getUniqueId().toString().equals(s))
+                    continue c;
+            user.sendLangMessage(user.chatFilt ? out2 : out);
         }
-        Console.sendColoredConsole("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + (blocked ? "§c[BLOCKED]§f " : "") + out[1]);
+        Console.sendColoredConsole("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + out[1]);
     }
 }
