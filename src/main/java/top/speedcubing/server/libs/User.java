@@ -17,7 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
-import top.speedcubing.lib.bungee.TextBuilder;
+import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.config;
 import top.speedcubing.server.database.Database;
@@ -120,7 +120,7 @@ public class User {
     }
 
     public void sendLangTextComp(TextBuilder[] s) {
-        player.spigot().sendMessage(s[lang].build());
+        player.spigot().sendMessage(s[lang].toBungee());
     }
 
     public LangMessage langMessageSender(String[] s) {

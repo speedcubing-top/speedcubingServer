@@ -1,7 +1,7 @@
 package top.speedcubing.server.share;
 
 import org.bukkit.entity.Player;
-import top.speedcubing.lib.bungee.TextBuilder;
+import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.*;
 import top.speedcubing.server.config;
 import top.speedcubing.server.database.Database;
@@ -11,7 +11,20 @@ import java.util.Collection;
 
 public class Chat {
 
-    public static void globalChat(Collection<? extends Player> players, Player sender, TextBuilder[] text, TextBuilder[] filteredtext) {
+    public static String filter(String text) {
+        for (String s : config.filteredText)
+            text = text.replace(s, StringUtils.repeat("*", s.length()));
+        return text;
+    }
+
+    public static void globalChat(Collection<? extends Player> players, Player sender, TextBuilder[] text, String message) {
+        String filtered = filter(message);
+        TextBuilder[] out2 = new TextBuilder[text.length];
+        for (int i = 0; i < text.length; i++) {
+            String serial = text[i].getSerial();
+            text[i] = TextBuilder.unSerialize(serial.replace("%msg%", message));
+            out2[i] = TextBuilder.unSerialize(serial.replace("%msg%", filtered));
+        }
         String[] ignores = Database.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;
         c:
@@ -20,16 +33,13 @@ public class Chat {
             for (String s : ignores)
                 if (user.player.getUniqueId().toString().equals(s))
                     continue c;
-            user.sendLangTextComp(user.chatFilt ? text : filteredtext);
+            user.sendLangTextComp(user.chatFilt ? text : out2);
         }
+        Console.sendColoredConsole("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + text[1]);
     }
 
     public static void globalChat(Collection<? extends Player> players, Player sender, String[] format, String message, String... replace) {
-        String filtered = message;
-
-
-        for (String s : config.filteredText)
-            filtered = filtered.replace(s, StringUtils.repeat("*", s.length()));
+        String filtered = filter(message);
 
         String[] out = new String[format.length];
         String[] out2 = new String[format.length];
