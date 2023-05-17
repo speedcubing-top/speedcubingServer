@@ -44,7 +44,7 @@ public class User {
     public static Map<Integer, User> usersByID = new HashMap<>();
     public static Map<UUID, User> usersByUUID = new HashMap<>();
     public final Player player;
-
+    public String lastTabbed;
     public Set<String> permissions;
     public double[] velocities;
     public int lang;
@@ -92,6 +92,10 @@ public class User {
         this.isStaff = this.realRank.equals("builder") || this.realRank.equals("helper") || this.realRank.equals("admin") || this.realRank.equals("owner") || this.realRank.equals("mod");
         usersByID.put(id, this);
         usersByUUID.put(bGetUniqueId(), this);
+    }
+
+    public boolean hasPermission(String perm){
+        return permissions.contains(perm.toLowerCase());
     }
 
     public String[] getFormat() {
