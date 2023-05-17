@@ -13,6 +13,7 @@ import top.speedcubing.lib.utils.sockets.*;
 import top.speedcubing.namedb.NameDb;
 import top.speedcubing.server.Commands.*;
 import top.speedcubing.server.Commands.overrided.plugins;
+import top.speedcubing.server.Commands.staff.*;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.database.Database;
@@ -104,6 +105,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("hub").setExecutor(new hub());
         Bukkit.getPluginCommand("fly").setExecutor(new fly());
         Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
+        Bukkit.getPluginCommand("updaterank").setExecutor(new updaterank());
         Bukkit.getPluginCommand("heal").setExecutor(new heal());
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginCommand("announce").setExecutor(new announce());

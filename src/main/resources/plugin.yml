@@ -29,6 +29,8 @@ commands:
     usage: /nick
   unnick:
     usage: /unnick
+  updaterank:
+    usage: /updaterank
   testkb:
     usage: /testkb
 depend:
