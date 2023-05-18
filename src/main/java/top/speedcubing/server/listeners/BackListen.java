@@ -39,6 +39,10 @@ public class BackListen implements Listener {
     public void PlayerKickEvent(PlayerKickEvent e) {
         if (e.getReason().equals("disconnect.spam"))
             e.setCancelled(true);
+        else if(e.getReason().equals("Timed out")) {
+            e.setCancelled(true);
+            e.getPlayer().sendMessage("cancelled timed out");
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)

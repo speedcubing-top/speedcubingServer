@@ -24,7 +24,6 @@ public class config {
     public static List<String> ranks = new ArrayList<>();
     public static Set<String> filteredText = new HashSet<>();
     public static Set<Pattern> blockedLog = new HashSet<>();
-    public static Set<Pattern> blockedTab = new HashSet<>();
     public static Set<Pattern> blockedMod = new HashSet<>();
     public static Set<Pattern> blacklistedMod = new HashSet<>();
 
@@ -35,7 +34,7 @@ public class config {
 
     public static boolean debugMode;
 
-    public void reload() {
+    public static void reload() {
         try {
             config = new JsonParser().parse(new FileReader("../../../server.json")).getAsJsonObject();
             DatabaseURL = config.getAsJsonObject("database").get("url").getAsString();
@@ -48,8 +47,6 @@ public class config {
             config.get("filteredtext").getAsJsonArray().forEach(a -> filteredText.add(a.getAsString()));
             blockedLog.clear();
             config.get("spigotblockedlog").getAsJsonArray().forEach(a -> blockedLog.add(Pattern.compile(a.getAsString())));
-            blockedTab.clear();
-            config.get("allowtabcomplete").getAsJsonArray().forEach(a -> blockedTab.add(Pattern.compile(a.getAsString())));
             blockedMod.clear();
             config.get("blockedmod").getAsJsonArray().forEach(a -> blockedMod.add(Pattern.compile(a.getAsString())));
             blacklistedMod.clear();
@@ -71,7 +68,7 @@ public class config {
         }
     }
 
-    public void reloadDatabase() {
+    public static void reloadDatabase() {
         for (String s : Database.systemConnection.select("name").from("groups").getStringArray())
             grouppermissions.put(s, Sets.newHashSet(Database.systemConnection.select("perms").from("groups").where("name='" + s + "'").getString().split("\\|")));
     }

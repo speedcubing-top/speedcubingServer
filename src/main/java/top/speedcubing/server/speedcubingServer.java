@@ -42,10 +42,10 @@ public class speedcubingServer extends JavaPlugin {
     public void onEnable() {
         NameDb.init();
         //conn
-        new config().reload();
+        config.reload();
         Database.init();
         CubingTick.init();
-        new config().reloadDatabase();
+        config.reloadDatabase();
         try {
             tcpServer = new ServerSocket(Bukkit.getPort() + 1);
         } catch (IOException e) {
@@ -140,8 +140,8 @@ public class speedcubingServer extends JavaPlugin {
                             else preLoginStorage.get(id).cps = true;
                             break;
                         case "cfg":
-                            new config().reload();
-                            new config().reloadDatabase();
+                            config.reload();
+                            config.reloadDatabase();
                             break;
                         case "demo":
                             PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
