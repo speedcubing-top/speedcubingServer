@@ -110,11 +110,14 @@ public class GlobalString {
             "§cYou are not nicked!"
     };
 
+    public static String[] unknownRank = {"unknown rank", "unknown rank", "unknown rank", "unknown rank"
+    };
+
     public static String[] alreadyNicked = {
-            "§cYou are not nicked!",
-            "§cYou are not nicked!",
-            "§cYou are not nicked!",
-            "§cYou are not nicked!"
+            "§cYou are already nicked!",
+            "§cYou are already nicked!",
+            "§cYou are already nicked!",
+            "§cYou are already nicked!"
     };
 
     public static String[] nicknotavaliable = {

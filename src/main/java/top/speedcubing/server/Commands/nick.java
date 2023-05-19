@@ -2,23 +2,17 @@ package top.speedcubing.server.Commands;
 
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
-import org.bukkit.command.CommandSender;
+import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
-import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-import top.speedcubing.lib.utils.Reflections;
-import top.speedcubing.server.database.Database;
-import top.speedcubing.server.database.Rank;
+import top.speedcubing.lib.utils.*;
+import top.speedcubing.server.*;
+import top.speedcubing.server.database.*;
 import top.speedcubing.server.events.player.NickEvent;
-import top.speedcubing.server.libs.GlobalString;
-import top.speedcubing.server.libs.User;
-import top.speedcubing.server.speedcubingServer;
+import top.speedcubing.server.libs.*;
 
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
 
 public class nick implements CommandExecutor {
 
@@ -31,32 +25,45 @@ public class nick implements CommandExecutor {
                     user.sendLangMessage(GlobalString.nicksameusername);
                 else if (name.equals(user.realName))
                     user.sendLangMessage(GlobalString.nickdefaultusername);
-                else {
-                    boolean allow = (user.isStaff ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.connection.isStringExist("playersdata", "name='" + name + "'") && !Database.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'");
-                    if (allow) {
-                        if (!user.isStaff) {
-                            try {
-                                MojangAPI.getByName(name);
-                                allow = false;
-                            } catch (Exception e) {
-                            }
-                        }
-                    }
-                    if (allow)
-                        nickPlayer(name, Database.connection.select("nickpriority").from("playersdata").where("id=" + user.id).getString(), true, (Player) commandSender);
-                    else
-                        user.sendLangMessage(GlobalString.nicknotavaliable);
-                }
+                else
+                    nickCheck(user, name, user.player, user.dbSelect("nickpriority").getString());
+            } else if (strings.length == 2) {
+                User user = User.getUser(commandSender);
+                if (user.isStaff) {
+                    String name = strings[0];
+                    if (config.rankPermissions.containsKey(strings[1].toLowerCase())) {
+                        nickCheck(user, name, user.player, strings[1].toLowerCase());
+                        user.dbUpdate("nickpriority='"+strings[1].toLowerCase()+"'");
+                    } else
+                        user.sendLangMessage(GlobalString.unknownRank);
+                } else commandSender.sendMessage("/nick <nickname>\n/nick (use the previous nick)");
             } else if (strings.length == 0) {
                 String[] datas = Database.connection.select("nickname,nickpriority").from("playersdata").where("id=" + User.getUser(commandSender).id).getStringArray();
                 if (datas[0].equals(""))
-                    commandSender.sendMessage("/nick <nickname>");
+                    commandSender.sendMessage("You didn't nicked before! please use /nick <nickname>");
                 else if (datas[0].equals(commandSender.getName()))
                     User.getUser(commandSender).sendLangMessage(GlobalString.alreadyNicked);
                 else nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender);
-            } else commandSender.sendMessage("/nick <nickname>, /nick (use the previous nick)");
+            } else commandSender.sendMessage("/nick <nickname>\n/nick (use the previous nick)");
         }
         return true;
+    }
+
+    private void nickCheck(User user, String name, Player player, String rank) {
+        boolean allow = (user.isStaff ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.connection.isStringExist("playersdata", "name='" + name + "'") && !Database.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'");
+        if (allow) {
+            if (!user.isStaff) {
+                try {
+                    MojangAPI.getByName(name);
+                    allow = false;
+                } catch (Exception e) {
+                }
+            }
+        }
+        if (allow)
+            nickPlayer(name, rank, true, player);
+        else
+            user.sendLangMessage(GlobalString.nicknotavaliable);
     }
 
     public static void nickPlayer(String name, String rank, boolean nick, Player player) {
