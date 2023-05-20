@@ -30,6 +30,11 @@ public class ServerEvent {
             if (user.hasPermission("cmd." + command) || user.hasPermission("cmd.*"))
                 return;
             e.isCancelled = true;
+        } else if(e.packet instanceof PacketPlayInKeepAlive){
+            if(e.player.getName().equals("speedcubing")) {
+                System.out.println("cancel");
+                e.isCancelled = true;
+            }
         }
     }
 
