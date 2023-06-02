@@ -31,10 +31,10 @@ public class ServerEvent {
                 return;
             e.isCancelled = true;
         } else if(e.packet instanceof PacketPlayInKeepAlive){
-            if(e.player.getName().equals("speedcubing")) {
-                System.out.println("cancel");
-                e.isCancelled = true;
-            }
+//            if(e.player.getName().equals("speedcubing")) {
+//                System.out.println("cancel");
+//                e.isCancelled = true;
+//            }
         }
     }
 

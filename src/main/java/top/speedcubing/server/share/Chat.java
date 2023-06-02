@@ -35,7 +35,7 @@ public class Chat {
                     continue c;
             user.sendLangTextComp(user.chatFilt ? text : out2);
         }
-        Console.sendColoredConsole("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + text[1]);
+        Console.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + text[1]);
     }
 
     public static void globalChat(Collection<? extends Player> players, Player sender, String[] format, String message, String... replace) {
@@ -63,6 +63,6 @@ public class Chat {
                     continue c;
             user.sendLangMessage(user.chatFilt ? out2 : out);
         }
-        Console.sendColoredConsole("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + out[1]);
+        Console.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + out[1]);
     }
 }

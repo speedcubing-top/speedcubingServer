@@ -22,7 +22,7 @@ import top.speedcubing.server.libs.*;
 import top.speedcubing.server.listeners.*;
 
 import java.io.*;
-import java.net.ServerSocket;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -38,6 +38,7 @@ public class speedcubingServer extends JavaPlugin {
 
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
+    public static long last = System.currentTimeMillis();
 
     public void onEnable() {
         NameDb.init();
@@ -48,6 +49,7 @@ public class speedcubingServer extends JavaPlugin {
         config.reloadDatabase();
         try {
             tcpServer = new ServerSocket(Bukkit.getPort() + 1);
+            tcpServer.setSoTimeout(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -119,15 +121,29 @@ public class speedcubingServer extends JavaPlugin {
         Threads.newThread("Cubing-Socket-Thread", () -> {
             while (true) {
                 try {
-                    DataInputStream in = ByteUtils.inputStreamToDataInputStream(tcpServer.accept().getInputStream(), 1024);
-                    String header;
+                    System.out.println("waiting...");
+                    Socket s = tcpServer.accept();
+                    System.out.println("accept first");
+                    long now = System.currentTimeMillis();
+                    InputStream i = s.getInputStream();
+                    System.out.println("accept second");
+                    long lastRead2 = System.currentTimeMillis() - now;
+                    now = System.currentTimeMillis();
+                    byte[] b = ByteUtils.readInputStream(i, 1024);
+                    System.out.println("accept 3rd");
+                    long lastRead3 = System.currentTimeMillis() - now;
+                    DataInputStream in = ByteUtils.byteToDataInputStream(b);
+                    System.out.println("accepted " + (System.currentTimeMillis() - last) + " " + (System.currentTimeMillis() - now)+" "+lastRead2+" "+lastRead3);
+                    last = System.currentTimeMillis();
+                   String header;
                     try {
                         header = in.readUTF();
                     } catch (Exception e) {
+                        System.out.println(Arrays.toString(b) + " " + s.getPort());
                         continue;
                     }
+                    System.out.println("header = " + header);
                     DataIO.handle(in, header);
-                    System.out.println("[Socket] received " + header + " " + in);
                     switch (header) {
                         case "bungee":
                             User.getUser(in.readInt()).tcpPort = in.readInt();
