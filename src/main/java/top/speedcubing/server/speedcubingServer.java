@@ -86,7 +86,7 @@ public class speedcubingServer extends JavaPlugin {
                         if (!punished)
                             for (Pattern p : config.blockedMod) {
                                 if (p.matcher(a2).matches()) {
-                                    player.kickPlayer("Invalid Modification found.");
+                                    player.kickPlayer("Invalid Modification Found.");
                                     punished = true;
                                     break;
                                 }

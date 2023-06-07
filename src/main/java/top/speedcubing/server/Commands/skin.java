@@ -31,7 +31,7 @@ public class skin implements CommandExecutor {
             if (!target.equals("")) {
                 ProfileSkin skin;
                 try {
-                    skin = MojangAPI.getDetailByName(target);
+                    skin = MojangAPI.getSkinByName(target);
                 } catch (Exception e) {
                     user.sendLangMessage(GlobalString.invalidName);
                     return true;
