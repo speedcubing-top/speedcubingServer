@@ -29,9 +29,9 @@ commands:
     usage: /nick
   unnick:
     usage: /unnick
-  updaterank:
-    usage: /updaterank
   testkb:
     usage: /testkb
+  limbo:
+    usage: /limbo
 depend:
   - speedcubingLib

@@ -58,7 +58,7 @@ public class speedcubingServer extends JavaPlugin {
         //spigot
         try {
             Class.forName("top.speedcubing.server.CubingPaperConfig");
-            CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", Bukkit.getServerName(), "sh", "../../../" + Bukkit.getServerName() + ".sh", "init"};
+            CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", Bukkit.getServerName(), "sh", "../../" + Bukkit.getServerName() + ".sh", "init"};
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -107,7 +107,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("hub").setExecutor(new hub());
         Bukkit.getPluginCommand("fly").setExecutor(new fly());
         Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
-        Bukkit.getPluginCommand("updaterank").setExecutor(new updaterank());
+        Bukkit.getPluginCommand("limbo").setExecutor(new limbo());
         Bukkit.getPluginCommand("heal").setExecutor(new heal());
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginCommand("announce").setExecutor(new announce());

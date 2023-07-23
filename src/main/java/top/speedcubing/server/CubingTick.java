@@ -51,9 +51,9 @@ public class CubingTick {
                             Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> user.player.kickPlayer("You are clicking too fast !"));
                         user.leftClick = 0;
                         user.rightClick = 0;
-                        if (!Bukkit.getServerName().equals("lobby"))
+                        if (!Bukkit.getServerName().equals("limbo"))
                             if (t - user.lastMove > 300000)
-                                BungeePluginMessage.switchServer(user.player, "lobby");
+                                BungeePluginMessage.switchServer(user.player, "limbo");
                     }
                     DataCenter.champs = Sets.newHashSet(Database.connection.select("id").from("champ").getIntArray());
                     DataCenter.onlineCount = Database.systemConnection.select("SUM(onlinecount)").from("proxies").getInt();
