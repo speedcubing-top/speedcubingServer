@@ -94,6 +94,11 @@ public class User {
         usersByUUID.put(bGetUniqueId(), this);
     }
 
+    //guild
+    public String getGuild(){
+        return dbSelect("guild").getString();
+    }
+
     public boolean hasPermission(String perm){
         return permissions.contains(perm.toLowerCase());
     }
@@ -131,10 +136,6 @@ public class User {
         return new LangMessage(s[lang], this);
     }
 
-    public SQLConnection.SQLPrepare dbSelect(String field) {
-        return Database.connection.select(field).from("playersdata").where("id=" + id);
-    }
-
     public PlayerConnection playerConn() {
         return toNMS().playerConnection;
     }
@@ -154,6 +155,10 @@ public class User {
 
     public void dbUpdate(String field) {
         Database.connection.update("playersdata", field, "id=" + id);
+    }
+
+    public SQLConnection.SQLPrepare dbSelect(String field) {
+        return Database.connection.select(field).from("playersdata").where("id=" + id);
     }
 
     //bukkit

@@ -5,33 +5,24 @@ import net.minecraft.server.v1_8_R3.WorldData;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.*;
+import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.Reflections;
-import top.speedcubing.server.config;
-import top.speedcubing.server.database.Database;
-import top.speedcubing.server.database.Rank;
-import top.speedcubing.server.libs.PreLoginData;
-import top.speedcubing.server.libs.User;
-import top.speedcubing.server.speedcubingServer;
+import top.speedcubing.server.*;
+import top.speedcubing.server.database.*;
+import top.speedcubing.server.libs.*;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class FrontListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,opped,chatfilt").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
+        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,opped,chatfilt,guild").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
         PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(Integer.parseInt(datas[4]));
         if (bungeeData == null) {
             e.setKickMessage("§cServer Restarting... Please wait for a few seconds.");
@@ -49,14 +40,14 @@ public class FrontListen implements Listener {
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         Player player = e.getPlayer();
+        //Check Nick
         String displayName = player.getName();
         String realRank = Rank.getRank(datas[0], Integer.parseInt(datas[4]));
         String displayRank = realRank;
-        String nickedRealName = "";
-        if (!datas[5].equals(displayName)) {
+        boolean nicked = !datas[5].equals(displayName);
+        if (nicked)
             displayRank = datas[1];
-            nickedRealName = datas[5];
-        }
+        //Perms
         Set<String> perms = Sets.newHashSet(datas[2].split("\\|"));
         perms.remove("");
         perms.addAll(config.rankPermissions.get(realRank));
@@ -66,13 +57,17 @@ public class FrontListen implements Listener {
                 groups.add(s.substring(6));
         }
         groups.forEach(a -> perms.addAll(config.grouppermissions.get(a)));
-        User user = new User(player, displayRank,realRank ,perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[7].equals("1"), datas[5]);
-
+        //Op
         player.setOp(datas[6].equals("1"));
-
+        //User
+        User user = new User(player, displayRank, realRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[7].equals("1"), datas[5]);
+        //Guild
+        String tag = Database.connection.select("tag").from("guild").where("name='" + datas[8] + "'").getString();
+        tag = nicked ? "" : (tag == null ? "" : " §6[" + tag + "]");
+        //Packets
         String extracted = speedcubingServer.getCode(user.displayRank) + speedcubingServer.playerNameExtract(displayName);
         user.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
-        user.joinPacket = new OutScoreboardTeam().a(extracted).c(user.getFormat()[0]).g(Collections.singletonList(displayName)).h(0).packet;
+        user.joinPacket = new OutScoreboardTeam().a(extracted).c(user.getFormat()[0]).d(tag).g(Collections.singletonList(displayName)).h(0).packet;
         //formatting
         for (User u : User.getUsers())
             user.sendPacket(u.leavePacket, u.joinPacket);
@@ -85,10 +80,9 @@ public class FrontListen implements Listener {
                 p.hidePlayer(player);
         for (User u : User.getUsers())
             if (u.vanished) player.hidePlayer(u.player);
-
         //nick
-        if (!nickedRealName.equals(""))
-            user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(realRank) + speedcubingServer.playerNameExtract(nickedRealName)).c(Rank.getFormat(realRank, user.id)[0]).g(Collections.singletonList(nickedRealName)).h(0).packet);
+        if (nicked)
+            user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(realRank) + speedcubingServer.playerNameExtract(datas[5])).c(Rank.getFormat(realRank, user.id)[0]).g(Collections.singletonList(datas[5])).h(0).packet);
     }
 
     @EventHandler(priority = EventPriority.LOW)

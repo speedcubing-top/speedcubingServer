@@ -72,7 +72,11 @@ public class nick implements CommandExecutor {
         String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
         PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.displayRank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
         PacketPlayOutScoreboardTeam leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
-        PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank, user.id)[0]).g(Collections.singletonList(name)).h(0).packet;
+        //guild
+        String tag = Database.connection.select("tag").from("guild").where("name='" + user.getGuild() + "'").getString();
+        tag = nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
+
+        PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank, user.id)[0]).d(tag).g(Collections.singletonList(name)).h(0).packet;
         for (User u : User.getUsers()) {
             if (u != user)
                 u.sendPacket(old);
