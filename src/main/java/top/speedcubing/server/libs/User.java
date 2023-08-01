@@ -1,28 +1,20 @@
 package top.speedcubing.server.libs;
 
-import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.Packet;
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
-import net.minecraft.server.v1_8_R3.PlayerConnection;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.Sound;
+import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.*;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
-import top.speedcubing.server.config;
-import top.speedcubing.server.database.Database;
-import top.speedcubing.server.database.Rank;
-import top.speedcubing.server.speedcubingServer;
+import top.speedcubing.server.*;
+import top.speedcubing.server.database.*;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -94,12 +86,16 @@ public class User {
         usersByUUID.put(bGetUniqueId(), this);
     }
 
+    public boolean nicked() {
+        return !realName.equalsIgnoreCase(player.getName());
+    }
+
     //guild
-    public String getGuild(){
+    public String getGuild() {
         return dbSelect("guild").getString();
     }
 
-    public boolean hasPermission(String perm){
+    public boolean hasPermission(String perm) {
         return permissions.contains(perm.toLowerCase());
     }
 

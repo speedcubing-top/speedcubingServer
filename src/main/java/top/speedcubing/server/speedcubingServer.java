@@ -133,9 +133,9 @@ public class speedcubingServer extends JavaPlugin {
                     System.out.println("accept 3rd");
                     long lastRead3 = System.currentTimeMillis() - now;
                     DataInputStream in = ByteUtils.byteToDataInputStream(b);
-                    System.out.println("accepted " + (System.currentTimeMillis() - last) + " " + (System.currentTimeMillis() - now)+" "+lastRead2+" "+lastRead3);
+                    System.out.println("accepted " + (System.currentTimeMillis() - last) + " " + (System.currentTimeMillis() - now) + " " + lastRead2 + " " + lastRead3);
                     last = System.currentTimeMillis();
-                   String header;
+                    String header;
                     try {
                         header = in.readUTF();
                     } catch (Exception e) {
@@ -179,7 +179,9 @@ public class speedcubingServer extends JavaPlugin {
                             break;
                         case "vanish":
                             user = User.getUser(in.readInt());
-                            if (in.readBoolean())
+                            boolean vanish = in.readBoolean();
+                            user.vanished = vanish;
+                            if (vanish)
                                 Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> {
                                     for (Player p : Bukkit.getOnlinePlayers())
                                         p.hidePlayer(user.player);

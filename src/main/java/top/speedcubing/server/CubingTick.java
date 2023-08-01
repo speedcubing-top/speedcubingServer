@@ -3,18 +3,15 @@ package top.speedcubing.server;
 import com.google.common.collect.Sets;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
+import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.pluginMessage.BungeePluginMessage;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-import top.speedcubing.lib.utils.sockets.TCPClient;
-import top.speedcubing.server.database.DataCenter;
-import top.speedcubing.server.database.Database;
+import top.speedcubing.server.database.*;
 import top.speedcubing.server.events.CubingTickEvent;
 import top.speedcubing.server.libs.User;
 
-import java.lang.management.ManagementFactory;
-import java.lang.management.MemoryUsage;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.lang.management.*;
+import java.util.*;
 
 public class CubingTick {
 
@@ -51,6 +48,12 @@ public class CubingTick {
                             Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> user.player.kickPlayer("You are clicking too fast !"));
                         user.leftClick = 0;
                         user.rightClick = 0;
+                        if (user.nicked() && user.vanished)
+                            PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED §fand §cVANISHED");
+                        else if (user.vanished)
+                            PlayerUtils.sendActionBar(user.player, "You are currently §cVANISHED");
+                        else if(user.nicked())
+                            PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED");
                         if (!Bukkit.getServerName().equals("limbo"))
                             if (t - user.lastMove > 300000)
                                 BungeePluginMessage.switchServer(user.player, "limbo");
