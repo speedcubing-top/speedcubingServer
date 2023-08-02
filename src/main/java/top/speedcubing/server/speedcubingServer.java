@@ -47,13 +47,8 @@ public class speedcubingServer extends JavaPlugin {
         Database.init();
         CubingTick.init();
         config.reloadDatabase();
-        try {
-            tcpServer = new ServerSocket(Bukkit.getPort() + 1);
-            tcpServer.setSoTimeout(0);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         tcpClient = new TCPClient("localhost", 100);
+        SocketServer.init();
 
         //spigot
         try {
@@ -118,92 +113,7 @@ public class speedcubingServer extends JavaPlugin {
         new LogListener().reloadFilter();
 
         //socket receive
-        Threads.newThread("Cubing-Socket-Thread", () -> {
-            while (true) {
-                try {
-                    System.out.println("waiting...");
-                    Socket s = tcpServer.accept();
-                    System.out.println("accept first");
-                    long now = System.currentTimeMillis();
-                    InputStream i = s.getInputStream();
-                    System.out.println("accept second");
-                    long lastRead2 = System.currentTimeMillis() - now;
-                    now = System.currentTimeMillis();
-                    byte[] b = ByteUtils.readInputStream(i, 1024);
-                    System.out.println("accept 3rd");
-                    long lastRead3 = System.currentTimeMillis() - now;
-                    DataInputStream in = ByteUtils.byteToDataInputStream(b);
-                    System.out.println("accepted " + (System.currentTimeMillis() - last) + " " + (System.currentTimeMillis() - now) + " " + lastRead2 + " " + lastRead3);
-                    last = System.currentTimeMillis();
-                    String header;
-                    try {
-                        header = in.readUTF();
-                    } catch (Exception e) {
-                        System.out.println(Arrays.toString(b) + " " + s.getPort());
-                        continue;
-                    }
-                    System.out.println("header = " + header);
-                    DataIO.handle(in, header);
-                    switch (header) {
-                        case "bungee":
-                            User.getUser(in.readInt()).tcpPort = in.readInt();
-                            break;
-                        case "cpsrequest":
-                            int id = in.readInt();
-                            User user = User.getUser(id);
-                            if (user != null)
-                                user.listened = in.readBoolean();
-                            else preLoginStorage.get(id).cps = true;
-                            break;
-                        case "cfg":
-                            config.reload();
-                            config.reloadDatabase();
-                            break;
-                        case "demo":
-                            PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
-                            id = in.readInt();
-                            if (id == 0)
-                                User.getUsers().forEach(a -> a.sendPacket(packet));
-                            else
-                                User.getUser(id).sendPacket(packet);
-                            break;
-                        case "crash":
-                            id = in.readInt();
-                            if (id == 0)
-                                Bukkit.getOnlinePlayers().forEach(PlayerUtils::explosionCrash);
-                            else
-                                PlayerUtils.explosionCrash(User.getUser(id).player);
-                            break;
-                        case "velo":
-                            User.getUser(in.readInt()).velocities = in.readBoolean() ? new double[]{in.readDouble(), in.readDouble()} : null;
-                            break;
-                        case "vanish":
-                            user = User.getUser(in.readInt());
-                            boolean vanish = in.readBoolean();
-                            user.vanished = vanish;
-                            if (vanish)
-                                Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> {
-                                    for (Player p : Bukkit.getOnlinePlayers())
-                                        p.hidePlayer(user.player);
-                                });
-                            else
-                                Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> {
-                                    for (Player p : Bukkit.getOnlinePlayers())
-                                        p.showPlayer(user.player);
-                                });
-                            break;
-                        case "restart":
-                            RestartCommand.restart();
-                            break;
-                        default:
-                            new SocketEvent(in, header).call();
-                            break;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+
         Database.systemConnection.update("servers",
                 "launchtime=" + SystemUtils.getCurrentSecond() +
                         ",ram_max=" + SystemUtils.getXmx() / 1048576

@@ -51,7 +51,7 @@ public class ServerEvent {
     @LibEventHandler
     public void InputEvent(InputEvent e) {
         try {
-            switch (e.header) {
+            switch (e.subHeader) {
                 case "bungee":
                     int i = e.receive.readInt();
                     speedcubingServer.preLoginStorage.put(i, new PreLoginData(e.receive.readInt(), e.receive.readUTF(), e.receive.readUTF(), e.receive.readBoolean()));

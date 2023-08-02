@@ -7,12 +7,12 @@ import java.io.DataInputStream;
 
 public class InputEvent extends LibEventManager {
     public final DataInputStream receive;
-    public final String header;
+    public final String subHeader;
     public final ByteArrayDataBuilder respond = new ByteArrayDataBuilder();
 
-    public InputEvent(DataInputStream receive, String packetID, String header) {
+    public InputEvent(DataInputStream receive, String subHeader) {
         this.receive = receive;
-        this.header = header;
-        respond.writeUTF("out").writeUTF(packetID);
+        this.subHeader = subHeader;
+        respond.writeUTF("out");
     }
 }
