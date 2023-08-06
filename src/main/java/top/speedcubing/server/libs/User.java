@@ -16,6 +16,7 @@ import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.*;
 import top.speedcubing.server.database.*;
 
+import java.awt.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -96,7 +97,19 @@ public class User {
     }
 
     public boolean hasPermission(String perm) {
-        return permissions.contains(perm.toLowerCase());
+        perm = perm.toLowerCase();
+        if (permissions.contains(perm))
+            return true;
+        String[] s = perm.split("\\.");
+        StringBuilder def = new StringBuilder(s[0]);
+        if (permissions.contains(def + ".*"))
+            return true;
+        for (int i = 1; i < s.length - 1; i++) {
+            def.append(".").append(s[i]);
+            if (permissions.contains(def + ".*"))
+                return true;
+        }
+        return false;
     }
 
     public String[] getFormat() {

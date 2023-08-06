@@ -29,11 +29,11 @@ public class nick implements CommandExecutor {
                     nickCheck(user, name, user.player, user.dbSelect("nickpriority").getString());
             } else if (strings.length == 2) {
                 User user = User.getUser(commandSender);
-                if (user.isStaff) {
+                if (user.hasPermission("perm.nick.nickrank")) {
                     String name = strings[0];
                     if (config.rankPermissions.containsKey(strings[1].toLowerCase())) {
                         nickCheck(user, name, user.player, strings[1].toLowerCase());
-                        user.dbUpdate("nickpriority='"+strings[1].toLowerCase()+"'");
+                        user.dbUpdate("nickpriority='" + strings[1].toLowerCase() + "'");
                     } else
                         user.sendLangMessage(GlobalString.unknownRank);
                 } else commandSender.sendMessage("/nick <nickname>\n/nick (use the previous nick)");
@@ -50,9 +50,9 @@ public class nick implements CommandExecutor {
     }
 
     private void nickCheck(User user, String name, Player player, String rank) {
-        boolean allow = (user.isStaff ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.connection.isStringExist("playersdata", "name='" + name + "'") && !Database.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'");
+        boolean allow = (user.hasPermission("perm.nick.legacyregex") ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.connection.isStringExist("playersdata", "name='" + name + "'") && !Database.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'");
         if (allow) {
-            if (!user.isStaff) {
+            if (!user.hasPermission("perm.nick.anyname")) {
                 try {
                     MojangAPI.getByName(name);
                     allow = false;
