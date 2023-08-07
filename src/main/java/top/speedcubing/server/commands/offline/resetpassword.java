@@ -1,11 +1,11 @@
-package top.speedcubing.server.Commands.offline;
+package top.speedcubing.server.commands.offline;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.server.database.Database;
-import top.speedcubing.server.libs.User;
+import top.speedcubing.server.player.User;
 
 public class resetpassword implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {

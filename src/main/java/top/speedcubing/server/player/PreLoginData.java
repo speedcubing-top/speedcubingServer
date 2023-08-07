@@ -1,4 +1,4 @@
-package top.speedcubing.server.libs;
+package top.speedcubing.server.player;
 
 public class PreLoginData {
     public final int port;

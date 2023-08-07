@@ -3,9 +3,10 @@ package top.speedcubing.server.share;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.*;
-import top.speedcubing.server.config;
 import top.speedcubing.server.database.Database;
-import top.speedcubing.server.libs.User;
+import top.speedcubing.server.lang.LangMessage;
+import top.speedcubing.server.player.User;
+import top.speedcubing.server.utils.config;
 
 import java.util.Collection;
 
@@ -38,21 +39,10 @@ public class Chat {
         Console.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + text[1]);
     }
 
-    public static void globalChat(Collection<? extends Player> players, Player sender, String[] format, String message, String... replace) {
-        String filtered = filter(message);
-
-        String[] out = new String[format.length];
-        String[] out2 = new String[format.length];
-        for (int i = 0; i < format.length; i++) {
-            out[i] = format[i];
-            out2[i] = format[i];
-            for (int j = 0; j < replace.length; j++) {
-                out[i] = out[i].replace("%" + j + "%", replace[j]);
-                out2[i] = out2[i].replace("%" + j + "%", replace[j]);
-            }
-            out[i] = out[i].replace("%msg%", message);
-            out2[i] = out2[i].replace("%msg%", filtered);
-        }
+    public static void globalChat(Collection<? extends Player> players, Player sender, LangMessage format, String message, String... replace) {
+        String filteredMessage = filter(message);
+        LangMessage l1 = format.clone().replaceAll(replace).replace(3, message);
+        LangMessage l2 = format.clone().replaceAll(replace).replace(3, filteredMessage);
         String[] ignores = Database.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;
         c:
@@ -61,8 +51,8 @@ public class Chat {
             for (String s : ignores)
                 if (user.player.getUniqueId().toString().equals(s))
                     continue c;
-            user.sendLangMessage(user.chatFilt ? out2 : out);
+            user.sendLangMessage(user.chatFilt ? l1 : l2);
         }
-        Console.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + out[1]);
+        Console.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + l1.get(1));
     }
 }

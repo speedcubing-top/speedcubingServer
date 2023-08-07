@@ -6,7 +6,7 @@ import org.bukkit.event.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
-import top.speedcubing.server.libs.User;
+import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
 public class BackListen implements Listener {

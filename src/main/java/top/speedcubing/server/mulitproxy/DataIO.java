@@ -1,4 +1,4 @@
-package top.speedcubing.server.libs;
+package top.speedcubing.server.mulitproxy;
 
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.sockets.ByteUtils;

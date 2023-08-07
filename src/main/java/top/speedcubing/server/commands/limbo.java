@@ -1,4 +1,4 @@
-package top.speedcubing.server.Commands;
+package top.speedcubing.server.commands;
 
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;

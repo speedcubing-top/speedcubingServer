@@ -14,7 +14,8 @@ import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.Reflections;
 import top.speedcubing.server.*;
 import top.speedcubing.server.database.*;
-import top.speedcubing.server.libs.*;
+import top.speedcubing.server.player.*;
+import top.speedcubing.server.utils.config;
 
 import java.util.*;
 

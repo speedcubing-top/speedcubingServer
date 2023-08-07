@@ -1,4 +1,4 @@
-package top.speedcubing.server.Commands.staff;
+package top.speedcubing.server.commands.staff;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;

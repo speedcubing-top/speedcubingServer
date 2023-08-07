@@ -1,7 +1,7 @@
 package top.speedcubing.server.database;
 
 import top.speedcubing.lib.utils.SQL.SQLConnection;
-import top.speedcubing.server.config;
+import top.speedcubing.server.utils.config;
 
 public class Database {
     public static SQLConnection connection;

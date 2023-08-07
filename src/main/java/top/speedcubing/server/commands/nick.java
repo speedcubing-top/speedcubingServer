@@ -1,4 +1,4 @@
-package top.speedcubing.server.Commands;
+package top.speedcubing.server.commands;
 
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
@@ -10,7 +10,9 @@ import top.speedcubing.lib.utils.*;
 import top.speedcubing.server.*;
 import top.speedcubing.server.database.*;
 import top.speedcubing.server.events.player.NickEvent;
-import top.speedcubing.server.libs.*;
+import top.speedcubing.server.lang.GlobalString;
+import top.speedcubing.server.player.User;
+import top.speedcubing.server.utils.config;
 
 import java.util.*;
 

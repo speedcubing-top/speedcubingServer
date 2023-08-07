@@ -1,6 +1,6 @@
 package top.speedcubing.server.database;
 
-import top.speedcubing.server.config;
+import top.speedcubing.server.utils.config;
 
 public class Rank {
 

@@ -8,8 +8,8 @@ import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.util.Java15Compat;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
-import top.speedcubing.server.libs.GlobalString;
-import top.speedcubing.server.libs.User;
+import top.speedcubing.server.lang.GlobalString;
+import top.speedcubing.server.player.User;
 
 import java.util.Arrays;
 import java.util.List;

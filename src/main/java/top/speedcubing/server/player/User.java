@@ -1,4 +1,4 @@
-package top.speedcubing.server.libs;
+package top.speedcubing.server.player;
 
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.World;
@@ -15,8 +15,9 @@ import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.*;
 import top.speedcubing.server.database.*;
+import top.speedcubing.server.lang.LangMessage;
+import top.speedcubing.server.utils.config;
 
-import java.awt.*;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -129,20 +130,27 @@ public class User {
         return d == null ? v : v.setX(v.getX() * d[0]).setY(v.getY() * d[1]).setZ(v.getZ() * d[0]);
     }
 
-    public void sendLangMessage(String[] s) {
-        bSendMessage(s[lang]);
-    }
-
     public void openLangInventory(Inventory[] inventories) {
         bOpenInventory(inventories[lang]);
     }
 
-    public void sendLangTextComp(TextBuilder[] s) {
-        player.spigot().sendMessage(s[lang].toBungee());
+    public void sendLangMessage(LangMessage message, String... replaces) {
+        if (replaces == null) {
+            bSendMessage(message.get(lang));
+        } else {
+            String text = message.get(lang);
+            for (int i = 0; i < replaces.length; i++)
+                text = text.replace("%" + (i + 1) + "%", replaces[i]);
+            bSendMessage(text);
+        }
     }
 
-    public LangMessage langMessageSender(String[] s) {
-        return new LangMessage(s[lang], this);
+    public void sendLangMessage(LangMessage message) {
+        sendLangMessage(message, null);
+    }
+
+    public void sendLangTextComp(TextBuilder[] s) {
+        player.spigot().sendMessage(s[lang].toBungee());
     }
 
     public PlayerConnection playerConn() {
@@ -280,26 +288,5 @@ public class User {
 
     public boolean bIsSneaking() {
         return player.isSneaking();
-    }
-    //bukkit end
-
-    public static class LangMessage {
-
-        private String s;
-        private final User user;
-
-        public LangMessage(String s, User user) {
-            this.s = s;
-            this.user = user;
-        }
-
-        public LangMessage replace(String s1, String s2) {
-            s = s.replace(s1, s2);
-            return this;
-        }
-
-        public void send() {
-            user.player.sendMessage(s);
-        }
     }
 }

@@ -1,10 +1,11 @@
-package top.speedcubing.server.Commands;
+package top.speedcubing.server.commands;
 
 import org.bukkit.command.*;
 import org.bukkit.entity.Player;
 import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.events.player.NickEvent;
-import top.speedcubing.server.libs.*;
+import top.speedcubing.server.lang.GlobalString;
+import top.speedcubing.server.player.User;
 
 public class unnick implements CommandExecutor {
 

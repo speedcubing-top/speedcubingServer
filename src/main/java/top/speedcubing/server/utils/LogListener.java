@@ -1,4 +1,4 @@
-package top.speedcubing.server.libs;
+package top.speedcubing.server.utils;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -7,11 +7,7 @@ import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import top.speedcubing.lib.utils.Console;
-import top.speedcubing.server.config;
-import top.speedcubing.server.speedcubingServer;
 
 import java.util.Iterator;
 import java.util.regex.Pattern;

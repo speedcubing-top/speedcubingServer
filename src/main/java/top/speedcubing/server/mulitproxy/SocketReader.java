@@ -1,4 +1,4 @@
-package top.speedcubing.server.libs;
+package top.speedcubing.server.mulitproxy;
 
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
@@ -8,11 +8,13 @@ import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.utils.*;
 import top.speedcubing.server.*;
 import top.speedcubing.server.events.*;
+import top.speedcubing.server.player.User;
+import top.speedcubing.server.utils.config;
 
 import java.io.*;
 import java.net.*;
 
-public class SocketServer {
+public class SocketReader {
     public static ServerSocket tcpServer;
 
     private static void initServer() {

@@ -1,4 +1,4 @@
-package top.speedcubing.server;
+package top.speedcubing.server.utils;
 
 import com.google.common.collect.Sets;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
@@ -6,9 +6,10 @@ import org.bukkit.Bukkit;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.pluginMessage.BungeePluginMessage;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
+import top.speedcubing.server.*;
 import top.speedcubing.server.database.*;
 import top.speedcubing.server.events.CubingTickEvent;
-import top.speedcubing.server.libs.User;
+import top.speedcubing.server.player.User;
 
 import java.lang.management.*;
 import java.util.*;

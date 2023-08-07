@@ -1,4 +1,4 @@
-package top.speedcubing.server.Commands.overrided;
+package top.speedcubing.server.commands.overrided;
 
 import org.bukkit.command.CommandSender;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;

@@ -1,8 +1,6 @@
 package top.speedcubing.server;
 
-import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.bukkit.*;
@@ -11,15 +9,16 @@ import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.*;
 import top.speedcubing.lib.utils.sockets.*;
 import top.speedcubing.namedb.NameDb;
-import top.speedcubing.server.Commands.*;
-import top.speedcubing.server.Commands.overrided.plugins;
-import top.speedcubing.server.Commands.staff.*;
+import top.speedcubing.server.commands.*;
+import top.speedcubing.server.commands.overrided.plugins;
+import top.speedcubing.server.commands.staff.*;
 import top.speedcubing.server.ExploitFixer.ForceOp;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.database.Database;
-import top.speedcubing.server.events.SocketEvent;
-import top.speedcubing.server.libs.*;
+import top.speedcubing.server.utils.*;
 import top.speedcubing.server.listeners.*;
+import top.speedcubing.server.mulitproxy.SocketReader;
+import top.speedcubing.server.player.*;
 
 import java.io.*;
 import java.net.*;
@@ -48,7 +47,7 @@ public class speedcubingServer extends JavaPlugin {
         CubingTick.init();
         config.reloadDatabase();
         tcpClient = new TCPClient("localhost", 100);
-        SocketServer.init();
+        SocketReader.init();
 
         //spigot
         try {

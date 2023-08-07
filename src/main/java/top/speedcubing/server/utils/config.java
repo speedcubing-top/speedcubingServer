@@ -1,4 +1,4 @@
-package top.speedcubing.server;
+package top.speedcubing.server.utils;
 
 import com.google.common.collect.Sets;
 import com.google.gson.Gson;

@@ -1,14 +1,10 @@
-package top.speedcubing.server.Commands.staff;
+package top.speedcubing.server.commands.staff;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.server.speedcubingServer;
-
-import java.util.Collections;
-import java.util.List;
 
 public class proxycommand implements CommandExecutor {
 

@@ -1,4 +1,4 @@
-package top.speedcubing.server.Commands;
+package top.speedcubing.server.commands;
 
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.command.Command;
@@ -10,8 +10,8 @@ import top.speedcubing.lib.api.mojang.ProfileSkin;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.server.events.player.SkinEvent;
-import top.speedcubing.server.libs.GlobalString;
-import top.speedcubing.server.libs.User;
+import top.speedcubing.server.lang.GlobalString;
+import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
 import java.util.List;
