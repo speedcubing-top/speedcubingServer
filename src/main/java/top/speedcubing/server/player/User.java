@@ -13,10 +13,9 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
-import top.speedcubing.server.*;
 import top.speedcubing.server.database.*;
 import top.speedcubing.server.lang.LangMessage;
-import top.speedcubing.server.utils.config;
+import top.speedcubing.server.speedcubingServer;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -62,18 +61,11 @@ public class User {
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
     public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
-        this.player = player;
-        Set<String> groups = new HashSet<>();
-        for (String s : permissions) {
-            if (group.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6)))
-                groups.add(s.substring(6));
-        }
-        groups.forEach(a -> permissions.addAll(config.grouppermissions.get(a)));
-        this.permissions = permissions;
         speedcubingServer.preLoginStorage.remove(id);
+        this.player = player;
+        this.permissions = permissions;
+        System.out.println(permissions);
         this.listened = bungeeData.cps;
-        if (!bungeeData.hor.equals("null"))
-            this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         this.lang = lang;
         this.id = id;
         this.chatFilt = chatFilt;
@@ -84,6 +76,8 @@ public class User {
         this.tcpPort = bungeeData.port;
         this.allowOp = allowOp;
         this.isStaff = this.realRank.equals("builder") || this.realRank.equals("helper") || this.realRank.equals("admin") || this.realRank.equals("owner") || this.realRank.equals("mod");
+        if (!bungeeData.hor.equals("null"))
+            this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         usersByID.put(id, this);
         usersByUUID.put(bGetUniqueId(), this);
     }
