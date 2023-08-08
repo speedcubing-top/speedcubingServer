@@ -3,7 +3,7 @@ package top.speedcubing.server.lang;
 import org.bukkit.command.*;
 import top.speedcubing.server.player.User;
 
-public class LangMessage {
+public class LangMessage implements Cloneable {
     String[] s;
 
     public LangMessage(String... s) {
@@ -31,7 +31,12 @@ public class LangMessage {
     }
 
     public LangMessage clone() {
-        return new LangMessage(s);
+        try {
+            super.clone();
+            return new LangMessage(s.clone());
+        } catch (CloneNotSupportedException var2) {
+            throw new Error(var2);
+        }
     }
 }
 

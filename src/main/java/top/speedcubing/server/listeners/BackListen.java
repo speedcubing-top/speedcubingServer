@@ -17,12 +17,6 @@ public class BackListen implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
-    public void CreatureSpawnEvent(CreatureSpawnEvent e) {
-        if (e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER && e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG)
-            e.setCancelled(true);
-    }
-
-    @EventHandler(priority = EventPriority.HIGHEST)
     public void InventoryOpenEvent(InventoryOpenEvent e) {
         InventoryType type = e.getInventory().getType();
         if (e.getPlayer().getGameMode() != GameMode.CREATIVE)
@@ -53,5 +47,10 @@ public class BackListen implements Listener {
         User.usersByUUID.remove(player.getUniqueId());
         if (Bukkit.getOnlinePlayers().size() == 1 && speedcubingServer.restartable)
             speedcubingServer.restart();
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void PlayerMoveEvent(PlayerMoveEvent e) {
+        User.getUser(e.getPlayer()).lastMove = System.currentTimeMillis();
     }
 }

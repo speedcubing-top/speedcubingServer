@@ -24,10 +24,10 @@ public class GlobalString {
     );
 
     public static final LangMessage MessageFormat = new LangMessage(
-            "%1% §8» %2%%msg%",
-            "%1% §8» %2%%msg%",
-            "%1% §8» %2%%msg%",
-            "%1% §8» %2%%msg%"
+            "%1% §8» %2%%3%",
+            "%1% §8» %2%%3%",
+            "%1% §8» %2%%3%",
+            "%1% §8» %2%%3%"
     );
     public static LangMessage category = new LangMessage(
             "§eClick to see the category!",

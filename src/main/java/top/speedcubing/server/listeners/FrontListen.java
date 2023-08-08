@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.*;
+import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerCommandEvent;
@@ -123,22 +124,23 @@ public class FrontListen implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
+    public void CreatureSpawnEvent(CreatureSpawnEvent e) {
+        if (e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER && e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG)
+            e.setCancelled(true);
+    }
+
+    @EventHandler(priority = EventPriority.LOW)
     public void ServerCommandEvent(ServerCommandEvent e) {
         System.out.print("[CONSOLE] " + e.getCommand());
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void WeatherChangeEvent(WeatherChangeEvent e) {
         if (e.getWorld().hasStorm()) {
             WorldData worldData = ((CraftWorld) e.getWorld()).getHandle().worldData;
             worldData.setWeatherDuration(0);
             Reflections.setField(worldData, "q", false);
         } else e.setCancelled(true);
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void PlayerMoveEvent(PlayerMoveEvent e) {
-        User.getUser(e.getPlayer()).lastMove = System.currentTimeMillis();
     }
 }
