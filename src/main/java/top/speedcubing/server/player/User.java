@@ -15,7 +15,6 @@ import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.database.*;
 import top.speedcubing.server.lang.LangMessage;
-import top.speedcubing.server.speedcubingServer;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -73,10 +72,9 @@ public class User {
         this.vanished = bungeeData.vanished;
         this.tcpPort = bungeeData.port;
         this.allowOp = allowOp;
-        this.isStaff = this.realRank.equals("builder") || this.realRank.equals("helper") || this.realRank.equals("admin") || this.realRank.equals("owner") || this.realRank.equals("mod");
+        this.isStaff = Rank.isStaff(realRank);
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
-        speedcubingServer.preLoginStorage.remove(id);
         usersByID.put(id, this);
         usersByUUID.put(bGetUniqueId(), this);
     }

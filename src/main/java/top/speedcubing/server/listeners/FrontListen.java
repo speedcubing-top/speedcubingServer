@@ -13,9 +13,9 @@ import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.Reflections;
-import top.speedcubing.server.*;
 import top.speedcubing.server.database.*;
 import top.speedcubing.server.player.*;
+import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.config;
 
 import java.util.*;
@@ -24,17 +24,27 @@ public class FrontListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
-        PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(Integer.parseInt(datas[4]));
+        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
+        int id = Integer.parseInt(datas[4]);
+        realRank = Rank.getRank(datas[0], Integer.parseInt(datas[4]));
+        PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(id);
+        if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (datas[8].equals("0"))) {
+            e.setKickMessage("§cThis server is currently under maintenance.");
+            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            speedcubingServer.preLoginStorage.remove(id);
+            return;
+        }
         if (bungeeData == null) {
-            e.setKickMessage("§cServer Restarting... Please wait for a few seconds.");
+            e.setKickMessage("§cError occurred.");
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
         } else {
             this.datas = datas;
             this.bungeeData = bungeeData;
+            speedcubingServer.preLoginStorage.remove(id);
         }
     }
 
+    String realRank;
     String[] datas;
     PreLoginData bungeeData;
 
@@ -44,7 +54,7 @@ public class FrontListen implements Listener {
         Player player = e.getPlayer();
         //Check Nick
         String displayName = player.getName();
-        String realRank = Rank.getRank(datas[0], Integer.parseInt(datas[4]));
+
         String displayRank = realRank;
         boolean nicked = !datas[5].equals(displayName);
         if (nicked)
