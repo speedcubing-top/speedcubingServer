@@ -24,7 +24,7 @@ public class FrontListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,opped,chatfilt,guild").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
+        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
         PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(Integer.parseInt(datas[4]));
         if (bungeeData == null) {
             e.setKickMessage("§cServer Restarting... Please wait for a few seconds.");
@@ -59,12 +59,10 @@ public class FrontListen implements Listener {
                 groups.add(s.substring(6));
         }
         groups.forEach(a -> perms.addAll(config.grouppermissions.get(a)));
-        //Op
-        player.setOp(datas[6].equals("1"));
         //User
-        User user = new User(player, displayRank, realRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[7].equals("1"), datas[5]);
+        User user = new User(player, displayRank, realRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[6].equals("1"), datas[5]);
         //Guild
-        String tag = Database.connection.select("tag").from("guild").where("name='" + datas[8] + "'").getString();
+        String tag = Database.connection.select("tag").from("guild").where("name='" + datas[7] + "'").getString();
         tag = nicked ? "" : (tag == null ? "" : " §6[" + tag + "]");
         //Packets
         String extracted = speedcubingServer.getCode(user.displayRank) + speedcubingServer.playerNameExtract(displayName);

@@ -61,10 +61,8 @@ public class User {
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
     public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
-        speedcubingServer.preLoginStorage.remove(id);
         this.player = player;
         this.permissions = permissions;
-        System.out.println(permissions);
         this.listened = bungeeData.cps;
         this.lang = lang;
         this.id = id;
@@ -78,6 +76,7 @@ public class User {
         this.isStaff = this.realRank.equals("builder") || this.realRank.equals("helper") || this.realRank.equals("admin") || this.realRank.equals("owner") || this.realRank.equals("mod");
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
+        speedcubingServer.preLoginStorage.remove(id);
         usersByID.put(id, this);
         usersByUUID.put(bGetUniqueId(), this);
     }

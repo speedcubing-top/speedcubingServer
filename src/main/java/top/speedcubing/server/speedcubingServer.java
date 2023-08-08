@@ -3,25 +3,24 @@ package top.speedcubing.server;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
-import top.speedcubing.lib.bukkit.*;
+import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.*;
-import top.speedcubing.lib.utils.sockets.*;
+import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.namedb.NameDb;
+import top.speedcubing.paper.CubingPaperConfig;
+import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.commands.*;
 import top.speedcubing.server.commands.overrided.plugins;
 import top.speedcubing.server.commands.staff.*;
-import top.speedcubing.server.ExploitFixer.ForceOp;
-import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.database.Database;
-import top.speedcubing.server.utils.*;
 import top.speedcubing.server.listeners.*;
 import top.speedcubing.server.mulitproxy.SocketReader;
 import top.speedcubing.server.player.*;
+import top.speedcubing.server.utils.*;
 
-import java.io.*;
-import java.net.*;
+import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Pattern;
@@ -31,13 +30,11 @@ public class speedcubingServer extends JavaPlugin {
     public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
 
     public static final Pattern legacyNameRegex = Pattern.compile("^\\w{1,16}$");
-    public static ServerSocket tcpServer;
     public static TCPClient tcpClient;
     public static Map<Integer, PreLoginData> preLoginStorage = new HashMap<>();
 
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
-    public static long last = System.currentTimeMillis();
 
     public void onEnable() {
         NameDb.init();
@@ -51,14 +48,14 @@ public class speedcubingServer extends JavaPlugin {
 
         //spigot
         try {
-            Class.forName("top.speedcubing.server.CubingPaperConfig");
+            Class.forName("top.speedcubing.paper.CubingPaperConfig");
             CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", Bukkit.getServerName(), "sh", "../../" + Bukkit.getServerName() + ".sh", "init"};
+            CubingPaperConfig.alwaysOP = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
         //lib
         speedcubingLibBukkit.deletePlayerFile = true;
-        new ForceOp().run();
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
             if (bytes.length != 2) {
                 boolean store = false, punished = false;
