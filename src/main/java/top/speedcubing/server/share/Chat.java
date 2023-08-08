@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.*;
 import top.speedcubing.server.database.Database;
-import top.speedcubing.server.lang.*;
+import top.speedcubing.server.lang.LangMessage;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.config;
 
@@ -23,8 +23,8 @@ public class Chat {
         TextBuilder[] out2 = new TextBuilder[text.length];
         for (int i = 0; i < text.length; i++) {
             String serial = text[i].getSerial();
-            text[i] = TextBuilder.unSerialize(serial.replace("%msg%", message));
-            out2[i] = TextBuilder.unSerialize(serial.replace("%msg%", filtered));
+            text[i] = TextBuilder.unSerialize(serial.replace("%3%", message));
+            out2[i] = TextBuilder.unSerialize(serial.replace("%3%", filtered));
         }
         String[] ignores = Database.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;

@@ -1,6 +1,7 @@
 package top.speedcubing.server.lang;
 
 import org.bukkit.command.*;
+import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.server.player.User;
 
 public class LangMessage implements Cloneable {
