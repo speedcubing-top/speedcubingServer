@@ -27,14 +27,14 @@ public class FrontListen implements Listener {
         Player player = e.getPlayer();
         String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
         int id = Integer.parseInt(datas[4]);
-        realRank = Rank.getRank(datas[0], Integer.parseInt(datas[4]));
-        PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(id);
+        realRank = Rank.getRank(datas[0], id);
         if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (datas[8].equals("0"))) {
             e.setKickMessage("§cThis server is currently under maintenance.");
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             speedcubingServer.preLoginStorage.remove(id);
             return;
         }
+        PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(id);
         if (bungeeData == null) {
             e.setKickMessage("§cError occurred.");
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
