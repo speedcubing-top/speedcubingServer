@@ -50,7 +50,7 @@ public class speedcubingServer extends JavaPlugin {
         try {
             Class.forName("top.speedcubing.paper.CubingPaperConfig");
             CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", Bukkit.getServerName(), "sh", "../../" + Bukkit.getServerName() + ".sh", "init"};
-            CubingPaperConfig.alwaysOP = true;
+            CubingPaperConfig.commandOP = true;
         } catch (Exception e) {
             e.printStackTrace();
         }

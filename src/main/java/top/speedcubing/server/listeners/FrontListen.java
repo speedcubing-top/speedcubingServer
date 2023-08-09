@@ -19,6 +19,7 @@ import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.config;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FrontListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
@@ -63,14 +64,12 @@ public class FrontListen implements Listener {
         Set<String> perms = Sets.newHashSet(datas[2].split("\\|"));
         perms.remove("");
         perms.addAll(config.rankPermissions.get(realRank));
-        Set<String> groups = new HashSet<>();
-        for (String s : perms) {
-            if (User.group.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6)))
-                groups.add(s.substring(6));
-        }
+        Set<String> groups = perms.stream().filter(s -> User.group.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6))).map(s -> s.substring(6)).collect(Collectors.toSet());
         groups.forEach(a -> perms.addAll(config.grouppermissions.get(a)));
         //User
         User user = new User(player, displayRank, realRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[6].equals("1"), datas[5]);
+        //OP
+        player.setOp(user.hasPermission("perm.op"));
         //Guild
         String tag = Database.connection.select("tag").from("guild").where("name='" + datas[7] + "'").getString();
         tag = nicked ? "" : (tag == null ? "" : " §6[" + tag + "]");
