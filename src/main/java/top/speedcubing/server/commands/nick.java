@@ -7,11 +7,11 @@ import org.bukkit.entity.Player;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.*;
-import top.speedcubing.server.*;
 import top.speedcubing.server.database.*;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
+import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.config;
 
 import java.util.*;

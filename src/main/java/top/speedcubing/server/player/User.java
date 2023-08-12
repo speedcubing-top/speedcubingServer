@@ -56,11 +56,10 @@ public class User {
     public final boolean isStaff;
     public long lastInvClick;
     public final String realRank;
-    public boolean terms;
     public long lastMove = System.currentTimeMillis();
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
-    public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName,boolean terms) {
+    public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
         this.player = player;
         this.permissions = permissions;
         this.listened = bungeeData.cps;

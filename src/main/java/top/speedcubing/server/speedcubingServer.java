@@ -2,7 +2,7 @@ package top.speedcubing.server;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.spigotmc.RestartCommand;
+import org.spigotmc.*;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
 import top.speedcubing.lib.speedcubingLibBukkit;
@@ -45,7 +45,8 @@ public class speedcubingServer extends JavaPlugin {
         config.reloadDatabase();
         tcpClient = new TCPClient("localhost", 100);
         SocketReader.init();
-
+        //spigot.yml
+        SpigotConfig.disableStatSaving = true;
         //spigot
         try {
             Class.forName("top.speedcubing.paper.CubingPaperConfig");
