@@ -25,7 +25,7 @@ public class FrontListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
+        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
         int id = Integer.parseInt(datas[4]);
         realRank = Rank.getRank(datas[0], id);
         if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (datas[8].equals("0"))) {
@@ -67,7 +67,7 @@ public class FrontListen implements Listener {
         Set<String> groups = perms.stream().filter(s -> User.group.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6))).map(s -> s.substring(6)).collect(Collectors.toSet());
         groups.forEach(a -> perms.addAll(config.grouppermissions.get(a)));
         //User
-        User user = new User(player, displayRank, realRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[6].equals("1"), datas[5]);
+        User user = new User(player, displayRank, realRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[6].equals("1"), datas[5], datas[9].equals("1"));
         //OP
         player.setOp(user.hasPermission("perm.op"));
         //Guild

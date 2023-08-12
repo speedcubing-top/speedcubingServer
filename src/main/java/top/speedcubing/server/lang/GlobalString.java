@@ -1,7 +1,5 @@
 package top.speedcubing.server.lang;
 
-import top.speedcubing.server.lang.LangMessage;
-
 public class GlobalString {
     public static LangMessage LobbyJoinMessage = new LangMessage(
             "%1% has joined the Lobby!",
@@ -164,4 +162,7 @@ public class GlobalString {
             "§4You can't set the items here!",
             "§4你不能將物品設定於此處!",
             "§4你不能将物品设定于此处!");
+
+    public static LangMessage terms = new LangMessage(
+            "1", "1", "1", "1");
 }
