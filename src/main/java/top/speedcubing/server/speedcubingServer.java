@@ -5,7 +5,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.*;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.LibEventManager;
-import top.speedcubing.lib.speedcubingLibBukkit;
 import top.speedcubing.lib.utils.*;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.namedb.NameDb;
@@ -52,11 +51,11 @@ public class speedcubingServer extends JavaPlugin {
             Class.forName("top.speedcubing.paper.CubingPaperConfig");
             CubingPaperConfig.restartArgument = new String[]{"screen", "-mdS", Bukkit.getServerName(), "sh", "../../" + Bukkit.getServerName() + ".sh", "init"};
             CubingPaperConfig.commandOP = true;
+            CubingPaperConfig.disableOpsJson = true;
         } catch (Exception e) {
             e.printStackTrace();
         }
         //lib
-        speedcubingLibBukkit.deletePlayerFile = true;
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
             if (bytes.length != 2) {
                 boolean store = false, punished = false;
@@ -104,7 +103,6 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
         OverrideCommandManager.register(new plugins());
-        speedcubingLibBukkit.deletePlayerFile = true;
         TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
         LibEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
