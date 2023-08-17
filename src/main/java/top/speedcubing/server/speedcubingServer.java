@@ -85,6 +85,9 @@ public class speedcubingServer extends JavaPlugin {
                     } else name = string;
                     i = end;
                 }
+                String mods = new String(bytes, StandardCharsets.UTF_8);
+                System.out.println(mods);
+                System.out.println(Arrays.toString(bytes));
                 User.getUser(player).dbUpdate("forgemod='" + new String(bytes, StandardCharsets.UTF_8) + "'");
             }
         });

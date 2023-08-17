@@ -6,9 +6,9 @@ import org.bukkit.entity.Player;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.utils.*;
-import top.speedcubing.server.*;
 import top.speedcubing.server.events.*;
 import top.speedcubing.server.player.User;
+import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.config;
 
 import java.io.*;
@@ -49,7 +49,7 @@ public class SocketReader {
                             new Thread(() -> {
                                 try {
                                     byte[] resend = new ByteArrayDataBuilder().write(((InputEvent) new InputEvent(in, in.readUTF()).call()).respond.toByteArray()).toByteArray();
-                                    dataOutputStream.write(resend, 0, resend.length);
+                                    dataOutputStream.write(resend);
                                 } catch (IOException exception) {
                                     exception.printStackTrace();
                                 }
@@ -109,6 +109,9 @@ public class SocketReader {
                             new SocketEvent(in, header).call();
                             break;
                     }
+                    dataInputStream.close();
+                    dataOutputStream.close();
+                    in.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
