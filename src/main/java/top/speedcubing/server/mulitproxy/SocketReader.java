@@ -5,14 +5,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.bukkit.PlayerUtils;
-import top.speedcubing.lib.utils.*;
-import top.speedcubing.server.events.*;
+import top.speedcubing.lib.utils.ByteArrayDataBuilder;
+import top.speedcubing.lib.utils.Threads;
+import top.speedcubing.server.events.InputEvent;
+import top.speedcubing.server.events.SocketEvent;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.config;
 
-import java.io.*;
-import java.net.*;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
 
 public class SocketReader {
     public static ServerSocket tcpServer;
@@ -46,14 +52,12 @@ public class SocketReader {
                     }
                     switch (header) {
                         case "in":
-                            new Thread(() -> {
-                                try {
-                                    byte[] resend = new ByteArrayDataBuilder().write(((InputEvent) new InputEvent(in, in.readUTF()).call()).respond.toByteArray()).toByteArray();
-                                    dataOutputStream.write(resend);
-                                } catch (IOException exception) {
-                                    exception.printStackTrace();
-                                }
-                            }).start();
+                            try {
+                                byte[] resend = new ByteArrayDataBuilder().write(((InputEvent) new InputEvent(in, in.readUTF()).call()).respond.toByteArray()).toByteArray();
+                                dataOutputStream.write(resend);
+                            } catch (IOException exception) {
+                                exception.printStackTrace();
+                            }
                             break;
                         case "bungee":
                             User.getUser(in.readInt()).tcpPort = in.readInt();
@@ -112,6 +116,7 @@ public class SocketReader {
                     dataInputStream.close();
                     dataOutputStream.close();
                     in.close();
+                    s.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
