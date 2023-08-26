@@ -1,7 +1,7 @@
 package top.speedcubing.server.mulitproxy;
 
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-import top.speedcubing.lib.utils.sockets.ByteUtils;
+import top.speedcubing.lib.utils.IOUtils;
 import top.speedcubing.server.speedcubingServer;
 
 import java.io.DataInputStream;
@@ -13,7 +13,7 @@ public class DataIO {
         try {
             byte[] b = new ByteArrayDataBuilder().writeUTF("in").write(data).toByteArray();
             byte[] result = speedcubingServer.tcpClient.sendAndRead(port, b, 2048);
-            return ByteUtils.byteToDataInputStream(result);
+            return IOUtils.toDataInputStream(result);
         } catch (IOException e) {
             e.printStackTrace();
             return null;
