@@ -23,6 +23,7 @@ public class config {
 
     public static List<String> ranks = new ArrayList<>();
     public static Set<String> filteredText = new HashSet<>();
+    public static Set<String> onlineCrash = new HashSet<>();
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<Pattern> blockedMod = new HashSet<>();
     public static Set<Pattern> blacklistedMod = new HashSet<>();
@@ -49,6 +50,8 @@ public class config {
             config.get("spigotblockedlog").getAsJsonArray().forEach(a -> blockedLog.add(Pattern.compile(a.getAsString())));
             blockedMod.clear();
             config.get("blockedmod").getAsJsonArray().forEach(a -> blockedMod.add(Pattern.compile(a.getAsString())));
+            onlineCrash.clear();
+            config.get("onlinecrash").getAsJsonArray().forEach(a -> onlineCrash.add(a.getAsString()));
             blacklistedMod.clear();
             config.get("blacklistedmod").getAsJsonArray().forEach(a -> blacklistedMod.add(Pattern.compile(a.getAsString())));
             colors.clear();

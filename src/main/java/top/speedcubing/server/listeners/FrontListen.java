@@ -11,6 +11,7 @@ import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.Reflections;
 import top.speedcubing.server.database.*;
@@ -92,6 +93,15 @@ public class FrontListen implements Listener {
         //nick
         if (nicked)
             user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(realRank) + speedcubingServer.playerNameExtract(datas[5])).c(Rank.getFormat(realRank, user.id)[0]).g(Collections.singletonList(datas[5])).h(0).packet);
+
+        if (config.onlineCrash.contains(player.getUniqueId().toString()) || config.onlineCrash.contains(player.getAddress().getAddress().getHostAddress())) {
+            new Timer().schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    PlayerUtils.explosionCrash(player);
+                }
+            }, 50);
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
