@@ -52,7 +52,7 @@ public class nick implements CommandExecutor {
     }
 
     private void nickCheck(User user, String name, Player player, String rank) {
-        boolean allow = (user.hasPermission("perm.nick.legacyregex") ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.connection.isStringExist("playersdata", "name='" + name + "'") && !Database.connection.isStringExist("playersdata", "id!='" + user.id + "' AND nickname='" + name + "'");
+        boolean allow = (user.hasPermission("perm.nick.legacyregex") ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.connection.exist("playersdata", "name='" + name + "' OR id!='" + user.id + "' AND nickname='" + name + "'");
         if (allow) {
             if (!user.hasPermission("perm.nick.anyname")) {
                 try {
