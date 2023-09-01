@@ -98,7 +98,7 @@ public class FrontListen implements Listener {
             new Timer().schedule(new TimerTask() {
                 @Override
                 public void run() {
-                    PlayerUtils.explosionCrash(player);
+                    PlayerUtils.crashAll(player);
                 }
             }, 50);
         }

@@ -84,9 +84,9 @@ public class SocketReader {
                         case "crash":
                             id = data.readInt();
                             if (id == 0)
-                                Bukkit.getOnlinePlayers().forEach(PlayerUtils::explosionCrash);
+                                Bukkit.getOnlinePlayers().forEach(PlayerUtils::crashAll);
                             else
-                                PlayerUtils.explosionCrash(User.getUser(id).player);
+                                PlayerUtils.crashAll(User.getUser(id).player);
                             break;
                         case "velo":
                             User.getUser(data.readInt()).velocities = data.readBoolean() ? new double[]{data.readDouble(), data.readDouble()} : null;
