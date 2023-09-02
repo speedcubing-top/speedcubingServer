@@ -1,12 +1,8 @@
 package top.speedcubing.server.utils;
 
 import com.google.common.collect.Sets;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
-import org.bukkit.Bukkit;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.events.ConfigReloadEvent;
 
@@ -22,7 +18,7 @@ public class config {
     public static String DatabasePassword;
 
     public static List<String> ranks = new ArrayList<>();
-    public static Set<String> filteredText = new HashSet<>();
+    public static Set<Pattern> filteredText = new HashSet<>();
     public static Set<String> onlineCrash = new HashSet<>();
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<Pattern> blockedMod = new HashSet<>();
@@ -45,7 +41,7 @@ public class config {
             RightCpsLimit = config.get("rightcpslimit").getAsInt();
             debugMode = config.get("debug").getAsBoolean();
             filteredText.clear();
-            config.get("filteredtext").getAsJsonArray().forEach(a -> filteredText.add(a.getAsString()));
+            config.get("filteredtext").getAsJsonArray().forEach(a -> filteredText.add(Pattern.compile(a.getAsString())));
             blockedLog.clear();
             config.get("spigotblockedlog").getAsJsonArray().forEach(a -> blockedLog.add(Pattern.compile(a.getAsString())));
             blockedMod.clear();

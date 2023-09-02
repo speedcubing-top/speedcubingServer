@@ -9,12 +9,21 @@ import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.config;
 
 import java.util.Collection;
+import java.util.regex.*;
 
 public class Chat {
 
     public static String filter(String text) {
-        for (String s : config.filteredText)
-            text = text.replace(s, StringUtils.repeat("*", s.length()));
+        for (Pattern p : config.filteredText) {
+            Matcher matcher = p.matcher(text);
+            StringBuffer replacement = new StringBuffer();
+            while (matcher.find()) {
+                String match = matcher.group();
+                matcher.appendReplacement(replacement, StringUtils.repeat("*", match.length()));
+            }
+            matcher.appendTail(replacement);
+            text = replacement.toString();
+        }
         return text;
     }
 
@@ -34,7 +43,7 @@ public class Chat {
             for (String s : ignores)
                 if (user.player.getUniqueId().toString().equals(s))
                     continue c;
-            user.sendLangTextComp(user.chatFilt ? text : out2);
+            user.sendLangTextComp(user.chatFilt ? out2 : text);
         }
         Console.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + text[1]);
     }
@@ -51,7 +60,7 @@ public class Chat {
             for (String s : ignores)
                 if (user.player.getUniqueId().toString().equals(s))
                     continue c;
-            user.sendLangMessage(user.chatFilt ? l1 : l2);
+            user.sendLangMessage(user.chatFilt ? l2 : l1);
         }
         Console.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + l1.get(1));
     }

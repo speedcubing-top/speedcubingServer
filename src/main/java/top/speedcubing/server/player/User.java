@@ -87,6 +87,7 @@ public class User {
     public String getGuild() {
         return dbSelect("guild").getString();
     }
+    //perm
 
     public boolean hasPermission(String perm) {
         perm = perm.toLowerCase();
@@ -104,6 +105,7 @@ public class User {
         return false;
     }
 
+    //format
     public String[] getFormat() {
         return Rank.getFormat(displayRank, id);
     }
@@ -116,11 +118,17 @@ public class User {
         return getFormat()[0] + (realName ? this.realName : bGetName());
     }
 
+    //kb
     public Vector applyKnockback(Vector v) {
         double[] d = velocities;
         return d == null ? v : v.setX(v.getX() * d[0]).setY(v.getY() * d[1]).setZ(v.getZ() * d[0]);
     }
 
+    public void knockback(Vector v) {
+        playerConn().sendPacket(new PacketPlayOutEntityVelocity(player.getEntityId(), v.getX(), v.getY(), v.getZ()));
+    }
+
+    //lang
     public void openLangInventory(Inventory[] inventories) {
         bOpenInventory(inventories[lang]);
     }
@@ -153,8 +161,9 @@ public class User {
     }
 
     public void sendPacket(Packet<?>... packets) {
+        PlayerConnection c = playerConn();
         for (Packet<?> p : packets)
-            playerConn().sendPacket(p);
+            c.sendPacket(p);
     }
 
     public void sound(Sound sound) {
