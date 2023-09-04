@@ -1,6 +1,6 @@
 package top.speedcubing.server.events;
 
-import top.speedcubing.lib.eventbus.LibEventManager;
+import top.speedcubing.lib.eventbus.CubingEvent;
 
-public class CubingTickEvent extends LibEventManager {
+public class CubingTickEvent extends CubingEvent {
 }

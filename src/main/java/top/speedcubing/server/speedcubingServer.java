@@ -4,7 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.*;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
-import top.speedcubing.lib.eventbus.LibEventManager;
+import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.*;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.namedb.NameDb;
@@ -107,7 +107,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
         OverrideCommandManager.register(new plugins());
         TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
-        LibEventManager.registerListeners(new ServerEvent());
+        CubingEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
 
         //socket receive

@@ -2,7 +2,7 @@ package top.speedcubing.server;
 
 import net.minecraft.server.v1_8_R3.*;
 import top.speedcubing.lib.bukkit.event.*;
-import top.speedcubing.lib.eventbus.LibEventHandler;
+import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.lib.utils.Reflections;
 import top.speedcubing.server.events.InputEvent;
 import top.speedcubing.server.player.*;
@@ -19,7 +19,7 @@ public class ServerEvent {
         return s.endsWith(" ") ? args.length - 1 : args.length - 2;
     }
 
-    @LibEventHandler
+    @CubingEventHandler
     public void PlayInEvent(PlayInEvent e) {
         if (e.packet instanceof PacketPlayInTabComplete) {
             String s = ((PacketPlayInTabComplete) e.packet).a();
@@ -29,7 +29,7 @@ public class ServerEvent {
             if (user.hasPermission("cmd." + command) || user.hasPermission("cmd.*"))
                 return;
             e.isCancelled = true;
-        } else if(e.packet instanceof PacketPlayInKeepAlive){
+        } else if (e.packet instanceof PacketPlayInKeepAlive) {
 //            if(e.player.getName().equals("speedcubing")) {
 //                System.out.println("cancel");
 //                e.isCancelled = true;
@@ -37,17 +37,17 @@ public class ServerEvent {
         }
     }
 
-    @LibEventHandler
+    @CubingEventHandler
     public void PlayOutEvent(PlayOutEvent e) {
         if (e.packet instanceof PacketPlayOutStatistic) {
             ((Map<Statistic, Integer>) Reflections.getField(e.packet, "a")).replaceAll((k, v) -> 0);
-        } else if(e.packet instanceof PacketPlayOutTabComplete){
-            String[] s = (String[]) Reflections.getField(e.packet,"a");
+        } else if (e.packet instanceof PacketPlayOutTabComplete) {
+            String[] s = (String[]) Reflections.getField(e.packet, "a");
             System.out.println(Arrays.toString(s));
         }
     }
 
-    @LibEventHandler
+    @CubingEventHandler
     public void InputEvent(InputEvent e) {
         try {
             switch (e.subHeader) {

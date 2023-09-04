@@ -124,10 +124,6 @@ public class User {
         return d == null ? v : v.setX(v.getX() * d[0]).setY(v.getY() * d[1]).setZ(v.getZ() * d[0]);
     }
 
-    public void knockback(Vector v) {
-        playerConn().sendPacket(new PacketPlayOutEntityVelocity(player.getEntityId(), v.getX(), v.getY(), v.getZ()));
-    }
-
     //lang
     public void openLangInventory(Inventory[] inventories) {
         bOpenInventory(inventories[lang]);
@@ -152,6 +148,8 @@ public class User {
         player.spigot().sendMessage(s[lang].toBungee());
     }
 
+    //nms
+
     public PlayerConnection playerConn() {
         return toNMS().playerConnection;
     }
@@ -166,9 +164,20 @@ public class User {
             c.sendPacket(p);
     }
 
+    //tools
     public void sound(Sound sound) {
         bPlaySound(player.getLocation(), sound, 1, 1);
     }
+
+    public boolean isDamageTickOver() {
+        return player.getNoDamageTicks() <= player.getMaximumNoDamageTicks() / 2;
+    }
+
+    public void knockback(Vector v) {
+        playerConn().sendPacket(new PacketPlayOutEntityVelocity(player.getEntityId(), v.getX(), v.getY(), v.getZ()));
+    }
+
+    //db
 
     public void dbUpdate(String field) {
         Database.connection.update("playersdata", field, "id=" + id);

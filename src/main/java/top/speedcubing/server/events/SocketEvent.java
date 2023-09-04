@@ -1,10 +1,10 @@
 package top.speedcubing.server.events;
 
-import top.speedcubing.lib.eventbus.LibEventManager;
+import top.speedcubing.lib.eventbus.CubingEvent;
 
 import java.io.DataInputStream;
 
-public class SocketEvent extends LibEventManager {
+public class SocketEvent extends CubingEvent {
     public final DataInputStream receive;
     public final String header;
 
