@@ -122,7 +122,7 @@ public class speedcubingServer extends JavaPlugin {
             @Override
             public void run() {
                 restartable = true;
-                if (Bukkit.getOnlinePlayers().size() == 0)
+                if (Bukkit.getOnlinePlayers().isEmpty())
                     restart();
             }
         }, 28800000);
@@ -157,7 +157,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static int getRandomBungeePort() {
-        return (User.usersByID.values().size() != 0 ? User.usersByID.values().iterator().next().tcpPort : 25566);
+        return (!User.usersByID.values().isEmpty() ? User.usersByID.values().iterator().next().tcpPort : 25565 + 1000);
     }
 
     public static int getCode(String rank) {

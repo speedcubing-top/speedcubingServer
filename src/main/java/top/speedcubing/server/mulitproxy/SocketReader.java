@@ -26,7 +26,7 @@ public class SocketReader {
 
     private static void initServer() {
         try {
-            tcpServer = new ServerSocket(Bukkit.getPort() + 1);
+            tcpServer = new ServerSocket(Bukkit.getPort() + 1000);
             tcpServer.setSoTimeout(0);
         } catch (IOException e) {
             e.printStackTrace();
