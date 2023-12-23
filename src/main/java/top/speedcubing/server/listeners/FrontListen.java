@@ -79,11 +79,11 @@ public class FrontListen implements Listener {
         user.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
         user.joinPacket = new OutScoreboardTeam().a(extracted).c(user.getFormat()[0]).d(tag).g(Collections.singletonList(displayName)).h(0).packet;
         //formatting
-        for (User u : User.getUsers())
+        for (User u : User.getUsers()) {
             user.sendPacket(u.leavePacket, u.joinPacket);
-        for (User u : User.getUsers())
             if (u != user)
                 u.sendPacket(user.leavePacket, user.joinPacket);
+        }
         //vanish
         if (user.vanished)
             for (Player p : Bukkit.getOnlinePlayers())

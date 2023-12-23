@@ -2,19 +2,24 @@ package top.speedcubing.server.commands;
 
 import net.minecraft.server.v1_8_R3.*;
 import org.bukkit.Location;
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
-import top.speedcubing.lib.utils.*;
-import top.speedcubing.server.database.*;
+import top.speedcubing.lib.utils.ByteArrayDataBuilder;
+import top.speedcubing.lib.utils.Reflections;
+import top.speedcubing.server.database.Database;
+import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.config;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashSet;
 
 public class nick implements CommandExecutor {
 
@@ -71,22 +76,26 @@ public class nick implements CommandExecutor {
     public static void nickPlayer(String name, String rank, boolean nick, Player player) {
         User user = User.getUser(player);
         EntityPlayer entityPlayer = user.toNMS();
-        String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
-        PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.displayRank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
-        PacketPlayOutScoreboardTeam leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
+
         //guild
         String tag = Database.connection.select("tag").from("guild").where("name='" + user.getGuild() + "'").getString();
         tag = nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
 
-        PacketPlayOutScoreboardTeam joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank, user.id)[0]).d(tag).g(Collections.singletonList(name)).h(0).packet;
-        for (User u : User.getUsers()) {
+        String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
+        PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.displayRank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
+        user.leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
+        user.joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank, user.id)[0]).d(tag).g(Collections.singletonList(name)).h(0).packet;
+
+        for (User u : User.getUsers())
             if (u != user)
                 u.sendPacket(old);
-        }
+
         Reflections.setField(entityPlayer.getProfile(), "name", name);
+
         for (User u : User.getUsers()) {
             u.bHidePlayer(player);
             u.bShowPlayer(player);
+            u.sendPacket(user.leavePacket, user.joinPacket);
         }
         Location l = player.getLocation();
         user.sendPacket(
@@ -96,10 +105,6 @@ public class nick implements CommandExecutor {
                 new PacketPlayOutPosition(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>()));
         new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
         player.updateInventory();
-        for (User u : User.getUsers())
-            u.sendPacket(leavePacket, joinPacket);
-        user.joinPacket = joinPacket;
-        user.leavePacket = leavePacket;
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""));
         Database.connection.update("onlineplayer", "displayname='" + rank + "',displayrank='" + name + "'", "id=" + user.id);
         speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
