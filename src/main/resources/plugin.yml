@@ -33,5 +33,7 @@ commands:
     usage: /testkb
   limbo:
     usage: /limbo
+  kaboom:
+    usage: /kaboom
 depend:
   - speedcubingLib
