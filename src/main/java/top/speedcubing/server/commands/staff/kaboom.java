@@ -34,20 +34,16 @@ public class kaboom implements CommandExecutor {
             player.setVelocity(velocity);
           commandSender.sendMessage("§aLaunched " + User.getUser(player).realName + "!");
         }
-        //commandSender.sendMessage("§bApplied velocity to all online players! " + velocityToString(velocity));
     }
 
     private void issueLightningStrikesToAllPlayers(int count, CommandSender commandSender) {
         Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
         for (Player player : onlinePlayers) {
             for (int i = 0; i < count; i++) {
-                double beforeHealth = player.getHealth();
                 player.getWorld().strikeLightning(player.getLocation());
-                player.setHealth(beforeHealth);
+                player.setHealth(20);
             }
-            //commandSender.sendMessage("§bIssued " + count + " lightning strikes to '" + User.getUser(player).realName + "'!");
         }
-        //commandSender.sendMessage("§bIssued " + count + " lightning strikes to all online players!");
     }
 
     private void displaySubtitleToAllPlayers(String subtitle, String senderName, CommandSender commandSender) {
