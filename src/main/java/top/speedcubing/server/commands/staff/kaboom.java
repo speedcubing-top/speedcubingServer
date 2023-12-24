@@ -41,7 +41,9 @@ public class kaboom implements CommandExecutor {
         Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
         for (Player player : onlinePlayers) {
             for (int i = 0; i < count; i++) {
+                double beforeHealth = player.getHealth();
                 player.getWorld().strikeLightning(player.getLocation());
+                player.setHealth(beforeHealth);
             }
             //commandSender.sendMessage("§bIssued " + count + " lightning strikes to '" + User.getUser(player).realName + "'!");
         }
