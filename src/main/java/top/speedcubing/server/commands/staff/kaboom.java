@@ -17,13 +17,14 @@ public class kaboom implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0) {
             String senderName = commandSender.getName();
-            displaySubtitleToAllPlayers("§l§cKABOOM!", senderName ,commandSender);
+            displaySubtitleToAllPlayers("§lccKABOOM!", senderName ,commandSender);
             applyVelocityToAllPlayers(new Vector(0, 4, 0), commandSender);
             issueLightningStrikesToAllPlayers(3, commandSender);
             commandSender.sendMessage("§l§cKABOOM!");
             Console.printlnColor("§7[§4STAFF§7] " + senderName + " caused a nuclear reaction!");
         } else {
             commandSender.sendMessage("/kaboom");
+            commandSender.sendMessage("§4WARNING! §cTHIS COMMAND IS NOT FOR PRODUCTION AND MIGHT CAUSE FALSE BANS ON KNOCKBACKFFA");
         }
         return true;
     }
