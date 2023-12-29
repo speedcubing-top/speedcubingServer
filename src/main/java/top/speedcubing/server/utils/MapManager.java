@@ -7,7 +7,7 @@ import java.nio.file.*;
 
 public class MapManager {
 
-    public static void install(String url, String map, Difficulty difficulty, int time, boolean autoSave) throws Exception {
+    public static World install(String url, String map, Difficulty difficulty, int time, boolean autoSave) throws Exception {
         long t = System.currentTimeMillis();
         World world = Bukkit.getWorld(map);
         System.out.println("[MapManager] installing \"" + map + "\"" + (url == null ? "" : (" from \"" + map + "\"")));
@@ -28,5 +28,6 @@ public class MapManager {
         world.setAutoSave(autoSave);
         t = System.currentTimeMillis() - t;
         System.out.println("[MapManager] \"" + map + "\" installing finished. (" + String.format("%.3fs", t / 1000D) + ")");
+        return world;
     }
 }
