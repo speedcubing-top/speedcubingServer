@@ -32,7 +32,7 @@
 	    <artifactId>NameDb</artifactId>
 	    <scope>system</scope>
 	    <version>1.0.0</version>
-	    <SystemPath>${pom.basedir}/lib/NameDb.jar</systemPath>
+	    <systemPath>${pom.basedir}/lib/NameDb.jar</systemPath>
         </dependency>
     </dependencies>
     <build>
