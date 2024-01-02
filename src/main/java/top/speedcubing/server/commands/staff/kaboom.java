@@ -17,7 +17,7 @@ public class kaboom implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0) {
             String senderName = commandSender.getName();
-            displaySubtitleToAllPlayers("§lccKABOOM!", senderName ,commandSender);
+            displaySubtitleToAllPlayers("§l§cKABOOM!", senderName ,commandSender);
             applyVelocityToAllPlayers(new Vector(0, 4, 0), commandSender);
             issueLightningStrikesToAllPlayers(3, commandSender);
             commandSender.sendMessage("§l§cKABOOM!");
