@@ -4,7 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>top.speedcubing</groupId>
+    <groupId>org.example</groupId>
     <artifactId>speedcubingServer</artifactId>
     <version>1.0-SNAPSHOT</version>
 
@@ -18,22 +18,20 @@
             <artifactId>paperspigot</artifactId>
             <scope>system</scope>
             <version>1.0</version>
-	    <systemPath>${pom.basedir}/lib/paperspigot-1.8.8-R0.1-SNAPSHOT.jar</systemPath>
+            <systemPath>${basedir}\..\..\Projects\PaperSpigot-Server\target\paperspigot-1.8.8-R0.1-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>speedcubinglib</groupId>
             <artifactId>speedcubinglib</artifactId>
             <scope>system</scope>
             <version>1.0</version>
-	    <systemPath>${pom.basedir}/lib/speedcubingLib.jar
+            <systemPath>${basedir}\..\..\Projects\speedcubingLib\out\artifacts\speedcubingLib\speedcubingLib.jar
             </systemPath>
         </dependency>
         <dependency>
             <groupId>top.speedcubing</groupId>
             <artifactId>NameDb</artifactId>
-	    <version>1.0.0</version>
-	    <scope>system</scope>
-	    <systemPath>${pom.basedir}/lib/NameDb.jar</systemPath>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
     <build>
