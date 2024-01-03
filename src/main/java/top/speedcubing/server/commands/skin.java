@@ -28,7 +28,7 @@ public class skin implements CommandExecutor {
             else if (strings.length == 1)
                 target = strings[0];
             else player.sendMessage("/skin , /skin <player>");
-            if (!target.equals("")) {
+            if (!target.isEmpty()) {
                 ProfileSkin skin;
                 try {
                     skin = MojangAPI.getSkinByName(target);

@@ -106,6 +106,8 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginCommand("announce").setExecutor(new announce());
         Bukkit.getPluginCommand("kaboom").setExecutor(new kaboom());
+        Bukkit.getPluginCommand("deepfry").setExecutor(new deepfry());
+        Bukkit.getPluginCommand("freeze").setExecutor(new freeze());
         OverrideCommandManager.register(new plugins());
         TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
         CubingEventManager.registerListeners(new ServerEvent());

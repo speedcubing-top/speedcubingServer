@@ -15,7 +15,6 @@ public class fly implements CommandExecutor {
                 boolean allowFlight = player.getAllowFlight();
                 player.setAllowFlight(!allowFlight);
                 User.getUser(player).sendLangMessage(allowFlight ? GlobalString.FlyDisable : GlobalString.FlyEnable);
-                commandSender.sendMessage("Fly Toggled.");
             }
         } else commandSender.sendMessage("/fly");
         return true;

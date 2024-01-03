@@ -35,5 +35,9 @@ commands:
     usage: /limbo
   kaboom:
     usage: /kaboom
+  deepfry:
+    usage: /deepfry
+  freeze:
+    usage: /freeze
 depend:
   - speedcubingLib
