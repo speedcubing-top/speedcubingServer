@@ -30,7 +30,7 @@
         <dependency>
             <groupId>top.speedcubing</groupId>
 	    <artifactId>NameDb</artifactId>
-	    <scope>compile</scope>
+	    <scope>system</scope>
 	    <version>1.0.0</version>
 	    <systemPath>${pom.basedir}/lib/NameDb.jar</systemPath>
         </dependency>
