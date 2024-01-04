@@ -134,10 +134,10 @@ public class GlobalString {
     );
 
     public static LangMessage FlyEnable = new LangMessage(
-            "enabled", "enabled", "enabled", "enabled"
+            "§aFly is now enabled.", "§aFly is now enabled.", "§aFly is now enabled.", "§aFly is now enabled."
     );
     public static LangMessage FlyDisable = new LangMessage(
-            "disabled", "disabled", "disabled", "disabled"
+            "§cFly is now disabled.", "§cFly is now disabled.", "§cFly is now disabled.", "§cFly is now disabled."
     );
     public static LangMessage OnlyInHub = new LangMessage(
             "§cYou can only do this in lobby.",
