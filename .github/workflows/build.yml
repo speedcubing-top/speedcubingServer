@@ -19,7 +19,8 @@ jobs:
       with:
         java-version: '8'
         distribution: 'adopt'
-  
+    - name: Install dependency
+      run: mvn -B install --file /lib/NameDb/pom.xml
     - name: Build with Maven
       run: mvn -B package --file pom.xml
 
