@@ -107,6 +107,10 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("kaboom").setExecutor(new kaboom());
         Bukkit.getPluginCommand("deepfry").setExecutor(new deepfry());
         Bukkit.getPluginCommand("freeze").setExecutor(new freeze());
+        Bukkit.getPluginCommand("gms").setExecutor(new gms());
+        Bukkit.getPluginCommand("gmsp").setExecutor(new gmsp());
+        Bukkit.getPluginCommand("gma").setExecutor(new gma());
+        Bukkit.getPluginCommand("gmc").setExecutor(new gmc());
         OverrideCommandManager.register(new plugins());
         TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
         CubingEventManager.registerListeners(new ServerEvent());
