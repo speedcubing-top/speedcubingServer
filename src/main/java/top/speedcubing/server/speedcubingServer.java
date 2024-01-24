@@ -124,14 +124,14 @@ public class speedcubingServer extends JavaPlugin {
                 , "name='" + Bukkit.getServerName() + "'");
 
         //restart
-        new Timer("Cubing-Restart-Thread").schedule(new TimerTask() {
-            @Override
-            public void run() {
-                restartable = true;
-                if (Bukkit.getOnlinePlayers().isEmpty())
-                    restart();
-            }
-        }, 28800000);
+//        new Timer("Cubing-Restart-Thread").schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                restartable = true;
+//                if (Bukkit.getOnlinePlayers().isEmpty())
+//                    restart();
+//            }
+//        }, 28800000);
 
 
         if (!config.debugMode) {
