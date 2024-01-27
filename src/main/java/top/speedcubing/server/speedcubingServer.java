@@ -9,6 +9,7 @@ import top.speedcubing.lib.utils.*;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.namedb.NameDb;
 import top.speedcubing.paper.CubingPaperConfig;
+import top.speedcubing.server.authenticator.listeners.PlayerListener;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.commands.*;
 import top.speedcubing.server.commands.overrided.plugins;
@@ -34,9 +35,11 @@ public class speedcubingServer extends JavaPlugin {
 
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
+    public static speedcubingServer instance;
 
     public void onEnable() {
         NameDb.init();
+        instance = this;
         //conn
         config.reload();
         Database.init();
@@ -93,6 +96,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
         Bukkit.getPluginManager().registerEvents(new FrontListen(), this);
         Bukkit.getPluginManager().registerEvents(new BackListen(), this);
+        //Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);
         Bukkit.getPluginCommand("nick").setExecutor(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("discord").setExecutor(new discord());

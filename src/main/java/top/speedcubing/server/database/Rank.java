@@ -13,6 +13,6 @@ public class Rank {
     }
 
     public static boolean isStaff(String realRank){
-        return realRank.equals("builder") || realRank.equals("helper") || realRank.equals("admin") || realRank.equals("owner") || realRank.equals("mod");
+        return realRank.equals("builder") || realRank.equals("helper") || realRank.equals("admin") || realRank.equals("owner") || realRank.equals("mod") || realRank.equals("developer");
     }
 }
