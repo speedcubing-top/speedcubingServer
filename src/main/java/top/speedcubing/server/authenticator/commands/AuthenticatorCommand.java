@@ -120,8 +120,7 @@ public class AuthenticatorCommand implements CommandExecutor {
                     }
                     int id = Database.connection.select("id").from("playersdata").where("name='" + targetName + "'").getInt();
                     User user = User.getUser(id);
-                    Player target = user.player;
-                    AuthHandler.setTrustedSessions(target, false);
+                    AuthHandler.setTrustedSessions(user, false);
                     sender.sendMessage("§aSuccessfully reset " + realTargetName + " trusted sessions");
                 } else {
                     sender.sendMessage("§cThis command is console only.");

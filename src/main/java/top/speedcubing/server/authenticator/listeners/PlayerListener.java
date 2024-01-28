@@ -33,6 +33,7 @@ public class PlayerListener implements Listener {
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
         User user = User.getUser(p);
+        String ip = p.getAddress().getAddress().getHostAddress();
         boolean isAuthEnable = AuthHandler.isEnable(uuid);
         boolean isAuthBypass = AuthHandler.hasBypass(uuid);
         if (isAuthBypass) {
@@ -54,7 +55,7 @@ public class PlayerListener implements Listener {
                 GoogleAuthenticatorKey key = authenticator.createCredentials();
                 String keyString = key.getKey();
                 keyMap.put(uuid, keyString);
-                e.getPlayer().sendMessage("set key pls");
+                AuthHandler.sendSetKeyMessage(p);
             }
             new BukkitRunnable() {
                 @Override
@@ -78,6 +79,16 @@ public class PlayerListener implements Listener {
                     }
                 }
             }.runTaskAsynchronously(speedcubingServer.instance);
+        } else if (AuthHandler.hasTrustedSessions(uuid)) {
+            String oldIp = AuthHandler.getIp(uuid);
+            if (oldIp != null && !oldIp.isEmpty()) {
+                if (!ip.equals(oldIp)) {
+                    AuthHandler.setTrustedSessions(p,false);
+                    AuthHandler.setIp(uuid,ip);
+                }
+            } else {
+                AuthHandler.setIp(uuid,ip);
+            }
         }
     }
 

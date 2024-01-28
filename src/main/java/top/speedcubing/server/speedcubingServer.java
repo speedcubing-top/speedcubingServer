@@ -98,6 +98,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new FrontListen(), this);
         Bukkit.getPluginManager().registerEvents(new BackListen(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);
+
         Bukkit.getPluginCommand("nick").setExecutor(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("discord").setExecutor(new discord());

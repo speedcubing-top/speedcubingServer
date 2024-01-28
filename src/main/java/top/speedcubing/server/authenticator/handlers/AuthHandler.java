@@ -47,9 +47,22 @@ public class AuthHandler {
             user.dbUpdate("auth_sessions=" + 0);
         }
     }
+    public static void setTrustedSessions(User user, boolean bool) {
+        if (bool) {
+            user.dbUpdate("auth_sessions=" + 1);
+        } else {
+            user.dbUpdate("auth_sessions=" + 0);
+        }
+    }
 
     public static boolean hasTrustedSessions(UUID uuid) {
         return Database.connection.select("auth_sessions").from("playersdata").where("uuid='" + uuid + "'").getBoolean();
+    }
+    public static void setIp(UUID uuid, String ip) {
+        Database.connection.update("playersdata", "auth_ip='" + ip + "'", "uuid='" + uuid + "'");
+    }
+    public static String getIp(UUID uuid) {
+        return Database.connection.select("auth_ip").from("playersdata").where("uuid='" + uuid + "'").getString();
     }
 
     public static void sendSetKeyMessage(Player player) {
