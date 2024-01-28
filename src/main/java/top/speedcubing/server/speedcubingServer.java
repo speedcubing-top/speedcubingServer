@@ -9,6 +9,7 @@ import top.speedcubing.lib.utils.*;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.namedb.NameDb;
 import top.speedcubing.paper.CubingPaperConfig;
+import top.speedcubing.server.authenticator.commands.AuthenticatorCommand;
 import top.speedcubing.server.authenticator.listeners.PlayerListener;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.commands.*;
@@ -96,7 +97,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
         Bukkit.getPluginManager().registerEvents(new FrontListen(), this);
         Bukkit.getPluginManager().registerEvents(new BackListen(), this);
-        //Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);
         Bukkit.getPluginCommand("nick").setExecutor(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("discord").setExecutor(new discord());
@@ -115,6 +116,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("gmsp").setExecutor(new gmsp());
         Bukkit.getPluginCommand("gma").setExecutor(new gma());
         Bukkit.getPluginCommand("gmc").setExecutor(new gmc());
+        Bukkit.getPluginCommand("2fa").setExecutor(new AuthenticatorCommand());
         OverrideCommandManager.register(new plugins());
         TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
         CubingEventManager.registerListeners(new ServerEvent());

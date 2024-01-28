@@ -47,5 +47,7 @@ commands:
     usage: /gma
   gmsp:
     usage: /gmsp
+  2fa:
+    usage: /2fa
 depend:
   - speedcubingLib

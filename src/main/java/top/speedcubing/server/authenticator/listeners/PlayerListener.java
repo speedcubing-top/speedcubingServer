@@ -2,24 +2,24 @@ package top.speedcubing.server.authenticator.listeners;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.map.MapView;
 import org.bukkit.scheduler.BukkitRunnable;
+import top.speedcubing.server.authenticator.handlers.AuthHandler;
 import top.speedcubing.server.authenticator.utils.ImageRenderer;
-import top.speedcubing.server.database.Database;
 import top.speedcubing.server.player.User;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import top.speedcubing.server.speedcubingServer;
 
 import java.io.IOException;
-import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -33,33 +33,34 @@ public class PlayerListener implements Listener {
         Player p = e.getPlayer();
         UUID uuid = p.getUniqueId();
         User user = User.getUser(p);
-        boolean isAuthEnable = Database.connection.select("auth_enable").from("playersdata").where("uuid='" + uuid + "'").getBoolean();
-        boolean isAuthBypass = Database.connection.select("auth_bypass").from("playersdata").where("uuid='" + uuid + "'").getBoolean();
+        boolean isAuthEnable = AuthHandler.isEnable(uuid);
+        boolean isAuthBypass = AuthHandler.hasBypass(uuid);
         if (isAuthBypass) {
             return;
         }
-        if (forcedAuthForStaff(user,isAuthEnable)) {
+        if (forcedAuthForStaff(user, isAuthEnable)) {
             p.kickPlayer("§aForced turn on 2FA\nPlease rejoin server!");
             return;
         }
 
-        if (isAuthEnable) {
-            String authKey = Database.connection.select("auth_key").from("playersdata").where("uuid='" + uuid + "'").getString();
-            if (authKey.isEmpty()) {
-                if (keyMap.containsKey(uuid)) {
+        if (!isAuthEnable) {
+            return;
+        }
 
-                } else {
-                    GoogleAuthenticator authenticator = new GoogleAuthenticator();
-                    GoogleAuthenticatorKey key = authenticator.createCredentials();
-                    String keyString = key.getKey();
-                    keyMap.put(uuid,keyString);
-                }
+        String authKey = AuthHandler.getKey(uuid);
+        if (authKey == null || authKey.isEmpty()) {
+            if (!keyMap.containsKey(uuid)) {
+                GoogleAuthenticator authenticator = new GoogleAuthenticator();
+                GoogleAuthenticatorKey key = authenticator.createCredentials();
+                String keyString = key.getKey();
+                keyMap.put(uuid, keyString);
+                e.getPlayer().sendMessage("set key pls");
             }
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    String url = replaceLabel(qrCodeURL,"Speedcubing:" + user.bGetName());
-                    String finallyUrl = replaceKey(url,keyMap.get(uuid));
+                    String url = replaceLabel(qrCodeURL, "Speedcubing:" + user.bGetName());
+                    String finallyUrl = replaceKey(url, keyMap.get(uuid));
                     MapView view = Bukkit.createMap(p.getWorld());
                     view.getRenderers().forEach(view::removeRenderer);
                     try {
@@ -70,12 +71,86 @@ public class PlayerListener implements Listener {
                         mapMeta.setDisplayName(ChatColor.GOLD + "QR Code");
                         mapItem.setItemMeta(mapMeta);
                         p.getInventory().addItem(mapItem);
+                        p.sendMessage("Your QRCode URL: " + finallyUrl);
                     } catch (IOException ee) {
                         ee.printStackTrace();
                         p.sendMessage(ChatColor.RED + "An error occurred! Is the URL correct?");
                     }
                 }
             }.runTaskAsynchronously(speedcubingServer.instance);
+        }
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent e) {
+        if (keyMap.containsKey(e.getPlayer().getUniqueId())) {
+            keyMap.remove(e.getPlayer().getUniqueId());
+        }
+    }
+
+    @EventHandler
+    public void onInteraction(PlayerInteractEvent e) { //make enabl;e check
+        if (AuthHandler.isEnable(e.getPlayer().getUniqueId())) {
+            if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
+                e.setCancelled(true);
+                if (AuthHandler.hasKey(e.getPlayer().getUniqueId())) {
+                    AuthHandler.sendEnterCodeMessage(e.getPlayer());
+                } else {
+                    AuthHandler.sendSetKeyMessage(e.getPlayer());
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onCmdExecute(PlayerCommandPreprocessEvent e) {
+        if (AuthHandler.isEnable(e.getPlayer().getUniqueId())) {
+            if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
+                if (!e.getMessage().contains("2fa")) {
+                    e.setCancelled(true);
+                    if (AuthHandler.hasKey(e.getPlayer().getUniqueId())) {
+                        AuthHandler.sendEnterCodeMessage(e.getPlayer());
+                    } else {
+                        AuthHandler.sendSetKeyMessage(e.getPlayer());
+                    }
+                }
+            }
+        }
+    }
+    @EventHandler
+    public void onProxyCommand(AsyncPlayerChatEvent e) {
+        if (AuthHandler.isEnable(e.getPlayer().getUniqueId())) {
+            if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
+                String cmd = e.getMessage();
+                if (cmd.startsWith("/")) {
+                    if (cmd.contains("2fa") || cmd.contains("l")) {
+                        e.setCancelled(true);
+                        if (AuthHandler.hasKey(e.getPlayer().getUniqueId())) {
+                            AuthHandler.sendEnterCodeMessage(e.getPlayer());
+                        } else {
+                            AuthHandler.sendSetKeyMessage(e.getPlayer());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
+    public void onMove(PlayerMoveEvent e) {
+        if (AuthHandler.isEnable(e.getPlayer().getUniqueId())) {
+            if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
+                Location oldLoc = e.getFrom();
+                Location newLoc = e.getTo();
+                if (newLoc.getX() != oldLoc.getX() || newLoc.getZ() != oldLoc.getZ()) {
+                    e.getPlayer().teleport(oldLoc);
+                    if (AuthHandler.hasKey(e.getPlayer().getUniqueId())) {
+                        AuthHandler.sendEnterCodeMessage(e.getPlayer());
+                    } else {
+                        AuthHandler.sendSetKeyMessage(e.getPlayer());
+                    }
+                }
+            }
         }
     }
 
@@ -86,6 +161,7 @@ public class PlayerListener implements Listener {
     public String replaceKey(String qrCodeURL, String key) {
         return qrCodeURL.replace("%%key%%", key);
     }
+
     private boolean forcedAuthForStaff(User user, boolean auth) {
         if (user.isStaff) {
             if (!auth) {
