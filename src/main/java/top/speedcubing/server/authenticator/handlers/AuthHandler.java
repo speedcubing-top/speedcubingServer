@@ -70,6 +70,6 @@ public class AuthHandler {
     }
 
     public static void sendEnterCodeMessage(Player player) {
-        player.sendMessage("§cAuthenticate yourself with `/2fa <code>`");
+        player.sendMessage("§cPlease authenticate using `/2fa <code>`");
     }
 }
