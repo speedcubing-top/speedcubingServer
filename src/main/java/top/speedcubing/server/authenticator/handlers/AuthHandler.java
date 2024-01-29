@@ -66,12 +66,10 @@ public class AuthHandler {
     }
 
     public static void sendSetKeyMessage(Player player) {
-        //TODO: modify this message
-        player.sendMessage("set key pls");
+        player.sendMessage("§cPlease set up 2FA with `/2fa setup`");
     }
 
     public static void sendEnterCodeMessage(Player player) {
-        //TODO: modify this message
-        player.sendMessage("enter code pls");
+        player.sendMessage("§cAuthenticate yourself with `/2fa <code>`");
     }
 }

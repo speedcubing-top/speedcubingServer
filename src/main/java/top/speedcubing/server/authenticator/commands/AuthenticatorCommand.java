@@ -70,8 +70,7 @@ public class AuthenticatorCommand implements CommandExecutor {
                     AuthHandler.setTrustedSessions(player, false);
                     player.sendMessage("§aSuccessfully reset your trusted sessions");
                 } else {
-                    //TODO: modify this message
-                    player.sendMessage("§cYou don't have authenticated");
+                    player.sendMessage("§cYou don't have a trusted session");
                 }
             }
         } else if (args.length == 2) {
@@ -86,36 +85,30 @@ public class AuthenticatorCommand implements CommandExecutor {
                                 if (key != null && new GoogleAuthenticator().authorize(key, Integer.parseInt(code))) {
                                     AuthHandler.setKey(player.getUniqueId(), key);
                                     AuthHandler.setTrustedSessions(player, true);
-                                    player.sendMessage("§aYou have successfully setup two-factor authentication");
+                                    player.sendMessage("§a2FA Successfully set up.");
                                     removeMap(player);
                                     PlayerListener.keyMap.remove(player.getUniqueId());
                                 } else {
-                                    //TODO: modify this message
-                                    player.sendMessage("§cThe key you entered was not valid, please try again");
+                                    player.sendMessage("§cInvalid key entered.");
                                 }
                             } else {
-                                //TODO: modify this message
                                 player.sendMessage("§cAn error occurred. Please contact staff");
                             }
                         } else {
-                            //TODO: modify this message
                             player.sendMessage("§cInvalid key entered");
                         }
                     } else {
-                        //TODO: modify this message
-                        player.sendMessage("§cYou already has key, please use /2fa <code>");
+                        player.sendMessage("§c2FA is already set up, `/2fa <code>` to authenticate yourself");
                     }
                 } else {
-                    //TODO: modify this message
-                    player.sendMessage("§c2FA is disable");
+                    player.sendMessage("§c2FA is disabled");
                 }
             } else if (args[0].equalsIgnoreCase("reset")) {
                 if (!(sender instanceof Player)) {
                     String targetName = args[1];
                     String realTargetName = Database.connection.select("name").from("playersdata").where("name='" + targetName + "'").getString();
                     if (realTargetName == null) {
-                        //TODO: modify this message
-                        sender.sendMessage("player not found");
+                        sender.sendMessage("§cThe player you entered does not exist.");
                         return true;
                     }
                     int id = Database.connection.select("id").from("playersdata").where("name='" + targetName + "'").getInt();
