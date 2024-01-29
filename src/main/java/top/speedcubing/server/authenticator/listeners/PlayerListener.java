@@ -26,6 +26,7 @@ import java.util.UUID;
 
 public class PlayerListener implements Listener {
     public static Map<UUID, String> keyMap = new HashMap<>();
+    private Map<UUID,Boolean> twofaStatus = new HashMap<>();
     private String qrCodeURL = "https://www.google.com/chart?chs=128x128&cht=qr&chl=otpauth://totp/%%label%%?secret=%%key%%";
 
     @EventHandler
@@ -35,6 +36,7 @@ public class PlayerListener implements Listener {
         User user = User.getUser(p);
         String ip = p.getAddress().getAddress().getHostAddress();
         boolean isAuthEnable = AuthHandler.isEnable(uuid);
+        twofaStatus.put(uuid,isAuthEnable);
         boolean isAuthBypass = AuthHandler.hasBypass(uuid);
         if (isAuthBypass) {
             return;
@@ -72,7 +74,7 @@ public class PlayerListener implements Listener {
                         mapMeta.setDisplayName(ChatColor.GOLD + "QR Code");
                         mapItem.setItemMeta(mapMeta);
                         p.getInventory().addItem(mapItem);
-                        p.sendMessage("Your QRCode URL: " + finallyUrl);
+                        p.sendMessage("§6Your QRCode URL: " + finallyUrl);
                     } catch (IOException ee) {
                         ee.printStackTrace();
                         p.sendMessage(ChatColor.RED + "An error occurred! Is the URL correct?");
@@ -97,27 +99,16 @@ public class PlayerListener implements Listener {
         if (keyMap.containsKey(e.getPlayer().getUniqueId())) {
             keyMap.remove(e.getPlayer().getUniqueId());
         }
-    }
-
-    @EventHandler
-    public void onInteraction(PlayerInteractEvent e) { //make enabl;e check
-        if (AuthHandler.isEnable(e.getPlayer().getUniqueId())) {
-            if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
-                e.setCancelled(true);
-                if (AuthHandler.hasKey(e.getPlayer().getUniqueId())) {
-                    AuthHandler.sendEnterCodeMessage(e.getPlayer());
-                } else {
-                    AuthHandler.sendSetKeyMessage(e.getPlayer());
-                }
-            }
+        if (twofaStatus.containsKey(e.getPlayer().getUniqueId())) {
+            twofaStatus.remove(e.getPlayer().getUniqueId());
         }
     }
 
     @EventHandler
-    public void onCmdExecute(PlayerCommandPreprocessEvent e) {
-        if (AuthHandler.isEnable(e.getPlayer().getUniqueId())) {
-            if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
-                if (!e.getMessage().contains("2fa")) {
+    public void onInteraction(PlayerInteractEvent e) { //make enabl;e check
+        if (twofaStatus.containsKey(e.getPlayer().getUniqueId())) {
+            if (twofaStatus.get(e.getPlayer().getUniqueId())) {
+                if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
                     e.setCancelled(true);
                     if (AuthHandler.hasKey(e.getPlayer().getUniqueId())) {
                         AuthHandler.sendEnterCodeMessage(e.getPlayer());
@@ -128,13 +119,13 @@ public class PlayerListener implements Listener {
             }
         }
     }
+
     @EventHandler
-    public void onProxyCommand(AsyncPlayerChatEvent e) {
-        if (AuthHandler.isEnable(e.getPlayer().getUniqueId())) {
-            if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
-                String cmd = e.getMessage();
-                if (cmd.startsWith("/")) {
-                    if (cmd.contains("2fa") || cmd.contains("l")) {
+    public void onCmdExecute(PlayerCommandPreprocessEvent e) {
+        if (twofaStatus.containsKey(e.getPlayer().getUniqueId())) {
+            if (twofaStatus.get(e.getPlayer().getUniqueId())) {
+                if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
+                    if (!e.getMessage().contains("2fa")) {
                         e.setCancelled(true);
                         if (AuthHandler.hasKey(e.getPlayer().getUniqueId())) {
                             AuthHandler.sendEnterCodeMessage(e.getPlayer());
@@ -146,19 +137,41 @@ public class PlayerListener implements Listener {
             }
         }
     }
+    @EventHandler
+    public void onProxyCommand(AsyncPlayerChatEvent e) {
+        if (twofaStatus.containsKey(e.getPlayer().getUniqueId())) {
+            if (twofaStatus.get(e.getPlayer().getUniqueId())) {
+                if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
+                    String cmd = e.getMessage();
+                    if (cmd.startsWith("/")) {
+                        if (cmd.contains("2fa") || cmd.contains("l")) {
+                            e.setCancelled(true);
+                            if (AuthHandler.hasKey(e.getPlayer().getUniqueId())) {
+                                AuthHandler.sendEnterCodeMessage(e.getPlayer());
+                            } else {
+                                AuthHandler.sendSetKeyMessage(e.getPlayer());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
-        if (AuthHandler.isEnable(e.getPlayer().getUniqueId())) {
-            if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
-                Location oldLoc = e.getFrom();
-                Location newLoc = e.getTo();
-                if (newLoc.getX() != oldLoc.getX() || newLoc.getZ() != oldLoc.getZ()) {
-                    e.getPlayer().teleport(oldLoc);
-                    if (AuthHandler.hasKey(e.getPlayer().getUniqueId())) {
-                        AuthHandler.sendEnterCodeMessage(e.getPlayer());
-                    } else {
-                        AuthHandler.sendSetKeyMessage(e.getPlayer());
+        if (twofaStatus.containsKey(e.getPlayer().getUniqueId())) {
+            if (twofaStatus.get(e.getPlayer().getUniqueId())) {
+                if (!AuthHandler.hasTrustedSessions(e.getPlayer().getUniqueId())) {
+                    Location oldLoc = e.getFrom();
+                    Location newLoc = e.getTo();
+                    if (newLoc.getX() != oldLoc.getX() || newLoc.getZ() != oldLoc.getZ()) {
+                        e.getPlayer().teleport(oldLoc);
+                        if (AuthHandler.hasKey(e.getPlayer().getUniqueId())) {
+                            AuthHandler.sendEnterCodeMessage(e.getPlayer());
+                        } else {
+                            AuthHandler.sendSetKeyMessage(e.getPlayer());
+                        }
                     }
                 }
             }
