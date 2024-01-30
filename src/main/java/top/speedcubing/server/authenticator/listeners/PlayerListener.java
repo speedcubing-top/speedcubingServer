@@ -318,8 +318,11 @@ public class PlayerListener implements Listener {
     private boolean forcedAuthForStaff(User user, UUID uuid, boolean auth) {
         if (user.isStaff) {
             if (!auth) {
-                AuthHandler.setEnable(uuid, true);
-                //user.dbUpdate("auth_enable=" + 1);
+                user.dbUpdate("auth_enable=" + 1);
+                AuthStatusChangeEvent authStatusChangeEvent = new AuthStatusChangeEvent(uuid, auth);
+                Bukkit.getPluginManager().callEvent(authStatusChangeEvent);
+                //I don't fucking know why its broken
+                //AuthHandler.setEnable(uuid,auth);
                 return true;
             }
         }
