@@ -5,7 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.server.authenticator.handlers.AuthHandler;
@@ -32,14 +31,23 @@ public class AuthenticatorCommand implements CommandExecutor {
                 return true;
             }
             Player player = (Player) sender;
+            UUID uuid = player.getUniqueId();
             String code = args[0];
             if (isInt(code)) {
                 if (code.length() == 6) {
-                    if (AuthHandler.hasTrustedSessions(player.getUniqueId())) {
+                    if (!PlayerListener.sessionStatusMap.containsKey(uuid)) {
+                        AuthHandler.sendErrorMessage(player);
+                        return true;
+                    }
+                    if (PlayerListener.sessionStatusMap.get(uuid)) {
                         player.sendMessage("§aYou have successfully authenticated");
                         return true;
                     }
-                    if (AuthHandler.hasKey(player.getUniqueId())) {
+                    if (!PlayerListener.hasKeyMap.containsKey(uuid)) {
+                        AuthHandler.sendErrorMessage(player);
+                        return true;
+                    }
+                    if (PlayerListener.hasKeyMap.get(uuid)) {
                         String key = AuthHandler.getKey(player.getUniqueId());
                         if (key != null && new GoogleAuthenticator().authorize(key, Integer.parseInt(code))) {
                             AuthHandler.setTrustedSessions(player, true);
@@ -76,18 +84,27 @@ public class AuthenticatorCommand implements CommandExecutor {
         } else if (args.length == 2) {
             if (args[0].equalsIgnoreCase("setup")) {
                 Player player = (Player) sender;
-                if (AuthHandler.isEnable(player.getUniqueId())) {
-                    if (!AuthHandler.hasKey(player.getUniqueId())) {
+                UUID uuid = player.getUniqueId();
+                if (!PlayerListener.twofaStatusMap.containsKey(uuid)) {
+                    AuthHandler.sendErrorMessage(player);
+                    return true;
+                }
+                if (PlayerListener.twofaStatusMap.get(uuid)) {
+                    if (!PlayerListener.hasKeyMap.containsKey(uuid)) {
+                        AuthHandler.sendErrorMessage(player);
+                        return true;
+                    }
+                    if (!PlayerListener.hasKeyMap.get(uuid)) {
                         String code = args[1];
                         if (code.length() == 6 && isInt(code)) {
-                            if (PlayerListener.keyMap.containsKey(player.getUniqueId())) {
-                                String key = PlayerListener.keyMap.get(player.getUniqueId());
+                            if (PlayerListener.keyMapForNoKey.containsKey(player.getUniqueId())) {
+                                String key = PlayerListener.keyMapForNoKey.get(player.getUniqueId());
                                 if (key != null && new GoogleAuthenticator().authorize(key, Integer.parseInt(code))) {
                                     AuthHandler.setKey(player.getUniqueId(), key);
                                     AuthHandler.setTrustedSessions(player, true);
                                     player.sendMessage("§a2FA Successfully set up.");
                                     removeMap(player);
-                                    PlayerListener.keyMap.remove(player.getUniqueId());
+                                    PlayerListener.keyMapForNoKey.remove(player.getUniqueId());
                                 } else {
                                     player.sendMessage("§cInvalid key entered.");
                                 }

@@ -1,6 +1,11 @@
 package top.speedcubing.server.authenticator.handlers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import top.speedcubing.server.authenticator.events.AuthKeyChangeEvent;
+import top.speedcubing.server.authenticator.events.AuthSessionChangeEvent;
+import top.speedcubing.server.authenticator.events.AuthStatusChangeEvent;
+import top.speedcubing.server.authenticator.listeners.PlayerListener;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.player.User;
 
@@ -12,6 +17,8 @@ public class AuthHandler {
     }
 
     public static void setEnable(UUID uuid, boolean bool) {
+        AuthStatusChangeEvent authStatusChangeEvent = new AuthStatusChangeEvent(uuid, bool);
+        Bukkit.getPluginManager().callEvent(authStatusChangeEvent);
         if (bool) {
             Database.connection.update("playersdata", "auth_enable='" + 1 + "'", "uuid='" + uuid + "'");
         } else {
@@ -37,17 +44,24 @@ public class AuthHandler {
 
     public static void setKey(UUID uuid, String key) {
         Database.connection.update("playersdata", "auth_key='" + key + "'", "uuid='" + uuid + "'");
+        AuthKeyChangeEvent authKeyChangeEvent = new AuthKeyChangeEvent(uuid, key);
+        Bukkit.getPluginManager().callEvent(authKeyChangeEvent);
     }
 
     public static void setTrustedSessions(Player player, boolean bool) {
         User user = User.getUser(player);
+        AuthSessionChangeEvent authSessionChangeEvent = new AuthSessionChangeEvent(player, bool);
+        Bukkit.getPluginManager().callEvent(authSessionChangeEvent);
         if (bool) {
             user.dbUpdate("auth_sessions=" + 1);
         } else {
             user.dbUpdate("auth_sessions=" + 0);
         }
     }
+
     public static void setTrustedSessions(User user, boolean bool) {
+        AuthSessionChangeEvent authSessionChangeEvent = new AuthSessionChangeEvent(user, bool);
+        Bukkit.getPluginManager().callEvent(authSessionChangeEvent);
         if (bool) {
             user.dbUpdate("auth_sessions=" + 1);
         } else {
@@ -58,18 +72,23 @@ public class AuthHandler {
     public static boolean hasTrustedSessions(UUID uuid) {
         return Database.connection.select("auth_sessions").from("playersdata").where("uuid='" + uuid + "'").getBoolean();
     }
+
     public static void setIp(UUID uuid, String ip) {
         Database.connection.update("playersdata", "auth_ip='" + ip + "'", "uuid='" + uuid + "'");
     }
+
     public static String getIp(UUID uuid) {
         return Database.connection.select("auth_ip").from("playersdata").where("uuid='" + uuid + "'").getString();
     }
 
     public static void sendSetKeyMessage(Player player) {
-        player.sendMessage("§cPlease set up 2FA with `/2fa setup`");
+        player.sendMessage("§cPlease set up 2FA with `/2fa setup <code>`");
     }
 
     public static void sendEnterCodeMessage(Player player) {
         player.sendMessage("§cPlease authenticate using `/2fa <code>`");
+    }
+    public static void sendErrorMessage(Player player) {
+        player.sendMessage("§cAn error occurred");
     }
 }
