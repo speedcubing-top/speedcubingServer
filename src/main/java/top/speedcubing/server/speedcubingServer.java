@@ -37,6 +37,33 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
     public static speedcubingServer instance;
+    private void registerCommands() {
+        Bukkit.getPluginCommand("nick").setExecutor(new nick());
+        Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
+        Bukkit.getPluginCommand("discord").setExecutor(new discord());
+        Bukkit.getPluginCommand("skin").setExecutor(new skin());
+        Bukkit.getPluginCommand("hub").setExecutor(new hub());
+        Bukkit.getPluginCommand("fly").setExecutor(new fly());
+        Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
+        Bukkit.getPluginCommand("limbo").setExecutor(new limbo());
+        Bukkit.getPluginCommand("heal").setExecutor(new heal());
+        Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
+        Bukkit.getPluginCommand("announce").setExecutor(new announce());
+        Bukkit.getPluginCommand("kaboom").setExecutor(new kaboom());
+        Bukkit.getPluginCommand("deepfry").setExecutor(new deepfry());
+        Bukkit.getPluginCommand("freeze").setExecutor(new freeze());
+        Bukkit.getPluginCommand("gms").setExecutor(new gms());
+        Bukkit.getPluginCommand("gmsp").setExecutor(new gmsp());
+        Bukkit.getPluginCommand("gma").setExecutor(new gma());
+        Bukkit.getPluginCommand("gmc").setExecutor(new gmc());
+        Bukkit.getPluginCommand("2fa").setExecutor(new AuthenticatorCommand());
+    }
+    private void registerListeners() {
+        Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
+        Bukkit.getPluginManager().registerEvents(new FrontListen(), this);
+        Bukkit.getPluginManager().registerEvents(new BackListen(), this);
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);
+    }
 
     public void onEnable() {
         NameDb.init();
@@ -94,30 +121,9 @@ public class speedcubingServer extends JavaPlugin {
                 User.getUser(player).dbUpdate("forgemod='" + new String(bytes, StandardCharsets.UTF_8) + "'");
             }
         });
-        Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
-        Bukkit.getPluginManager().registerEvents(new FrontListen(), this);
-        Bukkit.getPluginManager().registerEvents(new BackListen(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);
 
-        Bukkit.getPluginCommand("nick").setExecutor(new nick());
-        Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
-        Bukkit.getPluginCommand("discord").setExecutor(new discord());
-        Bukkit.getPluginCommand("skin").setExecutor(new skin());
-        Bukkit.getPluginCommand("hub").setExecutor(new hub());
-        Bukkit.getPluginCommand("fly").setExecutor(new fly());
-        Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
-        Bukkit.getPluginCommand("limbo").setExecutor(new limbo());
-        Bukkit.getPluginCommand("heal").setExecutor(new heal());
-        Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
-        Bukkit.getPluginCommand("announce").setExecutor(new announce());
-        Bukkit.getPluginCommand("kaboom").setExecutor(new kaboom());
-        Bukkit.getPluginCommand("deepfry").setExecutor(new deepfry());
-        Bukkit.getPluginCommand("freeze").setExecutor(new freeze());
-        Bukkit.getPluginCommand("gms").setExecutor(new gms());
-        Bukkit.getPluginCommand("gmsp").setExecutor(new gmsp());
-        Bukkit.getPluginCommand("gma").setExecutor(new gma());
-        Bukkit.getPluginCommand("gmc").setExecutor(new gmc());
-        Bukkit.getPluginCommand("2fa").setExecutor(new AuthenticatorCommand());
+        registerListeners();
+        registerCommands();
         OverrideCommandManager.register(new plugins());
         TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
         CubingEventManager.registerListeners(new ServerEvent());

@@ -1,6 +1,7 @@
 package top.speedcubing.server.authenticator.commands;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -22,6 +23,12 @@ public class AuthenticatorCommand implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
+        if (Bukkit.getServerName().equalsIgnoreCase("limbo")) {
+            sender.sendMessage("§c2FA is disabled at here");
+            Player player = (Player) sender;
+            player.performCommand("l");
+            return true;
+        }
         if (args.length == 0) {
             usage(sender);
             return true;

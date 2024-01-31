@@ -35,6 +35,7 @@ public class PlayerListener implements Listener {
     public static Map<UUID, Boolean> sessionStatusMap = new HashMap<>();
     public static Map<UUID, Boolean> hasKeyMap = new HashMap<>();
     public static Map<UUID, String> keyMapForHasKey = new HashMap<>();
+    public static Map<UUID, Boolean> hasBypassMap = new HashMap<>();
     private final String qrCodeURL = "https://www.google.com/chart?chs=128x128&cht=qr&chl=otpauth://totp/%%label%%?secret=%%key%%";
 
     @EventHandler
@@ -46,6 +47,7 @@ public class PlayerListener implements Listener {
         boolean isAuthEnable = AuthHandler.isEnable(uuid);
         boolean hasSessions = AuthHandler.hasTrustedSessions(uuid);
         boolean isAuthBypass = AuthHandler.hasBypass(uuid);
+        hasBypassMap.put(uuid,isAuthBypass);
         boolean hasKey = AuthHandler.hasKey(uuid);
         hasKeyMap.put(uuid, hasKey);
         twofaStatusMap.put(uuid, isAuthEnable);
@@ -59,6 +61,9 @@ public class PlayerListener implements Listener {
         }
 
         if (!isAuthEnable) {
+            return;
+        }
+        if (Bukkit.getServerName().equalsIgnoreCase("limbo")) {
             return;
         }
         if (!hasKeyMap.containsKey(uuid)) {
@@ -111,6 +116,9 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
+        if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
+            hasBypassMap.remove(e.getPlayer().getUniqueId());
+        }
         if (keyMapForNoKey.containsKey(e.getPlayer().getUniqueId())) {
             keyMapForNoKey.remove(e.getPlayer().getUniqueId());
         }
@@ -131,6 +139,11 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onInteraction(PlayerInteractEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
+        if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
+            if (hasBypassMap.get(e.getPlayer().getUniqueId())) {
+                return;
+            }
+        }
         if (!twofaStatusMap.containsKey(uuid)) {
             return;
         }
@@ -157,6 +170,11 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onCmdExecute(PlayerCommandPreprocessEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
+        if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
+            if (hasBypassMap.get(e.getPlayer().getUniqueId())) {
+                return;
+            }
+        }
         if (!twofaStatusMap.containsKey(uuid)) {
             return;
         }
@@ -185,6 +203,11 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onProxyCommand(AsyncPlayerChatEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
+        if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
+            if (hasBypassMap.get(e.getPlayer().getUniqueId())) {
+                return;
+            }
+        }
         if (!twofaStatusMap.containsKey(uuid)) {
             return;
         }
@@ -215,6 +238,11 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
+        if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
+            if (hasBypassMap.get(e.getPlayer().getUniqueId())) {
+                return;
+            }
+        }
         InventoryType inventoryType = e.getInventory().getType();
         if (inventoryType == InventoryType.CHEST) {
             if (!twofaStatusMap.containsKey(uuid)) {
@@ -244,6 +272,11 @@ public class PlayerListener implements Listener {
     @EventHandler
     public void onMove(PlayerMoveEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
+        if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
+            if (hasBypassMap.get(e.getPlayer().getUniqueId())) {
+                return;
+            }
+        }
         if (!twofaStatusMap.containsKey(uuid)) {
             return;
         }
