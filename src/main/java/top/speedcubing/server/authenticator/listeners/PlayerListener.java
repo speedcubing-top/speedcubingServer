@@ -27,6 +27,7 @@ import top.speedcubing.server.speedcubingServer;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 public class PlayerListener implements Listener {
@@ -59,7 +60,6 @@ public class PlayerListener implements Listener {
             p.kickPlayer("§aForced turn on 2FA\nPlease rejoin server!");
             return;
         }
-
         if (!isAuthEnable) {
             return;
         }
@@ -289,7 +289,6 @@ public class PlayerListener implements Listener {
         if (sessionStatusMap.get(uuid)) {
             return;
         }
-
         Location oldLoc = e.getFrom();
         Location newLoc = e.getTo();
         if (newLoc.getX() != oldLoc.getX() || newLoc.getZ() != oldLoc.getZ()) {

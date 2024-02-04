@@ -49,5 +49,8 @@ commands:
     usage: /gmsp
   2fa:
     usage: /2fa
+  image:
+    aliases: [ i ]
+    usage: /image
 depend:
   - speedcubingLib
