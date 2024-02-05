@@ -48,7 +48,7 @@ public class PlayerListener implements Listener {
         boolean isAuthEnable = AuthHandler.isEnable(uuid);
         boolean hasSessions = AuthHandler.hasTrustedSessions(uuid);
         boolean isAuthBypass = AuthHandler.hasBypass(uuid);
-        hasBypassMap.put(uuid,isAuthBypass);
+        hasBypassMap.put(uuid, isAuthBypass);
         boolean hasKey = AuthHandler.hasKey(uuid);
         hasKeyMap.put(uuid, hasKey);
         twofaStatusMap.put(uuid, isAuthEnable);
@@ -101,17 +101,17 @@ public class PlayerListener implements Listener {
                     }
                 }
             }.runTaskAsynchronously(speedcubingServer.instance);
-        } else if (AuthHandler.hasTrustedSessions(uuid)) {
-            String oldIp = AuthHandler.getIp(uuid);
-            if (oldIp != null && !oldIp.isEmpty()) {
-                if (!ip.equals(oldIp)) {
-                    AuthHandler.setTrustedSessions(p, false);
-                    AuthHandler.setIp(uuid, ip);
-                }
-            } else {
+        }
+        String oldIp = AuthHandler.getIp(uuid);
+        if (oldIp != null && !oldIp.isEmpty()) {
+            if (!ip.equals(oldIp)) {
+                AuthHandler.setTrustedSessions(p, false);
                 AuthHandler.setIp(uuid, ip);
             }
+        } else {
+            AuthHandler.setIp(uuid, ip);
         }
+
     }
 
     @EventHandler
@@ -235,6 +235,7 @@ public class PlayerListener implements Listener {
             }
         }
     }
+
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
