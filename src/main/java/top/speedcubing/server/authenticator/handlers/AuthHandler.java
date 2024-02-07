@@ -88,6 +88,7 @@ public class AuthHandler {
     public static void sendEnterCodeMessage(Player player) {
         player.sendMessage("§cPlease authenticate using `/2fa <code>`");
     }
+
     public static void sendErrorMessage(Player player) {
         player.sendMessage("§cAn error occurred");
     }

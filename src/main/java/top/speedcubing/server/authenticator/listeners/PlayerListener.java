@@ -53,22 +53,18 @@ public class PlayerListener implements Listener {
         hasKeyMap.put(uuid, hasKey);
         twofaStatusMap.put(uuid, isAuthEnable);
         sessionStatusMap.put(uuid, hasSessions);
-        if (isAuthBypass) {
-            return;
-        }
+        if (isAuthBypass) return;
+
         if (forcedAuthForStaff(user, uuid, isAuthEnable)) {
             p.kickPlayer("§aForced turn on 2FA\nPlease rejoin server!");
             return;
         }
-        if (!isAuthEnable) {
-            return;
-        }
-        if (Bukkit.getServerName().equalsIgnoreCase("limbo")) {
-            return;
-        }
-        if (!hasKeyMap.containsKey(uuid)) {
-            return;
-        }
+        if (!isAuthEnable) return;
+
+        if (Bukkit.getServerName().equalsIgnoreCase("limbo")) return;
+
+        if (!hasKeyMap.containsKey(uuid)) return;
+
         if (!hasKeyMap.get(uuid)) {
             if (!keyMapForNoKey.containsKey(uuid)) {
                 GoogleAuthenticator authenticator = new GoogleAuthenticator();
@@ -111,55 +107,36 @@ public class PlayerListener implements Listener {
         } else {
             AuthHandler.setIp(uuid, ip);
         }
-
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
-            hasBypassMap.remove(e.getPlayer().getUniqueId());
-        }
-        if (keyMapForNoKey.containsKey(e.getPlayer().getUniqueId())) {
-            keyMapForNoKey.remove(e.getPlayer().getUniqueId());
-        }
-        if (twofaStatusMap.containsKey(e.getPlayer().getUniqueId())) {
-            twofaStatusMap.remove(e.getPlayer().getUniqueId());
-        }
-        if (sessionStatusMap.containsKey(e.getPlayer().getUniqueId())) {
-            sessionStatusMap.remove(e.getPlayer().getUniqueId());
-        }
-        if (hasKeyMap.containsKey(e.getPlayer().getUniqueId())) {
-            hasKeyMap.remove(e.getPlayer().getUniqueId());
-        }
-        if (keyMapForHasKey.containsKey(e.getPlayer().getUniqueId())) {
-            keyMapForHasKey.remove(e.getPlayer().getUniqueId());
-        }
+        hasBypassMap.remove(e.getPlayer().getUniqueId());
+        keyMapForNoKey.remove(e.getPlayer().getUniqueId());
+        twofaStatusMap.remove(e.getPlayer().getUniqueId());
+        sessionStatusMap.remove(e.getPlayer().getUniqueId());
+        hasKeyMap.remove(e.getPlayer().getUniqueId());
+        keyMapForHasKey.remove(e.getPlayer().getUniqueId());
     }
 
     @EventHandler
     public void onInteraction(PlayerInteractEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
         if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
-            if (hasBypassMap.get(e.getPlayer().getUniqueId())) {
-                return;
-            }
+            if (hasBypassMap.get(e.getPlayer().getUniqueId())) return;
         }
-        if (!twofaStatusMap.containsKey(uuid)) {
-            return;
-        }
-        if (!twofaStatusMap.get(uuid)) {
-            return;
-        }
-        if (!sessionStatusMap.containsKey(uuid)) {
-            return;
-        }
-        if (sessionStatusMap.get(uuid)) {
-            return;
-        }
+
+        if (!twofaStatusMap.containsKey(uuid)) return;
+
+        if (!twofaStatusMap.get(uuid)) return;
+
+        if (!sessionStatusMap.containsKey(uuid)) return;
+
+        if (sessionStatusMap.get(uuid)) return;
+
         e.setCancelled(true);
-        if (!hasKeyMap.containsKey(uuid)) {
-            return;
-        }
+        if (!hasKeyMap.containsKey(uuid)) return;
+
         if (hasKeyMap.get(uuid)) {
             AuthHandler.sendEnterCodeMessage(e.getPlayer());
         } else {
@@ -171,22 +148,17 @@ public class PlayerListener implements Listener {
     public void onCmdExecute(PlayerCommandPreprocessEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
         if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
-            if (hasBypassMap.get(e.getPlayer().getUniqueId())) {
-                return;
-            }
+            if (hasBypassMap.get(e.getPlayer().getUniqueId())) return;
         }
-        if (!twofaStatusMap.containsKey(uuid)) {
-            return;
-        }
-        if (!twofaStatusMap.get(uuid)) {
-            return;
-        }
-        if (!sessionStatusMap.containsKey(uuid)) {
-            return;
-        }
-        if (sessionStatusMap.get(uuid)) {
-            return;
-        }
+
+        if (!twofaStatusMap.containsKey(uuid)) return;
+
+        if (!twofaStatusMap.get(uuid)) return;
+
+        if (!sessionStatusMap.containsKey(uuid)) return;
+
+        if (sessionStatusMap.get(uuid)) return;
+
         if (!e.getMessage().contains("2fa")) {
             e.setCancelled(true);
             if (!hasKeyMap.containsKey(uuid)) {
@@ -200,67 +172,26 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onProxyCommand(AsyncPlayerChatEvent e) {
-        UUID uuid = e.getPlayer().getUniqueId();
-        if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
-            if (hasBypassMap.get(e.getPlayer().getUniqueId())) {
-                return;
-            }
-        }
-        if (!twofaStatusMap.containsKey(uuid)) {
-            return;
-        }
-        if (!twofaStatusMap.get(uuid)) {
-            return;
-        }
-        if (!sessionStatusMap.containsKey(uuid)) {
-            return;
-        }
-        if (sessionStatusMap.get(uuid)) {
-            return;
-        }
-        String cmd = e.getMessage();
-        if (cmd.startsWith("/")) {
-            if (cmd.contains("2fa") || cmd.contains("l")) {
-                e.setCancelled(true);
-                if (!hasKeyMap.containsKey(uuid)) {
-                    return;
-                }
-                if (hasKeyMap.get(uuid)) {
-                    AuthHandler.sendEnterCodeMessage(e.getPlayer());
-                } else {
-                    AuthHandler.sendSetKeyMessage(e.getPlayer());
-                }
-            }
-        }
-    }
 
     @EventHandler
     public void onInventoryOpen(InventoryOpenEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
         if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
-            if (hasBypassMap.get(e.getPlayer().getUniqueId())) {
-                return;
-            }
+            if (hasBypassMap.get(e.getPlayer().getUniqueId())) return;
         }
+
         InventoryType inventoryType = e.getInventory().getType();
         if (inventoryType == InventoryType.CHEST) {
-            if (!twofaStatusMap.containsKey(uuid)) {
-                return;
-            }
-            if (!twofaStatusMap.get(uuid)) {
-                return;
-            }
-            if (!sessionStatusMap.containsKey(uuid)) {
-                return;
-            }
-            if (sessionStatusMap.get(uuid)) {
-                return;
-            }
-            if (!hasKeyMap.containsKey(uuid)) {
-                return;
-            }
+            if (!twofaStatusMap.containsKey(uuid)) return;
+
+            if (!twofaStatusMap.get(uuid)) return;
+
+            if (!sessionStatusMap.containsKey(uuid)) return;
+
+            if (sessionStatusMap.get(uuid)) return;
+
+            if (!hasKeyMap.containsKey(uuid)) return;
+
             e.setCancelled(true);
             if (hasKeyMap.get(uuid)) {
                 AuthHandler.sendEnterCodeMessage((Player) e.getPlayer());
@@ -274,29 +205,22 @@ public class PlayerListener implements Listener {
     public void onMove(PlayerMoveEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();
         if (hasBypassMap.containsKey(e.getPlayer().getUniqueId())) {
-            if (hasBypassMap.get(e.getPlayer().getUniqueId())) {
-                return;
-            }
+            if (hasBypassMap.get(e.getPlayer().getUniqueId())) return;
         }
-        if (!twofaStatusMap.containsKey(uuid)) {
-            return;
-        }
-        if (!twofaStatusMap.get(uuid)) {
-            return;
-        }
-        if (!sessionStatusMap.containsKey(uuid)) {
-            return;
-        }
-        if (sessionStatusMap.get(uuid)) {
-            return;
-        }
+        if (!twofaStatusMap.containsKey(uuid)) return;
+
+        if (!twofaStatusMap.get(uuid)) return;
+
+        if (!sessionStatusMap.containsKey(uuid)) return;
+
+        if (sessionStatusMap.get(uuid)) return;
+
         Location oldLoc = e.getFrom();
         Location newLoc = e.getTo();
         if (newLoc.getX() != oldLoc.getX() || newLoc.getZ() != oldLoc.getZ()) {
             e.getPlayer().teleport(oldLoc);
-            if (!hasKeyMap.containsKey(uuid)) {
-                return;
-            }
+            if (!hasKeyMap.containsKey(uuid)) return;
+
             if (hasKeyMap.get(uuid)) {
                 AuthHandler.sendEnterCodeMessage(e.getPlayer());
             } else {
@@ -361,6 +285,4 @@ public class PlayerListener implements Listener {
         }
         return false;
     }
-
-
 }
