@@ -33,7 +33,7 @@ public class config {
 
     public static void reload() {
         try {
-            config = new JsonParser().parse(new FileReader("/home/container/server.json")).getAsJsonObject();
+            config = new JsonParser().parse(new FileReader("/storage/server.json")).getAsJsonObject();
             DatabaseURL = config.getAsJsonObject("database").get("url").getAsString();
             DatabaseUser = config.getAsJsonObject("database").get("user").getAsString();
             DatabasePassword = config.getAsJsonObject("database").get("password").getAsString();
