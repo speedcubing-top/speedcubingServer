@@ -58,6 +58,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("gmc").setExecutor(new gmc());
         Bukkit.getPluginCommand("2fa").setExecutor(new AuthenticatorCommand());
         Bukkit.getPluginCommand("image").setExecutor(new image());
+        Bukkit.getPluginCommand("serverconfig").setExecutor(new serverconfig());
     }
     private void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
