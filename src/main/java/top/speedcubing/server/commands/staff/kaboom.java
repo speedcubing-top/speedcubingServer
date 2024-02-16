@@ -19,7 +19,7 @@ public class kaboom implements CommandExecutor {
             String senderName = commandSender.getName();
             displaySubtitleToAllPlayers("§l§cKABOOM!", senderName ,commandSender);
             applyVelocityToAllPlayers(new Vector(0, 4, 0), commandSender);
-            issueLightningStrikesToAllPlayers(3, commandSender);
+            issueLightningStrikesToAllPlayers(commandSender);
             commandSender.sendMessage("§l§cKABOOM!");
             Console.printlnColor("§7[§4STAFF§7] " + senderName + " caused a nuclear reaction!");
         } else {
@@ -30,30 +30,21 @@ public class kaboom implements CommandExecutor {
     }
 
     private void applyVelocityToAllPlayers(Vector velocity, CommandSender commandSender) {
-        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
-        for (Player player : onlinePlayers) {
+        Bukkit.getOnlinePlayers().forEach(player -> {
             player.setVelocity(velocity);
-          commandSender.sendMessage("§aLaunched " + User.getUser(player).realName + "!");
-        }
+            commandSender.sendMessage("§aLaunched " + User.getUser(player).realName + "!");
+        });
     }
-
-    private void issueLightningStrikesToAllPlayers(int count, CommandSender commandSender) {
-        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
-        for (Player player : onlinePlayers) {
-            for (int i = 0; i < count; i++) {
-                player.getWorld().strikeLightning(player.getLocation());
-                player.setHealth(20);
-            }
-        }
+    private void issueLightningStrikesToAllPlayers(CommandSender commandSender) {
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.getWorld().strikeLightning(player.getLocation());
+            player.setHealth(20);
+        });
     }
-
     private void displaySubtitleToAllPlayers(String subtitle, String senderName, CommandSender commandSender) {
-        Collection<? extends Player> onlinePlayers = Bukkit.getOnlinePlayers();
-        for (Player player : onlinePlayers) {
-            player.sendTitle(subtitle,"§cBy "+ senderName); // Clear previous title, display subtitle for 2 seconds, fade in for 4 seconds, fade out for 1 second
-            //commandSender.sendMessage("§bDisplayed subtitle to '" + User.getUser(player).realName + "'!");
-        }
-        //commandSender.sendMessage("§bDisplayed subtitle to all online players!");
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            player.sendTitle(subtitle,"§cBy "+ User.getUser(commandSender).getFormatName(true));
+        });
     }
 
     private String velocityToString(Vector velocity) {
