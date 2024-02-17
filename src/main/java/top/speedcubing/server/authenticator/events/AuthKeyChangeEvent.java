@@ -6,9 +6,9 @@ import org.bukkit.event.HandlerList;
 import java.util.UUID;
 
 public class AuthKeyChangeEvent extends Event {
-    private static HandlerList handlers = new HandlerList();
-    private UUID uuid;
-    private String key;
+    private static final HandlerList handlers = new HandlerList();
+    private final UUID uuid;
+    private final String key;
     public AuthKeyChangeEvent(UUID uuid, String key) {
         this.uuid = uuid;
         this.key = key;

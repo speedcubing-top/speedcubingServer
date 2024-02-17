@@ -48,8 +48,8 @@ public class PlayerListener implements Listener {
         boolean isAuthEnable = AuthHandler.isEnable(uuid);
         boolean hasSessions = AuthHandler.hasTrustedSessions(uuid);
         boolean isAuthBypass = AuthHandler.hasBypass(uuid);
-        hasBypassMap.put(uuid, isAuthBypass);
         boolean hasKey = AuthHandler.hasKey(uuid);
+        hasBypassMap.put(uuid, isAuthBypass);
         hasKeyMap.put(uuid, hasKey);
         twofaStatusMap.put(uuid, isAuthEnable);
         sessionStatusMap.put(uuid, hasSessions);
@@ -78,7 +78,7 @@ public class PlayerListener implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    String url = replaceLabel(qrCodeURL, "Speedcubing:" + user.bGetName());
+                    String url = replaceLabel(qrCodeURL, "Speedcubing: " + user.bGetName());
                     String finallyUrl = replaceKey(url, keyMapForNoKey.get(uuid));
                     MapView view = Bukkit.createMap(p.getWorld());
                     view.getRenderers().forEach(view::removeRenderer);
@@ -111,12 +111,13 @@ public class PlayerListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent e) {
-        hasBypassMap.remove(e.getPlayer().getUniqueId());
-        keyMapForNoKey.remove(e.getPlayer().getUniqueId());
-        twofaStatusMap.remove(e.getPlayer().getUniqueId());
-        sessionStatusMap.remove(e.getPlayer().getUniqueId());
-        hasKeyMap.remove(e.getPlayer().getUniqueId());
-        keyMapForHasKey.remove(e.getPlayer().getUniqueId());
+        UUID uuid = e.getPlayer().getUniqueId();
+        hasBypassMap.remove(uuid);
+        keyMapForNoKey.remove(uuid);
+        twofaStatusMap.remove(uuid);
+        sessionStatusMap.remove(uuid);
+        hasKeyMap.remove(uuid);
+        keyMapForHasKey.remove(uuid);
     }
 
     @EventHandler
@@ -143,7 +144,7 @@ public class PlayerListener implements Listener {
             AuthHandler.sendSetKeyMessage(e.getPlayer());
         }
     }
-
+    //this event is blocked paper command, proxy command blocker in speedcubingProxy
     @EventHandler
     public void onCmdExecute(PlayerCommandPreprocessEvent e) {
         UUID uuid = e.getPlayer().getUniqueId();

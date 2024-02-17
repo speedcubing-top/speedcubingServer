@@ -7,8 +7,8 @@ import java.util.UUID;
 
 public class AuthStatusChangeEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
-    private UUID uuid;
-    private Boolean status;
+    private final UUID uuid;
+    private final Boolean status;
 
     public AuthStatusChangeEvent(UUID uuid, Boolean status) {
         this.uuid = uuid;

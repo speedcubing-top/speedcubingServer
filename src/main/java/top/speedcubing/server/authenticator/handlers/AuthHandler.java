@@ -16,6 +16,7 @@ public class AuthHandler {
         return Database.connection.select("auth_enable").from("playersdata").where("uuid='" + uuid + "'").getBoolean();
     }
 
+    //Died idk why
     public static void setEnable(UUID uuid, boolean bool) {
         AuthStatusChangeEvent authStatusChangeEvent = new AuthStatusChangeEvent(uuid, bool);
         Bukkit.getPluginManager().callEvent(authStatusChangeEvent);
@@ -32,10 +33,7 @@ public class AuthHandler {
 
     public static boolean hasKey(UUID uuid) {
         String key = Database.connection.select("auth_key").from("playersdata").where("uuid='" + uuid + "'").getString();
-        if (key != null && !key.isEmpty()) {
-            return true;
-        }
-        return false;
+        return key != null && !key.isEmpty();
     }
 
     public static String getKey(UUID uuid) {

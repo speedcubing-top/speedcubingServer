@@ -10,7 +10,7 @@ public class AuthSessionChangeEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
     private Player player;
     private User user;
-    private Boolean status;
+    private final Boolean status;
     public AuthSessionChangeEvent(Player player, Boolean status) {
         this.player = player;
         this.status = status;

@@ -13,10 +13,12 @@ public class heal implements CommandExecutor {
             Player player = (Player) commandSender;
             if (strings.length == 0) {
                 player.setHealth(player.getMaxHealth());
+                player.sendMessage("Healed!");
             } else if (strings.length == 1) {
                 Player target = Bukkit.getPlayer(strings[0]);
                 if (target != null) {
                     target.setHealth(target.getMaxHealth());
+                    player.sendMessage("Healed!");
                 } else {
                     player.sendMessage("player not found!");
                 }
