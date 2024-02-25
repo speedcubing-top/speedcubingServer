@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class AuthenticatorCommand implements CommandExecutor {
-    private Map<UUID, Integer> count = new HashMap<>();
+    private final Map<UUID, Integer> verifedCount = new HashMap<>();
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
@@ -61,17 +61,17 @@ public class AuthenticatorCommand implements CommandExecutor {
                             player.sendMessage("§aYou have successfully authenticated");
                         } else {
                             player.sendMessage("§cThe key you entered was not valid, please try again");
-                            if (count.containsKey(player.getUniqueId())) {
-                                Integer score = count.get(player.getUniqueId());
+                            if (verifedCount.containsKey(player.getUniqueId())) {
+                                Integer score = verifedCount.get(player.getUniqueId());
                                 if (score != 10) {
-                                    count.put(player.getUniqueId(), score + 1);
+                                    verifedCount.put(player.getUniqueId(), score + 1);
                                 } else {
-                                    count.remove(player.getUniqueId());
+                                    verifedCount.remove(player.getUniqueId());
                                     String banCmd = "ban " + player.getName() + " 0 Suspicious activities detected on your account , contact support for assistance. -hideid";
                                     speedcubingServer.tcpClient.send(speedcubingServer.getRandomBungeePort(), new ByteArrayDataBuilder().writeUTF("proxycmd").writeUTF(banCmd).toByteArray());
                                 }
                             } else {
-                                count.put(player.getUniqueId(), 1);
+                                verifedCount.put(player.getUniqueId(), 1);
                             }
                         }
                     } else {
@@ -150,7 +150,6 @@ public class AuthenticatorCommand implements CommandExecutor {
     private void removeMap(Player player) {
         player.getInventory().remove(Material.MAP);
     }
-
 
     private void usage(CommandSender sender) {
         sender.sendMessage("§6[2FA Commands]\n" +
