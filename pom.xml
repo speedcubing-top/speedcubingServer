@@ -16,17 +16,13 @@
             <groupId>top.speedcubing</groupId>
             <artifactId>cubingpaper</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>top.speedcubing</groupId>
             <artifactId>speedcubinglib</artifactId>
-            <scope>system</scope>
-            <version>1.0</version>
-            <systemPath>${pom.basedir}/lib/speedcubingLib.jar</systemPath>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
-            <!--  clean install this first  -->
             <groupId>top.speedcubing</groupId>
             <artifactId>NameDb</artifactId>
             <version>1.0.0</version>
@@ -51,6 +47,12 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <artifactSet>
+                        <excludes>
+                            <exclude>top.speedcubing:cubingpaper</exclude>
+                            <exclude>top.speedcubing:speedcubinglib</exclude>
+                        </excludes>
+                    </artifactSet>
                     <finalName>${project.artifactId}-${project.version}</finalName>
                 </configuration>
             </plugin>
