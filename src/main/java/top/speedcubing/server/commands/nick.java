@@ -1,8 +1,14 @@
 package top.speedcubing.server.commands;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import net.minecraft.server.v1_8_R3.*;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
+import net.minecraft.server.v1_8_R3.PacketPlayOutHeldItemSlot;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R3.PacketPlayOutPosition;
+import net.minecraft.server.v1_8_R3.PacketPlayOutRespawn;
+import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,18 +25,6 @@ import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.config;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.Collections;
-import java.util.HashSet;
 
 public class nick implements CommandExecutor {
 
@@ -72,13 +66,13 @@ public class nick implements CommandExecutor {
         if (allow) {
             if (!user.hasPermission("perm.nick.anyname")) {
                 try {
-                    //MojangAPI.getByName(name);
-                    //allow = false;
-                    allow = ! isMinecraftAccountExists(name);
-                } catch (Exception e) {
+                    if (MojangAPI.getByName(name) != null)
+                        allow = false;
+                } catch (IOException ignored) {
                 }
             }
         }
+        System.out.println(allow);
         if (allow)
             nickPlayer(name, rank, true, player);
         else
@@ -121,48 +115,5 @@ public class nick implements CommandExecutor {
         Database.connection.update("onlineplayer", "displayname='" + rank + "',displayrank='" + name + "'", "id=" + user.id);
         speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
         user.displayRank = rank;
-    }
-    @Deprecated
-    public static String fetchUUID(String playerName) {
-        try {
-            String mojangAPIUrl = "https://api.mojang.com/users/profiles/minecraft/" + playerName;
-            URL url = new URL(mojangAPIUrl);
-
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                String line;
-                StringBuilder response = new StringBuilder();
-
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-
-                reader.close();
-                connection.disconnect();
-
-                JsonParser parser = new JsonParser();
-                JsonObject jsonResponse = parser.parse(response.toString()).getAsJsonObject();
-
-                if (jsonResponse.has("id")) {
-                    String uuidWithoutHyphens = jsonResponse.get("id").getAsString();
-                    //String formattedUUID = formatUUID(uuidWithoutHyphens);
-                    return uuidWithoutHyphens;
-                }
-            }
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-    @Deprecated
-    public static boolean isMinecraftAccountExists(String playerName) {
-        String uuid = fetchUUID(playerName);
-        return uuid != null;
-
     }
 }

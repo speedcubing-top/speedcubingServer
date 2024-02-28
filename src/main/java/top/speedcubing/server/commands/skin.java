@@ -1,5 +1,6 @@
 package top.speedcubing.server.commands;
 
+import java.util.List;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,8 +14,6 @@ import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
-
-import java.util.List;
 
 public class skin implements CommandExecutor {
 
@@ -32,8 +31,12 @@ public class skin implements CommandExecutor {
                 ProfileSkin skin;
                 try {
                     skin = MojangAPI.getSkinByName(target);
+                    if (skin == null) {
+                        user.sendLangMessage(GlobalString.invalidName);
+                        return true;
+                    }
                 } catch (Exception e) {
-                    user.sendLangMessage(GlobalString.invalidName);
+                    e.printStackTrace();
                     return true;
                 }
                 List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, new String[]{skin.getValue(), skin.getSignature()});
