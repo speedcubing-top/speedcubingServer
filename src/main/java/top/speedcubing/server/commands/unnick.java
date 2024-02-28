@@ -16,7 +16,7 @@ public class unnick implements CommandExecutor {
             if (!user.nicked())
                 User.getUser(commandSender).sendLangMessage(GlobalString.notNicked);
             else if (strings.length == 0)
-                nick.nickPlayer(user.realName, Rank.getRank(user.realRank, User.getUser(commandSender).id), false, player);
+                nick.nickPlayer(user.realName, Rank.getRank(user.realRank, User.getUser(commandSender).id), false, player,false);
             else commandSender.sendMessage("/unnick");
         }
         return true;

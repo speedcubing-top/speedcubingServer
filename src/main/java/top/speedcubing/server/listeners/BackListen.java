@@ -6,6 +6,7 @@ import org.bukkit.event.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.*;
 import org.bukkit.event.player.*;
+import top.speedcubing.server.commands.nick;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -45,6 +46,9 @@ public class BackListen implements Listener {
         Player player = e.getPlayer();
         User.usersByID.remove(User.getUser(player).id);
         User.usersByUUID.remove(player.getUniqueId());
+        nick.settingNick.remove(e.getPlayer().getUniqueId());
+        nick.nickName.remove(e.getPlayer().getUniqueId());
+        nick.nickRank.remove(e.getPlayer().getUniqueId());
         if (Bukkit.getOnlinePlayers().size() == 1 && speedcubingServer.restartable)
             speedcubingServer.restart();
     }
