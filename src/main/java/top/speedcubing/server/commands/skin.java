@@ -39,18 +39,26 @@ public class skin implements CommandExecutor {
                     e.printStackTrace();
                     return true;
                 }
-                List<Packet<?>>[] packets = PlayerUtils.changeSkin(player, new String[]{skin.getValue(), skin.getSignature()});
-                String worldname = player.getWorld().getName();
-                for (User p : User.getUsers()) {
-                    if (!p.player.getWorld().getName().equals(worldname))
-                        packets[1].forEach(p::sendPacket);
-                    else if (p != user)
-                        packets[0].forEach(p::sendPacket);
-                }
-                user.dbUpdate(target.equalsIgnoreCase(user.realName) ? "skinvalue='',skinsignature=''" : ("skinvalue='" + skin.getValue() + "',skinsignature='" + skin.getSignature() + "'"));
-                speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("skin").writeInt(user.id).writeUTF(skin.getValue()).writeUTF(skin.getSignature()).toByteArray());
+                updateSkin(user, skin.getValue(), skin.getSignature(), target);
             }
         }
         return true;
+    }
+
+    public static void updateSkin(User user, String value, String signature) {
+        updateSkin(user, value, signature, null);
+    }
+
+    private static void updateSkin(User user, String value, String signature, String target) {
+        List<Packet<?>>[] packets = PlayerUtils.changeSkin(user.player, value, signature);
+        String worldname = user.bGetWorld().getName();
+        for (User p : User.getUsers()) {
+            if (!p.player.getWorld().getName().equals(worldname))
+                packets[1].forEach(p::sendPacket);
+            else if (p != user)
+                packets[0].forEach(p::sendPacket);
+        }
+        user.dbUpdate((target != null && target.equalsIgnoreCase(user.realName)) ? "skinvalue='',skinsignature=''" : ("skinvalue='" + value + "',skinsignature='" + signature + "'"));
+        speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("skin").writeInt(user.id).writeUTF(value).writeUTF(signature).toByteArray());
     }
 }
