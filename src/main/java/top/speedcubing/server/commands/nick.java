@@ -310,7 +310,8 @@ public class nick implements CommandExecutor {
                 String name = generateRandomString();
                 book = new BookBuilder("random", "system")
                         .addPage(new TextBuilder().str("我們為你生成了一個隨機名稱:\n§l" + name + "\n\n")
-                                .both("   §a§nUSE NAME§r\n", ClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"), HoverEvent.showText("點擊這裡來使用這個名稱"))
+                                .both("   §a§nUSE NAME§r\n", ClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " tr" +
+                                        "ue"), HoverEvent.showText("點擊這裡來使用這個名稱"))
                                 .both("   §c§nTRY AGAIN§r\n", ClickEvent.runCommand("/nick nicknamerandom"), HoverEvent.showText("點擊這裡來產生新的名稱"))
                                 .both("\n§0§n或是點擊這裡來使用自訂名稱", ClickEvent.runCommand("/nick nicknamecustom"), HoverEvent.showText("點擊這裡來自訂名稱"))
                                 .toBungee())
