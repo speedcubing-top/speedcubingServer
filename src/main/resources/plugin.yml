@@ -54,5 +54,6 @@ commands:
     usage: /image
   serverconfig:
     usage: /serverconfig
+
 depend:
   - speedcubingLib

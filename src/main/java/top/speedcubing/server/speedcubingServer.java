@@ -37,6 +37,7 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
     public static speedcubingServer instance;
+
     private void registerCommands() {
         Bukkit.getPluginCommand("nick").setExecutor(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
@@ -60,11 +61,13 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("image").setExecutor(new image());
         Bukkit.getPluginCommand("serverconfig").setExecutor(new serverconfig());
     }
+
     private void registerListeners() {
         Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
         Bukkit.getPluginManager().registerEvents(new FrontListen(), this);
         Bukkit.getPluginManager().registerEvents(new BackListen(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(),this);
+        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
+        Bukkit.getPluginManager().registerEvents(new nick(), this);
     }
 
     public void onEnable() {
