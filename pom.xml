@@ -8,8 +8,8 @@
     <artifactId>speedcubingServer</artifactId>
     <version>1.0-SNAPSHOT</version>
     <properties>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
@@ -18,11 +18,13 @@
             <groupId>top.speedcubing</groupId>
             <artifactId>cubingpaper</artifactId>
             <version>1.8.8-R0.1-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>top.speedcubing</groupId>
             <artifactId>speedcubingLib</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>top.speedcubing</groupId>
@@ -49,12 +51,6 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <artifactSet>
-                        <excludes>
-                            <exclude>top.speedcubing:cubingpaper</exclude>
-                            <exclude>top.speedcubing:speedcubinglib</exclude>
-                        </excludes>
-                    </artifactSet>
                     <finalName>${project.artifactId}-${project.version}</finalName>
                 </configuration>
             </plugin>
