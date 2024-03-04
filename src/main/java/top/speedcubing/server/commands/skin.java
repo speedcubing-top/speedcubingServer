@@ -1,6 +1,5 @@
 package top.speedcubing.server.commands;
 
-import java.util.List;
 import net.minecraft.server.v1_8_R3.Packet;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -14,6 +13,8 @@ import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
+
+import java.util.List;
 
 public class skin implements CommandExecutor {
 

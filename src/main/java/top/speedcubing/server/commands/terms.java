@@ -1,6 +1,8 @@
 package top.speedcubing.server.commands;
 
-import org.bukkit.command.*;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 

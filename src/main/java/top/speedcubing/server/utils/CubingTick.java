@@ -6,13 +6,16 @@ import org.bukkit.Bukkit;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.pluginMessage.BungeePluginMessage;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-import top.speedcubing.server.*;
-import top.speedcubing.server.database.*;
+import top.speedcubing.server.database.DataCenter;
+import top.speedcubing.server.database.Database;
 import top.speedcubing.server.events.CubingTickEvent;
 import top.speedcubing.server.player.User;
+import top.speedcubing.server.speedcubingServer;
 
-import java.lang.management.*;
-import java.util.*;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryUsage;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CubingTick {
 

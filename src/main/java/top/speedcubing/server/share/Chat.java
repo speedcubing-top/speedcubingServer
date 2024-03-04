@@ -2,14 +2,16 @@ package top.speedcubing.server.share;
 
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
-import top.speedcubing.lib.utils.*;
+import top.speedcubing.lib.utils.Console;
+import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.lang.LangMessage;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.config;
 
 import java.util.Collection;
-import java.util.regex.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Chat {
 
