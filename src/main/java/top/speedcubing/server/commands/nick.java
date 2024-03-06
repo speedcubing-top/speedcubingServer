@@ -1,5 +1,12 @@
 package top.speedcubing.server.commands;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
@@ -15,11 +22,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.inventory.BookBuilder;
-import top.speedcubing.lib.bukkit.inventory.SignUtils;
+import top.speedcubing.lib.bukkit.inventory.SignBuilder;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
-import top.speedcubing.lib.minecraft.text.ClickEvent;
-import top.speedcubing.lib.minecraft.text.HoverEvent;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.minecraft.text.TextClickEvent;
+import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.Reflections;
 import top.speedcubing.server.database.Database;
@@ -29,14 +36,6 @@ import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.config;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 
 public class nick implements CommandExecutor, Listener {
     public static final Map<UUID, Boolean> settingNick = new HashMap<>();
@@ -248,7 +247,7 @@ public class nick implements CommandExecutor, Listener {
             case EULA:
                 book = new BookBuilder("eula", "system")
                         .addPage(new TextBuilder().str("匿名功能允許你使用不同的玩家名稱以防止被認出\n\n你仍然必須遵守所有規定,你一樣可以被檢舉,並且所有匿名紀錄將被保留")
-                                .both("\n\n➤ §n我了解,開始設置我的匿稱", ClickEvent.runCommand("/nick nickrank"), HoverEvent.showText("點擊這裡已繼續"))
+                                .both("\n\n➤ §n我了解,開始設置我的匿稱", TextClickEvent.runCommand("/nick nickrank"), TextHoverEvent.showText("點擊這裡已繼續"))
                                 .toBungee())
                         .build();
                 BookBuilder.openBook(book, player);
@@ -257,18 +256,18 @@ public class nick implements CommandExecutor, Listener {
                 if (User.getUser(player).hasPermission("perm.nick.nickrank")) {
                     book = new BookBuilder("rank", "system")
                             .addPage(new TextBuilder().str("讓我們開始設置你的暱稱!\n首先,請選擇一個你在匿名時顯示的§lRANK\n\n")
-                                    .both("§0➤ §8DEFAULT\n", ClickEvent.runCommand("/nick nickskindefault"), HoverEvent.showText("點擊這裡來選擇 §8DEFAULT"))
-                                    .both("§0➤ §3CHAMP\n", ClickEvent.runCommand("/nick nickskinchamp"), HoverEvent.showText("點擊這裡來選擇 §3CHAMP"))
-                                    .both("§0➤ §6PRIME\n", ClickEvent.runCommand("/nick nickskinprime"), HoverEvent.showText("點擊這裡來選擇 §6PRIME"))
-                                    .both("§0➤ §dVIP\n", ClickEvent.runCommand("/nick nickskinvip"), HoverEvent.showText("點擊這裡來選擇 §dVIP"))
-                                    .both("§0➤ §5YT\n", ClickEvent.runCommand("/nick nickskinyt"), HoverEvent.showText("點擊這裡來選擇 §5YT"))
-                                    .both("§0➤ §4YT+\n", ClickEvent.runCommand("/nick nickskinytplus"), HoverEvent.showText("點擊這裡來選擇 §4YT+"))
+                                    .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("點擊這裡來選擇 §8DEFAULT"))
+                                    .both("§0➤ §3CHAMP\n", TextClickEvent.runCommand("/nick nickskinchamp"), TextHoverEvent.showText("點擊這裡來選擇 §3CHAMP"))
+                                    .both("§0➤ §6PRIME\n", TextClickEvent.runCommand("/nick nickskinprime"), TextHoverEvent.showText("點擊這裡來選擇 §6PRIME"))
+                                    .both("§0➤ §dVIP\n", TextClickEvent.runCommand("/nick nickskinvip"), TextHoverEvent.showText("點擊這裡來選擇 §dVIP"))
+                                    .both("§0➤ §5YT\n", TextClickEvent.runCommand("/nick nickskinyt"), TextHoverEvent.showText("點擊這裡來選擇 §5YT"))
+                                    .both("§0➤ §4YT+\n", TextClickEvent.runCommand("/nick nickskinytplus"), TextHoverEvent.showText("點擊這裡來選擇 §4YT+"))
                                     .toBungee())
                             .build();
                 } else {
                     book = new BookBuilder("rank", "system")
                             .addPage(new TextBuilder().str("讓我們開始設置你的暱稱!\n首先,請選擇一個你在匿名時顯示的§lRANK\n\n")
-                                    .both("§0➤ §8DEFAULT\n", ClickEvent.runCommand("/nick nickskindefault"), HoverEvent.showText("點擊這裡來選擇 §8DEFAULT"))
+                                    .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("點擊這裡來選擇 §8DEFAULT"))
                                     .toBungee())
                             .build();
                 }
@@ -277,9 +276,9 @@ public class nick implements CommandExecutor, Listener {
             case SKIN:
                 book = new BookBuilder("skin", "system")
                         .addPage(new TextBuilder().str("很好! 現在選擇一個在你匿名時的 §lSKIN§r§0\n\n")
-                                .both("➤ 我的 skin\n", ClickEvent.runCommand("/nick nicknamechoosemyskin"), HoverEvent.showText("點擊這裡來使用你自己的skin"))
-                                .both("➤ Steve/Alex skin\n", ClickEvent.runCommand("/nick nicknamechoosesaskin"), HoverEvent.showText("點擊這裡來使用Steve或是Alex的skin"))
-                                .both("➤ 隨機 skin\n", ClickEvent.runCommand("/nick nicknamechooserandomskin"), HoverEvent.showText("點擊這裡來使用隨機skin"))
+                                .both("➤ 我的 skin\n", TextClickEvent.runCommand("/nick nicknamechoosemyskin"), TextHoverEvent.showText("點擊這裡來使用你自己的skin"))
+                                .both("➤ Steve/Alex skin\n", TextClickEvent.runCommand("/nick nicknamechoosesaskin"), TextHoverEvent.showText("點擊這裡來使用Steve或是Alex的skin"))
+                                .both("➤ 隨機 skin\n", TextClickEvent.runCommand("/nick nicknamechooserandomskin"), TextHoverEvent.showText("點擊這裡來使用隨機skin"))
                                 .toBungee())
                         .build();
                 BookBuilder.openBook(book, player);
@@ -289,17 +288,17 @@ public class nick implements CommandExecutor, Listener {
                 if (User.getUser(player).hasPermission("perm.nick.customname")) {
                     book = new BookBuilder("name", "system")
                             .addPage(new TextBuilder().str("現在你需要選擇一個暱稱名稱來使用\n")
-                                    .both("➤ 輸入一個名稱\n", ClickEvent.runCommand("/nick nicknamecustom"), HoverEvent.showText("還在寫這沒用"))
-                                    .both("➤ 使用隨機名稱\n", ClickEvent.runCommand("/nick nicknamerandom"), HoverEvent.showText("點擊這裡來使用隨機名稱"))
-                                    .both("➤ 繼續使用 '" + data + "'\n\n", ClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), HoverEvent.showText("點擊這裡來使用上次的名稱"))
+                                    .both("➤ 輸入一個名稱\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("還在寫這沒用"))
+                                    .both("➤ 使用隨機名稱\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("點擊這裡來使用隨機名稱"))
+                                    .both("➤ 繼續使用 '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("點擊這裡來使用上次的名稱"))
                                     .str("如果你想要解除匿名狀態可以輸入\n§l/unnick")
                                     .toBungee())
                             .build();
                 } else {
                     book = new BookBuilder("name", "system")
                             .addPage(new TextBuilder().str("現在你需要選擇一個暱稱名稱來使用\n")
-                                    .both("➤ 使用隨機名稱\n", ClickEvent.runCommand("/nick nicknamerandom"), HoverEvent.showText("點擊這裡來使用隨機名稱"))
-                                    .both("➤ 繼續使用 '" + data + "'\n\n", ClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), HoverEvent.showText("點擊這裡來使用上次的名稱"))
+                                    .both("➤ 使用隨機名稱\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("點擊這裡來使用隨機名稱"))
+                                    .both("➤ 繼續使用 '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("點擊這裡來使用上次的名稱"))
                                     .str("如果你想要解除匿名狀態可以輸入\n§l/unnick")
                                     .toBungee())
                             .build();
@@ -308,16 +307,16 @@ public class nick implements CommandExecutor, Listener {
                 break;
             case NAMECUSTOM:
                 String[] lines = {"請輸入自訂名稱"};
-                SignUtils.openSignGUI(speedcubingServer.instance, player, -50, 99, 47, "nick", lines);
+                SignBuilder.openSign(player, -50, 99, 47,  lines);
                 break;
             case NAMERANDOM:
                 String name = generateRandomString();
                 book = new BookBuilder("random", "system")
                         .addPage(new TextBuilder().str("我們為你生成了一個隨機名稱:\n§l" + name + "\n\n")
-                                .both("   §a§nUSE NAME§r\n", ClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " tr" +
-                                        "ue"), HoverEvent.showText("點擊這裡來使用這個名稱"))
-                                .both("   §c§nTRY AGAIN§r\n", ClickEvent.runCommand("/nick nicknamerandom"), HoverEvent.showText("點擊這裡來產生新的名稱"))
-                                .both("\n§0§n或是點擊這裡來使用自訂名稱", ClickEvent.runCommand("/nick nicknamecustom"), HoverEvent.showText("點擊這裡來自訂名稱"))
+                                .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " tr" +
+                                        "ue"), TextHoverEvent.showText("點擊這裡來使用這個名稱"))
+                                .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("點擊這裡來產生新的名稱"))
+                                .both("\n§0§n或是點擊這裡來使用自訂名稱", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("點擊這裡來自訂名稱"))
                                 .toBungee())
                         .build();
                 BookBuilder.openBook(book, player);

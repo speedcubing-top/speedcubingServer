@@ -51,6 +51,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
@@ -64,6 +66,8 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
     public static speedcubingServer instance;
+
+    public static ScheduledExecutorService scheduledPool = Executors.newScheduledThreadPool(10);
 
     private void registerCommands() {
         Bukkit.getPluginCommand("nick").setExecutor(new nick());

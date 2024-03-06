@@ -30,8 +30,7 @@ import top.speedcubing.server.utils.config;
 
 import java.util.Collections;
 import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 public class FrontListen implements Listener {
@@ -107,12 +106,7 @@ public class FrontListen implements Listener {
             user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(realRank) + speedcubingServer.playerNameExtract(datas[5])).c(Rank.getFormat(realRank, user.id)[0]).g(Collections.singletonList(datas[5])).h(0).packet);
 
         if (config.onlineCrash.contains(player.getUniqueId().toString()) || config.onlineCrash.contains(player.getAddress().getAddress().getHostAddress())) {
-            new Timer().schedule(new TimerTask() {
-                @Override
-                public void run() {
-                    PlayerUtils.crashAll(player);
-                }
-            }, 50);
+            speedcubingServer.scheduledPool.schedule(() -> PlayerUtils.crashAll(player), 50, TimeUnit.MILLISECONDS);
         }
     }
 
