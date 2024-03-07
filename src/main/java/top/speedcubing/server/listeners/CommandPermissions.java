@@ -1,5 +1,6 @@
 package top.speedcubing.server.listeners;
 
+import java.util.Set;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,8 +11,6 @@ import org.bukkit.util.Java15Compat;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
-
-import java.util.Set;
 
 public class CommandPermissions implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST)

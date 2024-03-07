@@ -1,5 +1,6 @@
 package top.speedcubing.server.commands;
 
+import java.io.IOException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -13,8 +14,6 @@ import org.bukkit.map.MapView;
 import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.server.authenticator.utils.ImageRenderer;
 import top.speedcubing.server.speedcubingServer;
-
-import java.io.IOException;
 
 public class image implements CommandExecutor {
     @Override

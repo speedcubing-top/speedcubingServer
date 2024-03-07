@@ -1,6 +1,10 @@
 package top.speedcubing.server.listeners;
 
 import com.google.common.collect.Sets;
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import net.minecraft.server.v1_8_R3.WorldData;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
@@ -27,11 +31,6 @@ import top.speedcubing.server.player.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.config;
-
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class FrontListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)

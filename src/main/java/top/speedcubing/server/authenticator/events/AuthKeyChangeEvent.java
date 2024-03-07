@@ -1,9 +1,8 @@
 package top.speedcubing.server.authenticator.events;
 
+import java.util.UUID;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
-
-import java.util.UUID;
 
 public class AuthKeyChangeEvent extends Event {
     private static final HandlerList handlers = new HandlerList();

@@ -2,6 +2,10 @@ package top.speedcubing.server.authenticator.listeners;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -27,11 +31,6 @@ import top.speedcubing.server.authenticator.handlers.AuthHandler;
 import top.speedcubing.server.authenticator.utils.ImageRenderer;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class PlayerListener implements Listener {
     public static Map<UUID, String> keyMapForNoKey = new HashMap<>(); //this map is for no key

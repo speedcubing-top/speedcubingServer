@@ -1,5 +1,11 @@
 package top.speedcubing.server.player;
 
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.regex.Pattern;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityVelocity;
@@ -23,13 +29,6 @@ import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.lang.LangMessage;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-import java.util.regex.Pattern;
 
 public class User {
 

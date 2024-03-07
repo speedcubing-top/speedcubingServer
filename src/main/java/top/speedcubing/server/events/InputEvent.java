@@ -1,9 +1,8 @@
 package top.speedcubing.server.events;
 
+import java.io.DataInputStream;
 import top.speedcubing.lib.eventbus.CubingEvent;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-
-import java.io.DataInputStream;
 
 public class InputEvent extends CubingEvent {
     public final DataInputStream receive;

@@ -1,5 +1,13 @@
 package top.speedcubing.server;
 
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
@@ -45,15 +53,6 @@ import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.CubingTick;
 import top.speedcubing.server.utils.LogListener;
 import top.speedcubing.server.utils.config;
-
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
 

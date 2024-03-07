@@ -6,9 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
-import top.speedcubing.server.database.Database;
-import top.speedcubing.server.events.ConfigReloadEvent;
-
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,6 +14,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import top.speedcubing.server.database.Database;
+import top.speedcubing.server.events.ConfigReloadEvent;
 
 public class config {
     public static ConfigReloadEvent event = new ConfigReloadEvent();

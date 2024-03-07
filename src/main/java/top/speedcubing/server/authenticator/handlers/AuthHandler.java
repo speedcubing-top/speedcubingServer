@@ -1,5 +1,6 @@
 package top.speedcubing.server.authenticator.handlers;
 
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import top.speedcubing.server.authenticator.events.AuthKeyChangeEvent;
@@ -7,8 +8,6 @@ import top.speedcubing.server.authenticator.events.AuthSessionChangeEvent;
 import top.speedcubing.server.authenticator.events.AuthStatusChangeEvent;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.player.User;
-
-import java.util.UUID;
 
 public class AuthHandler {
     public static boolean isEnable(UUID uuid) {

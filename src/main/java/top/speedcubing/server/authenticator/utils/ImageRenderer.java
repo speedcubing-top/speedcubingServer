@@ -1,17 +1,17 @@
 package top.speedcubing.server.authenticator.utils;
 
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.lang.ref.SoftReference;
+import java.net.URL;
+import javax.imageio.ImageIO;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.map.MapCanvas;
 import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
-
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.lang.ref.SoftReference;
-import java.net.URL;
 
 public class ImageRenderer extends MapRenderer {
     private SoftReference<BufferedImage> cacheImage;

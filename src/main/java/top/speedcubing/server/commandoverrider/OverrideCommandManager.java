@@ -1,11 +1,10 @@
 package top.speedcubing.server.commandoverrider;
 
-import org.bukkit.command.CommandSender;
-import top.speedcubing.lib.utils.collection.Sets;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import org.bukkit.command.CommandSender;
+import top.speedcubing.lib.utils.collection.Sets;
 
 public class OverrideCommandManager {
     static Map<String, OverrideCommandManager> cmds = new HashMap<>();

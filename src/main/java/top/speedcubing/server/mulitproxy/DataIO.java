@@ -1,11 +1,10 @@
 package top.speedcubing.server.mulitproxy;
 
+import java.io.DataInputStream;
+import java.io.IOException;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.IOUtils;
 import top.speedcubing.server.speedcubingServer;
-
-import java.io.DataInputStream;
-import java.io.IOException;
 
 public class DataIO {
 

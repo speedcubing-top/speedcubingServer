@@ -1,6 +1,9 @@
 package top.speedcubing.server.authenticator.commands;
 
 import com.warrenstrange.googleauth.GoogleAuthenticator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -13,10 +16,6 @@ import top.speedcubing.server.authenticator.listeners.PlayerListener;
 import top.speedcubing.server.database.Database;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
-
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 public class AuthenticatorCommand implements CommandExecutor {
     private final Map<UUID, Integer> verifedCount = new HashMap<>();
