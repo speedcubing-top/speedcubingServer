@@ -20,6 +20,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
+import top.speedcubing.common.io.SocketWriter;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.inventory.BookBuilder;
 import top.speedcubing.lib.bukkit.inventory.SignBuilder;
@@ -29,13 +30,12 @@ import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.Reflections;
-import top.speedcubing.server.database.Database;
-import top.speedcubing.server.database.Rank;
+import top.speedcubing.common.database.Database;
+import top.speedcubing.common.rank.Rank;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
-import top.speedcubing.server.utils.config;
 
 public class nick implements CommandExecutor, Listener {
     public static final Map<UUID, Boolean> settingNick = new HashMap<>();
@@ -141,7 +141,7 @@ public class nick implements CommandExecutor, Listener {
                 User user = User.getUser(commandSender);
                 if (user.hasPermission("perm.nick.nickrank")) {
                     String name = strings[0];
-                    if (config.rankPermissions.containsKey(strings[1].toLowerCase())) {
+                    if (Rank.rankByName.containsKey(strings[1].toLowerCase())) {
                         nickCheck(user, name, user.player, strings[1].toLowerCase(), false);
                         user.dbUpdate("nickpriority='" + strings[1].toLowerCase() + "'");
                     } else
@@ -151,7 +151,7 @@ public class nick implements CommandExecutor, Listener {
                 User user = User.getUser(commandSender);
                 if (user.hasPermission("perm.nick.nickrank") || nickRank.get(player.getUniqueId()).equals("default")) {
                     String name = strings[0];
-                    if (config.rankPermissions.containsKey(strings[1].toLowerCase())) {
+                    if (Rank.rankByName.containsKey(strings[1].toLowerCase())) {
                         nickCheck(user, name, user.player, strings[1].toLowerCase(), Boolean.parseBoolean(strings[2]));
                         user.dbUpdate("nickpriority='" + strings[1].toLowerCase() + "'");
                         if (strings[2].equalsIgnoreCase("true")) {
@@ -208,10 +208,10 @@ public class nick implements CommandExecutor, Listener {
         String tag = Database.connection.select("tag").from("guild").where("name='" + user.getGuild() + "'").getString();
         tag = nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
 
-        String extracted2 = speedcubingServer.getCode(rank) + speedcubingServer.playerNameExtract(name);
-        PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(speedcubingServer.getCode(user.displayRank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
+        String extracted2 = Rank.getCode(rank) + speedcubingServer.playerNameExtract(name);
+        PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(Rank.getCode(user.displayRank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
         user.leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
-        user.joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank, user.id)[0]).d(tag).g(Collections.singletonList(name)).h(0).packet;
+        user.joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank, user.id).getPrefix()).d(tag).g(Collections.singletonList(name)).h(0).packet;
 
         for (User u : User.getUsers())
             if (u != user)
@@ -234,7 +234,7 @@ public class nick implements CommandExecutor, Listener {
         player.updateInventory();
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""));
         Database.connection.update("onlineplayer", "displayname='" + rank + "',displayrank='" + name + "'", "id=" + user.id);
-        speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
+        SocketWriter.write(user.tcpPort, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
         user.displayRank = rank;
         if (openBook) {
             openNickBook(player, NickBook.RULE);
@@ -323,7 +323,7 @@ public class nick implements CommandExecutor, Listener {
                 break;
             case RULE:
                 book = new BookBuilder("rule", "system")
-                        .addPage(new TextBuilder().str("你已經設定完你的暱稱了!\n\n你現在的暱稱是:\n" + User.getUser(player).getPrefixName(false) + "." +
+                        .addPage(new TextBuilder().str("你已經設定完你的暱稱了!\n\n你現在的暱稱是:\n" + User.getUser(player).bGetName() + "." +
                                         "\n\n§0若要解除暱名狀態請輸入:\n§l/unnick")
                                 .toBungee())
                         .build();

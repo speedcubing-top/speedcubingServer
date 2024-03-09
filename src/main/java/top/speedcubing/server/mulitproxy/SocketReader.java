@@ -69,8 +69,7 @@ public class SocketReader {
                             else speedcubingServer.preLoginStorage.get(id).cps = true;
                             break;
                         case "cfg":
-                            config.reload();
-                            config.reloadDatabase();
+                            config.reload(false);
                             break;
                         case "demo":
                             PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);

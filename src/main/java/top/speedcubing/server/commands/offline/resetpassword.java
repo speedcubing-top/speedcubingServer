@@ -4,7 +4,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import top.speedcubing.server.database.Database;
+import top.speedcubing.common.database.Database;
 import top.speedcubing.server.player.User;
 
 public class resetpassword implements CommandExecutor {

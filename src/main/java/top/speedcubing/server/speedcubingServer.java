@@ -12,11 +12,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
 import org.spigotmc.SpigotConfig;
+import top.speedcubing.common.database.Database;
+import top.speedcubing.common.io.SocketWriter;
+import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.SystemUtils;
-import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.namedb.NameDb;
 import top.speedcubing.paper.CubingPaperConfig;
 import top.speedcubing.server.authenticator.commands.AuthenticatorCommand;
@@ -43,7 +45,6 @@ import top.speedcubing.server.commands.staff.proxycommand;
 import top.speedcubing.server.commands.staff.serverconfig;
 import top.speedcubing.server.commands.staff.testkb;
 import top.speedcubing.server.commands.unnick;
-import top.speedcubing.server.database.Database;
 import top.speedcubing.server.listeners.BackListen;
 import top.speedcubing.server.listeners.CommandPermissions;
 import top.speedcubing.server.listeners.FrontListen;
@@ -59,7 +60,6 @@ public class speedcubingServer extends JavaPlugin {
     public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
 
     public static final Pattern legacyNameRegex = Pattern.compile("^\\w{1,16}$");
-    public static TCPClient tcpClient;
     public static Map<Integer, PreLoginData> preLoginStorage = new HashMap<>();
 
     public static boolean canRestart = true; //can Timer/Quit restart server?
@@ -101,15 +101,18 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public void onEnable() {
-        NameDb.init();
         instance = this;
-        //conn
-        config.reload();
-        Database.init();
+
+        NameDb.init();
+        SocketWriter.init();
+
+        config.reload(true);
+        Database.connect(config.DatabaseURL,config.DatabaseUser,config.DatabasePassword);
+
+        Rank.reloadRanks();
         CubingTick.init();
-        config.reloadDatabase();
-        tcpClient = new TCPClient("localhost", 100);
         SocketReader.init();
+
         //spigot.yml
         SpigotConfig.disableStatSaving = true;
         //spigot
@@ -207,15 +210,11 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static void node(boolean add, int id, int port) {
-        tcpClient.send(port, new ByteArrayDataBuilder().writeUTF("hasnode").writeInt(id).writeBoolean(add).toByteArray());
+        SocketWriter.write(port, new ByteArrayDataBuilder().writeUTF("hasnode").writeInt(id).writeBoolean(add).toByteArray());
     }
 
     public static int getRandomBungeePort() {
         return (!User.usersByID.values().isEmpty() ? User.usersByID.values().iterator().next().tcpPort : 25565 + 1000);
-    }
-
-    public static int getCode(String rank) {
-        return 10 + config.ranks.indexOf(rank);
     }
 
     public static String playerNameExtract(String name) {

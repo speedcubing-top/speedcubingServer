@@ -40,7 +40,7 @@ public class kaboom implements CommandExecutor {
     }
     private void displaySubtitleToAllPlayers(String subtitle, String senderName, CommandSender commandSender) {
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.sendTitle(subtitle,"§cBy "+ User.getUser(commandSender).getFormatName(true));
+            player.sendTitle(subtitle,"§cBy "+ User.getUser(commandSender).getPrefixName(true));
         });
     }
 

@@ -6,7 +6,7 @@ import org.bukkit.entity.Player;
 import top.speedcubing.server.authenticator.events.AuthKeyChangeEvent;
 import top.speedcubing.server.authenticator.events.AuthSessionChangeEvent;
 import top.speedcubing.server.authenticator.events.AuthStatusChangeEvent;
-import top.speedcubing.server.database.Database;
+import top.speedcubing.common.database.Database;
 import top.speedcubing.server.player.User;
 
 public class AuthHandler {

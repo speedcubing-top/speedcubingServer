@@ -6,6 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.common.io.SocketWriter;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.api.mojang.ProfileSkin;
 import top.speedcubing.lib.bukkit.PlayerUtils;
@@ -13,7 +14,6 @@ import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
-import top.speedcubing.server.speedcubingServer;
 
 public class skin implements CommandExecutor {
 
@@ -59,6 +59,6 @@ public class skin implements CommandExecutor {
                 packets[0].forEach(p::sendPacket);
         }
         user.dbUpdate((target != null && target.equalsIgnoreCase(user.realName)) ? "skinvalue='',skinsignature=''" : ("skinvalue='" + value + "',skinsignature='" + signature + "'"));
-        speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("skin").writeInt(user.id).writeUTF(value).writeUTF(signature).toByteArray());
+        SocketWriter.write(user.tcpPort, new ByteArrayDataBuilder().writeUTF("skin").writeInt(user.id).writeUTF(value).writeUTF(signature).toByteArray());
     }
 }

@@ -7,11 +7,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
+import top.speedcubing.common.io.SocketWriter;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.pluginMessage.BungeePluginMessage;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-import top.speedcubing.server.database.DataCenter;
-import top.speedcubing.server.database.Database;
+import top.speedcubing.common.database.DatabaseData;
+import top.speedcubing.common.database.Database;
 import top.speedcubing.server.events.CubingTickEvent;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
@@ -46,7 +47,7 @@ public class CubingTick {
                     );
                     for (User user : User.usersByID.values()) {
                         if (user.listened)
-                            speedcubingServer.tcpClient.send(user.tcpPort, new ByteArrayDataBuilder().writeUTF("cps").writeInt(user.id).writeInt(user.leftClick).writeInt(user.rightClick).toByteArray());
+                            SocketWriter.write(user.tcpPort, new ByteArrayDataBuilder().writeUTF("cps").writeInt(user.id).writeInt(user.leftClick).writeInt(user.rightClick).toByteArray());
                         if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
                             Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> user.player.kickPlayer("You are clicking too fast !"));
                         user.leftClick = 0;
@@ -61,8 +62,8 @@ public class CubingTick {
                             if (t - user.lastMove > 300000)
                                 BungeePluginMessage.switchServer(user.player, "limbo");
                     }
-                    DataCenter.champs = Sets.newHashSet(Database.connection.select("id").from("champ").getIntArray());
-                    DataCenter.onlineCount = Database.systemConnection.select("SUM(onlinecount)").from("proxies").getInt();
+                    DatabaseData.champs = Sets.newHashSet(Database.connection.select("id").from("champ").getIntArray());
+                    DatabaseData.onlineCount = Database.systemConnection.select("SUM(onlinecount)").from("proxies").getInt();
 
                     event.call();
                 } catch (Exception e) {

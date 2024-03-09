@@ -10,10 +10,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.common.io.SocketWriter;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.server.authenticator.handlers.AuthHandler;
 import top.speedcubing.server.authenticator.listeners.PlayerListener;
-import top.speedcubing.server.database.Database;
+import top.speedcubing.common.database.Database;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -67,7 +68,7 @@ public class AuthenticatorCommand implements CommandExecutor {
                                 } else {
                                     verifedCount.remove(player.getUniqueId());
                                     String banCmd = "ban " + player.getName() + " 0 Suspicious activities detected on your account , contact support for assistance. -hideid";
-                                    speedcubingServer.tcpClient.send(speedcubingServer.getRandomBungeePort(), new ByteArrayDataBuilder().writeUTF("proxycmd").writeUTF(banCmd).toByteArray());
+                                    SocketWriter.write(speedcubingServer.getRandomBungeePort(), new ByteArrayDataBuilder().writeUTF("proxycmd").writeUTF(banCmd).toByteArray());
                                 }
                             } else {
                                 verifedCount.put(player.getUniqueId(), 1);

@@ -24,13 +24,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
+import top.speedcubing.common.database.Database;
+import top.speedcubing.common.rank.IDPlayer;
+import top.speedcubing.common.rank.Rank;
+import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
-import top.speedcubing.server.database.Database;
-import top.speedcubing.server.database.Rank;
 import top.speedcubing.server.lang.LangMessage;
 
-public class User {
+public class User extends IDPlayer {
+
+    public static Map<Integer, User> usersByID = new HashMap<>();
+    public static Map<UUID, User> usersByUUID = new HashMap<>();
 
     public static User getUser(int id) {
         return usersByID.get(id);
@@ -44,20 +49,16 @@ public class User {
         return usersByID.values();
     }
 
-    public static Map<Integer, User> usersByID = new HashMap<>();
-    public static Map<UUID, User> usersByUUID = new HashMap<>();
     public final Player player;
     public String lastTabbed;
     public Set<String> permissions;
     public double[] velocities;
     public int lang;
-    public final int id;
     public String displayRank;
     public int tcpPort;
     public boolean allowOp;
     public boolean chatFilt;
     public boolean listened;
-    public final String realName;
 
     public PacketPlayOutScoreboardTeam joinPacket;
     public PacketPlayOutScoreboardTeam leavePacket;
@@ -71,13 +72,12 @@ public class User {
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
     public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
+        super(realName, player.getUniqueId(), id);
         this.player = player;
         this.permissions = permissions;
         this.listened = bungeeData.cps;
         this.lang = lang;
-        this.id = id;
         this.chatFilt = chatFilt;
-        this.realName = realName;
         this.realRank = realRank;
         this.displayRank = displayRank;
         this.vanished = bungeeData.vanished;
@@ -116,17 +116,18 @@ public class User {
         return false;
     }
 
-    //format
-    public String[] getFormat() {
-        return Rank.getFormat(displayRank, id);
+
+    //RANK FORMAT
+    public RankFormat getFormat(boolean real) {
+        return Rank.getFormat(real ? realRank : displayRank, id);
     }
 
-    public String getFormatName(boolean realName) {
-        return getFormat()[1] + (realName ? this.realName : bGetName());
+    public String getColorName(boolean real) {
+        return getFormat(real).getNameColor() + (real ? realName : bGetName());
     }
 
-    public String getPrefixName(boolean realName) {
-        return getFormat()[0] + (realName ? this.realName : bGetName());
+    public String getPrefixName(boolean real) {
+        return getFormat(real).getPrefix() + (real ? realName : bGetName());
     }
 
     //kb

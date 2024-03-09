@@ -8,8 +8,7 @@ import top.speedcubing.server.utils.config;
 public class serverconfig implements CommandExecutor {
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        config.reload();
-        config.reloadDatabase();
+        config.reload(false);
         commandSender.sendMessage("reloading");
         return true;
     }

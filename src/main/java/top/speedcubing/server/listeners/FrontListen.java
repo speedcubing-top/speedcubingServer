@@ -25,8 +25,8 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.Reflections;
-import top.speedcubing.server.database.Database;
-import top.speedcubing.server.database.Rank;
+import top.speedcubing.common.database.Database;
+import top.speedcubing.common.rank.Rank;
 import top.speedcubing.server.player.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
@@ -74,9 +74,9 @@ public class FrontListen implements Listener {
         //Perms
         Set<String> perms = Sets.newHashSet(datas[2].split("\\|"));
         perms.remove("");
-        perms.addAll(config.rankPermissions.get(realRank));
-        Set<String> groups = perms.stream().filter(s -> User.group.matcher(s).matches() && config.grouppermissions.containsKey(s.substring(6))).map(s -> s.substring(6)).collect(Collectors.toSet());
-        groups.forEach(a -> perms.addAll(config.grouppermissions.get(a)));
+        perms.addAll(Rank.rankByName.get(realRank).getPerms());
+        Set<String> groups = perms.stream().filter(s -> User.group.matcher(s).matches() && Rank.grouppermissions.containsKey(s.substring(6))).map(s -> s.substring(6)).collect(Collectors.toSet());
+        groups.forEach(a -> perms.addAll(Rank.grouppermissions.get(a)));
         //User
         User user = new User(player, displayRank, realRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[6].equals("1"), datas[5]);
         //OP
@@ -85,9 +85,9 @@ public class FrontListen implements Listener {
         String tag = Database.connection.select("tag").from("guild").where("name='" + datas[7] + "'").getString();
         tag = nicked ? "" : (tag == null ? "" : " §6[" + tag + "]");
         //Packets
-        String extracted = speedcubingServer.getCode(user.displayRank) + speedcubingServer.playerNameExtract(displayName);
+        String extracted = Rank.getCode(user.displayRank) + speedcubingServer.playerNameExtract(displayName);
         user.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
-        user.joinPacket = new OutScoreboardTeam().a(extracted).c(user.getFormat()[0]).d(tag).g(Collections.singletonList(displayName)).h(0).packet;
+        user.joinPacket = new OutScoreboardTeam().a(extracted).c(user.getFormat(false).getPrefix()).d(tag).g(Collections.singletonList(displayName)).h(0).packet;
         //formatting
         for (User u : User.getUsers()) {
             user.sendPacket(u.leavePacket, u.joinPacket);
@@ -102,7 +102,7 @@ public class FrontListen implements Listener {
             if (u.vanished) player.hidePlayer(u.player);
         //nick
         if (nicked)
-            user.sendPacket(new OutScoreboardTeam().a(speedcubingServer.getCode(realRank) + speedcubingServer.playerNameExtract(datas[5])).c(Rank.getFormat(realRank, user.id)[0]).g(Collections.singletonList(datas[5])).h(0).packet);
+            user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(realRank) + speedcubingServer.playerNameExtract(datas[5])).c(Rank.getFormat(realRank, user.id).getPrefix()).g(Collections.singletonList(datas[5])).h(0).packet);
 
         if (config.onlineCrash.contains(player.getUniqueId().toString()) || config.onlineCrash.contains(player.getAddress().getAddress().getHostAddress())) {
             speedcubingServer.scheduledPool.schedule(() -> PlayerUtils.crashAll(player), 50, TimeUnit.MILLISECONDS);
