@@ -9,7 +9,6 @@ import top.speedcubing.lib.utils.sockets.TCPClient;
 public class SocketWriter {
 
     private static TCPClient tcpClient;
-
     public static void init() {
         tcpClient = new TCPClient("localhost", 100);
     }

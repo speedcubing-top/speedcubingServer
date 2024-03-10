@@ -122,12 +122,32 @@ public class User extends IDPlayer {
         return Rank.getFormat(real ? realRank : displayRank, id);
     }
 
+    public String getPrefix(boolean real) {
+        return getFormat(real).getPrefix();
+    }
+
+    public String getChatColor(boolean real) {
+        return getFormat(real).getChatColor();
+    }
+
+    public String getNameColor(boolean real) {
+        return getFormat(real).getNameColor();
+    }
+
     public String getColorName(boolean real) {
         return getFormat(real).getNameColor() + (real ? realName : bGetName());
     }
 
     public String getPrefixName(boolean real) {
         return getFormat(real).getPrefix() + (real ? realName : bGetName());
+    }
+
+    public String getColorNameChatColor(boolean real) {
+        return getFormat(real).getNameColor() + (real ? realName : bGetName()) + getChatColor(real);
+    }
+
+    public String getPrefixNameChatColor(boolean real) {
+        return getFormat(real).getPrefix() + (real ? realName : bGetName()) + getChatColor(real);
     }
 
     //kb

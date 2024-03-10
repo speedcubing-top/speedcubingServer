@@ -22,18 +22,14 @@ import top.speedcubing.server.utils.config;
 
 public class SocketReader {
     public static ServerSocket tcpServer;
+    public static void init() {
 
-    private static void initServer() {
         try {
             tcpServer = new ServerSocket(Bukkit.getPort() + 1000);
             tcpServer.setSoTimeout(0);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void init() {
-        initServer();
         Threads.newThread("Cubing-Socket-Thread", () -> {
             while (true) {
                 try {
