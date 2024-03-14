@@ -234,7 +234,7 @@ public class nick implements CommandExecutor, Listener {
         player.updateInventory();
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""));
         Database.connection.update("onlineplayer", "displayname='" + rank + "',displayrank='" + name + "'", "id=" + user.id);
-        SocketWriter.write(user.tcpPort, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
+        SocketWriter.write(user.proxy, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
         user.displayRank = rank;
         if (openBook) {
             openNickBook(player, NickBook.RULE);

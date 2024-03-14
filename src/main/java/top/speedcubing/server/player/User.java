@@ -25,11 +25,14 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 import top.speedcubing.common.database.Database;
+import top.speedcubing.common.io.SocketWriter;
 import top.speedcubing.common.rank.IDPlayer;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.server.lang.LangMessage;
 
 public class User extends IDPlayer {
@@ -55,7 +58,7 @@ public class User extends IDPlayer {
     public double[] velocities;
     public int lang;
     public String displayRank;
-    public int tcpPort;
+    public HostAndPort proxy;
     public boolean allowOp;
     public boolean chatFilt;
     public boolean listened;
@@ -81,7 +84,7 @@ public class User extends IDPlayer {
         this.realRank = realRank;
         this.displayRank = displayRank;
         this.vanished = bungeeData.vanished;
-        this.tcpPort = bungeeData.port;
+        this.proxy = bungeeData.proxy;
         this.allowOp = allowOp;
         this.isStaff = Rank.isStaff(realRank);
         if (!bungeeData.hor.equals("null"))
@@ -148,6 +151,10 @@ public class User extends IDPlayer {
 
     public String getPrefixNameChatColor(boolean real) {
         return getFormat(real).getPrefix() + (real ? realName : bGetName()) + getChatColor(real);
+    }
+
+    public void setInput(boolean add) {
+        SocketWriter.write(proxy, new ByteArrayDataBuilder().writeUTF("inputmode").writeInt(id).writeBoolean(add).toByteArray());
     }
 
     //kb

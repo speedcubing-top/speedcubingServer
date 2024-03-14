@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 import top.speedcubing.common.rank.Rank;
+import top.speedcubing.common.server.MinecraftServer;
 import top.speedcubing.server.events.ConfigReloadEvent;
 
 public class config {
@@ -48,10 +49,16 @@ public class config {
             config.get("blacklistedmod").getAsJsonArray().forEach(a -> blacklistedMod.add(Pattern.compile(a.getAsString())));
             event.call();
 
-            if (!init)
-                Rank.reloadRanks();
+            if (!init) {
+                reloadDBConfig();
+            }
         } catch (Exception exception) {
             exception.printStackTrace();
         }
+    }
+
+    public static void reloadDBConfig() {
+        Rank.loadRanks();
+        MinecraftServer.loadServers();
     }
 }

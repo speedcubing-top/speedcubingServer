@@ -47,7 +47,7 @@ public class Rank {
         return realRank.equals("builder") || realRank.equals("helper") || realRank.equals("admin") || realRank.equals("owner") || realRank.equals("mod") || realRank.equals("developer");
     }
 
-    public static void reloadRanks() {
+    public static void loadRanks() {
         rankByName.clear();
 
         List<Rank> rankByOrder = new ArrayList<>();

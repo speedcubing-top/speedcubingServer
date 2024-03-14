@@ -22,6 +22,7 @@ import top.speedcubing.server.utils.config;
 
 public class SocketReader {
     public static ServerSocket tcpServer;
+
     public static void init() {
 
         try {
@@ -53,9 +54,6 @@ public class SocketReader {
                             } catch (IOException exception) {
                                 exception.printStackTrace();
                             }
-                            break;
-                        case "bungee":
-                            User.getUser(data.readInt()).tcpPort = data.readInt();
                             break;
                         case "cpsrequest":
                             int id = data.readInt();

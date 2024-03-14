@@ -17,7 +17,7 @@ public class proxycommand implements CommandExecutor {
             for (String string : strings) {
                 comamnd.append(" ").append(string);
             }
-            SocketWriter.write(speedcubingServer.getRandomBungeePort(), new ByteArrayDataBuilder().writeUTF("proxycmd").writeUTF(comamnd.substring(1)).toByteArray());
+            SocketWriter.write(speedcubingServer.getRandomBungee(), new ByteArrayDataBuilder().writeUTF("proxycmd").writeUTF(comamnd.substring(1)).toByteArray());
         }
         return true;
     }

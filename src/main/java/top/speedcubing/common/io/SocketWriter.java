@@ -4,19 +4,16 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.IOUtils;
+import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 
 public class SocketWriter {
 
-    private static TCPClient tcpClient;
-    public static void init() {
-        tcpClient = new TCPClient("localhost", 100);
-    }
-
-    public static DataInputStream writeResponse(int port, byte[] data) {
+    public static DataInputStream writeResponse(HostAndPort hostPort, byte[] data) {
         try {
+            TCPClient tcpClient = new TCPClient(hostPort.getHost(), 100);
             byte[] b = new ByteArrayDataBuilder().writeUTF("in").write(data).toByteArray();
-            byte[] result = tcpClient.sendAndRead(port, b, 2048);
+            byte[] result = tcpClient.sendAndRead(hostPort.getPort(), b, 2048);
             return IOUtils.toDataInputStream(result);
         } catch (IOException e) {
             e.printStackTrace();
@@ -24,7 +21,8 @@ public class SocketWriter {
         }
     }
 
-    public static void write(int port, byte[] data) {
-        tcpClient.send(port, data);
+    public static void write(HostAndPort hostPort, byte[] data) {
+        TCPClient tcpClient = new TCPClient(hostPort.getHost(), 100);
+        tcpClient.send(hostPort.getPort(), data);
     }
 }

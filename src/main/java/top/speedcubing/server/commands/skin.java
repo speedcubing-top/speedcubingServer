@@ -59,6 +59,6 @@ public class skin implements CommandExecutor {
                 packets[0].forEach(p::sendPacket);
         }
         user.dbUpdate((target != null && target.equalsIgnoreCase(user.realName)) ? "skinvalue='',skinsignature=''" : ("skinvalue='" + value + "',skinsignature='" + signature + "'"));
-        SocketWriter.write(user.tcpPort, new ByteArrayDataBuilder().writeUTF("skin").writeInt(user.id).writeUTF(value).writeUTF(signature).toByteArray());
+        SocketWriter.write(user.proxy, new ByteArrayDataBuilder().writeUTF("skin").writeInt(user.id).writeUTF(value).writeUTF(signature).toByteArray());
     }
 }

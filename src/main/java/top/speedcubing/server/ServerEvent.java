@@ -59,7 +59,7 @@ public class ServerEvent {
             switch (e.subHeader) {
                 case "bungee":
                     int i = e.receive.readInt();
-                    speedcubingServer.preLoginStorage.put(i, new PreLoginData(e.receive.readInt(), e.receive.readUTF(), e.receive.readUTF(), e.receive.readBoolean()));
+                    speedcubingServer.preLoginStorage.put(i, new PreLoginData(e.receive.readUTF(), e.receive.readInt(), e.receive.readUTF(), e.receive.readUTF(), e.receive.readBoolean()));
                     break;
             }
         } catch (IOException exception) {

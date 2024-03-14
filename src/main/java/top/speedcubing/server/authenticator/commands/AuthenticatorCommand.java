@@ -68,7 +68,7 @@ public class AuthenticatorCommand implements CommandExecutor {
                                 } else {
                                     verifedCount.remove(player.getUniqueId());
                                     String banCmd = "ban " + player.getName() + " 0 Suspicious activities detected on your account , contact support for assistance. -hideid";
-                                    SocketWriter.write(speedcubingServer.getRandomBungeePort(), new ByteArrayDataBuilder().writeUTF("proxycmd").writeUTF(banCmd).toByteArray());
+                                    SocketWriter.write(speedcubingServer.getRandomBungee(), new ByteArrayDataBuilder().writeUTF("proxycmd").writeUTF(banCmd).toByteArray());
                                 }
                             } else {
                                 verifedCount.put(player.getUniqueId(), 1);

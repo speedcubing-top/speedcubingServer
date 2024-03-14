@@ -13,12 +13,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
 import org.spigotmc.SpigotConfig;
 import top.speedcubing.common.database.Database;
-import top.speedcubing.common.io.SocketWriter;
-import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.CubingEventManager;
-import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.SystemUtils;
+import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.namedb.NameDb;
 import top.speedcubing.paper.CubingPaperConfig;
 import top.speedcubing.server.authenticator.commands.AuthenticatorCommand;
@@ -104,12 +102,11 @@ public class speedcubingServer extends JavaPlugin {
         instance = this;
 
         NameDb.init();
-        SocketWriter.init();
 
         config.reload(true);
-        Database.connect(config.DatabaseURL,config.DatabaseUser,config.DatabasePassword);
+        Database.connect(config.DatabaseURL, config.DatabaseUser, config.DatabasePassword);
+        config.reloadDBConfig();
 
-        Rank.reloadRanks();
         CubingTick.init();
         SocketReader.init();
 
@@ -209,12 +206,8 @@ public class speedcubingServer extends JavaPlugin {
         );
     }
 
-    public static void node(boolean add, int id, int port) {
-        SocketWriter.write(port, new ByteArrayDataBuilder().writeUTF("hasnode").writeInt(id).writeBoolean(add).toByteArray());
-    }
-
-    public static int getRandomBungeePort() {
-        return (!User.usersByID.values().isEmpty() ? User.usersByID.values().iterator().next().tcpPort : 25565 + 1000);
+    public static HostAndPort getRandomBungee() {
+        return (!User.usersByID.values().isEmpty() ? User.usersByID.values().iterator().next().proxy : new HostAndPort("host.docker.internal", 25565 + 1000));
     }
 
     public static String playerNameExtract(String name) {
