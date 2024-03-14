@@ -2,16 +2,21 @@ package top.speedcubing.server;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import net.minecraft.server.v1_8_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayInTabComplete;
 import net.minecraft.server.v1_8_R3.PacketPlayOutStatistic;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTabComplete;
 import net.minecraft.server.v1_8_R3.Statistic;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
+import top.speedcubing.lib.events.SignUpdateEvent;
 import top.speedcubing.lib.events.packet.PlayInEvent;
 import top.speedcubing.lib.events.packet.PlayOutEvent;
 import top.speedcubing.lib.utils.Reflections;
+import top.speedcubing.server.commands.nick;
 import top.speedcubing.server.events.InputEvent;
 import top.speedcubing.server.player.PreLoginData;
 import top.speedcubing.server.player.User;
@@ -64,6 +69,19 @@ public class ServerEvent {
             }
         } catch (IOException exception) {
             exception.printStackTrace();
+        }
+    }
+    @CubingEventHandler
+    public void SignUpdateEvent(SignUpdateEvent e) {
+        Player player = e.getPlayer();
+        List<String> lines = e.getLines();
+        System.out.println("a");
+        if (nick.settingNick.containsKey(player.getUniqueId())) {
+            String name = lines.get(0);
+            System.out.println("b");
+            player.performCommand("nick " + name + " " + nick.nickRank.get(player.getUniqueId()) + " true");
+        } else {
+            System.out.println("c");
         }
     }
 }
