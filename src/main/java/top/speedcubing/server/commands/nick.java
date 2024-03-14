@@ -288,7 +288,7 @@ public class nick implements CommandExecutor, Listener {
                 if (User.getUser(player).hasPermission("perm.nick.customname")) {
                     book = new BookBuilder("name", "system")
                             .addPage(new TextBuilder().str("現在你需要選擇一個暱稱名稱來使用\n")
-                                    .both("➤ 輸入一個名稱\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("還在寫這沒用"))
+                                    .both("➤ 輸入一個名稱\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("點擊這裡來使用自訂名稱"))
                                     .both("➤ 使用隨機名稱\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("點擊這裡來使用隨機名稱"))
                                     .both("➤ 繼續使用 '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("點擊這裡來使用上次的名稱"))
                                     .str("如果你想要解除匿名狀態可以輸入\n§l/unnick")
@@ -306,7 +306,7 @@ public class nick implements CommandExecutor, Listener {
                 BookBuilder.openBook(book, player);
                 break;
             case NAMECUSTOM:
-                String[] lines = {"請輸入自訂名稱"};
+                String[] lines = {"","請輸入自訂名稱"};
                 SignBuilder.openSign(player, -50, 99, 47,  lines);
                 break;
             case NAMERANDOM:
