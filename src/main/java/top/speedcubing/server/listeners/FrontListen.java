@@ -22,11 +22,11 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
+import top.speedcubing.common.database.Database;
+import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.Reflections;
-import top.speedcubing.common.database.Database;
-import top.speedcubing.common.rank.Rank;
 import top.speedcubing.server.player.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
@@ -102,7 +102,7 @@ public class FrontListen implements Listener {
             if (u.vanished) player.hidePlayer(u.player);
         //nick
         if (nicked)
-            user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(realRank) + speedcubingServer.playerNameExtract(datas[5])).c(Rank.getFormat(realRank, user.id).getPrefix()).g(Collections.singletonList(datas[5])).h(0).packet);
+            user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(realRank) + speedcubingServer.playerNameExtract(datas[5])).c(Rank.getFormat(realRank, user.id).getPrefix()).d(tag).g(Collections.singletonList(datas[5])).h(0).packet);
 
         if (config.onlineCrash.contains(player.getUniqueId().toString()) || config.onlineCrash.contains(player.getAddress().getAddress().getHostAddress())) {
             speedcubingServer.scheduledPool.schedule(() -> PlayerUtils.crashAll(player), 50, TimeUnit.MILLISECONDS);
