@@ -26,7 +26,7 @@ public class config {
     public static Set<Pattern> blockedMod = new HashSet<>();
     public static Set<Pattern> blacklistedMod = new HashSet<>();
 
-    public static boolean debugMode;
+    public static boolean removeLogs;
 
     public static void reload(boolean init) {
         try {
@@ -36,7 +36,7 @@ public class config {
             DatabasePassword = config.getAsJsonObject("database").get("password").getAsString();
             LeftCpsLimit = config.get("leftcpslimit").getAsInt();
             RightCpsLimit = config.get("rightcpslimit").getAsInt();
-            debugMode = config.get("debug").getAsBoolean();
+            removeLogs = config.get("removeLogs").getAsBoolean();
             filteredText.clear();
             config.get("filteredtext").getAsJsonArray().forEach(a -> filteredText.add(Pattern.compile(a.getAsString())));
             blockedLog.clear();

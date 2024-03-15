@@ -182,7 +182,7 @@ public class speedcubingServer extends JavaPlugin {
 //        }, 28800000);
 
 
-        if (!config.debugMode) {
+        if (!config.removeLogs) {
             //delete logs
             for (File f : new File("logs").listFiles()) {
                 if (!f.getName().equals("latest.log"))
