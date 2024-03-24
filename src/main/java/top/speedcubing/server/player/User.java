@@ -33,6 +33,7 @@ import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.internet.HostAndPort;
+import top.speedcubing.server.lang.LangInventory;
 import top.speedcubing.server.lang.LangMessage;
 
 public class User extends IDPlayer {
@@ -164,8 +165,8 @@ public class User extends IDPlayer {
     }
 
     //lang
-    public void openLangInventory(Inventory[] inventories) {
-        bOpenInventory(inventories[lang]);
+    public void openLangInventory(LangInventory inventories) {
+        bOpenInventory(inventories.get(lang));
     }
 
     public void sendLangMessage(LangMessage message, String... replaces) {
