@@ -17,7 +17,7 @@ public class Chat {
     public static String filter(String text) {
         for (Pattern p : config.filteredText) {
             Matcher matcher = p.matcher(text);
-            StringBuffer replacement = new StringBuffer();
+            StringBuilder replacement = new StringBuilder();
             while (matcher.find()) {
                 String match = matcher.group();
                 matcher.appendReplacement(replacement, StringUtils.repeat("*", match.length()));
