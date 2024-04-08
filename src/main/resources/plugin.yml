@@ -55,5 +55,6 @@ commands:
   serverconfig:
     usage: /serverconfig
 
+
 depend:
   - speedcubingLib
