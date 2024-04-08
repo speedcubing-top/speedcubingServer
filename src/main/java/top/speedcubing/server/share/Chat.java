@@ -109,7 +109,7 @@ public class Chat {
         }
         try {
             DiscordWebhook discordWebhook = new DiscordWebhook(webhook);
-            discordWebhook.setContent("[" + hour + ":" + minute + ":" + formatSecond + " ChatLogger] " + "[" + sender.getWorld().getName() + "] " + ChatColor.stripColor(message));
+            discordWebhook.setContent("```[" + hour + ":" + minute + ":" + formatSecond + " ChatLogger] " + "[" + sender.getWorld().getName() + "] " + ChatColor.stripColor(message) + "```");
             discordWebhook.execute();
         } catch (Throwable e) {
             e.printStackTrace();
