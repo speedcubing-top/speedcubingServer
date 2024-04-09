@@ -189,7 +189,6 @@ public class User extends IDPlayer {
     }
 
     //nms
-
     public PlayerConnection playerConn() {
         return toNMS().playerConnection;
     }

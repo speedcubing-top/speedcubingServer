@@ -11,6 +11,10 @@ public class LangMessage implements Cloneable {
         this.s = s;
     }
 
+    public int length() {
+        return s.length;
+    }
+
     public String get(int lang) {
         return s[lang];
     }
