@@ -14,7 +14,6 @@ import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
 import top.speedcubing.server.lang.LangMessage;
 import top.speedcubing.server.player.User;
-import top.speedcubing.server.utils.WebhookURL;
 import top.speedcubing.server.utils.config;
 
 public class Chat {
@@ -67,22 +66,14 @@ public class Chat {
     }
 
     private static void chatLogger(Player sender, String message) {
-        String timeFormat = TimeFormatter.unixToRealTime(System.currentTimeMillis(), "HH:mm:ss", TimeUnit.MILLISECONDS);
-        String serverName = sender.getServer().getServerName();
-        WebhookURL webhookURL = null;
         try {
-            webhookURL = WebhookURL.valueOf(serverName.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            System.out.println("Error, Unknown server name: " + serverName);
-        }
-        String webhook = webhookURL != null ? webhookURL.getUrl() : "null";
-        try {
+            String timeFormat = TimeFormatter.unixToRealTime(System.currentTimeMillis(), "HH:mm:ss", TimeUnit.MILLISECONDS);
+            String webhook = Database.configConnection.select("discord_webhook").from("mc_servers").where("name=\"" + sender.getServer().getServerName() + "\"").getString();
             DiscordWebhook discordWebhook = new DiscordWebhook(webhook);
             discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + ChatColor.stripColor(message) + "```");
             discordWebhook.execute();
         } catch (Throwable e) {
             e.printStackTrace();
         }
-
     }
 }
