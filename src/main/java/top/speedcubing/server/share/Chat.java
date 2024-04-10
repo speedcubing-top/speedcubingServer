@@ -68,8 +68,7 @@ public class Chat {
     private static void chatLogger(Player sender, String message) {
         try {
             String timeFormat = TimeFormatter.unixToRealTime(System.currentTimeMillis(), "HH:mm:ss", TimeUnit.MILLISECONDS);
-            String webhook = Database.configConnection.select("discord_webhook").from("mc_servers").where("name=\"" + sender.getServer().getServerName() + "\"").getString();
-            DiscordWebhook discordWebhook = new DiscordWebhook(webhook);
+            DiscordWebhook discordWebhook = new DiscordWebhook(config.discordWebook);
             discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + ChatColor.stripColor(message) + "```");
             discordWebhook.execute();
         } catch (Throwable e) {

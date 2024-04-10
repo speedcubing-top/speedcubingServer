@@ -6,6 +6,8 @@ import java.io.FileReader;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.bukkit.Bukkit;
+import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.server.MinecraftServer;
 import top.speedcubing.server.events.ConfigReloadEvent;
@@ -26,6 +28,7 @@ public class config {
     public static Set<Pattern> blockedMod = new HashSet<>();
     public static Set<Pattern> blacklistedMod = new HashSet<>();
 
+    public static String discordWebook;
     public static boolean removeLogs;
 
     public static void reload(boolean init) {
@@ -60,5 +63,6 @@ public class config {
     public static void reloadDBConfig() {
         Rank.loadRanks();
         MinecraftServer.loadServers();
+        discordWebook = Database.configConnection.select("discord_webhook").from("mc_servers").where("name=\"" + Bukkit.getServer().getServerName() + "\"").getString();
     }
 }
