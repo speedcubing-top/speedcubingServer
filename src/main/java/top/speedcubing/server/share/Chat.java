@@ -13,6 +13,7 @@ import top.speedcubing.lib.utils.Console;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
 import top.speedcubing.server.lang.LangMessage;
+import top.speedcubing.server.lang.LanguageSystem;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.config;
 
@@ -34,8 +35,8 @@ public class Chat {
 
     public static void globalChat(Collection<? extends Player> players, Player sender, LangMessage format, String message, String... replace) {
         LangMessage l = format.clone().replaceAll(replace);
-        TextBuilder[] t = new TextBuilder[format.length()];
-        for (int i = 0; i < format.length(); i++) {
+        TextBuilder[] t = new TextBuilder[LanguageSystem.langCount];
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
             t[i] = new TextBuilder().str(l.get(i));
         }
         globalChat(players, sender, t, message);
@@ -43,9 +44,9 @@ public class Chat {
 
     public static void globalChat(Collection<? extends Player> players, Player sender, TextBuilder[] text, String message) {
         String filteredText = filter(message);
-        TextBuilder[] filtered = new TextBuilder[text.length];
-        TextBuilder[] unfiltered = new TextBuilder[text.length];
-        for (int i = 0; i < text.length; i++) {
+        TextBuilder[] filtered = new TextBuilder[LanguageSystem.langCount];
+        TextBuilder[] unfiltered = new TextBuilder[LanguageSystem.langCount];
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
             String serial = text[i].serialize();
             unfiltered[i] = TextBuilder.unSerialize(serial.replace("%3%", message));
             filtered[i] = TextBuilder.unSerialize(serial.replace("%3%", filteredText));

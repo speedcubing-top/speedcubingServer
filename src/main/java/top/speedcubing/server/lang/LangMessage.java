@@ -10,11 +10,6 @@ public class LangMessage implements Cloneable {
     public LangMessage(String... s) {
         this.s = s;
     }
-
-    public int length() {
-        return s.length;
-    }
-
     public String get(int lang) {
         return s[lang];
     }
@@ -30,7 +25,7 @@ public class LangMessage implements Cloneable {
     }
 
     public LangMessage replace(int i, String replaces) {
-        for (int l = 0; l < s.length; l++)
+        for (int l = 0; l < LanguageSystem.langCount; l++)
             s[l] = s[l].replace("%" + i + "%", replaces);
         return this;
     }

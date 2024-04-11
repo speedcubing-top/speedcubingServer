@@ -23,8 +23,8 @@ public class LangInventory {
     }
 
     public LangInventory(int size, String... s) {
-        this.s = new InventoryBuilder[s.length];
-        for (int i = 0; i < s.length; i++) {
+        this.s = new InventoryBuilder[LanguageSystem.langCount];
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
             this.s[i] = new InventoryBuilder(size, s[i]);
         }
     }
@@ -46,25 +46,25 @@ public class LangInventory {
     }
 
     public LangInventory setItem(LangItemStack stack, int... slots) {
-        for (int i = 0; i < s.length; i++)
+        for (int i = 0; i < LanguageSystem.langCount; i++)
             s[i].setItem(stack.get(i), slots);
         return this;
     }
 
     public LangInventory setItem(LangItemStack stack, int start, int end) {
-        for (int i = 0; i < s.length; i++)
+        for (int i = 0; i < LanguageSystem.langCount; i++)
             s[i].setItem(stack.get(i), start, end);
         return this;
     }
 
     public LangInventory setItem(LangItemStack stack, Consumer<ClickInventoryEvent> event, int... slots) {
-        for (int i = 0; i < s.length; i++)
+        for (int i = 0; i < LanguageSystem.langCount; i++)
             s[i].setItem(stack.get(i), event, slots);
         return this;
     }
 
     public LangInventory setItem(LangItemStack stack, Consumer<ClickInventoryEvent> event, int start, int end) {
-        for (int i = 0; i < s.length; i++)
+        for (int i = 0; i < LanguageSystem.langCount; i++)
             s[i].setItem(stack.get(i), event, start, end);
         return this;
     }
