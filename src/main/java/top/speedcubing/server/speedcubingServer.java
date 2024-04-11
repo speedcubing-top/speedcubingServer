@@ -109,16 +109,6 @@ public class speedcubingServer extends JavaPlugin {
         CubingTick.init();
         SocketReader.init();
 
-        //spigot.yml
-        SpigotConfig.disableStatSaving = true;
-        //spigot
-        try {
-            Class.forName("top.speedcubing.paper.CubingPaperConfig");
-            CubingPaperConfig.commandOP = true;
-            CubingPaperConfig.disableOpsJson = true;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         //lib
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
             if (bytes.length != 2) {
