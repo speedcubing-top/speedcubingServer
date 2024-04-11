@@ -69,7 +69,7 @@ public class Chat {
         try {
             String timeFormat = TimeFormatter.unixToRealTime(System.currentTimeMillis(), "HH:mm:ss", TimeUnit.MILLISECONDS);
             DiscordWebhook discordWebhook = new DiscordWebhook(config.discordWebook);
-            discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + ChatColor.stripColor(message) + "```");
+            discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + ChatColor.stripColor(message.replaceAll("`","'")) + "```");
             discordWebhook.execute();
         } catch (Throwable e) {
             e.printStackTrace();
