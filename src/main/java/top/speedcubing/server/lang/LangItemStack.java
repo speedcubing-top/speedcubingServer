@@ -10,9 +10,15 @@ public class LangItemStack {
     ItemStack[] s;
 
     public LangItemStack(ItemBuilder item, String... s) {
-        this.s = new ItemStack[LanguageSystem.langCount];
+        int r;
+        if (s.length == 0) {
+            r = 1;
+        } else
+            r = s.length;
+        this.s = new ItemStack[r];
+
         ItemStack stack = item.build();
-        for (int i = 0; i < LanguageSystem.langCount; i++) {
+        for (int i = 0; i < r; i++) {
             ItemStack s2 = stack.clone();
             ItemMeta meta = s2.getItemMeta();
             if (s.length != 0)
@@ -23,14 +29,20 @@ public class LangItemStack {
     }
 
     public ItemStack get(Player player) {
-        return get(User.getUser(player));
+        if (s.length == 1)
+            return s[0];
+        return s[User.getUser(player).lang];
     }
 
     public ItemStack get(int lang) {
+        if (s.length == 1)
+            return s[0];
         return s[lang];
     }
 
     public ItemStack get(User user) {
-        return get(user.lang);
+        if (s.length == 1)
+            return s[0];
+        return s[user.lang];
     }
 }
