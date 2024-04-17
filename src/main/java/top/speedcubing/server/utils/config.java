@@ -27,7 +27,6 @@ public class config {
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<Pattern> blockedMod = new HashSet<>();
     public static Set<Pattern> blacklistedMod = new HashSet<>();
-
     public static String discordWebook;
     public static boolean removeLogs;
 

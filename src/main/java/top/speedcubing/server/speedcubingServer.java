@@ -9,6 +9,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Pattern;
 
+import org.apache.commons.codec.language.bm.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
@@ -45,6 +46,7 @@ import top.speedcubing.server.commands.staff.proxycommand;
 import top.speedcubing.server.commands.staff.serverconfig;
 import top.speedcubing.server.commands.staff.testkb;
 import top.speedcubing.server.commands.unnick;
+import top.speedcubing.server.lang.LanguageSystem;
 import top.speedcubing.server.listeners.BackListen;
 import top.speedcubing.server.listeners.CommandPermissions;
 import top.speedcubing.server.listeners.FrontListen;
@@ -111,6 +113,7 @@ public class speedcubingServer extends JavaPlugin {
 
         CubingTick.init();
         SocketReader.init();
+        LanguageSystem.init();
 
         //lib
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {

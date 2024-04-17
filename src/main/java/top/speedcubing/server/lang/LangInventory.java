@@ -9,7 +9,8 @@ import top.speedcubing.lib.events.inventory.CloseInventoryEvent;
 import top.speedcubing.server.player.User;
 
 public class LangInventory {
-    private final InventoryBuilder[] s;
+    public final InventoryBuilder[] s;
+
     public Inventory get(Player player) {
         return get(User.getUser(player));
     }
@@ -22,10 +23,21 @@ public class LangInventory {
         return s[lang].getInventory();
     }
 
+    public LangInventory(int size, LangMessage message) {
+        this(size, message.s);
+    }
+
     public LangInventory(int size, String... s) {
         this.s = new InventoryBuilder[LanguageSystem.langCount];
         for (int i = 0; i < LanguageSystem.langCount; i++) {
             this.s[i] = new InventoryBuilder(size, s[i]);
+        }
+    }
+
+    public LangInventory(LangMessage title, InventoryBuilder... s) {
+        this.s = s;
+        for (int i = 0; i < title.s.length; i++) {
+            s[i].setTitle(title.get(i));
         }
     }
 

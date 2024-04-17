@@ -34,6 +34,7 @@ import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.server.lang.LangInventory;
+import top.speedcubing.server.lang.LangItemStack;
 import top.speedcubing.server.lang.LangMessage;
 
 public class User extends IDPlayer {
@@ -167,6 +168,10 @@ public class User extends IDPlayer {
     //lang
     public void openLangInventory(LangInventory inventories) {
         bOpenInventory(inventories.get(lang));
+    }
+
+    public void setLangItem(int slot, LangItemStack stack) {
+        bGetInventory().setItem(slot, stack.get(lang));
     }
 
     public void sendLangMessage(LangMessage message, String... replaces) {

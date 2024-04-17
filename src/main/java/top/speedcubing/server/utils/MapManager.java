@@ -20,7 +20,7 @@ public class MapManager {
             new ProcessBuilder("rm", "-r", map).start().waitFor();
             String file = url + ".tar.gz";
             HttpURLConnection connection = (HttpURLConnection) new URL("https://speedcubing.top/maps/" + file).openConnection();
-            connection.addRequestProperty("User-Agent", "Mozilla/4.0");
+            connection.addRequestProperty("User-Agent", "CubingPaper/1.0");
             connection.setRequestProperty("X-UUID-Key", "2ad5a999-854a-4c5e-adbc-aa434deb79d3");
             Files.copy(connection.getInputStream(), Paths.get(file), StandardCopyOption.REPLACE_EXISTING);
             new ProcessBuilder("tar", "-xvzf", file).start().waitFor();

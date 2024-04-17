@@ -9,20 +9,28 @@ import top.speedcubing.server.player.User;
 public class LangItemStack {
     ItemStack[] s;
 
+    public LangItemStack(ItemBuilder item, LangMessage m) {
+        this(item, m.s);
+    }
+
+    public LangItemStack(ItemBuilder item) {
+        this(item, new String[0]);
+    }
+
     public LangItemStack(ItemBuilder item, String... s) {
-        int r;
-        if (s.length == 0) {
-            r = 1;
-        } else
-            r = s.length;
+        int r = Math.max(s.length, 1);
         this.s = new ItemStack[r];
 
         ItemStack stack = item.build();
         for (int i = 0; i < r; i++) {
             ItemStack s2 = stack.clone();
             ItemMeta meta = s2.getItemMeta();
-            if (s.length != 0)
+
+            if (s.length == 1)
+                meta.setDisplayName(s[0]);
+            else if (s.length != 0)
                 meta.setDisplayName(s[i]);
+
             s2.setItemMeta(meta);
             this.s[i] = s2;
         }
