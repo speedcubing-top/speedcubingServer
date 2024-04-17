@@ -24,26 +24,46 @@ public class historyUi implements CommandExecutor, Listener {
         }
         if (args.length == 1) {
             String targetName = args[0];
-            if (!openHistoryGui(player,targetName)) {
+            if (!openHistoryGui(player, targetName)) {
                 player.sendMessage("§cThe player has never joined this server.");
                 return true;
             }
         }
         return true;
     }
-    private boolean openHistoryGui(Player player, String name) {
-        if (!Database.connection.exist("playersdata","name='" + name + "'")) return false;
 
-        Inventory inventory = Bukkit.createInventory(null,54,"Punishment History");
-
-        inventory.setItem(0,new ItemBuilder(Material.SKULL).owner(name).build());
-        player.openInventory(inventory);
-        return true;
-    }
     @EventHandler
     public void onClick(InventoryClickEvent e) {
-        if (e.getClickedInventory().getTitle().equals("Punishment History")) {
+        if (e.getInventory().getTitle().equals("Punishment History")) {
             e.setCancelled(true);
+            switch (e.getRawSlot()) {
+                case 0:
+                    if (e.isLeftClick()) {
+
+                    } else if (e.isRightClick()) {
+
+                    }
+                    break;
+                case 8:
+                    e.getWhoClicked().closeInventory();
+                    break;
+            }
         }
+    }
+    private boolean openHistoryGui(Player sender, String name) {
+        String[] data = Database.connection.select("name,profile_textures_value").from("playersdata").where("name='" + name + "'").getStringArray();
+        if (data.length == 0) return false;
+
+        Inventory inventory = Bukkit.createInventory(null, 9, "Punishment History");
+
+        inventory.setItem(0, new ItemBuilder(Material.SKULL_ITEM).name( "§a" + data[0] + "'s punishment history")
+                .addLore("§eLeft Click to view ban history","§eRight Click to view mute history").durability(3)
+                .skullFromProfileValue(data[1]).build());
+        for (int i = 1; i < 8; i++) {
+            inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name(" ").build());
+        }
+        inventory.setItem(8, new ItemBuilder(Material.BARRIER).name("§cCLOSE").build());
+        sender.openInventory(inventory);
+        return true;
     }
 }
