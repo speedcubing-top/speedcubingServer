@@ -52,6 +52,8 @@ commands:
   image:
     aliases: [ i ]
     usage: /image
+  historyui:
+    usage: /historyui
   serverconfig:
     usage: /serverconfig
 
