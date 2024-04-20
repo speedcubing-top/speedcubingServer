@@ -92,6 +92,7 @@ public class historyUi implements CommandExecutor, Listener {
     }
 
     private void Page(InventoryClickEvent e, Player player) {
+        String title = e.getInventory().getTitle();
         String[] pageString = e.getInventory().getTitle().split("Page");
         String[] page = pageString[1].split("/");
         int currentPage = Integer.parseInt(page[0].trim());
@@ -113,14 +114,26 @@ public class historyUi implements CommandExecutor, Listener {
                     openHistoryGui(player, name);
                     return;
                 }
-                player.openInventory(banList.get(currentPageIndex - 1));
+                if (title.contains("ban")) {
+                    player.openInventory(banList.get(currentPageIndex - 1));
+                } else {
+                    player.openInventory(muteList.get(currentPageIndex - 1));
+                }
                 break;
             case 53:
                 if (currentPage == totalPage) {
-                    player.openInventory(banList.get(0));
+                    if (title.contains("ban")) {
+                        player.openInventory(banList.get(0));
+                    } else {
+                        player.openInventory(muteList.get(0));
+                    }
                     return;
                 }
-                player.openInventory(banList.get(currentPageIndex + 1));
+                if (title.contains("ban")) {
+                    player.openInventory(banList.get(currentPageIndex + 1));
+                } else {
+                    player.openInventory(muteList.get(currentPageIndex + 1));
+                }
                 break;
             case 49:
                 player.closeInventory();
