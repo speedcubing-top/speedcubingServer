@@ -12,6 +12,9 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
+import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.minecraft.text.TextClickEvent;
+import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
 
@@ -24,6 +27,7 @@ import java.util.concurrent.TimeUnit;
 public class historyUi implements CommandExecutor, Listener {
     List<Inventory> banList = new ArrayList<>();
     List<Inventory> muteList = new ArrayList<>();
+
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player)) return true;
@@ -55,7 +59,7 @@ public class historyUi implements CommandExecutor, Listener {
                 switch (e.getRawSlot()) {
                     case 0:
                         if (e.isLeftClick()) {
-                            banList = generateBanPunishment(info);
+                            banList = generateBanGUI(info);
                             if (banList.isEmpty()) {
                                 player.sendMessage("§cThis player doesn't have any ban punishment logs");
                                 player.closeInventory();
@@ -63,7 +67,7 @@ public class historyUi implements CommandExecutor, Listener {
                             }
                             player.openInventory(banList.get(0));
                         } else if (e.isRightClick()) {
-                            muteList = generateMutePunishment(info);
+                            muteList = generateMuteGUI(info);
                             if (muteList.isEmpty()) {
                                 player.sendMessage("§cThis player doesn't have any mute punishment logs");
                                 player.closeInventory();
@@ -92,20 +96,30 @@ public class historyUi implements CommandExecutor, Listener {
         String[] page = pageString[1].split("/");
         int currentPage = Integer.parseInt(page[0].trim());
         int currentPageIndex = currentPage - 1;
-        int totalPage = Integer.parseInt(page[1].replace(")",""));
+        int totalPage = Integer.parseInt(page[1].replace(")", ""));
+        String[] skullStr = e.getInventory().getItem(0).getItemMeta().getDisplayName().split(":");
+        String name = skullStr[1].trim();
         e.setCancelled(true);
         switch (e.getRawSlot()) {
+            case 1:
+                player.sendMessage(new TextBuilder().both("§eClick here to query " + name + "'s client"
+                                , TextClickEvent.runCommand("/clientinfo " + name)
+                                , TextHoverEvent.showText("§eClick me!"))
+                        .toBungee());
+                player.closeInventory();
+                break;
             case 45:
                 if (currentPage == 1) {
-                    String[] skullStr = e.getInventory().getItem(0).getItemMeta().getDisplayName().split(":");
-                    String name = skullStr[1].trim();
-                    openHistoryGui(player,name);
+                    openHistoryGui(player, name);
                     return;
                 }
                 player.openInventory(banList.get(currentPageIndex - 1));
                 break;
             case 53:
-                if (currentPage == totalPage) return;
+                if (currentPage == totalPage) {
+                    player.openInventory(banList.get(0));
+                    return;
+                }
                 player.openInventory(banList.get(currentPageIndex + 1));
                 break;
             case 49:
@@ -121,7 +135,7 @@ public class historyUi implements CommandExecutor, Listener {
         Inventory inventory = Bukkit.createInventory(null, 9, "Punishment History");
 
         inventory.setItem(0, new ItemBuilder(Material.SKULL_ITEM).name("§a" + data[0] + "'s punishment history")
-                .addLore("§eLeft Click to view ban history", "§eRight Click to view mute history", "§eUUID:" + data[2]).durability(3)
+                .addLore("§eLeft Click to view ban history.", "§eRight Click to view mute history.", "§eUUID: " + data[2]).durability(3)
                 .owner(name)
                 .build());
         inventory.setItem(1, new ItemBuilder(Material.PAPER).name("§aINFORMATION")
@@ -135,7 +149,7 @@ public class historyUi implements CommandExecutor, Listener {
         return true;
     }
 
-    private List<Inventory> generateBanPunishment(String[] values) {
+    private List<Inventory> generateBanGUI(String[] values) {
         List<BanPunishment> datas = getBanPunishmentHistory(values[2]);
         List<Inventory> result = new ArrayList<>();
 
@@ -151,18 +165,18 @@ public class historyUi implements CommandExecutor, Listener {
                 GUISettings(values, inv);
 
                 BanPunishment punishment = datas.get(i);
-                long remain = getPunishRemain(punishment.getAt(),punishment.getDays(), punishment.getPardon(), SystemUtils.getCurrentSecond());
+                long remain = getPunishRemain(punishment.getAt(), punishment.getDays(), punishment.getPardon(), SystemUtils.getCurrentSecond());
                 inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eBanned logs")
                         .addLore("§eName: §a" + values[0],
                                 "§eOperator: §a" + punishment.getOperator(),
                                 "§eReason: §a" + punishment.getReason(),
                                 "§eBanID: §a" + punishment.getId(),
                                 "§eDuration: §a" + punishment.getDays(),
-                                "§eAt: §a" + TimeFormatter.unixToRealTime(punishment.getAt(), "yyyy/MM/dd HH:mm:ss",TimeUnit.SECONDS),
+                                "§eAt: §a" + TimeFormatter.unixToRealTime(punishment.getAt(), "yyyy/MM/dd HH:mm:ss", TimeUnit.SECONDS),
                                 "§eIp: §a" + punishment.getIp(),
                                 "§eHideID: §a" + (punishment.getHideid().equals("1") ? "true" : "false"),
                                 "§eState: §a" + (remain > 0 ? "Expire in " + new TimeFormatter(remain, TimeUnit.SECONDS).format("%D%d ", true).format("%h%h %m%m %s%s", false).toString() : remain < 0 ? "Not Unbanned yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unbanned by " + punishment.getPardon()),
-                                "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : TimeFormatter.unixToRealTime(punishment.getPardonat(),"yyyy/MM/dd HH:mm:ss",TimeUnit.SECONDS)))
+                                "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : TimeFormatter.unixToRealTime(punishment.getPardonat(), "yyyy/MM/dd HH:mm:ss", TimeUnit.SECONDS)))
                         .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
                         .build());
                 if (itemIndex > 45) {
@@ -176,9 +190,16 @@ public class historyUi implements CommandExecutor, Listener {
     }
 
     private void GUISettings(String[] values, Inventory inv) {
+        String title = inv.getTitle();
+        String[] pageString = title.split("Page");
+        String[] page = pageString[1].split("/");
+        int currentPage = Integer.parseInt(page[0].trim());
+        int currentPageIndex = currentPage - 1;
+        int totalPage = Integer.parseInt(page[1].replace(")", ""));
         inv.setItem(0, new ItemBuilder(Material.SKULL_ITEM).name("§aPlayer: " + values[0])
                 .durability(3)
                 .owner(values[0]).build());
+        inv.setItem(1, new ItemBuilder(Material.COMPASS).name("§a/Clientinfo").addLore("§eClick to query this player client.").build());
         for (int j = 9; j < 18; j++) {
             inv.setItem(j, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name(" ").build());
         }
@@ -188,12 +209,16 @@ public class historyUi implements CommandExecutor, Listener {
         for (int j = 50; j < 53; j++) {
             inv.setItem(j, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name(" ").build());
         }
-        inv.setItem(45, new ItemBuilder(Material.ARROW).name("§aPrevious page").build());
+        inv.setItem(45, new ItemBuilder(Material.ARROW).name(currentPage == 1 ? "§aGo back" : "§aPrevious Page")
+                .addLore(currentPage == 1 ? "§8To Punishment History." : "§8Go to page " + (currentPage - 1) + ".")
+                .build());
         inv.setItem(49, new ItemBuilder(Material.BARRIER).name("§cCLOSE").build());
-        inv.setItem(53, new ItemBuilder(Material.ARROW).name("§aNext page").build());
+        inv.setItem(53, new ItemBuilder(Material.ARROW).name("§aNext Page")
+                .addLore(currentPage == totalPage ? "§8Go To Page 1." : "§8Go To Page " + (currentPage + 1) + ".")
+                .build());
     }
 
-    private List<Inventory> generateMutePunishment(String[] values) {
+    private List<Inventory> generateMuteGUI(String[] values) {
         List<MutePunishment> datas = getMutePunishmentHistory(values[2]);
         List<Inventory> result = new ArrayList<>();
 
@@ -209,16 +234,16 @@ public class historyUi implements CommandExecutor, Listener {
                 GUISettings(values, inv);
 
                 MutePunishment punishment = datas.get(i);
-                long remain = getPunishRemain(punishment.getAt(),punishment.getDays(), punishment.getPardon(), SystemUtils.getCurrentSecond());
+                long remain = getPunishRemain(punishment.getAt(), punishment.getDays(), punishment.getPardon(), SystemUtils.getCurrentSecond());
                 inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eMuted logs")
                         .addLore("§eName: §a" + values[0],
                                 "§eOperator: §a" + punishment.getOperator(),
                                 "§eReason: §a" + punishment.getReason(),
                                 "§eMuteID: §a" + punishment.getId(),
                                 "§eDuration: §a" + punishment.getDays(),
-                                "§eAt: §a" + TimeFormatter.unixToRealTime(punishment.getAt(), "yyyy/MM/dd HH:mm:ss",TimeUnit.SECONDS),
+                                "§eAt: §a" + TimeFormatter.unixToRealTime(punishment.getAt(), "yyyy/MM/dd HH:mm:ss", TimeUnit.SECONDS),
                                 "§eState: §a" + (remain > 0 ? "Expire in " + new TimeFormatter(remain, TimeUnit.SECONDS).format("%D%d ", true).format("%h%h %m%m %s%s", false).toString() : remain < 0 ? "Not Unmuted yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unmuted by " + punishment.getPardon()),
-                                "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : TimeFormatter.unixToRealTime(punishment.getPardonat(),"yyyy/MM/dd HH:mm:ss",TimeUnit.SECONDS)))
+                                "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : TimeFormatter.unixToRealTime(punishment.getPardonat(), "yyyy/MM/dd HH:mm:ss", TimeUnit.SECONDS)))
                         .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
                         .build());
                 if (itemIndex > 45) {
@@ -254,12 +279,14 @@ public class historyUi implements CommandExecutor, Listener {
                 BanPunishment punishment = new BanPunishment(id, playerUuid, ip, hideid, at, reason, operator, days, pardon, pardonat);
                 resultList.add(punishment);
             }
+            resultList.sort((o1, o2) -> Long.compare(o2.getAt(), o1.getAt()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return resultList;
     }
+
 
     private List<MutePunishment> getMutePunishmentHistory(String uuid) {
         List<MutePunishment> resultList = new ArrayList<>();
@@ -282,12 +309,14 @@ public class historyUi implements CommandExecutor, Listener {
                 MutePunishment punishment = new MutePunishment(id, playerUuid, at, reason, operator, days, pardon, pardonat);
                 resultList.add(punishment);
             }
+            resultList.sort((o1, o2) -> Long.compare(o2.getAt(), o1.getAt()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
         return resultList;
     }
+
     public static long getPunishRemain(long at, String days, String pardon, long unix) {
         return getPunishRemain(at, Integer.parseInt(days), pardon, unix);
     }
