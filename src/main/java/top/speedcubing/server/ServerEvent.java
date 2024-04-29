@@ -1,16 +1,19 @@
 package top.speedcubing.server;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import net.minecraft.server.v1_8_R3.PacketDataSerializer;
+import net.minecraft.server.v1_8_R3.PacketPlayInCustomPayload;
 import net.minecraft.server.v1_8_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayInTabComplete;
 import net.minecraft.server.v1_8_R3.PacketPlayOutStatistic;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTabComplete;
 import net.minecraft.server.v1_8_R3.Statistic;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.lib.events.SignUpdateEvent;
 import top.speedcubing.lib.events.packet.PlayInEvent;
@@ -45,6 +48,22 @@ public class ServerEvent {
 //                System.out.println("cancel");
 //                e.isCancelled = true;
 //            }
+        } else if (e.packet instanceof PacketPlayInCustomPayload) {
+            PacketPlayInCustomPayload packet = (PacketPlayInCustomPayload) e.packet;
+            if (packet.a().equals("labymod3:main")) {
+                PacketDataSerializer serializer = packet.b();
+
+                String type = serializer.c(64);
+
+                if (!type.equals("INFO")) {
+                    return;
+                }
+
+                String json = serializer.c(10000);
+
+                JsonObject parser = JsonParser.parseString(json).getAsJsonObject();
+                System.out.println(parser);
+            }
         }
     }
 
@@ -71,6 +90,7 @@ public class ServerEvent {
             exception.printStackTrace();
         }
     }
+
     @CubingEventHandler
     public void SignUpdateEvent(SignUpdateEvent e) {
         Player player = e.getPlayer();
