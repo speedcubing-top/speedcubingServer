@@ -62,7 +62,7 @@ public class Chat {
             user.sendLangTextComp(user.chatFilt ? filtered : unfiltered);
         }
 
-        Console.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + unfiltered[1].toPlainText());
+        Console.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + unfiltered[1].toColorText());
         chatLogger(sender, unfiltered[1].toPlainText());
     }
 
@@ -70,7 +70,8 @@ public class Chat {
         try {
             String timeFormat = TimeFormatter.unixToRealTime(System.currentTimeMillis(), "HH:mm:ss", TimeUnit.MILLISECONDS);
             DiscordWebhook discordWebhook = new DiscordWebhook(config.discordWebook);
-            discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + ChatColor.stripColor(message.replaceAll("`","'")) + "```");
+            message = ChatColor.stripColor(message.replaceAll("`","'").replaceAll("\n","/n"));
+            discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + message + "```");
             discordWebhook.execute();
         } catch (Throwable e) {
             e.printStackTrace();

@@ -40,6 +40,7 @@ import top.speedcubing.server.commands.staff.gmc;
 import top.speedcubing.server.commands.staff.gms;
 import top.speedcubing.server.commands.staff.gmsp;
 import top.speedcubing.server.commands.staff.heal;
+import top.speedcubing.server.commands.staff.historyUi;
 import top.speedcubing.server.commands.staff.kaboom;
 import top.speedcubing.server.commands.staff.proxycommand;
 import top.speedcubing.server.commands.staff.serverconfig;
@@ -89,6 +90,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("2fa").setExecutor(new AuthenticatorCommand());
         Bukkit.getPluginCommand("image").setExecutor(new image());
         Bukkit.getPluginCommand("serverconfig").setExecutor(new serverconfig());
+        Bukkit.getPluginCommand("historyui").setExecutor(new historyUi());
     }
 
     private void registerListeners() {
@@ -97,6 +99,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BackListen(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new nick(), this);
+        Bukkit.getPluginManager().registerEvents(new historyUi(),this);
     }
 
     public void onEnable() {
