@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class historyUi implements CommandExecutor, Listener {
+public class history implements CommandExecutor, Listener {
     List<Inventory> banList = new ArrayList<>();
     List<Inventory> muteList = new ArrayList<>();
 

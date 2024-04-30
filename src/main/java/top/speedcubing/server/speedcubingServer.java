@@ -9,18 +9,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Pattern;
 
-import org.apache.commons.codec.language.bm.Lang;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
-import org.spigotmc.SpigotConfig;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.namedb.NameDb;
-import top.speedcubing.paper.CubingPaperConfig;
 import top.speedcubing.server.authenticator.commands.AuthenticatorCommand;
 import top.speedcubing.server.authenticator.listeners.PlayerListener;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
@@ -40,7 +37,7 @@ import top.speedcubing.server.commands.staff.gmc;
 import top.speedcubing.server.commands.staff.gms;
 import top.speedcubing.server.commands.staff.gmsp;
 import top.speedcubing.server.commands.staff.heal;
-import top.speedcubing.server.commands.staff.historyUi;
+import top.speedcubing.server.commands.staff.history;
 import top.speedcubing.server.commands.staff.kaboom;
 import top.speedcubing.server.commands.staff.proxycommand;
 import top.speedcubing.server.commands.staff.serverconfig;
@@ -58,7 +55,6 @@ import top.speedcubing.server.utils.LogListener;
 import top.speedcubing.server.utils.config;
 
 public class speedcubingServer extends JavaPlugin {
-
     public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
 
     public static final Pattern legacyNameRegex = Pattern.compile("^\\w{1,16}$");
@@ -90,7 +86,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("2fa").setExecutor(new AuthenticatorCommand());
         Bukkit.getPluginCommand("image").setExecutor(new image());
         Bukkit.getPluginCommand("serverconfig").setExecutor(new serverconfig());
-        Bukkit.getPluginCommand("historyui").setExecutor(new historyUi());
+        Bukkit.getPluginCommand("history").setExecutor(new history());
     }
 
     private void registerListeners() {
@@ -99,7 +95,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new BackListen(), this);
         Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
         Bukkit.getPluginManager().registerEvents(new nick(), this);
-        Bukkit.getPluginManager().registerEvents(new historyUi(),this);
+        Bukkit.getPluginManager().registerEvents(new history(),this);
     }
 
     public void onEnable() {
