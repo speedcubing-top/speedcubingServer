@@ -3,8 +3,6 @@ package top.speedcubing.server.commands;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.inventory.Inventory;
-import top.speedcubing.lib.bukkit.inventory.GUIBuilder;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 
