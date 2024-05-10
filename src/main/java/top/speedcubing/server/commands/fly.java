@@ -13,15 +13,14 @@ public class fly implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0) {
             Player player = (Player) commandSender;
-            if (!((ToggleFlyEvent) new ToggleFlyEvent(player).call()).isCancelled) {
+            if (!((ToggleFlyEvent) new ToggleFlyEvent(player).call()).isCancelled()) {
                 boolean allowFlight = player.getAllowFlight();
                 player.setAllowFlight(!allowFlight);
-                User.getUser(player).sendLangMessage(allowFlight ? GlobalString.FlyDisable : GlobalString.FlyEnable);
-                if (!allowFlight) {
-                    User.getUser(player).dbUpdate("fly=" + 1);
-                } else {
-                    User.getUser(player).dbUpdate("fly=" + 0);
-                }
+
+                User user = User.getUser(player);
+                user.sendLangMessage(allowFlight ? GlobalString.FlyDisable : GlobalString.FlyEnable);
+
+                user.dbUpdate("flying=" + (allowFlight ? 0 : 1));
             }
         } else commandSender.sendMessage("/fly");
         return true;

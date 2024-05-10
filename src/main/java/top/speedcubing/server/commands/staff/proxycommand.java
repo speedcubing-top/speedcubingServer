@@ -4,7 +4,8 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import top.speedcubing.common.io.SocketWriter;
-import top.speedcubing.lib.utils.ByteArrayDataBuilder;
+import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
+import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.speedcubingServer;
 
 public class proxycommand implements CommandExecutor {
@@ -17,7 +18,13 @@ public class proxycommand implements CommandExecutor {
             for (String string : strings) {
                 comamnd.append(" ").append(string);
             }
-            SocketWriter.write(speedcubingServer.getRandomBungee(), new ByteArrayDataBuilder().writeUTF("proxycmd").writeUTF(comamnd.substring(1)).toByteArray());
+
+            byte[] packet = new ByteArrayBuffer()
+                    .writeUTF("proxycmd")
+                    .writeUTF(comamnd.substring(1))
+                    .toByteArray();
+
+            TCPClient.write(speedcubingServer.getRandomBungee(), packet);
         }
         return true;
     }

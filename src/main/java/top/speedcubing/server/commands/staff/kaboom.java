@@ -5,6 +5,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.util.Vector;
+import top.speedcubing.lib.minecraft.MinecraftConsole;
 import top.speedcubing.lib.utils.Console;
 import top.speedcubing.server.player.User;
 
@@ -18,7 +19,7 @@ public class kaboom implements CommandExecutor {
             applyVelocityToAllPlayers(new Vector(0, 4, 0), commandSender);
             issueLightningStrikesToAllPlayers(commandSender);
             commandSender.sendMessage("§l§cKABOOM!");
-            Console.printlnColor("§7[§4STAFF§7] " + senderName + " caused a nuclear reaction!");
+            MinecraftConsole.printlnColor("§7[§4STAFF§7] " + senderName + " caused a nuclear reaction!");
         } else {
             commandSender.sendMessage("/kaboom");
             commandSender.sendMessage("§4WARNING! §cTHIS COMMAND IS NOT FOR PRODUCTION AND MIGHT CAUSE FALSE BANS ON KNOCKBACKFFA");

@@ -10,16 +10,14 @@ import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import top.speedcubing.lib.events.SignUpdateEvent;
-import top.speedcubing.server.commands.nick;
+import top.speedcubing.server.authenticator.AuthData;
+import top.speedcubing.server.authenticator.PlayerListener;
+import top.speedcubing.server.commands.nick.nick;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
-
-import java.util.List;
 
 public class BackListen implements Listener {
 
@@ -55,7 +53,9 @@ public class BackListen implements Listener {
     public void PlayerQuitEvent(PlayerQuitEvent e) {
         e.setQuitMessage("");
         Player player = e.getPlayer();
-        User.usersByID.remove(User.getUser(player).id);
+        User user = User.getUser(player);
+        AuthData.map.remove(user);
+        User.usersByID.remove(user.id);
         User.usersByUUID.remove(player.getUniqueId());
         nick.settingNick.remove(e.getPlayer().getUniqueId());
         nick.nickName.remove(e.getPlayer().getUniqueId());

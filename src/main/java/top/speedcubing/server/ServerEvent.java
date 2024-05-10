@@ -12,14 +12,13 @@ import net.minecraft.server.v1_8_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayInTabComplete;
 import net.minecraft.server.v1_8_R3.PacketPlayOutStatistic;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTabComplete;
-import net.minecraft.server.v1_8_R3.Statistic;
 import org.bukkit.entity.Player;
+import top.speedcubing.lib.api.events.SignUpdateEvent;
+import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
+import top.speedcubing.lib.bukkit.events.packet.PlayOutEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
-import top.speedcubing.lib.events.SignUpdateEvent;
-import top.speedcubing.lib.events.packet.PlayInEvent;
-import top.speedcubing.lib.events.packet.PlayOutEvent;
-import top.speedcubing.lib.utils.Reflections;
-import top.speedcubing.server.commands.nick;
+import top.speedcubing.lib.utils.ReflectionUtils;
+import top.speedcubing.server.commands.nick.nick;
 import top.speedcubing.server.events.InputEvent;
 import top.speedcubing.server.player.PreLoginData;
 import top.speedcubing.server.player.User;
@@ -35,21 +34,21 @@ public class ServerEvent {
 
     @CubingEventHandler
     public void PlayInEvent(PlayInEvent e) {
-        if (e.packet instanceof PacketPlayInTabComplete) {
-            String s = ((PacketPlayInTabComplete) e.packet).a();
+        if (e.getPacket() instanceof PacketPlayInTabComplete) {
+            String s = ((PacketPlayInTabComplete) e.getPacket()).a();
             String command = s.split(" ")[0].substring(1).toLowerCase();
-            User user = User.getUser(e.player);
+            User user = User.getUser(e.getPlayer());
             user.lastTabbed = command;
             if (user.hasPermission("cmd." + command) || user.hasPermission("cmd.*"))
                 return;
-            e.isCancelled = true;
-        } else if (e.packet instanceof PacketPlayInKeepAlive) {
+            e.setCancelled(true);
+        } else if (e.getPacket() instanceof PacketPlayInKeepAlive) {
 //            if(e.player.getName().equals("speedcubing")) {
 //                System.out.println("cancel");
 //                e.isCancelled = true;
 //            }
-        } else if (e.packet instanceof PacketPlayInCustomPayload) {
-            PacketPlayInCustomPayload packet = (PacketPlayInCustomPayload) e.packet;
+        } else if (e.getPacket() instanceof PacketPlayInCustomPayload) {
+            PacketPlayInCustomPayload packet = (PacketPlayInCustomPayload) e.getPacket();
             if (packet.a().equals("labymod3:main")) {
                 PacketDataSerializer serializer = packet.b();
 
@@ -69,10 +68,11 @@ public class ServerEvent {
 
     @CubingEventHandler
     public void PlayOutEvent(PlayOutEvent e) {
-        if (e.packet instanceof PacketPlayOutStatistic) {
-            ((Map<Statistic, Integer>) Reflections.getField(e.packet, "a")).replaceAll((k, v) -> 0);
-        } else if (e.packet instanceof PacketPlayOutTabComplete) {
-            String[] s = (String[]) Reflections.getField(e.packet, "a");
+        if (e.getPacket() instanceof PacketPlayOutStatistic) {
+            Map<?, Integer> stats = (Map<?, Integer>) ReflectionUtils.getField(e.getPacket(), "a");
+            stats.replaceAll((k, v) -> 0);
+        } else if (e.getPacket() instanceof PacketPlayOutTabComplete) {
+            String[] s = (String[]) ReflectionUtils.getField(e.getPacket(), "a");
             System.out.println(Arrays.toString(s));
         }
     }

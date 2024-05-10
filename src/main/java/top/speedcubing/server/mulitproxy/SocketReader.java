@@ -11,9 +11,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.lib.bukkit.PlayerUtils;
-import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-import top.speedcubing.lib.utils.IOUtils;
 import top.speedcubing.lib.utils.Threads;
+import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
+import top.speedcubing.lib.utils.bytes.IOUtils;
 import top.speedcubing.server.events.InputEvent;
 import top.speedcubing.server.events.SocketEvent;
 import top.speedcubing.server.player.User;
@@ -35,21 +35,20 @@ public class SocketReader {
             while (true) {
                 try {
                     Socket s = tcpServer.accept();
-                    String header;
+                    String packetID;
                     InputStream in = s.getInputStream();
                     OutputStream out = s.getOutputStream();
-                    byte[] d = IOUtils.readOnce(in, 2048);
-                    DataInputStream data = IOUtils.toDataInputStream(d);
+                    DataInputStream data = new DataInputStream(in);
                     try {
-                        header = data.readUTF();
+                        packetID = data.readUTF();
                     } catch (Exception e) {
                         e.printStackTrace();
                         continue;
                     }
-                    switch (header) {
+                    switch (packetID) {
                         case "in":
                             try {
-                                byte[] resend = new ByteArrayDataBuilder().write(((InputEvent) new InputEvent(data, data.readUTF()).call()).respond.toByteArray()).toByteArray();
+                                byte[] resend = new ByteArrayBuffer().write(((InputEvent) new InputEvent(data, data.readUTF()).call()).respond.toByteArray()).toByteArray();
                                 out.write(resend);
                             } catch (IOException exception) {
                                 exception.printStackTrace();
@@ -102,7 +101,7 @@ public class SocketReader {
                             RestartCommand.restart();
                             break;
                         default:
-                            new SocketEvent(data, header).call();
+                            new SocketEvent(data, packetID).call();
                             break;
                     }
                     IOUtils.closeQuietly(in, out, data, s);

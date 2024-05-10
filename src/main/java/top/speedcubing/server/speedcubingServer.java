@@ -18,31 +18,27 @@ import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.namedb.NameDb;
-import top.speedcubing.server.authenticator.commands.AuthenticatorCommand;
-import top.speedcubing.server.authenticator.listeners.PlayerListener;
+import top.speedcubing.server.authenticator.AuthenticatorCommand;
+import top.speedcubing.server.authenticator.PlayerListener;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.commands.discord;
 import top.speedcubing.server.commands.fly;
 import top.speedcubing.server.commands.hub;
 import top.speedcubing.server.commands.image;
 import top.speedcubing.server.commands.limbo;
-import top.speedcubing.server.commands.nick;
+import top.speedcubing.server.commands.nick.nick;
 import top.speedcubing.server.commands.overrided.plugins;
 import top.speedcubing.server.commands.skin;
 import top.speedcubing.server.commands.staff.announce;
 import top.speedcubing.server.commands.staff.deepfry;
 import top.speedcubing.server.commands.staff.freeze;
-import top.speedcubing.server.commands.staff.gma;
-import top.speedcubing.server.commands.staff.gmc;
-import top.speedcubing.server.commands.staff.gms;
-import top.speedcubing.server.commands.staff.gmsp;
 import top.speedcubing.server.commands.staff.heal;
 import top.speedcubing.server.commands.staff.history;
 import top.speedcubing.server.commands.staff.kaboom;
 import top.speedcubing.server.commands.staff.proxycommand;
 import top.speedcubing.server.commands.staff.serverconfig;
 import top.speedcubing.server.commands.staff.testkb;
-import top.speedcubing.server.commands.unnick;
+import top.speedcubing.server.commands.nick.unnick;
 import top.speedcubing.server.lang.LanguageSystem;
 import top.speedcubing.server.listeners.BackListen;
 import top.speedcubing.server.listeners.CommandPermissions;
@@ -79,10 +75,6 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("kaboom").setExecutor(new kaboom());
         Bukkit.getPluginCommand("deepfry").setExecutor(new deepfry());
         Bukkit.getPluginCommand("freeze").setExecutor(new freeze());
-        Bukkit.getPluginCommand("gms").setExecutor(new gms());
-        Bukkit.getPluginCommand("gmsp").setExecutor(new gmsp());
-        Bukkit.getPluginCommand("gma").setExecutor(new gma());
-        Bukkit.getPluginCommand("gmc").setExecutor(new gmc());
         Bukkit.getPluginCommand("2fa").setExecutor(new AuthenticatorCommand());
         Bukkit.getPluginCommand("image").setExecutor(new image());
         Bukkit.getPluginCommand("serverconfig").setExecutor(new serverconfig());
@@ -100,8 +92,6 @@ public class speedcubingServer extends JavaPlugin {
 
     public void onEnable() {
         instance = this;
-
-        NameDb.init();
 
         config.reload(true);
         Database.connect(config.DatabaseURL, config.DatabaseUser, config.DatabasePassword);

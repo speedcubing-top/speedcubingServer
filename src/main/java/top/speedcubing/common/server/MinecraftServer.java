@@ -8,6 +8,7 @@ import java.util.Map;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.io.SocketWriter;
 import top.speedcubing.lib.utils.internet.HostAndPort;
+import top.speedcubing.lib.utils.sockets.TCPClient;
 
 public class MinecraftServer {
     private static final Map<String, MinecraftServer> servers = new HashMap<>();
@@ -47,7 +48,7 @@ public class MinecraftServer {
     }
 
     public void write(byte[] data) {
-        SocketWriter.write(listenerAddress, data);
+        TCPClient.write(listenerAddress, data);
     }
 
     public HostAndPort getAddress() {

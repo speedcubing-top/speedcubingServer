@@ -25,14 +25,14 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 import top.speedcubing.common.database.Database;
-import top.speedcubing.common.io.SocketWriter;
 import top.speedcubing.common.rank.IDPlayer;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
-import top.speedcubing.lib.utils.ByteArrayDataBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.internet.HostAndPort;
+import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.lang.LangInventory;
 import top.speedcubing.server.lang.LangItemStack;
 import top.speedcubing.server.lang.LangMessage;
@@ -156,7 +156,7 @@ public class User extends IDPlayer {
     }
 
     public void setInput(boolean add) {
-        SocketWriter.write(proxy, new ByteArrayDataBuilder().writeUTF("inputmode").writeInt(id).writeBoolean(add).toByteArray());
+        TCPClient.write(proxy, new ByteArrayBuffer().writeUTF("inputmode").writeInt(id).writeBoolean(add).toByteArray());
     }
 
     //kb

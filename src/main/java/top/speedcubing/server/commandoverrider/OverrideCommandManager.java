@@ -6,14 +6,16 @@ import java.util.Set;
 import org.bukkit.command.CommandSender;
 import top.speedcubing.lib.utils.collection.Sets;
 
-public class OverrideCommandManager {
-    static Map<String, OverrideCommandManager> cmds = new HashMap<>();
+public abstract class OverrideCommandManager {
+    private static final Map<String, OverrideCommandManager> cmds = new HashMap<>();
 
 
     public static void register(OverrideCommandManager... commandManagers) {
-        for (OverrideCommandManager s : commandManagers)
-            for (String ss : s.getAlias())
+        for (OverrideCommandManager s : commandManagers) {
+            for (String ss : s.getAlias()) {
                 cmds.put(ss, s);
+            }
+        }
     }
 
     public static boolean dispatchOverride(CommandSender sender, String command, String[] strings) {
@@ -35,7 +37,5 @@ public class OverrideCommandManager {
         this.alias = Sets.hashSet(command);
     }
 
-    public void execute(CommandSender sender, String[] strings) {
-
-    }
+    public abstract void execute(CommandSender sender, String[] strings);
 }

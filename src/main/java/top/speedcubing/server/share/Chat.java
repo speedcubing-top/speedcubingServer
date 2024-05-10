@@ -8,8 +8,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.lib.discord.DiscordWebhook;
+import top.speedcubing.lib.minecraft.MinecraftConsole;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
-import top.speedcubing.lib.utils.Console;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
 import top.speedcubing.server.lang.LangMessage;
@@ -62,7 +62,7 @@ public class Chat {
             user.sendLangTextComp(user.chatFilt ? filtered : unfiltered);
         }
 
-        Console.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + unfiltered[1].toColorText());
+        MinecraftConsole.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + unfiltered[1].toColorText());
         chatLogger(sender, unfiltered[1].toPlainText());
     }
 
@@ -70,7 +70,7 @@ public class Chat {
         try {
             String timeFormat = TimeFormatter.unixToRealTime(System.currentTimeMillis(), "HH:mm:ss", TimeUnit.MILLISECONDS);
             DiscordWebhook discordWebhook = new DiscordWebhook(config.discordWebook);
-            message = ChatColor.stripColor(message.replaceAll("`","'").replaceAll("\n","/n"));
+            message = ChatColor.stripColor(message.replaceAll("`", "'").replaceAll("\n", "/n"));
             discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + message + "```");
             discordWebhook.execute();
         } catch (Throwable e) {

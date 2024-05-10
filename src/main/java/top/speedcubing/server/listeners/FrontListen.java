@@ -26,7 +26,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
-import top.speedcubing.lib.utils.Reflections;
+import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.player.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
@@ -107,6 +107,9 @@ public class FrontListen implements Listener {
         if (config.onlineCrash.contains(player.getUniqueId().toString()) || config.onlineCrash.contains(player.getAddress().getAddress().getHostAddress())) {
             speedcubingServer.scheduledPool.schedule(() -> PlayerUtils.crashAll(player), 50, TimeUnit.MILLISECONDS);
         }
+
+        //auth
+        //AuthHandler.handle(e);
     }
 
     @EventHandler(priority = EventPriority.LOW)
@@ -162,7 +165,7 @@ public class FrontListen implements Listener {
         if (e.getWorld().hasStorm()) {
             WorldData worldData = ((CraftWorld) e.getWorld()).getHandle().worldData;
             worldData.setWeatherDuration(0);
-            Reflections.setField(worldData, "q", false);
+            ReflectionUtils.setField(worldData, "q", false);
         } else e.setCancelled(true);
     }
 }

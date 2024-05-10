@@ -7,12 +7,13 @@ import java.util.Timer;
 import java.util.TimerTask;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
+import top.speedcubing.common.database.Database;
+import top.speedcubing.common.database.DatabaseData;
 import top.speedcubing.common.io.SocketWriter;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.pluginMessage.BungeePluginMessage;
-import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-import top.speedcubing.common.database.DatabaseData;
-import top.speedcubing.common.database.Database;
+import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
+import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.events.CubingTickEvent;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
@@ -47,7 +48,7 @@ public class CubingTick {
                     );
                     for (User user : User.usersByID.values()) {
                         if (user.listened)
-                            SocketWriter.write(user.proxy, new ByteArrayDataBuilder().writeUTF("cps").writeInt(user.id).writeInt(user.leftClick).writeInt(user.rightClick).toByteArray());
+                            TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("cps").writeInt(user.id).writeInt(user.leftClick).writeInt(user.rightClick).toByteArray());
                         if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
                             Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> user.player.kickPlayer("You are clicking too fast !"));
                         user.leftClick = 0;
@@ -56,7 +57,7 @@ public class CubingTick {
                             PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED §fand §cVANISHED");
                         else if (user.vanished)
                             PlayerUtils.sendActionBar(user.player, "You are currently §cVANISHED");
-                        else if(user.nicked())
+                        else if (user.nicked())
                             PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED");
                         if (!Bukkit.getServerName().equals("limbo"))
                             if (t - user.lastMove > 300000)

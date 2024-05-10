@@ -1,4 +1,4 @@
-package top.speedcubing.server.commands;
+package top.speedcubing.server.commands.nick;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -28,10 +28,12 @@ import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
-import top.speedcubing.lib.utils.ByteArrayDataBuilder;
-import top.speedcubing.lib.utils.Reflections;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.Rank;
+import top.speedcubing.lib.utils.ReflectionUtils;
+import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
+import top.speedcubing.lib.utils.sockets.TCPClient;
+import top.speedcubing.server.commands.skin;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
@@ -55,7 +57,7 @@ public class nick implements CommandExecutor, Listener {
     }
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        if (!((NickEvent) new NickEvent((Player) commandSender).call()).isCancelled) {
+        if (!((NickEvent) new NickEvent((Player) commandSender).call()).isCancelled()) {
             Player player = (Player) commandSender;
             if (strings.length == 1) {
                 if (strings[0].equalsIgnoreCase("nickeula") && settingNick.get(player.getUniqueId())) {
@@ -197,7 +199,7 @@ public class nick implements CommandExecutor, Listener {
         }
     }
 
-    public static void nickPlayer(String name, String rank, boolean nick, Player player, boolean openBook) {
+    static void nickPlayer(String name, String rank, boolean nick, Player player, boolean openBook) {
         User user = User.getUser(player);
         EntityPlayer entityPlayer = user.toNMS();
         settingNick.remove(user.bGetUniqueId());
@@ -217,7 +219,7 @@ public class nick implements CommandExecutor, Listener {
             if (u != user)
                 u.sendPacket(old);
 
-        Reflections.setField(entityPlayer.getProfile(), "name", name);
+        ReflectionUtils.setField(entityPlayer.getProfile(), "name", name);
 
         for (User u : User.getUsers()) {
             u.bHidePlayer(player);
@@ -234,7 +236,7 @@ public class nick implements CommandExecutor, Listener {
         player.updateInventory();
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""));
         Database.connection.update("onlineplayer", "displayname='" + rank + "',displayrank='" + name + "'", "id=" + user.id);
-        SocketWriter.write(user.proxy, new ByteArrayDataBuilder().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
+        TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
         user.displayRank = rank;
         if (openBook) {
             openNickBook(player, NickBook.RULE);

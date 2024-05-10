@@ -12,8 +12,9 @@ public class hub implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0) {
             Player player = (Player) commandSender;
-            if (!((HubEvent) new HubEvent(player).call()).isCancelled)
+            if (!((HubEvent) new HubEvent(player).call()).isCancelled()) {
                 BungeePluginMessage.switchServer(player, "lobby");
+            }
         } else commandSender.sendMessage("/hub, /l, /lobby");
         return true;
     }

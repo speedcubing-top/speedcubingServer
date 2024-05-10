@@ -1,4 +1,4 @@
-package top.speedcubing.server.commands;
+package top.speedcubing.server.commands.nick;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,7 +13,7 @@ public class unnick implements CommandExecutor {
 
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
-        if (!((NickEvent) new NickEvent(player).call()).isCancelled) {
+        if (!((NickEvent) new NickEvent(player).call()).isCancelled()) {
             User user = User.getUser(player);
             if (!user.nicked())
                 User.getUser(commandSender).sendLangMessage(GlobalString.notNicked);
@@ -21,7 +21,6 @@ public class unnick implements CommandExecutor {
                 nick.nickPlayer(user.realName, Rank.getRank(user.realRank, User.getUser(commandSender).id), false, player, false);
                 player.performCommand("skin " + user.realName);
             }
-
             else commandSender.sendMessage("/unnick");
         }
         return true;

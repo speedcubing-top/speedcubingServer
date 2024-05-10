@@ -1,4 +1,4 @@
-package top.speedcubing.server.authenticator.utils;
+package top.speedcubing.server.authenticator;
 
 import java.awt.Dimension;
 import java.awt.Graphics2D;
@@ -14,14 +14,13 @@ import org.bukkit.map.MapRenderer;
 import org.bukkit.map.MapView;
 
 public class ImageRenderer extends MapRenderer {
-    private SoftReference<BufferedImage> cacheImage;
+    private final SoftReference<BufferedImage> cacheImage;
     private boolean hasRendered = false;
 
     public ImageRenderer(String url) throws IOException {
         this.cacheImage = new SoftReference<>(this.getImage(url));
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public void render(MapView view, MapCanvas canvas, Player player) {
         if (this.hasRendered) {
@@ -30,11 +29,10 @@ public class ImageRenderer extends MapRenderer {
 
         if (this.cacheImage.get() != null) {
             canvas.drawImage(0, 0, this.cacheImage.get());
-            this.hasRendered = true;
         } else {
             player.sendMessage(ChatColor.RED + "Attempted to render the image, but the cached image was null!");
-            this.hasRendered = true;
         }
+        this.hasRendered = true;
     }
 
     private BufferedImage getImage(String url) throws IOException {
