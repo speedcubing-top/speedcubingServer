@@ -151,6 +151,7 @@ public class FrontListen implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void CreatureSpawnEvent(CreatureSpawnEvent e) {
+        if (Bukkit.getServerName().equals("Bedwars")) return;
         if (e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER && e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG)
             e.setCancelled(true);
     }
