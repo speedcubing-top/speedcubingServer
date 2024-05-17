@@ -1,6 +1,9 @@
 package top.speedcubing.server.share;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -66,15 +69,19 @@ public class Chat {
         chatLogger(sender, unfiltered[1].toPlainText());
     }
 
+    private static final Executor discordWebhookPool = Executors.newSingleThreadExecutor();
+
     private static void chatLogger(Player sender, String message) {
-        try {
-            String timeFormat = TimeFormatter.unixToRealTime(System.currentTimeMillis(), "HH:mm:ss", TimeUnit.MILLISECONDS);
-            DiscordWebhook discordWebhook = new DiscordWebhook(config.discordWebook);
-            message = ChatColor.stripColor(message.replaceAll("`", "'").replaceAll("\n", "/n"));
-            discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + message + "```");
-            discordWebhook.execute();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        String timeFormat = TimeFormatter.unixToRealTime(System.currentTimeMillis(), "HH:mm:ss", TimeUnit.MILLISECONDS);
+        DiscordWebhook discordWebhook = new DiscordWebhook(config.discordWebook);
+        message = ChatColor.stripColor(message.replaceAll("`", "'").replaceAll("\n", "/n"));
+        discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + message + "```");
+        discordWebhookPool.execute(() -> {
+            try {
+                discordWebhook.execute();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 }
