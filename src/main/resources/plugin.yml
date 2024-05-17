@@ -39,14 +39,6 @@ commands:
     usage: /deepfry
   freeze:
     usage: /freeze
-  gmc:
-    usage: /gmc
-  gms:
-    usage: /gms
-  gma:
-    usage: /gma
-  gmsp:
-    usage: /gmsp
   2fa:
     usage: /2fa
   image:
@@ -54,6 +46,8 @@ commands:
     usage: /image
   history:
     usage: /history
+  getitemtype:
+    usage: /getitemtype
   serverconfig:
     usage: /serverconfig
 

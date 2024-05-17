@@ -23,6 +23,7 @@ import top.speedcubing.server.authenticator.PlayerListener;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.commands.discord;
 import top.speedcubing.server.commands.fly;
+import top.speedcubing.server.commands.getitemtype;
 import top.speedcubing.server.commands.hub;
 import top.speedcubing.server.commands.image;
 import top.speedcubing.server.commands.limbo;
@@ -79,6 +80,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("image").setExecutor(new image());
         Bukkit.getPluginCommand("serverconfig").setExecutor(new serverconfig());
         Bukkit.getPluginCommand("history").setExecutor(new history());
+        Bukkit.getPluginCommand("getitemtype").setExecutor(new getitemtype());
     }
 
     private void registerListeners() {
