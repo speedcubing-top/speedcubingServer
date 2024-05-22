@@ -3,7 +3,6 @@ package top.speedcubing.server.authenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import java.io.IOException;
-import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -25,7 +24,7 @@ import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
 public class PlayerListener implements Listener {
-    private final String qrCodeURL = "https://www.google.com/chart?chs=128x128&cht=qr&chl=otpauth://totp/%%label%%?secret=%%key%%";
+    private final String qrCodeURL = "https://quickchart.io/chart?chs=128x128&cht=qr&chl=otpauth://totp/%label?secret=%key";
 
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
@@ -60,19 +59,19 @@ public class PlayerListener implements Listener {
             new BukkitRunnable() {
                 @Override
                 public void run() {
-                    String url = replaceLabel(qrCodeURL, "Speedcubing: " + user.bGetName());
-                    String finallyUrl = replaceKey(url, auth.noKey);
+                    String url = qrCodeURL.replace("%label", "speedcubing.top:%20" + user.bGetName())
+                            .replace("%key", auth.noKey);
                     MapView view = Bukkit.createMap(p.getWorld());
                     view.getRenderers().forEach(view::removeRenderer);
                     try {
-                        ImageRenderer renderer = new ImageRenderer(finallyUrl);
+                        ImageRenderer renderer = new ImageRenderer(url);
                         view.addRenderer(renderer);
                         ItemStack mapItem = new ItemStack(Material.MAP, 1, view.getId());
                         ItemMeta mapMeta = mapItem.getItemMeta();
                         mapMeta.setDisplayName(ChatColor.GOLD + "QR Code");
                         mapItem.setItemMeta(mapMeta);
                         p.getInventory().addItem(mapItem);
-                        p.sendMessage("§6Your QRCode URL: " + finallyUrl);
+                        p.sendMessage("§6Your QRCode URL: " + url);
                     } catch (IOException ee) {
                         ee.printStackTrace();
                         p.sendMessage(ChatColor.RED + "An error occurred! Is the URL correct?");
@@ -98,7 +97,7 @@ public class PlayerListener implements Listener {
         User user = User.getUser(e.getPlayer());
         AuthData auth = AuthData.map.get(user);
 
-        if(auth == null)
+        if (auth == null)
             return;
 
         if (auth.allowAction())
@@ -118,7 +117,7 @@ public class PlayerListener implements Listener {
     public void onCmdExecute(PlayerCommandPreprocessEvent e) {
         AuthData auth = AuthData.map.get(User.getUser(e.getPlayer()));
 
-        if(auth == null)
+        if (auth == null)
             return;
 
         if (auth.allowAction())
@@ -139,7 +138,7 @@ public class PlayerListener implements Listener {
     public void onInventoryOpen(InventoryOpenEvent e) {
         AuthData auth = AuthData.map.get(User.getUser(e.getPlayer()));
 
-        if(auth == null)
+        if (auth == null)
             return;
 
         if (auth.allowAction())
@@ -160,8 +159,10 @@ public class PlayerListener implements Listener {
     public void onMove(PlayerMoveEvent e) {
         AuthData auth = AuthData.map.get(User.getUser(e.getPlayer()));
 
-        if(auth == null)
+        if (auth == null)
             return;
+
+        System.out.println(auth);
 
         if (auth.allowAction()) {
             return;
@@ -179,13 +180,4 @@ public class PlayerListener implements Listener {
             }
         }
     }
-
-    public String replaceLabel(String qrCodeURL, String label) {
-        return qrCodeURL.replace("%%label%%", label);
-    }
-
-    public String replaceKey(String qrCodeURL, String key) {
-        return qrCodeURL.replace("%%key%%", key);
-    }
-
 }

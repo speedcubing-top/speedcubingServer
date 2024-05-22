@@ -21,7 +21,7 @@ public class AuthData {
         this.user = user;
         this.isAuthBypass = data[0].equals("1");
         this.isAuthEnable = data[1].equals("1");
-        this.key = data[2] == null ? null : (data[2].isEmpty() ? null : data[2]);
+        this.key = data[2].isEmpty() ? null : data[2];
         this.hasSessions = data[3].equals("1");
         this.ip = data[4];
     }
@@ -77,5 +77,10 @@ public class AuthData {
 
     public boolean allowAction() {
         return hasSessions || !isAuthEnable || isAuthBypass;
+    }
+
+    @Override
+    public String toString() {
+        return "{isAuthBypass="+isAuthBypass+",key="+key+",isAuthEnabled="+isAuthEnable+",hasSessions="+hasSessions+"}";
     }
 }
