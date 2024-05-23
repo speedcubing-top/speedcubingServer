@@ -1,7 +1,5 @@
 package top.speedcubing.server.authenticator;
 
-import com.warrenstrange.googleauth.GoogleAuthenticator;
-import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import java.io.IOException;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -51,9 +49,7 @@ public class PlayerListener implements Listener {
 
         if (!auth.hasKey()) {
             if (auth.noKey == null) {
-                GoogleAuthenticator authenticator = new GoogleAuthenticator();
-                GoogleAuthenticatorKey key2 = authenticator.createCredentials();
-                auth.noKey = key2.getKey();
+                auth.noKey = AuthUtils.generateSecret();
                 AuthMessenger.sendSetKeyMessage(p);
             }
             new BukkitRunnable() {

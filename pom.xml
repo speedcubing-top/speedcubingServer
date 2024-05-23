@@ -31,11 +31,6 @@
             <artifactId>NameDb</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
-        <dependency>
-            <groupId>com.warrenstrange</groupId>
-            <artifactId>googleauth</artifactId>
-            <version>0.5.0</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>

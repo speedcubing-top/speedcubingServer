@@ -1,6 +1,5 @@
 package top.speedcubing.server.authenticator;
 
-import com.warrenstrange.googleauth.GoogleAuthenticator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -50,7 +49,7 @@ public class AuthenticatorCommand implements CommandExecutor {
                     }
                     if (auth.hasKey()) {
                         String key = auth.getKey();
-                        if (new GoogleAuthenticator().authorize(key, Integer.parseInt(code))) {
+                        if (AuthUtils.authorize(key, Integer.parseInt(code))) {
                             auth.setSession(true);
                             player.sendMessage("§aYou have successfully authenticated");
                         } else {
@@ -94,7 +93,7 @@ public class AuthenticatorCommand implements CommandExecutor {
                         if (code.length() == 6 && StringUtils.isInt(code)) {
                             if (auth.noKey != null) {
                                 String key = auth.noKey;
-                                if (new GoogleAuthenticator().authorize(key, Integer.parseInt(code))) {
+                                if (AuthUtils.authorize(key, Integer.parseInt(code))) {
                                     auth.setKey(key);
                                     player.sendMessage("§a2FA Successfully set up.");
                                     removeMap(player);
