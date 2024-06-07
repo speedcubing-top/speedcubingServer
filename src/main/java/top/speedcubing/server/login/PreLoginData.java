@@ -1,4 +1,4 @@
-package top.speedcubing.server.player;
+package top.speedcubing.server.login;
 
 import top.speedcubing.lib.utils.internet.HostAndPort;
 

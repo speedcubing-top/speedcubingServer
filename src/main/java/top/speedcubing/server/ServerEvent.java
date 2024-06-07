@@ -20,7 +20,7 @@ import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.commands.nick.nick;
 import top.speedcubing.server.events.InputEvent;
-import top.speedcubing.server.player.PreLoginData;
+import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
 
 public class ServerEvent {

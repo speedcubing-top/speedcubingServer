@@ -36,6 +36,7 @@ import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.lang.LangInventory;
 import top.speedcubing.server.lang.LangItemStack;
 import top.speedcubing.server.lang.LangMessage;
+import top.speedcubing.server.login.PreLoginData;
 
 public class User extends IDPlayer {
 

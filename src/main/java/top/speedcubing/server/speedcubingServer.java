@@ -8,8 +8,8 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Pattern;
-
 import org.bukkit.Bukkit;
+import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.common.database.Database;
@@ -17,9 +17,7 @@ import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.internet.HostAndPort;
-import top.speedcubing.namedb.NameDb;
 import top.speedcubing.server.authenticator.AuthenticatorCommand;
-import top.speedcubing.server.authenticator.PlayerListener;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.commands.discord;
 import top.speedcubing.server.commands.fly;
@@ -28,6 +26,7 @@ import top.speedcubing.server.commands.hub;
 import top.speedcubing.server.commands.image;
 import top.speedcubing.server.commands.limbo;
 import top.speedcubing.server.commands.nick.nick;
+import top.speedcubing.server.commands.nick.unnick;
 import top.speedcubing.server.commands.overrided.plugins;
 import top.speedcubing.server.commands.skin;
 import top.speedcubing.server.commands.staff.announce;
@@ -39,13 +38,12 @@ import top.speedcubing.server.commands.staff.kaboom;
 import top.speedcubing.server.commands.staff.proxycommand;
 import top.speedcubing.server.commands.staff.serverconfig;
 import top.speedcubing.server.commands.staff.testkb;
-import top.speedcubing.server.commands.nick.unnick;
 import top.speedcubing.server.lang.LanguageSystem;
-import top.speedcubing.server.listeners.BackListen;
-import top.speedcubing.server.listeners.CommandPermissions;
-import top.speedcubing.server.listeners.FrontListen;
+import top.speedcubing.server.listeners.PostListen;
+import top.speedcubing.server.listeners.PreListen;
+import top.speedcubing.server.listeners.SingleListen;
+import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.mulitproxy.SocketReader;
-import top.speedcubing.server.player.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.CubingTick;
 import top.speedcubing.server.utils.LogListener;
@@ -53,7 +51,6 @@ import top.speedcubing.server.utils.config;
 
 public class speedcubingServer extends JavaPlugin {
     public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
-
     public static final Pattern legacyNameRegex = Pattern.compile("^\\w{1,16}$");
     public static Map<Integer, PreLoginData> preLoginStorage = new HashMap<>();
 
@@ -61,6 +58,7 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean restartable = false; //is it time to restart ?
     public static speedcubingServer instance;
     public static ScheduledExecutorService scheduledPool = Executors.newScheduledThreadPool(10);
+
     private void registerCommands() {
         Bukkit.getPluginCommand("nick").setExecutor(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
@@ -84,14 +82,14 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     private void registerListeners() {
-        Bukkit.getPluginManager().registerEvents(new CommandPermissions(), this);
-        Bukkit.getPluginManager().registerEvents(new FrontListen(), this);
-        Bukkit.getPluginManager().registerEvents(new BackListen(), this);
-        Bukkit.getPluginManager().registerEvents(new PlayerListener(), this);
-        Bukkit.getPluginManager().registerEvents(new nick(), this);
-        Bukkit.getPluginManager().registerEvents(new history(),this);
+        registerListeners(
+                new PreListen(),
+                new PostListen(),
+                new SingleListen());
+        registerListeners(new history());
     }
 
+    @Override
     public void onEnable() {
         instance = this;
 
@@ -180,6 +178,7 @@ public class speedcubingServer extends JavaPlugin {
         }
     }
 
+    @Override
     public void onDisable() {
         CubingTick.calcTimer.cancel();
         Database.systemConnection.update(
@@ -220,5 +219,11 @@ public class speedcubingServer extends JavaPlugin {
     public static void restart() {
         if (canRestart)
             RestartCommand.restart();
+    }
+
+    public static void registerListeners(Listener... listeners) {
+        for (Listener l : listeners) {
+            Bukkit.getPluginManager().registerEvents(l, instance);
+        }
     }
 }

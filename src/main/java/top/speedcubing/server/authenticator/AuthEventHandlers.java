@@ -8,7 +8,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -23,11 +22,10 @@ import org.bukkit.scheduler.BukkitRunnable;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
-public class PlayerListener implements Listener {
-    private final String qrCodeURL = "https://quickchart.io/chart?chs=128x128&cht=qr&chl=otpauth://totp/%label?secret=%key";
+public class AuthEventHandlers implements Listener {
+    private static final String qrCodeURL = "https://quickchart.io/chart?chs=128x128&cht=qr&chl=otpauth://totp/%label?secret=%key";
 
-    @EventHandler
-    public void onPlayerJoin(PlayerJoinEvent e) {
+    public static void onPlayerJoin(PlayerJoinEvent e) {
         Player p = e.getPlayer();
         User user = User.getUser(p);
 
@@ -91,9 +89,7 @@ public class PlayerListener implements Listener {
             auth.setIp(ip);
         }
     }
-
-    @EventHandler
-    public void onInteraction(PlayerInteractEvent e) {
+    public static void onInteraction(PlayerInteractEvent e) {
         User user = User.getUser(e.getPlayer());
         AuthData auth = AuthData.map.get(user);
 
@@ -113,8 +109,8 @@ public class PlayerListener implements Listener {
     }
 
     //this event is blocked paper command, proxy command blocker in speedcubingProxy
-    @EventHandler
-    public void onCmdExecute(PlayerCommandPreprocessEvent e) {
+
+    public static void onCmdExecute(PlayerCommandPreprocessEvent e) {
         AuthData auth = AuthData.map.get(User.getUser(e.getPlayer()));
 
         if (auth == null)
@@ -134,8 +130,7 @@ public class PlayerListener implements Listener {
     }
 
 
-    @EventHandler
-    public void onInventoryOpen(InventoryOpenEvent e) {
+    public static void onInventoryOpen(InventoryOpenEvent e) {
         AuthData auth = AuthData.map.get(User.getUser(e.getPlayer()));
 
         if (auth == null)
@@ -155,8 +150,7 @@ public class PlayerListener implements Listener {
         }
     }
 
-    @EventHandler
-    public void onMove(PlayerMoveEvent e) {
+    public static void onPlayerMove(PlayerMoveEvent e) {
         AuthData auth = AuthData.map.get(User.getUser(e.getPlayer()));
 
         if (auth == null)
