@@ -152,8 +152,6 @@ public class AuthEventHandlers implements Listener {
         if (auth == null)
             return;
 
-        System.out.println(auth);
-
         if (auth.allowAction()) {
             return;
         }

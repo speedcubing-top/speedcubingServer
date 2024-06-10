@@ -210,8 +210,8 @@ public class nick implements CommandExecutor, Listener {
         String tag = Database.connection.select("tag").from("guild").where("name='" + user.getGuild() + "'").getString();
         tag = nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
 
-        String extracted2 = Rank.getCode(rank) + speedcubingServer.playerNameExtract(name);
-        PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(Rank.getCode(user.displayRank) + speedcubingServer.playerNameExtract(player.getName())).h(1).packet;
+        String extracted2 = Rank.getCode(rank) + speedcubingServer.playerNameEncode(name);
+        PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(Rank.getCode(user.displayRank) + speedcubingServer.playerNameEncode(player.getName())).h(1).packet;
         user.leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
         user.joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank, user.id).getPrefix()).d(tag).g(Collections.singletonList(name)).h(0).packet;
 
