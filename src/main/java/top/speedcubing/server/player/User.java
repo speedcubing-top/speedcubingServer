@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.Packet;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityVelocity;
@@ -191,7 +193,11 @@ public class User extends IDPlayer {
     }
 
     public void sendLangTextComp(TextBuilder[] s) {
-        player.spigot().sendMessage(s[lang].toBungee());
+        sendComponent(s[lang].toBungee());
+    }
+
+    public void sendComponent(TextComponent component){
+        player.spigot().sendMessage(component);
     }
 
     //nms
