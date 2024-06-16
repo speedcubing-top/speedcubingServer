@@ -3,9 +3,9 @@ package top.speedcubing.server.lang;
 import java.util.function.Consumer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
 import top.speedcubing.lib.bukkit.events.inventory.ClickInventoryEvent;
 import top.speedcubing.lib.bukkit.events.inventory.CloseInventoryEvent;
+import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
 import top.speedcubing.server.player.User;
 
 public class LangInventory {

@@ -3,7 +3,7 @@ package top.speedcubing.server.login;
 import top.speedcubing.server.login.PreLoginData;
 
 public class LoginJoinData {
-   private final String realRank;
+    private final String realRank;
     private final String[] datas;
     private final PreLoginData bungeeData;
 

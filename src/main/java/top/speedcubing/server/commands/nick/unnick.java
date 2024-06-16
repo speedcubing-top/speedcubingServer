@@ -20,8 +20,7 @@ public class unnick implements CommandExecutor {
             else if (strings.length == 0) {
                 nick.nickPlayer(user.realName, Rank.getRank(user.realRank, User.getUser(commandSender).id), false, player, false);
                 player.performCommand("skin " + user.realName);
-            }
-            else commandSender.sendMessage("/unnick");
+            } else commandSender.sendMessage("/unnick");
         }
         return true;
     }

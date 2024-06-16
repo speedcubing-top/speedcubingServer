@@ -81,6 +81,6 @@ public class AuthData {
 
     @Override
     public String toString() {
-        return "{isAuthBypass="+isAuthBypass+",key="+key+",isAuthEnabled="+isAuthEnable+",hasSessions="+hasSessions+"}";
+        return "{isAuthBypass=" + isAuthBypass + ",key=" + key + ",isAuthEnabled=" + isAuthEnable + ",hasSessions=" + hasSessions + "}";
     }
 }

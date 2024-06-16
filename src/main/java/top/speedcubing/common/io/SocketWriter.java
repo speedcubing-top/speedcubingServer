@@ -11,7 +11,7 @@ public class SocketWriter {
     public static DataInputStream writeResponse(HostAndPort hostPort, byte[] data) {
         byte[] packet = new ByteArrayBuffer().writeUTF("in").write(data).toByteArray();
         byte[] response = TCPClient.writeAndReadAll(hostPort, packet);
-        if(response == null)
+        if (response == null)
             return null;
         return IOUtils.toDataInputStream(response);
     }

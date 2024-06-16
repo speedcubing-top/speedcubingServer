@@ -196,7 +196,7 @@ public class User extends IDPlayer {
         sendComponent(s[lang].toBungee());
     }
 
-    public void sendComponent(TextComponent component){
+    public void sendComponent(TextComponent component) {
         player.spigot().sendMessage(component);
     }
 

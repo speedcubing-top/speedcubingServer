@@ -8,13 +8,15 @@ import top.speedcubing.server.player.User;
 public class LangMessage implements Cloneable {
     String[] s;
 
-    public static LangMessage load(String name) {
+    public static LangMessage load(String... langMessageIDs) {
         String[] s = new String[LanguageSystem.langCount];
         try {
             for (int i = 0; i < LanguageSystem.langCount; i++) {
-                s[i] = LanguageSystem.lang[i].get(name).getAsString();
+                for (String id : langMessageIDs) {
+                    s[i] += LanguageSystem.lang[i].get(id).getAsString();
+                }
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             Arrays.fill(s, "not-found");
             e.printStackTrace();
         }

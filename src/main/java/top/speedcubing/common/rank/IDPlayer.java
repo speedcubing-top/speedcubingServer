@@ -9,7 +9,7 @@ public abstract class IDPlayer {
     public UUID uuid;
     public Integer id;
 
-    public IDPlayer(String realName, UUID uuid, Integer id){
+    public IDPlayer(String realName, UUID uuid, Integer id) {
         this.realName = realName;
         this.uuid = uuid;
         this.id = id;

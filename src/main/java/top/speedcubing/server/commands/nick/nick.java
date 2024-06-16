@@ -308,8 +308,8 @@ public class nick implements CommandExecutor, Listener {
                 BookBuilder.openBook(book, player);
                 break;
             case NAMECUSTOM:
-                String[] lines = {"","請輸入自訂名稱"};
-                SignBuilder.openSign(player, -50, 99, 47,  lines);
+                String[] lines = {"", "請輸入自訂名稱"};
+                SignBuilder.openSign(player, -50, 99, 47, lines);
                 break;
             case NAMERANDOM:
                 String name = generateRandomString();

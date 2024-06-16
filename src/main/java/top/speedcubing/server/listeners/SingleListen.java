@@ -20,6 +20,7 @@ public class SingleListen implements Listener {
         if (e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER && e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG)
             e.setCancelled(true);
     }
+
     @EventHandler
     public void FoodLevelChangeEvent(FoodLevelChangeEvent e) {
         e.setCancelled(true);
@@ -34,7 +35,7 @@ public class SingleListen implements Listener {
     public void PlayerKickEvent(org.bukkit.event.player.PlayerKickEvent e) {
         if (e.getReason().equals("disconnect.spam"))
             e.setCancelled(true);
-        else if(e.getReason().equals("Timed out")) {
+        else if (e.getReason().equals("Timed out")) {
             e.setCancelled(true);
             e.getPlayer().sendMessage("cancelled timed out");
         }

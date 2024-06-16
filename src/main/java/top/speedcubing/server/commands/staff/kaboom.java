@@ -15,7 +15,7 @@ public class kaboom implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (strings.length == 0) {
             String senderName = commandSender.getName();
-            displaySubtitleToAllPlayers("§l§cKABOOM!", senderName ,commandSender);
+            displaySubtitleToAllPlayers("§l§cKABOOM!", senderName, commandSender);
             applyVelocityToAllPlayers(new Vector(0, 4, 0), commandSender);
             issueLightningStrikesToAllPlayers(commandSender);
             commandSender.sendMessage("§l§cKABOOM!");
@@ -33,15 +33,17 @@ public class kaboom implements CommandExecutor {
             commandSender.sendMessage("§aLaunched " + User.getUser(player).realName + "!");
         });
     }
+
     private void issueLightningStrikesToAllPlayers(CommandSender commandSender) {
         Bukkit.getOnlinePlayers().forEach(player -> {
             player.getWorld().strikeLightning(player.getLocation());
             player.setHealth(20);
         });
     }
+
     private void displaySubtitleToAllPlayers(String subtitle, String senderName, CommandSender commandSender) {
         Bukkit.getOnlinePlayers().forEach(player -> {
-            player.sendTitle(subtitle,"§cBy "+ User.getUser(commandSender).getPrefixName(true));
+            player.sendTitle(subtitle, "§cBy " + User.getUser(commandSender).getPrefixName(true));
         });
     }
 

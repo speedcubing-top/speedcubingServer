@@ -85,6 +85,7 @@ public class AuthEventHandlers implements Listener {
             auth.setIp(ip);
         }
     }
+
     public static void onInteraction(PlayerInteractEvent e) {
         User user = User.getUser(e.getPlayer());
         AuthData auth = AuthData.map.get(user);

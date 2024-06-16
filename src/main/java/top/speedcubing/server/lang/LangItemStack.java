@@ -1,5 +1,6 @@
 package top.speedcubing.server.lang;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -9,12 +10,28 @@ import top.speedcubing.server.player.User;
 public class LangItemStack {
     ItemStack[] s;
 
+    public LangItemStack(Material material, LangMessage m) {
+        this(new ItemBuilder(material), m.s);
+    }
+
     public LangItemStack(ItemBuilder item, LangMessage m) {
         this(item, m.s);
     }
 
+    public LangItemStack(Material material, String langMessageID) {
+        this(new ItemBuilder(material), LangMessage.load(langMessageID));
+    }
+
+    public LangItemStack(ItemBuilder item, String langMessageID) {
+        this(item, LangMessage.load(langMessageID));
+    }
+
     public LangItemStack(ItemBuilder item) {
         this(item, new String[0]);
+    }
+
+    public LangItemStack(Material material) {
+        this(new ItemBuilder(material), new String[0]);
     }
 
     public LangItemStack(ItemBuilder item, String... s) {

@@ -35,7 +35,7 @@ import top.speedcubing.server.utils.config;
 
 public class PreListen implements Listener {
 
-   private LoginJoinData data;
+    private LoginJoinData data;
 
     static class CommandElement {
         public final String command;
@@ -179,14 +179,16 @@ public class PreListen implements Listener {
             return;
         }
 
-        data = new LoginJoinData(realRank,datas,bungeeData);
+        data = new LoginJoinData(realRank, datas, bungeeData);
         speedcubingServer.preLoginStorage.remove(id);
     }
+
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerVelocityEvent(PlayerVelocityEvent e) {
         Player player = e.getPlayer();
         player.setVelocity(User.getUser(player).applyKnockback(player.getVelocity()));
     }
+
     @EventHandler(priority = EventPriority.LOW)
     public void ServerCommandEvent(ServerCommandEvent e) {
         CommandElement element = new CommandElement(e.getCommand(), true);

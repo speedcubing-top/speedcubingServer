@@ -5,6 +5,7 @@ import top.speedcubing.lib.eventbus.CubingEvent;
 
 public abstract class PlayerEvent extends CubingEvent {
     private final Player player;
+
     public PlayerEvent(Player player) {
         this.player = player;
     }
