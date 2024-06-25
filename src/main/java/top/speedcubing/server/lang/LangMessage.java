@@ -12,6 +12,7 @@ public class LangMessage implements Cloneable {
         String[] s = new String[LanguageSystem.langCount];
         try {
             for (int i = 0; i < LanguageSystem.langCount; i++) {
+                s[i] = "";
                 for (String id : langMessageIDs) {
                     s[i] += LanguageSystem.lang[i].get(id).getAsString();
                 }

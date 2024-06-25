@@ -27,6 +27,11 @@ public class LangInventory {
         this(size, message.s);
     }
 
+    public LangInventory(int size, String s) {
+        this(size, LangMessage.load(s));
+    }
+
+
     public LangInventory(int size, String... s) {
         this.s = new InventoryBuilder[LanguageSystem.langCount];
         for (int i = 0; i < LanguageSystem.langCount; i++) {
