@@ -48,8 +48,11 @@ commands:
     usage: /history
   getitemtype:
     usage: /getitemtype
+  sendpacket:
+    usage: /sendpacket
   serverconfig:
     usage: /serverconfig
+
 
 
 depend:

@@ -13,6 +13,13 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     </properties>
+    <repositories>
+        <repository>
+            <id>dmulloy2-repo</id>
+            <url>https://repo.dmulloy2.net/repository/public/</url>
+        </repository>
+        <!-- And so on -->
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>top.speedcubing</groupId>
@@ -30,6 +37,11 @@
             <groupId>top.speedcubing</groupId>
             <artifactId>NameDb</artifactId>
             <version>1.0-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>com.comphenix.protocol</groupId>
+            <artifactId>ProtocolLib</artifactId>
+            <version>4.8.0</version>
         </dependency>
     </dependencies>
     <build>
