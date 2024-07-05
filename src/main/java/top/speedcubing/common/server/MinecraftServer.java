@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import top.speedcubing.common.database.Database;
-import top.speedcubing.common.io.SocketWriter;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 
@@ -23,7 +22,7 @@ public class MinecraftServer {
 
     public static void loadServers() {
         try {
-            ResultSet r = Database.configConnection.select("name,host,port").from("mc_servers").executeQuery();
+            ResultSet r = Database.systemConnection.select("name,host,port").from("servers").executeQuery();
             while (r.next()) {
                 String name = r.getString("name");
                 String host = r.getString("host");
@@ -45,6 +44,10 @@ public class MinecraftServer {
         this.address = address;
         this.listenerAddress = new HostAndPort(address.getHost(), address.getPort() + 1000);
         servers.put(name, this);
+    }
+
+    public int getPlayerCount() {
+        return Database.systemConnection.select("SUM(onlinecount)").from("stat_onlinecount").where("server='" + name + "'").getInt();
     }
 
     public void write(byte[] data) {

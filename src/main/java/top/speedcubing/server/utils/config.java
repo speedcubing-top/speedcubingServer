@@ -62,6 +62,6 @@ public class config {
     public static void reloadDBConfig() {
         Rank.loadRanks();
         MinecraftServer.loadServers();
-        discordWebook = Database.configConnection.select("discord_webhook").from("mc_servers").where("name=\"" + Bukkit.getServer().getServerName() + "\"").getString();
+        discordWebook = Database.systemConnection.select("discord_webhook").from("servers").where("name=\"" + Bukkit.getServer().getServerName() + "\"").getString();
     }
 }
