@@ -115,6 +115,7 @@ public class speedcubingServer extends JavaPlugin {
         instance = this;
         protocolManager = ProtocolLibrary.getProtocolManager();
         sendpacket.initFuckPeople();
+        ServerEvent.initSignUpdateEvent();
         config.reload(true);
         Database.connect(config.DatabaseURL, config.DatabaseUser, config.DatabasePassword);
         config.reloadDBConfig();

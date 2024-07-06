@@ -1,15 +1,26 @@
 package top.speedcubing.server;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.InternalStructure;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.compiler.CompiledStructureModifier;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketDataSerializer;
 import net.minecraft.server.v1_8_R3.PacketPlayInCustomPayload;
 import net.minecraft.server.v1_8_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayInTabComplete;
+import net.minecraft.server.v1_8_R3.PacketPlayInUpdateSign;
 import net.minecraft.server.v1_8_R3.PacketPlayOutStatistic;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTabComplete;
 import org.bukkit.entity.Player;
@@ -90,18 +101,36 @@ public class ServerEvent {
             exception.printStackTrace();
         }
     }
-
-    @CubingEventHandler
-    public void SignUpdateEvent(SignUpdateEvent e) {
-        Player player = e.getPlayer();
-        List<String> lines = e.getLines();
-        System.out.println("a");
-        if (nick.settingNick.containsKey(player.getUniqueId())) {
-            String name = lines.get(0);
-            System.out.println("b");
-            player.performCommand("nick " + name + " " + nick.nickRank.get(player.getUniqueId()) + " true");
-        } else {
-            System.out.println("c");
-        }
+// won't work
+//    @CubingEventHandler
+//    public void SignUpdateEvent(SignUpdateEvent e) {
+//        Player player = e.getPlayer();
+//        List<String> lines = e.getLines();
+//        System.out.println("a");
+//        if (nick.settingNick.containsKey(player.getUniqueId())) {
+//            String name = lines.get(0);
+//            System.out.println("b");
+//            player.performCommand("nick " + name + " " + nick.nickRank.get(player.getUniqueId()) + " true");
+//        } else {
+//            System.out.println("c");
+//        }
+//    }
+    public static void initSignUpdateEvent() {
+        speedcubingServer.instance.protocolManager.addPacketListener(new PacketAdapter(
+                speedcubingServer.instance,
+                ListenerPriority.HIGHEST,
+                PacketType.Play.Client.UPDATE_SIGN) {
+            @Override
+            public void onPacketReceiving(PacketEvent event) {
+                Player player = event.getPlayer();
+                PacketPlayInUpdateSign packet = (PacketPlayInUpdateSign) event.getPacket().getHandle();
+                IChatBaseComponent[] components = packet.b();
+                String name = components[0].getText();
+                if (nick.settingNick.containsKey(player.getUniqueId())) {
+                    player.performCommand("nick " + name + " " + nick.nickRank.get(player.getUniqueId()) + " true");
+                    nick.openNickBook(player, nick.NickBook.RULE);
+                }
+            }
+        });
     }
 }

@@ -6,20 +6,32 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.EntityArrow;
 import net.minecraft.server.v1_8_R3.IBlockData;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
+import net.minecraft.server.v1_8_R3.PacketPlayOutAttachEntity;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
+import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
+import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntity;
+import net.minecraft.server.v1_8_R3.PlayerConnection;
 import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityShootBowEvent;
+import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import top.speedcubing.server.speedcubingServer;
 
@@ -58,6 +70,16 @@ public class sendpacket implements CommandExecutor, Listener {
                 break;
             case "fuckpeople":
                 fuckPeople(target);
+                break;
+            case "sit":
+                sit(target);
+                break;
+            case "stand":
+                stand(target);
+                break;
+            case "gameend":
+                ganeEnd(target);
+                break;
         }
 
         return true;
@@ -66,6 +88,13 @@ public class sendpacket implements CommandExecutor, Listener {
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         whoWasFucked.remove(e.getPlayer());
+    }
+
+    @EventHandler
+    public void onShot(EntityShootBowEvent e) {
+        if (e.getEntity() instanceof Player) {
+            Player player = (Player) e.getEntity();
+        }
     }
 
     private void sleep(Player player) {
@@ -93,6 +122,39 @@ public class sendpacket implements CommandExecutor, Listener {
         whoWasFucked.add(player);
         ((WorldServer) craftPlayer.getHandle().world).getPlayerChunkMap().removePlayer(craftPlayer.getHandle());
         ((WorldServer) craftPlayer.getHandle().world).getPlayerChunkMap().addPlayer(craftPlayer.getHandle());
+    }
+    private void sit(Player player) {
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        Location location = player.getLocation();
+
+        EntityArrow arrow = new EntityArrow(
+                ((CraftWorld) player.getWorld()).getHandle(),
+                location.getX(),
+                location.getY() -1,
+                location.getZ()
+        );
+
+        PacketPlayOutSpawnEntity spawnPacket = new PacketPlayOutSpawnEntity(arrow, 60);
+        PacketPlayOutAttachEntity attachPacket = new PacketPlayOutAttachEntity(0, ((CraftPlayer) player).getHandle(), arrow);
+
+        craftPlayer.getHandle().playerConnection.sendPacket(spawnPacket);
+        craftPlayer.getHandle().playerConnection.sendPacket(attachPacket);
+        craftPlayer.getHandle().u().getTracker().a(craftPlayer.getHandle(), spawnPacket);
+        craftPlayer.getHandle().u().getTracker().a(craftPlayer.getHandle(), attachPacket);
+    }
+    private void stand(Player player) {
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        PacketPlayOutAttachEntity detachPacket = new PacketPlayOutAttachEntity(0, ((CraftPlayer) player).getHandle(), null);
+        craftPlayer.getHandle().playerConnection.sendPacket(detachPacket);
+        PacketPlayOutEntityDestroy destroyPacket = new PacketPlayOutEntityDestroy(((CraftEntity) player).getHandle().passenger.getId());
+        craftPlayer.getHandle().playerConnection.sendPacket(destroyPacket);
+        craftPlayer.getHandle().u().getTracker().a(craftPlayer.getHandle(), detachPacket);
+        craftPlayer.getHandle().u().getTracker().a(craftPlayer.getHandle(), destroyPacket);
+    }
+    private void ganeEnd(Player player) {
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(4, 1);
+        craftPlayer.getHandle().playerConnection.sendPacket(packet);
     }
 
     public static void initFuckPeople() {
