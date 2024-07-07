@@ -12,43 +12,48 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
+import top.speedcubing.common.CommonLib;
 import top.speedcubing.common.database.Database;
+import top.speedcubing.common.io.SocketReader;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.server.authenticator.AuthenticatorCommand;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
-import top.speedcubing.server.commands.discord;
-import top.speedcubing.server.commands.fly;
-import top.speedcubing.server.commands.getitemtype;
-import top.speedcubing.server.commands.hub;
-import top.speedcubing.server.commands.image;
-import top.speedcubing.server.commands.limbo;
-import top.speedcubing.server.commands.nick.nick;
-import top.speedcubing.server.commands.nick.unnick;
-import top.speedcubing.server.commands.overrided.plugins;
-import top.speedcubing.server.commands.skin;
-import top.speedcubing.server.commands.staff.announce;
-import top.speedcubing.server.commands.staff.freeze;
-import top.speedcubing.server.commands.staff.heal;
-import top.speedcubing.server.commands.staff.history;
-import top.speedcubing.server.commands.staff.proxycommand;
-import top.speedcubing.server.commands.staff.serverconfig;
-import top.speedcubing.server.commands.staff.testkb;
-import top.speedcubing.server.commands.troll.deepfry;
-import top.speedcubing.server.commands.troll.kaboom;
-import top.speedcubing.server.commands.troll.sendpacket;
+import top.speedcubing.server.bukkitcmd.discord;
+import top.speedcubing.server.bukkitcmd.fly;
+import top.speedcubing.server.bukkitcmd.getitemtype;
+import top.speedcubing.server.bukkitcmd.hub;
+import top.speedcubing.server.bukkitcmd.image;
+import top.speedcubing.server.bukkitcmd.limbo;
+import top.speedcubing.server.bukkitcmd.nick.nick;
+import top.speedcubing.server.bukkitcmd.nick.unnick;
+import top.speedcubing.server.bukkitcmd.overrided.plugins;
+import top.speedcubing.server.bukkitcmd.skin;
+import top.speedcubing.server.bukkitcmd.staff.announce;
+import top.speedcubing.server.bukkitcmd.staff.freeze;
+import top.speedcubing.server.bukkitcmd.staff.heal;
+import top.speedcubing.server.bukkitcmd.staff.history;
+import top.speedcubing.server.bukkitcmd.staff.proxycommand;
+import top.speedcubing.server.bukkitcmd.staff.serverconfig;
+import top.speedcubing.server.bukkitcmd.staff.testkb;
+import top.speedcubing.server.bukkitcmd.troll.deepfry;
+import top.speedcubing.server.bukkitcmd.troll.kaboom;
+import top.speedcubing.server.bukkitcmd.troll.sendpacket;
+import top.speedcubing.server.cubinglistener.CubingTick;
+import top.speedcubing.server.cubinglistener.PlayIn;
+import top.speedcubing.server.cubinglistener.PlayOut;
+import top.speedcubing.server.cubinglistener.SocketInput;
+import top.speedcubing.server.cubinglistener.SocketRead;
 import top.speedcubing.server.lang.LanguageSystem;
-import top.speedcubing.server.listeners.PostListen;
-import top.speedcubing.server.listeners.PreListen;
-import top.speedcubing.server.listeners.SingleListen;
+import top.speedcubing.server.bukkitlistener.PostListen;
+import top.speedcubing.server.bukkitlistener.PreListen;
+import top.speedcubing.server.bukkitlistener.SingleListen;
 import top.speedcubing.server.login.PreLoginData;
-import top.speedcubing.server.mulitproxy.SocketReader;
 import top.speedcubing.server.player.User;
-import top.speedcubing.server.utils.CubingTick;
+import top.speedcubing.server.utils.Configuration;
 import top.speedcubing.server.utils.LogListener;
-import top.speedcubing.server.utils.config;
 
 public class speedcubingServer extends JavaPlugin {
     public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
@@ -94,13 +99,20 @@ public class speedcubingServer extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        sendpacket.initFuckPeople();
-        config.reload(true);
-        Database.connect(config.DatabaseURL, config.DatabaseUser, config.DatabasePassword);
-        config.reloadDBConfig();
 
-        CubingTick.init();
-        SocketReader.init();
+        CubingEventManager.registerListeners(
+                new CubingTick(),
+                new PlayIn(),
+                new PlayOut(),
+                new SocketInput(),
+                new SocketRead(),
+                new Configuration());
+
+        CommonLib.init();
+
+        sendpacket.initFuckPeople();
+
+        SocketReader.init(new HostAndPort("127.0.0.1", Bukkit.getPort() + 1000));
         LanguageSystem.init();
         //temporarily fixed
 
@@ -116,7 +128,7 @@ public class speedcubingServer extends JavaPlugin {
                     a2 = name + " " + string;
                     if (store && !bypass) {
                         if (!punished)
-                            for (Pattern p : config.blacklistedMod) {
+                            for (Pattern p : Configuration.blacklistedMod) {
                                 if (p.matcher(a2).matches()) {
                                     Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "proxycommand ban " + player.getName() + " 0 Suspicious activities detected on your account.");
                                     punished = true;
@@ -124,7 +136,7 @@ public class speedcubingServer extends JavaPlugin {
                                 }
                             }
                         if (!punished)
-                            for (Pattern p : config.blockedMod) {
+                            for (Pattern p : Configuration.blockedMod) {
                                 if (p.matcher(a2).matches()) {
                                     player.kickPlayer("Invalid Modification Found.");
                                     punished = true;
@@ -145,7 +157,6 @@ public class speedcubingServer extends JavaPlugin {
         registerCommands();
         OverrideCommandManager.register(new plugins());
         TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
-        CubingEventManager.registerListeners(new ServerEvent());
         new LogListener().reloadFilter();
 
         //socket receive
@@ -165,7 +176,7 @@ public class speedcubingServer extends JavaPlugin {
 //            }
 //        }, 28800000);
 
-        if (!config.removeLogs) {
+        if (!Configuration.removeLogs) {
             //delete logs
             for (File f : new File("logs").listFiles()) {
                 if (!f.getName().equals("latest.log"))
@@ -182,7 +193,7 @@ public class speedcubingServer extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        CubingTick.calcTimer.cancel();
+        CommonLib.shutdown();
         Database.systemConnection.update(
                 "servers",
                 "onlinecount=-1,ram_max=-1,ram_heap=-1,ram_used=-1,tps1=-1,tps2=-1,tps3=-1",

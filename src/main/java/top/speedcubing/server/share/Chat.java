@@ -18,12 +18,12 @@ import top.speedcubing.lib.utils.TimeFormatter;
 import top.speedcubing.server.lang.LangMessage;
 import top.speedcubing.server.lang.LanguageSystem;
 import top.speedcubing.server.player.User;
-import top.speedcubing.server.utils.config;
+import top.speedcubing.server.utils.Configuration;
 
 public class Chat {
 
     private static String filter(String text) {
-        for (Pattern p : config.filteredText) {
+        for (Pattern p : Configuration.filteredText) {
             Matcher matcher = p.matcher(text);
             StringBuilder replacement = new StringBuilder();
             while (matcher.find()) {
@@ -73,7 +73,7 @@ public class Chat {
 
     private static void chatLogger(Player sender, String message) {
         String timeFormat = TimeFormatter.unixToRealTime(System.currentTimeMillis(), "HH:mm:ss", TimeUnit.MILLISECONDS);
-        DiscordWebhook discordWebhook = new DiscordWebhook(config.discordWebook);
+        DiscordWebhook discordWebhook = new DiscordWebhook(Configuration.discordWebook);
         message = ChatColor.stripColor(message.replaceAll("`", "'").replaceAll("\n", "/n"));
         discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + message + "```");
         discordWebhookPool.execute(() -> {

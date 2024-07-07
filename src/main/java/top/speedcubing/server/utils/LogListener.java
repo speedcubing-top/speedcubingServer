@@ -21,7 +21,7 @@ public class LogListener {
             public Result filter(LogEvent event) {
                 String msg = Console.removeAnsi(event.getMessage().getFormattedMessage());
                 boolean denied = false;
-                for (Pattern p : config.blockedLog) {
+                for (Pattern p : Configuration.blockedLog) {
                     if (p.matcher(msg).matches()) {
                         denied = true;
                         break;
