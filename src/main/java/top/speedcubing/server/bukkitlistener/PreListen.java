@@ -32,6 +32,7 @@ import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.Configuration;
+import top.speedcubing.server.utils.RankSystem;
 
 public class PreListen implements Listener {
 
@@ -129,7 +130,7 @@ public class PreListen implements Listener {
         String tag = Database.connection.select("tag").from("guild").where("name='" + data.getDatas()[7] + "'").getString();
         tag = nicked ? "" : (tag == null ? "" : " §6[" + tag + "]");
         //Packets
-        String extracted = Rank.getCode(user.displayRank) + speedcubingServer.playerNameEncode(displayName);
+        String extracted = Rank.getCode(user.displayRank) + RankSystem.playerNameEncode(displayName);
         user.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
         user.joinPacket = new OutScoreboardTeam().a(extracted).c(user.getFormat(false).getPrefix()).d(tag).g(Collections.singletonList(displayName)).h(0).packet;
         //formatting
@@ -146,7 +147,7 @@ public class PreListen implements Listener {
             if (u.vanished) player.hidePlayer(u.player);
         //nick
         if (nicked)
-            user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(data.getRealRank()) + speedcubingServer.playerNameEncode(data.getDatas()[5])).c(Rank.getFormat(data.getRealRank(), user.id).getPrefix()).d(tag).g(Collections.singletonList(data.getDatas()[5])).h(0).packet);
+            user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(data.getRealRank()) + RankSystem.playerNameEncode(data.getDatas()[5])).c(Rank.getFormat(data.getRealRank(), user.id).getPrefix()).d(tag).g(Collections.singletonList(data.getDatas()[5])).h(0).packet);
 
         if (Configuration.onlineCrash.contains(player.getUniqueId().toString()) || Configuration.onlineCrash.contains(player.getAddress().getAddress().getHostAddress())) {
             speedcubingServer.scheduledPool.schedule(() -> PlayerUtils.crashAll(player), 50, TimeUnit.MILLISECONDS);

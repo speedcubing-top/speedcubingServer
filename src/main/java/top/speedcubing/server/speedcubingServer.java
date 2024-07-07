@@ -15,12 +15,12 @@ import org.spigotmc.RestartCommand;
 import top.speedcubing.common.CommonLib;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.io.SocketReader;
+import top.speedcubing.common.server.MinecraftServer;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.server.authenticator.AuthenticatorCommand;
-import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.bukkitcmd.discord;
 import top.speedcubing.server.bukkitcmd.fly;
 import top.speedcubing.server.bukkitcmd.getitemtype;
@@ -41,15 +41,16 @@ import top.speedcubing.server.bukkitcmd.staff.testkb;
 import top.speedcubing.server.bukkitcmd.troll.deepfry;
 import top.speedcubing.server.bukkitcmd.troll.kaboom;
 import top.speedcubing.server.bukkitcmd.troll.sendpacket;
+import top.speedcubing.server.bukkitlistener.PostListen;
+import top.speedcubing.server.bukkitlistener.PreListen;
+import top.speedcubing.server.bukkitlistener.SingleListen;
+import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.cubinglistener.CubingTick;
 import top.speedcubing.server.cubinglistener.PlayIn;
 import top.speedcubing.server.cubinglistener.PlayOut;
 import top.speedcubing.server.cubinglistener.SocketInput;
 import top.speedcubing.server.cubinglistener.SocketRead;
 import top.speedcubing.server.lang.LanguageSystem;
-import top.speedcubing.server.bukkitlistener.PostListen;
-import top.speedcubing.server.bukkitlistener.PreListen;
-import top.speedcubing.server.bukkitlistener.SingleListen;
 import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.Configuration;
@@ -64,37 +65,6 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean restartable = false; //is it time to restart ?
     public static speedcubingServer instance;
     public static ScheduledExecutorService scheduledPool = Executors.newScheduledThreadPool(10);
-
-    private void registerCommands() {
-        Bukkit.getPluginCommand("nick").setExecutor(new nick());
-        Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
-        Bukkit.getPluginCommand("discord").setExecutor(new discord());
-        Bukkit.getPluginCommand("skin").setExecutor(new skin());
-        Bukkit.getPluginCommand("hub").setExecutor(new hub());
-        Bukkit.getPluginCommand("fly").setExecutor(new fly());
-        Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
-        Bukkit.getPluginCommand("limbo").setExecutor(new limbo());
-        Bukkit.getPluginCommand("heal").setExecutor(new heal());
-        Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
-        Bukkit.getPluginCommand("announce").setExecutor(new announce());
-        Bukkit.getPluginCommand("kaboom").setExecutor(new kaboom());
-        Bukkit.getPluginCommand("deepfry").setExecutor(new deepfry());
-        Bukkit.getPluginCommand("freeze").setExecutor(new freeze());
-        Bukkit.getPluginCommand("2fa").setExecutor(new AuthenticatorCommand());
-        Bukkit.getPluginCommand("image").setExecutor(new image());
-        Bukkit.getPluginCommand("serverconfig").setExecutor(new serverconfig());
-        Bukkit.getPluginCommand("history").setExecutor(new history());
-        Bukkit.getPluginCommand("getitemtype").setExecutor(new getitemtype());
-        Bukkit.getPluginCommand("sendpacket").setExecutor(new sendpacket());
-    }
-
-    private void registerListeners() {
-        registerListeners(
-                new PreListen(),
-                new PostListen(),
-                new SingleListen());
-        registerListeners(new history(), new sendpacket());
-    }
 
     @Override
     public void onEnable() {
@@ -153,8 +123,16 @@ public class speedcubingServer extends JavaPlugin {
             }
         });
 
-        registerListeners();
+
+        registerListeners(
+                new PreListen(),
+                new PostListen(),
+                new SingleListen(),
+                new history(),
+                new sendpacket());
+
         registerCommands();
+
         OverrideCommandManager.register(new plugins());
         TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
         new LogListener().reloadFilter();
@@ -205,56 +183,33 @@ public class speedcubingServer extends JavaPlugin {
         return (!User.usersByID.values().isEmpty() ? User.usersByID.values().iterator().next().proxy : new HostAndPort("host.docker.internal", 25565 + 1000));
     }
 
-    public static String playerNameEncode(String name) {
-        int buffer = 0;
-        int nBitsIn = 0;
-        StringBuilder builder = new StringBuilder();
-        for (char c : name.toCharArray()) {
-            //57('9') -> c - '0'                 c = c - 48    // 0~9 10
-            //90('Z') -> c - ('A' - 10)          c = c - 55    // A~Z 26
-            //95('_') -> (26 + 10)               c = 36        // _   1
-            //other   -> c - ('a' - 10 - 26 - 1) c = c - 59    // a~z 26
-            int b = (c <= 57 ? c - 48 : (c <= 90 ? c - 55 : (c == 95 ? 36 : c - 60)));
-            nBitsIn += 6;
-            buffer |= (b << (32 - nBitsIn));
-            while (nBitsIn >= 16) {
-                builder.append((char) (buffer >>> 16));
-                nBitsIn -= 16;
-                buffer <<= 16;
-            }
-        }
-        if (nBitsIn != 0) {
-            builder.append((char) (buffer >>> 16));
-        }
-        return builder.toString();
-        /* old
-        StringBuilder str = new StringBuilder();
-        StringBuilder nameBuilder = new StringBuilder(name);
-        while (nameBuilder.length() < 16) {
-            nameBuilder.append(" ");
-        }
-        name = nameBuilder.toString();
-        for (int i = 0; i < 16; i++) {
-            int c = name.charAt(i);
-            c = (c == 32 ? 0 : (c <= 57 ? c - 47 : (c <= 90 ? c - 54 : (c == 95 ? 37 : c - 59))));
-            StringBuilder bin = new StringBuilder(Integer.toBinaryString(c));
-            while (bin.length() < 6) {
-                bin.insert(0, "0");
-            }
-            str.append(bin);
-        }
-        str.append("00");
-        StringBuilder string = new StringBuilder();
-        for (int i = 0; i < 14; i++) {
-            string.append((char) (Integer.parseInt(str.substring(i * 7, i * 7 + 6), 2) + 32));
-        }
-        return string.toString();
-         */
-    }
-
     public static void restart() {
         if (canRestart)
             RestartCommand.restart();
+    }
+
+
+    private void registerCommands() {
+        Bukkit.getPluginCommand("nick").setExecutor(new nick());
+        Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
+        Bukkit.getPluginCommand("discord").setExecutor(new discord());
+        Bukkit.getPluginCommand("skin").setExecutor(new skin());
+        Bukkit.getPluginCommand("hub").setExecutor(new hub());
+        Bukkit.getPluginCommand("fly").setExecutor(new fly());
+        Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
+        Bukkit.getPluginCommand("limbo").setExecutor(new limbo());
+        Bukkit.getPluginCommand("heal").setExecutor(new heal());
+        Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
+        Bukkit.getPluginCommand("announce").setExecutor(new announce());
+        Bukkit.getPluginCommand("kaboom").setExecutor(new kaboom());
+        Bukkit.getPluginCommand("deepfry").setExecutor(new deepfry());
+        Bukkit.getPluginCommand("freeze").setExecutor(new freeze());
+        Bukkit.getPluginCommand("2fa").setExecutor(new AuthenticatorCommand());
+        Bukkit.getPluginCommand("image").setExecutor(new image());
+        Bukkit.getPluginCommand("serverconfig").setExecutor(new serverconfig());
+        Bukkit.getPluginCommand("history").setExecutor(new history());
+        Bukkit.getPluginCommand("getitemtype").setExecutor(new getitemtype());
+        Bukkit.getPluginCommand("sendpacket").setExecutor(new sendpacket());
     }
 
     public static void registerListeners(Listener... listeners) {
