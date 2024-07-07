@@ -1,4 +1,4 @@
-package top.speedcubing.server.commands.staff;
+package top.speedcubing.server.commands.troll;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;

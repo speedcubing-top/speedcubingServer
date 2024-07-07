@@ -1,33 +1,31 @@
 package top.speedcubing.server;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Map;
 import net.minecraft.server.v1_8_R3.IChatBaseComponent;
 import net.minecraft.server.v1_8_R3.PacketDataSerializer;
 import net.minecraft.server.v1_8_R3.PacketPlayInCustomPayload;
 import net.minecraft.server.v1_8_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayInTabComplete;
 import net.minecraft.server.v1_8_R3.PacketPlayInUpdateSign;
+import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
+import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutStatistic;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTabComplete;
 import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
 import top.speedcubing.lib.bukkit.events.packet.PlayOutEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.commands.nick.nick;
+import top.speedcubing.server.commands.troll.sendpacket;
 import top.speedcubing.server.events.InputEvent;
 import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Map;
 
 public class ServerEvent {
 
@@ -69,6 +67,22 @@ public class ServerEvent {
                 JsonObject parser = JsonParser.parseString(json).getAsJsonObject();
                 System.out.println(parser);
             }
+        } else if (e.getPacket() instanceof PacketPlayInUpdateSign) {
+            PacketPlayInUpdateSign packet = (PacketPlayInUpdateSign) e.getPacket();
+            IChatBaseComponent[] components = packet.b();
+            String name = components[0].getText();
+
+            if (nick.settingNick.containsKey(e.getPlayer().getUniqueId())) {
+                Bukkit.getScheduler().runTask(speedcubingServer.instance, () -> {
+                    try {
+                        e.getPlayer().performCommand("nick " + name + " " + nick.nickRank.get(e.getPlayer().getUniqueId()) + " true");
+                        nick.openNickBook(e.getPlayer(), nick.NickBook.RULE);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        e.getPlayer().sendMessage("§cError executing command: " + ex.getMessage());
+                    }
+                });
+            }
         }
     }
 
@@ -79,7 +93,36 @@ public class ServerEvent {
             stats.replaceAll((k, v) -> 0);
         } else if (e.getPacket() instanceof PacketPlayOutTabComplete) {
             String[] s = (String[]) ReflectionUtils.getField(e.getPacket(), "a");
-            System.out.println(Arrays.toString(s));
+            System.out.println("tab complete packet " + Arrays.toString(s));
+        } else if (e.getPacket() instanceof PacketPlayOutMapChunk) {
+
+            if (!sendpacket.whoWasFucked.contains(e.getPlayer()))
+                return;
+
+            try {
+                PacketPlayOutMapChunk.ChunkMap data = (PacketPlayOutMapChunk.ChunkMap) ReflectionUtils.getField(e.getPacket(), "c");
+                boolean isInit = (boolean) ReflectionUtils.getField(e.getPacket(), "d");
+                boolean isOverworld = ((CraftPlayer) e.getPlayer()).getHandle().world.worldProvider.o();
+                sendpacket.randomChunkData(isOverworld, isInit, data);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        } else if (e.getPacket() instanceof PacketPlayOutMapChunkBulk) {
+
+            if (!sendpacket.whoWasFucked.contains(e.getPlayer()))
+                return;
+
+            try {
+                PacketPlayOutMapChunk.ChunkMap[] data = (PacketPlayOutMapChunk.ChunkMap[]) ReflectionUtils.getField(e.getPacket(), "c");
+                boolean isOverworld = (boolean) ReflectionUtils.getField(e.getPacket(), "d");
+                for (PacketPlayOutMapChunk.ChunkMap datum : data) {
+                    sendpacket.randomChunkData(isOverworld, true, datum);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
         }
     }
 
@@ -95,46 +138,5 @@ public class ServerEvent {
         } catch (IOException exception) {
             exception.printStackTrace();
         }
-    }
-
-    // won't work
-//    @CubingEventHandler
-//    public void SignUpdateEvent(SignUpdateEvent e) {
-//        Player player = e.getPlayer();
-//        List<String> lines = e.getLines();
-//        System.out.println("a");
-//        if (nick.settingNick.containsKey(player.getUniqueId())) {
-//            String name = lines.get(0);
-//            System.out.println("b");
-//            player.performCommand("nick " + name + " " + nick.nickRank.get(player.getUniqueId()) + " true");
-//        } else {
-//            System.out.println("c");
-//        }
-//    }
-    public static void initSignUpdateEvent() {
-        speedcubingServer.instance.protocolManager.addPacketListener(new PacketAdapter(
-                speedcubingServer.instance,
-                ListenerPriority.HIGHEST,
-                PacketType.Play.Client.UPDATE_SIGN) {
-            @Override
-            public void onPacketReceiving(PacketEvent event) {
-                Player player = event.getPlayer();
-                PacketPlayInUpdateSign packet = (PacketPlayInUpdateSign) event.getPacket().getHandle();
-                IChatBaseComponent[] components = packet.b();
-                String name = components[0].getText();
-
-                if (nick.settingNick.containsKey(player.getUniqueId())) {
-                    Bukkit.getScheduler().runTask(speedcubingServer.instance, () -> {
-                        try {
-                            player.performCommand("nick " + name + " " + nick.nickRank.get(player.getUniqueId()) + " true");
-                            nick.openNickBook(player, nick.NickBook.RULE);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            player.sendMessage("§cError executing command: " + e.getMessage());
-                        }
-                    });
-                }
-            }
-        });
     }
 }

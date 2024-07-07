@@ -1,18 +1,13 @@
 package top.speedcubing.server;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.events.PacketEvent;
-import io.netty.buffer.Unpooled;
-import net.minecraft.server.v1_8_R3.Block;
-import net.minecraft.server.v1_8_R3.IBlockData;
-import net.minecraft.server.v1_8_R3.PacketDataSerializer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
-import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
+import java.io.File;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -35,15 +30,15 @@ import top.speedcubing.server.commands.nick.unnick;
 import top.speedcubing.server.commands.overrided.plugins;
 import top.speedcubing.server.commands.skin;
 import top.speedcubing.server.commands.staff.announce;
-import top.speedcubing.server.commands.staff.deepfry;
 import top.speedcubing.server.commands.staff.freeze;
 import top.speedcubing.server.commands.staff.heal;
 import top.speedcubing.server.commands.staff.history;
-import top.speedcubing.server.commands.staff.kaboom;
 import top.speedcubing.server.commands.staff.proxycommand;
-import top.speedcubing.server.commands.staff.sendpacket;
 import top.speedcubing.server.commands.staff.serverconfig;
 import top.speedcubing.server.commands.staff.testkb;
+import top.speedcubing.server.commands.troll.deepfry;
+import top.speedcubing.server.commands.troll.kaboom;
+import top.speedcubing.server.commands.troll.sendpacket;
 import top.speedcubing.server.lang.LanguageSystem;
 import top.speedcubing.server.listeners.PostListen;
 import top.speedcubing.server.listeners.PreListen;
@@ -55,19 +50,6 @@ import top.speedcubing.server.utils.CubingTick;
 import top.speedcubing.server.utils.LogListener;
 import top.speedcubing.server.utils.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadLocalRandom;
-import java.util.regex.Pattern;
-
 public class speedcubingServer extends JavaPlugin {
     public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
     public static final Pattern legacyNameRegex = Pattern.compile("^\\w{1,16}$");
@@ -77,7 +59,6 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean restartable = false; //is it time to restart ?
     public static speedcubingServer instance;
     public static ScheduledExecutorService scheduledPool = Executors.newScheduledThreadPool(10);
-    public ProtocolManager protocolManager;
 
     private void registerCommands() {
         Bukkit.getPluginCommand("nick").setExecutor(new nick());
@@ -113,9 +94,7 @@ public class speedcubingServer extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        protocolManager = ProtocolLibrary.getProtocolManager();
         sendpacket.initFuckPeople();
-        ServerEvent.initSignUpdateEvent();
         config.reload(true);
         Database.connect(config.DatabaseURL, config.DatabaseUser, config.DatabasePassword);
         config.reloadDBConfig();

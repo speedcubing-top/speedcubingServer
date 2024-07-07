@@ -1,4 +1,4 @@
-package top.speedcubing.server.commands.staff;
+package top.speedcubing.server.commands.troll;
 
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;

@@ -1,9 +1,9 @@
-package top.speedcubing.server.commands.staff;
+package top.speedcubing.server.commands.troll;
 
-import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.ListenerPriority;
-import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketEvent;
+import java.util.Collections;
+import java.util.Set;
+import java.util.WeakHashMap;
+import java.util.concurrent.ThreadLocalRandom;
 import net.minecraft.server.v1_8_R3.Block;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.EntityArrow;
@@ -14,9 +14,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
-import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntity;
-import net.minecraft.server.v1_8_R3.PlayerConnection;
 import net.minecraft.server.v1_8_R3.WorldServer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,23 +24,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.v1_8_R3.CraftWorld;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityShootBowEvent;
-import org.bukkit.event.entity.ProjectileLaunchEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import top.speedcubing.server.speedcubingServer;
-
-import java.lang.reflect.Field;
-import java.util.Collections;
-import java.util.Set;
-import java.util.WeakHashMap;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class sendpacket implements CommandExecutor, Listener {
-    private final static Set<Player> whoWasFucked = Collections.newSetFromMap(new WeakHashMap<>());
+    public final static Set<Player> whoWasFucked = Collections.newSetFromMap(new WeakHashMap<>());
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -123,6 +112,7 @@ public class sendpacket implements CommandExecutor, Listener {
         ((WorldServer) craftPlayer.getHandle().world).getPlayerChunkMap().removePlayer(craftPlayer.getHandle());
         ((WorldServer) craftPlayer.getHandle().world).getPlayerChunkMap().addPlayer(craftPlayer.getHandle());
     }
+
     private void sit(Player player) {
         CraftPlayer craftPlayer = (CraftPlayer) player;
         Location location = player.getLocation();
@@ -130,7 +120,7 @@ public class sendpacket implements CommandExecutor, Listener {
         EntityArrow arrow = new EntityArrow(
                 ((CraftWorld) player.getWorld()).getHandle(),
                 location.getX(),
-                location.getY() -1,
+                location.getY() - 1,
                 location.getZ()
         );
 
@@ -142,6 +132,7 @@ public class sendpacket implements CommandExecutor, Listener {
         craftPlayer.getHandle().u().getTracker().a(craftPlayer.getHandle(), spawnPacket);
         craftPlayer.getHandle().u().getTracker().a(craftPlayer.getHandle(), attachPacket);
     }
+
     private void stand(Player player) {
         CraftPlayer craftPlayer = (CraftPlayer) player;
         PacketPlayOutAttachEntity detachPacket = new PacketPlayOutAttachEntity(0, ((CraftPlayer) player).getHandle(), null);
@@ -151,6 +142,7 @@ public class sendpacket implements CommandExecutor, Listener {
         craftPlayer.getHandle().u().getTracker().a(craftPlayer.getHandle(), detachPacket);
         craftPlayer.getHandle().u().getTracker().a(craftPlayer.getHandle(), destroyPacket);
     }
+
     private void ganeEnd(Player player) {
         CraftPlayer craftPlayer = (CraftPlayer) player;
         PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(4, 1);
@@ -159,6 +151,7 @@ public class sendpacket implements CommandExecutor, Listener {
 
     public static void initFuckPeople() {
         initSupported();
+        /*
         speedcubingServer.instance.protocolManager.addPacketListener(new PacketAdapter(
                 speedcubingServer.instance,
                 ListenerPriority.NORMAL,
@@ -203,7 +196,7 @@ public class sendpacket implements CommandExecutor, Listener {
                     throw new RuntimeException(e);
                 }
             }
-        });
+        });*/
     }
 
     private static int reverseSectionsCount(int i, boolean flag, boolean flag1) {
