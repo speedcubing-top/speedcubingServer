@@ -1,8 +1,6 @@
 package top.speedcubing.server;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -10,12 +8,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
 import top.speedcubing.common.CommonLib;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.io.SocketReader;
-import top.speedcubing.common.server.MinecraftServer;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SystemUtils;
@@ -44,6 +42,7 @@ import top.speedcubing.server.bukkitcmd.troll.sendpacket;
 import top.speedcubing.server.bukkitlistener.PostListen;
 import top.speedcubing.server.bukkitlistener.PreListen;
 import top.speedcubing.server.bukkitlistener.SingleListen;
+import top.speedcubing.server.bukkitlistener.pluginchannel.FMLHSListener;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.cubinglistener.CubingTick;
 import top.speedcubing.server.cubinglistener.PlayIn;
@@ -69,7 +68,6 @@ public class speedcubingServer extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-
         CubingEventManager.registerListeners(
                 new CubingTick(),
                 new PlayIn(),
@@ -77,67 +75,24 @@ public class speedcubingServer extends JavaPlugin {
                 new SocketInput(),
                 new SocketRead(),
                 new Configuration());
+        registerCommands();
+        registerListeners();
 
         CommonLib.init();
 
-        sendpacket.initFuckPeople();
-
         SocketReader.init(new HostAndPort("127.0.0.1", Bukkit.getPort() + 1000));
+
         LanguageSystem.init();
+
         //temporarily fixed
 
-        //lib
-        Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", (s, player, bytes) -> {
-            if (bytes.length != 2) {
-                boolean store = false, punished = false;
-                String name = null, a2, string;
-                Boolean bypass = Database.connection.select("modbypass").from("playersdata").where("id=" + User.getUser(player).id).getBoolean();
-                for (int i = 2; i < bytes.length; store = !store) {
-                    int end = i + bytes[i] + 1;
-                    string = new String(Arrays.copyOfRange(bytes, i + 1, end));
-                    a2 = name + " " + string;
-                    if (store && !bypass) {
-                        if (!punished)
-                            for (Pattern p : Configuration.blacklistedMod) {
-                                if (p.matcher(a2).matches()) {
-                                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "proxycommand ban " + player.getName() + " 0 Suspicious activities detected on your account.");
-                                    punished = true;
-                                    break;
-                                }
-                            }
-                        if (!punished)
-                            for (Pattern p : Configuration.blockedMod) {
-                                if (p.matcher(a2).matches()) {
-                                    player.kickPlayer("Invalid Modification Found.");
-                                    punished = true;
-                                    break;
-                                }
-                            }
-                    } else name = string;
-                    i = end;
-                }
-                String mods = new String(bytes, StandardCharsets.UTF_8);
-                System.out.println(mods);
-                System.out.println(Arrays.toString(bytes));
-                User.getUser(player).dbUpdate("forgemod='" + new String(bytes, StandardCharsets.UTF_8) + "'");
-            }
-        });
+        sendpacket.initFuckPeople();
 
-
-        registerListeners(
-                new PreListen(),
-                new PostListen(),
-                new SingleListen(),
-                new history(),
-                new sendpacket());
-
-        registerCommands();
+        Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", new FMLHSListener());
 
         OverrideCommandManager.register(new plugins());
         TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
         new LogListener().reloadFilter();
-
-        //socket receive
 
         Database.systemConnection.update("servers",
                 "launchtime=" + SystemUtils.getCurrentSecond() +
@@ -179,16 +134,6 @@ public class speedcubingServer extends JavaPlugin {
         );
     }
 
-    public static HostAndPort getRandomBungee() {
-        return (!User.usersByID.values().isEmpty() ? User.usersByID.values().iterator().next().proxy : new HostAndPort("host.docker.internal", 25565 + 1000));
-    }
-
-    public static void restart() {
-        if (canRestart)
-            RestartCommand.restart();
-    }
-
-
     private void registerCommands() {
         Bukkit.getPluginCommand("nick").setExecutor(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
@@ -212,9 +157,26 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("sendpacket").setExecutor(new sendpacket());
     }
 
+    private void registerListeners() {
+        registerListeners(new PreListen(), new PostListen(), new SingleListen(), new history(), new sendpacket());
+    }
+
+    public static Plugin getInstance() {
+        return instance;
+    }
+
     public static void registerListeners(Listener... listeners) {
         for (Listener l : listeners) {
             Bukkit.getPluginManager().registerEvents(l, instance);
         }
+    }
+
+    public static HostAndPort getRandomBungee() {
+        return (!User.usersByID.values().isEmpty() ? User.usersByID.values().iterator().next().proxy : new HostAndPort("host.docker.internal", 25565 + 1000));
+    }
+
+    public static void restart() {
+        if (canRestart)
+            RestartCommand.restart();
     }
 }

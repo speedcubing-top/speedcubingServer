@@ -52,12 +52,12 @@ public class SocketRead {
                 boolean vanish = data.readBoolean();
                 user.vanished = vanish;
                 if (vanish)
-                    Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> {
+                    Bukkit.getScheduler().runTask(speedcubingServer.getInstance(), () -> {
                         for (Player p : Bukkit.getOnlinePlayers())
                             p.hidePlayer(user.player);
                     });
                 else
-                    Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> {
+                    Bukkit.getScheduler().runTask(speedcubingServer.getInstance(), () -> {
                         for (Player p : Bukkit.getOnlinePlayers())
                             p.showPlayer(user.player);
                     });
