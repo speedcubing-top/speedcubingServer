@@ -35,7 +35,7 @@ public class CubingTick {
                 TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("cps").writeInt(user.id).writeInt(user.leftClick).writeInt(user.rightClick).toByteArray());
                         /*
                         if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
-                            Bukkit.getScheduler().runTask(speedcubingServer.getPlugin(speedcubingServer.class), () -> user.player.kickPlayer("You are clicking too fast !"));
+                            Bukkit.getScheduler().runTask(speedcubingServer.getInstance(), () -> user.player.kickPlayer("You are clicking too fast !"));
                         */
             user.leftClick = 0;
             user.rightClick = 0;
