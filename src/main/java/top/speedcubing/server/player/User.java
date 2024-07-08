@@ -1,5 +1,6 @@
 package top.speedcubing.server.player;
 
+import java.time.ZoneId;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -67,7 +68,6 @@ public class User extends IDPlayer {
     public boolean allowOp;
     public boolean chatFilt;
     public boolean listened;
-
     public PacketPlayOutScoreboardTeam joinPacket;
     public PacketPlayOutScoreboardTeam leavePacket;
     public int leftClick;
@@ -77,6 +77,7 @@ public class User extends IDPlayer {
     public long lastInvClick;
     public final String realRank;
     public long lastMove = System.currentTimeMillis();
+    public String timeZone;
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
     public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
@@ -92,6 +93,7 @@ public class User extends IDPlayer {
         this.proxy = bungeeData.proxy;
         this.allowOp = allowOp;
         this.isStaff = Rank.isStaff(realRank);
+        this.timeZone = dbSelect("timezone").getString();
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         usersByID.put(id, this);
@@ -160,6 +162,10 @@ public class User extends IDPlayer {
 
     public void setInput(boolean add) {
         TCPClient.write(proxy, new ByteArrayBuffer().writeUTF("inputmode").writeInt(id).writeBoolean(add).toByteArray());
+    }
+    public String getCurrentTime() {
+        ZoneId zone = ZoneId.of(timeZone);
+        return java.time.LocalTime.now(zone).toString();
     }
 
     //kb

@@ -1,11 +1,10 @@
 package top.speedcubing.server.bukkitlistener;
 
 import com.google.common.collect.Sets;
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
 import org.bukkit.Bukkit;
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -33,6 +32,15 @@ import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.Configuration;
 import top.speedcubing.server.utils.RankSystem;
+
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class PreListen implements Listener {
 
@@ -152,9 +160,34 @@ public class PreListen implements Listener {
         if (Configuration.onlineCrash.contains(player.getUniqueId().toString()) || Configuration.onlineCrash.contains(player.getAddress().getAddress().getHostAddress())) {
             speedcubingServer.scheduledPool.schedule(() -> PlayerUtils.crashAll(player), 50, TimeUnit.MILLISECONDS);
         }
-
         //auth
         AuthEventHandlers.onPlayerJoin(e);
+
+        //腦癱時間
+        if (Bukkit.getServerName().equalsIgnoreCase("lobby")) {
+            LocalTime start = LocalTime.of(0, 0);
+            LocalTime end = LocalTime.of(6, 0);
+            LocalTime now = LocalTime.parse(user.getCurrentTime());
+            if (now.equals(start) || now.isAfter(start) && now.isBefore(end)) {
+                new Timer().schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+                        String s = formatter.format(now);
+                        player.sendMessage("§cCurrent time is " + s + " ,Please take a rest.");
+                        for (User u : User.getUsers()) {
+                            howToWin(u.player);
+                        }
+                    }
+                }, 1000);
+            }
+        }
+    }
+
+    private void howToWin(Player player) {
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        PacketPlayOutBed packetPlayOutBed = new PacketPlayOutBed(craftPlayer.getHandle(), new BlockPosition(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ()));
+        craftPlayer.getHandle().u().getTracker().a(craftPlayer.getHandle(), packetPlayOutBed);
     }
 
     @EventHandler(priority = EventPriority.LOW)

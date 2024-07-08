@@ -128,7 +128,10 @@ public class nick implements CommandExecutor, Listener {
                         commandSender.sendMessage("You didn't nicked before! please use /nick <nickname>");
                     else if (datas[0].equals(commandSender.getName()))
                         User.getUser(commandSender).sendLangMessage(GlobalString.alreadyNicked);
-                    else nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender, false);
+                    else {
+                        nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender, false);
+                        openNickBook((Player) commandSender, NickBook.RULE);
+                    }
                     return true;
                 }
                 String name = strings[0];
