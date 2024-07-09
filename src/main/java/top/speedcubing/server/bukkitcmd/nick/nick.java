@@ -1,10 +1,16 @@
 package top.speedcubing.server.bukkitcmd.nick;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+
+import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.POS;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import org.bukkit.command.Command;
@@ -18,6 +24,7 @@ import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.inventory.BookBuilder;
 import top.speedcubing.lib.bukkit.inventory.SignBuilder;
+import top.speedcubing.lib.math.scMath;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
@@ -29,6 +36,7 @@ import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
+
 import static top.speedcubing.server.speedcubingServer.dict;
 
 public class nick implements CommandExecutor, Listener {
@@ -300,16 +308,19 @@ public class nick implements CommandExecutor, Listener {
                 SignBuilder.openSign(player, -50, 99, 47, lines);
                 break;
             case NAMERANDOM:
-                String name = generateRandomString();
-                book = new BookBuilder("random", "system")
-                        .addPage(new TextBuilder().str("我們為你生成了一個隨機名稱:\n§l" + name + "\n\n")
-                                .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"),
-                                        TextHoverEvent.showText("點擊這裡來使用這個名稱"))
-                                .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("點擊這裡來產生新的名稱"))
-                                .both("\n§0§n或是點擊這裡來使用自訂名稱", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("點擊這裡來自訂名稱"))
-                                .toBungee())
-                        .build();
-                BookBuilder.openBook(book, player);
+                player.sendMessage("§e正在生成隨機名稱,請稍後...");
+                speedcubingServer.scheduledPool.execute(() -> {
+                    String name = generateRandomString();
+                    ItemStack b = new BookBuilder("random", "system")
+                            .addPage(new TextBuilder().str("我們為你生成了一個隨機名稱:\n§l" + name + "\n\n")
+                                    .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"),
+                                            TextHoverEvent.showText("點擊這裡來使用這個名稱"))
+                                    .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("點擊這裡來產生新的名稱"))
+                                    .both("\n§0§n或是點擊這裡來使用自訂名稱", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("點擊這裡來自訂名稱"))
+                                    .toBungee())
+                            .build();
+                    BookBuilder.openBook(b, player);
+                });
                 break;
             case RULE:
                 book = new BookBuilder("rule", "system")
@@ -323,17 +334,75 @@ public class nick implements CommandExecutor, Listener {
     }
 
     public static String generateRandomString() {
-        //Random random = new Random();
-        return getRandomAdjective();
+        String name = "";
+        Random random = new Random();
+        int r = random.nextInt(5);
+        switch (r) {
+            case 0:
+                name = getRandomAdjective() + getRandomWord() + getRandomWord();
+                break;
+            case 1:
+                name = getRandomAdjective() + getRandomWord() + getRandomNumber();
+                break;
+            case 2:
+                name = getRandomWord() + getRandomAdjective();
+                break;
+            case 3:
+                name = getRandomAdjective() + getRandomVerb();
+                break;
+            case 4:
+                name = getRandomWord() + getRandomAdjective() + getRandomNumber();
+                break;
+        }
+        if (name.length() > 16) {
+            return generateRandomString();
+        }
+        return name;
+    }
 
+    public static String upper(String s) {
+        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
     }
 
     public static String getRandomAdjective() {
+        return upper(getRandomWord(POS.ADJECTIVE));
+    }
+
+    public static String getRandomVerb() {
+        return upper(getRandomWord(POS.VERB));
+    }
+
+    public static String getRandomAdverb() {
+        return upper(getRandomWord(POS.ADVERB));
+    }
+
+    public static String getRandomWord() {
+        return upper(getRandomWord(POS.NOUN));
+    }
+
+    public static int getRandomNumber() {
+        return scMath.randomInt(1990, 2010);
+    }
+
+    public static String getRandomWord(POS pos) {
         if (dict == null) {
             System.out.println("WordNet dictionary not initialized!");
             return "unknown";
         }
-        return "";
+        List<String> words = new ArrayList<>();
+        for (Iterator<IIndexWord> it = dict.getIndexWordIterator(pos); it.hasNext(); ) {
+            IIndexWord indexWord = it.next();
+            String lemma = indexWord.getLemma();
+            if (!lemma.contains(" ") && !lemma.contains("-")) {
+                words.add(lemma);
+            }
+        }
+        if (words.isEmpty()) {
+            System.out.println("No words found in WordNet for POS: " + pos);
+            return "unknown";
+        }
+        Random random = new Random();
+        return words.get(random.nextInt(words.size()));
     }
 
 }
