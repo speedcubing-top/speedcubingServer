@@ -245,7 +245,7 @@ public class nick implements CommandExecutor, Listener {
             case EULA:
                 book = new BookBuilder("eula", "system")
                         .addPage(new TextBuilder().str("Nicknames allow you to\nplay tih a different\n\n All rules still apply.\nYou can still be\nreported and all name\nhistory is stored.")
-                                .both("\n\n➤ §nI understand, set up my nickname", TextClickEvent.runCommand("/nick nickrank"), TextHoverEvent.showText("Click here to proceed"))
+                                .both("\n\n➤ §nI understand, set up my nickname", TextClickEvent.runCommand("/nick nickrank"), TextHoverEvent.showText("Click here to proceed."))
                                 .toBungee())
                         .build();
                 BookBuilder.openBook(book, player);
@@ -253,7 +253,7 @@ public class nick implements CommandExecutor, Listener {
             case RANK:
                 if (User.getUser(player).hasPermission("perm.nick.nickrank")) {
                     book = new BookBuilder("rank", "system")
-                            .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\nyou would like to be\n" +
+                            .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\n§r§0you would like to be\n" +
                                             "shown as when nicked.\n\n")
                                     .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("Click her to be shown as §8DEFAULT"))
                                     .both("§0➤ §3CHAMP\n", TextClickEvent.runCommand("/nick nickskinchamp"), TextHoverEvent.showText("Click her to be shown as §3CHAMP"))
@@ -265,7 +265,7 @@ public class nick implements CommandExecutor, Listener {
                             .build();
                 } else {
                     book = new BookBuilder("rank", "system")
-                            .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\nyou would like to be\n" +
+                            .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\n§r§0you would like to be\n" +
                                             "shown as when nicked.\n\n")
                                     .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("Click her to be shown as §8DEFAULT"))
                                     .toBungee())
@@ -275,10 +275,10 @@ public class nick implements CommandExecutor, Listener {
                 break;
             case SKIN:
                 book = new BookBuilder("skin", "system")
-                        .addPage(new TextBuilder().str("Awesome! Now, which §lSKIN would you like to\nhave while nicked?\n\n")
-                                .both("➤ My normal skin skin\n", TextClickEvent.runCommand("/nick nicknamechoosemyskin"), TextHoverEvent.showText("Click here to use your normal skin"))
-                                .both("➤ Steve/Alex skin\n", TextClickEvent.runCommand("/nick nicknamechoosesaskin"), TextHoverEvent.showText("Click here to use Steve/Alex skin"))
-                                .both("➤ Random skin\n", TextClickEvent.runCommand("/nick nicknamechooserandomskin"), TextHoverEvent.showText("Click here to use random preset skin"))
+                        .addPage(new TextBuilder().str("Awesome! Now, which §lSKIN §r§0would you like to\nhave while nicked?\n\n")
+                                .both("➤ My normal skin\n", TextClickEvent.runCommand("/nick nicknamechoosemyskin"), TextHoverEvent.showText("Click here to use your normal skin."))
+                                .both("➤ Steve/Alex skin\n", TextClickEvent.runCommand("/nick nicknamechoosesaskin"), TextHoverEvent.showText("Click here to use Steve/Alex skin."))
+                                .both("➤ Random skin\n", TextClickEvent.runCommand("/nick nicknamechooserandomskin"), TextHoverEvent.showText("Click here to use random preset skin."))
                                 .toBungee())
                         .build();
                 BookBuilder.openBook(book, player);
@@ -287,17 +287,17 @@ public class nick implements CommandExecutor, Listener {
                 String data = Database.connection.select("nickname").from("playersdata").where("id=" + User.getUser(player).id).getString();
                 if (User.getUser(player).hasPermission("perm.nick.customname")) {
                     book = new BookBuilder("name", "system")
-                            .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!\n\n")
-                                    .both("➤ Enter a name\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to enter a custom name"))
-                                    .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name"))
+                            .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
+                                    .both("➤ Enter a name\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to enter a custom name."))
+                                    .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name."))
                                     .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
                                     .str("To go back to being\nyour usual self, type:\n§l/unnick")
                                     .toBungee())
                             .build();
                 } else {
                     book = new BookBuilder("name", "system")
-                            .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!\n\n")
-                                    .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name"))
+                            .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
+                                    .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name."))
                                     .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
                                     .str("To go back to being\nyour usual self, type:\n§l/unnick")
                                     .toBungee())
@@ -306,7 +306,7 @@ public class nick implements CommandExecutor, Listener {
                 BookBuilder.openBook(book, player);
                 break;
             case NAMECUSTOM:
-                String[] lines = {"", "Please enter a name"};
+                String[] lines = {"", "Enter a name"};
                 SignBuilder.openSign(player, -50, 99, 47, lines);
                 break;
             case NAMERANDOM:
@@ -318,7 +318,7 @@ public class nick implements CommandExecutor, Listener {
                                     .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"),
                                             TextHoverEvent.showText("Click here to use this name."))
                                     .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to generate another name."))
-                                    .both("\n§0§n或是點擊這裡來使用自訂名稱", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("點擊這裡來自訂名稱"))
+                                    .both("\n§0§nOr click here to use custom name", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to use custom name."))
                                     .toBungee())
                             .build();
                     BookBuilder.openBook(b, player);
@@ -326,8 +326,8 @@ public class nick implements CommandExecutor, Listener {
                 break;
             case RULE:
                 book = new BookBuilder("rule", "system")
-                        .addPage(new TextBuilder().str("你已經設定完你的暱稱了!\n\n你現在的暱稱是:\n" + User.getUser(player).bGetName() + "." +
-                                        "\n\n§0若要解除暱名狀態請輸入:\n§l/unnick")
+                        .addPage(new TextBuilder().str("You have finished\nsetting up your\nnickname!\n\nYour nickname is:\n" + User.getUser(player).bGetName() + "." +
+                                        "\n\n§0To go back to being\nyour usual self, type:\n§l/unnick")
                                 .toBungee())
                         .build();
                 BookBuilder.openBook(book, player);
