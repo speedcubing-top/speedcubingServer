@@ -1,12 +1,11 @@
 package top.speedcubing.server.bukkitcmd.nick;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import edu.mit.jwi.IDictionary;
+import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.IWord;
+import edu.mit.jwi.item.IWordID;
+import edu.mit.jwi.item.POS;
+import edu.mit.jwi.item.Word;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
@@ -38,6 +37,18 @@ import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.RankSystem;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
+
+import static top.speedcubing.server.speedcubingServer.dict;
 
 public class nick implements CommandExecutor, Listener {
     public static final Map<UUID, Boolean> settingNick = new HashMap<>();
@@ -105,7 +116,7 @@ public class nick implements CommandExecutor, Listener {
                             }
                             break;
                         case "nicknamechooserandomskin":
-                            int userid = new Random().nextInt(39975) + 1;
+                            int userid = new Random().nextInt(40000) + 1;
                             String name = Database.connection.select("name").from("playersdata").where("id=" + userid).getString();
                             player.performCommand("skin " + name);
                             player.sendMessage("§aSet your skin to " + name + ".");
@@ -318,8 +329,8 @@ public class nick implements CommandExecutor, Listener {
                 String name = generateRandomString();
                 book = new BookBuilder("random", "system")
                         .addPage(new TextBuilder().str("我們為你生成了一個隨機名稱:\n§l" + name + "\n\n")
-                                .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " tr" +
-                                        "ue"), TextHoverEvent.showText("點擊這裡來使用這個名稱"))
+                                .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"),
+                                        TextHoverEvent.showText("點擊這裡來使用這個名稱"))
                                 .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("點擊這裡來產生新的名稱"))
                                 .both("\n§0§n或是點擊這裡來使用自訂名稱", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("點擊這裡來自訂名稱"))
                                 .toBungee())
@@ -338,18 +349,17 @@ public class nick implements CommandExecutor, Listener {
     }
 
     public static String generateRandomString() {
-        String characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_";
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-        int minLength = 4;
-        int maxLength = 16;
-        int length = random.nextInt(maxLength - minLength + 1) + minLength;
+        //Random random = new Random();
+        return getRandomAdjective();
 
-        for (int i = 0; i < length; i++) {
-            int index = random.nextInt(characters.length());
-            sb.append(characters.charAt(index));
-        }
-
-        return sb.toString();
     }
+
+    public static String getRandomAdjective() {
+        if (dict == null) {
+            System.out.println("WordNet dictionary not initialized!");
+            return "unknown";
+        }
+        return "";
+    }
+
 }

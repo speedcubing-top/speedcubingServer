@@ -1,11 +1,7 @@
 package top.speedcubing.server;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.regex.Pattern;
+import edu.mit.jwi.Dictionary;
+import edu.mit.jwi.IDictionary;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -55,6 +51,14 @@ import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.Configuration;
 import top.speedcubing.server.utils.LogListener;
 
+import java.io.File;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.regex.Pattern;
+
 public class speedcubingServer extends JavaPlugin {
     public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
     public static final Pattern legacyNameRegex = Pattern.compile("^\\w{1,16}$");
@@ -64,6 +68,7 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean restartable = false; //is it time to restart ?
     public static speedcubingServer instance;
     public static ScheduledExecutorService scheduledPool = Executors.newScheduledThreadPool(10);
+    public static IDictionary dict;
 
     @Override
     public void onEnable() {
@@ -77,14 +82,19 @@ public class speedcubingServer extends JavaPlugin {
                 new Configuration());
         registerCommands();
         registerListeners();
-
+        System.setProperty("wordnet.database.dir", "/storage/WNdb-3.0/dict");
         CommonLib.init();
-
         SocketReader.init(new HostAndPort("127.0.0.1", Bukkit.getPort() + 1000));
+        try {
+            URL url = new URL("file", null, "/storage/WNdb-3.0/dict");
+            dict = new Dictionary(url);
+            dict.open();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+
 
         LanguageSystem.init();
-
-        //temporarily fixed
 
         sendpacket.initFuckPeople();
 
@@ -132,6 +142,7 @@ public class speedcubingServer extends JavaPlugin {
                 "onlinecount=-1,ram_max=-1,ram_heap=-1,ram_used=-1,tps1=-1,tps2=-1,tps3=-1",
                 "name='" + Bukkit.getServerName() + "'"
         );
+        dict.close();
     }
 
     private void registerCommands() {
