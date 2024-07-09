@@ -2,6 +2,13 @@ package top.speedcubing.server;
 
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
+import java.io.File;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.regex.Pattern;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -51,14 +58,6 @@ import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.Configuration;
 import top.speedcubing.server.utils.LogListener;
-
-import java.io.File;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.regex.Pattern;
 
 public class speedcubingServer extends JavaPlugin {
     public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
@@ -133,6 +132,32 @@ public class speedcubingServer extends JavaPlugin {
                     f.delete();
             }
         }
+
+        Bukkit.getScheduler().scheduleSyncRepeatingTask(this, () -> {
+            for (User u : User.getUsers()) {
+                if (u.leftClickQueue.size() == 20) {
+                    u.leftCPS -= u.leftClickQueue.poll();
+                }
+                u.leftCPS += u.leftClickTick;
+                u.leftClickQueue.add(u.leftClickTick);
+                u.leftClickTick = 0;
+
+                if (u.rightClickQueue.size() == 20) {
+                    u.rightCPS -= u.rightClickQueue.poll();
+                }
+                u.rightCPS += u.rightClickTick;
+                u.rightClickQueue.add(u.rightClickTick);
+                u.rightClickTick = 0;
+
+                if (u.cpsHologram != null) {
+                    int leftClick = u.leftCPS;
+                    int rightClick = u.rightCPS;
+                    String colorCodeLeft = leftClick <= 10 ? "§a" : leftClick <= 20 ? "§2" : leftClick <= 30 ? "§e" : leftClick <= 40 ? "§6" : leftClick <= 50 ? "§c" : "§4";
+                    String colorCodeRight = rightClick <= 10 ? "§a" : rightClick <= 20 ? "§2" : rightClick <= 30 ? "§e" : rightClick <= 40 ? "§6" : rightClick <= 50 ? "§c" : "§4";
+                    u.cpsHologram.setName("§8[CPS§r " + colorCodeLeft + leftClick + " §8|§r " + colorCodeRight + rightClick + "§8]");
+                }
+            }
+        }, 0, 1);
     }
 
     @Override

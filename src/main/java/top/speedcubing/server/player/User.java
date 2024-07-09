@@ -1,10 +1,12 @@
 package top.speedcubing.server.player;
 
 import java.time.ZoneId;
+import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -74,8 +76,8 @@ public class User extends IDPlayer {
     public boolean listened;
     public PacketPlayOutScoreboardTeam joinPacket;
     public PacketPlayOutScoreboardTeam leavePacket;
-    public int leftClick;
-    public int rightClick;
+    public Queue<Integer> leftClickQueue = new ArrayDeque<>(), rightClickQueue = new ArrayDeque<>();
+    public int leftCPS, rightCPS, leftClickTick, rightClickTick;
     public boolean vanished;
     public final boolean isStaff;
     public long lastInvClick;
@@ -167,6 +169,7 @@ public class User extends IDPlayer {
     public void setInput(boolean add) {
         TCPClient.write(proxy, new ByteArrayBuffer().writeUTF("inputmode").writeInt(id).writeBoolean(add).toByteArray());
     }
+
     public String getCurrentTime() {
         ZoneId zone = ZoneId.of(timeZone);
         return java.time.LocalTime.now(zone).toString();
@@ -250,7 +253,7 @@ public class User extends IDPlayer {
         this.joinPacket = new OutScoreboardTeam().a(extracted).c(getFormat(false).getPrefix()).d(getGuildTag(nick)).g(Collections.singletonList(displayName)).h(0).packet;
     }
 
-    public void removeCPSHologram(){
+    public void removeCPSHologram() {
         if (cpsHologram != null) {
             cpsHologram.despawn();
             cpsHologram.delete();

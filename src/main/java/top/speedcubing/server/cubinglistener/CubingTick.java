@@ -32,22 +32,12 @@ public class CubingTick {
         );
         for (User user : User.usersByID.values()) {
             if (user.listened)
-                TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("cps").writeInt(user.id).writeInt(user.leftClick).writeInt(user.rightClick).toByteArray());
+                TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("cps").writeInt(user.id).writeInt(user.leftCPS).writeInt(user.rightCPS).toByteArray());
                         /*
                         if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
                             Bukkit.getScheduler().runTask(speedcubingServer.getInstance(), () -> user.player.kickPlayer("You are clicking too fast !"));
                         */
 
-            if (user.cpsHologram != null) {
-                int lefeClick = user.leftClick;
-                int rightClick = user.rightClick;
-                String colorCodeLeft = lefeClick <= 10 ? "§a" : lefeClick <= 20 ? "§2" : lefeClick <= 30 ? "§e" : lefeClick <= 40 ? "§6" : lefeClick <= 50 ? "§c" : "§4";
-                String colorCodeRight = rightClick <= 10 ? "§a" : rightClick <= 20 ? "§2" : rightClick <= 30 ? "§e" : rightClick <= 40 ? "§6" : rightClick <= 50 ? "§c" : "§4";
-                user.cpsHologram.setName("§8[CPS§r " + colorCodeLeft + user.leftClick + " §8|§r " + colorCodeRight + user.rightClick + "§8]");
-            }
-
-            user.leftClick = 0;
-            user.rightClick = 0;
             if (user.nicked() && user.vanished)
                 PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED §fand §cVANISHED");
             else if (user.vanished)

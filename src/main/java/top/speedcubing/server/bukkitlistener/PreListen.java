@@ -99,11 +99,11 @@ public class PreListen implements Listener {
         switch (e.getAction()) {
             case LEFT_CLICK_AIR:
             case LEFT_CLICK_BLOCK:
-                User.getUser(e.getPlayer()).leftClick += 1;
+                User.getUser(e.getPlayer()).leftClickTick += 1;
                 break;
             case RIGHT_CLICK_AIR:
             case RIGHT_CLICK_BLOCK:
-                User.getUser(e.getPlayer()).rightClick += 1;
+                User.getUser(e.getPlayer()).rightClickTick += 1;
                 break;
         }
 
