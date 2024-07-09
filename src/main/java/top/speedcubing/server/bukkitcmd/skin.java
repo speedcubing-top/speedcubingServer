@@ -1,8 +1,5 @@
 package top.speedcubing.server.bukkitcmd;
 
-import java.util.List;
-import net.minecraft.server.v1_8_R3.Packet;
-import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -51,13 +48,12 @@ public class skin implements CommandExecutor {
     }
 
     private static void updateSkin(User user, String value, String signature, String target) {
-        List<Packet<?>>[] packets = PlayerUtils.changeSkin(user.player, value, signature);
-        World world = user.bGetWorld();
-        for (User p : User.getUsers()) {
-            if (!p.player.getWorld().equals(world))
-                packets[1].forEach(p::sendPacket);
-            else if (p != user)
-                packets[0].forEach(p::sendPacket);
+        PlayerUtils.changeSkin(user.player, value, signature);
+        for (User u : User.getUsers()) {
+            if (u.player.canSee(user.player)) {
+                u.bHidePlayer(user.player);
+                u.bShowPlayer(user.player);
+            }
         }
         user.dbUpdate((target != null && target.equalsIgnoreCase(user.realName)) ? "skinvalue='',skinsignature=''" : ("skinvalue='" + value + "',skinsignature='" + signature + "'"));
         TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("skin").writeInt(user.id).writeUTF(value).writeUTF(signature).toByteArray());

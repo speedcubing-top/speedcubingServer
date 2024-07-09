@@ -2,12 +2,12 @@ package top.speedcubing.server.player;
 
 import java.time.ZoneId;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
-import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.Packet;
@@ -31,6 +31,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.IDPlayer;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
+import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
@@ -40,6 +41,7 @@ import top.speedcubing.server.lang.LangInventory;
 import top.speedcubing.server.lang.LangItemStack;
 import top.speedcubing.server.lang.LangMessage;
 import top.speedcubing.server.login.PreLoginData;
+import top.speedcubing.server.utils.RankSystem;
 
 public class User extends IDPlayer {
 
@@ -232,6 +234,19 @@ public class User extends IDPlayer {
 
     public void knockback(Vector v) {
         playerConn().sendPacket(new PacketPlayOutEntityVelocity(player.getEntityId(), v.getX(), v.getY(), v.getZ()));
+    }
+
+    public String getGuildTag(boolean nick) {
+        String tag = Database.connection.select("tag").from("guild").where("name='" + getGuild() + "'").getString();
+        return nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
+    }
+
+    public void createTeamPacket(boolean nick, String displayName) {
+
+        String extracted = Rank.getCode(displayRank) + RankSystem.playerNameEncode(displayName);
+        this.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
+        this.joinPacket = new OutScoreboardTeam().a(extracted).c(getFormat(false).getPrefix()).d(getGuildTag(nick)).g(Collections.singletonList(displayName)).h(0).packet;
+
     }
 
     //db

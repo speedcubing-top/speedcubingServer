@@ -1,18 +1,12 @@
 package top.speedcubing.server.bukkitcmd.nick;
 
-import edu.mit.jwi.IDictionary;
-import edu.mit.jwi.item.IIndexWord;
-import edu.mit.jwi.item.IWord;
-import edu.mit.jwi.item.IWordID;
-import edu.mit.jwi.item.POS;
-import edu.mit.jwi.item.Word;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
-import net.minecraft.server.v1_8_R3.PacketPlayOutHeldItemSlot;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_8_R3.PacketPlayOutPosition;
-import net.minecraft.server.v1_8_R3.PacketPlayOutRespawn;
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
-import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -24,7 +18,6 @@ import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.bukkit.inventory.BookBuilder;
 import top.speedcubing.lib.bukkit.inventory.SignBuilder;
-import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
@@ -36,18 +29,6 @@ import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
-import top.speedcubing.server.utils.RankSystem;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-
 import static top.speedcubing.server.speedcubingServer.dict;
 
 public class nick implements CommandExecutor, Listener {
@@ -213,45 +194,38 @@ public class nick implements CommandExecutor, Listener {
         }
     }
 
-    static void nickPlayer(String name, String rank, boolean nick, Player player, boolean openBook) {
+    static void nickPlayer(String displayName, String displayRank, boolean nick, Player player, boolean openBook) {
         User user = User.getUser(player);
         EntityPlayer entityPlayer = user.toNMS();
+
+        user.displayRank = displayRank;
+
+        ReflectionUtils.setField(entityPlayer.getProfile(), "name", displayName);
+
         settingNick.remove(user.bGetUniqueId());
         nickName.remove(user.bGetUniqueId());
         nickRank.remove(user.bGetUniqueId());
 
-        //guild
-        String tag = Database.connection.select("tag").from("guild").where("name='" + user.getGuild() + "'").getString();
-        tag = nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
+        //packet
+        user.createTeamPacket(nick, displayName);
 
-        String extracted2 = Rank.getCode(rank) + RankSystem.playerNameEncode(name);
-        PacketPlayOutScoreboardTeam old = new OutScoreboardTeam().a(Rank.getCode(user.displayRank) + RankSystem.playerNameEncode(player.getName())).h(1).packet;
-        user.leavePacket = new OutScoreboardTeam().a(extracted2).h(1).packet;
-        user.joinPacket = new OutScoreboardTeam().a(extracted2).c(Rank.getFormat(rank, user.id).getPrefix()).d(tag).g(Collections.singletonList(name)).h(0).packet;
-
-        for (User u : User.getUsers())
-            if (u != user)
-                u.sendPacket(old);
-
-        ReflectionUtils.setField(entityPlayer.getProfile(), "name", name);
-
+        //send packets
         for (User u : User.getUsers()) {
-            u.bHidePlayer(player);
-            u.bShowPlayer(player);
-            u.sendPacket(user.leavePacket, user.joinPacket);
+            if (u.player.canSee(player)) {
+                u.bHidePlayer(player);
+                u.bShowPlayer(player);
+            }
+            u.sendPacket(user.joinPacket);
         }
-        Location l = player.getLocation();
+
         user.sendPacket(
                 new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer),
-                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer),
-                new PacketPlayOutRespawn(player.getWorld().getEnvironment().getId(), entityPlayer.world.getDifficulty(), entityPlayer.world.getWorldData().getType(), entityPlayer.playerInteractManager.getGameMode()),
-                new PacketPlayOutPosition(l.getX(), l.getY(), l.getZ(), l.getYaw(), l.getPitch(), new HashSet<>()));
-        new PacketPlayOutHeldItemSlot(player.getInventory().getHeldItemSlot());
-        player.updateInventory();
-        user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + name + "'" : ""));
-        Database.connection.update("onlineplayer", "displayname='" + rank + "',displayrank='" + name + "'", "id=" + user.id);
-        TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(rank).writeUTF(name).toByteArray());
-        user.displayRank = rank;
+                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer));
+
+        user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + displayName + "',nickpriority='" + displayRank + "'" : ""));
+        Database.connection.update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);
+        TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(displayRank).writeUTF(displayName).toByteArray());
+
         if (openBook) {
             openNickBook(player, NickBook.RULE);
         }

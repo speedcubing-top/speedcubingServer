@@ -117,46 +117,54 @@ public class PreListen implements Listener {
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         Player player = e.getPlayer();
+
         //Check Nick
         String displayName = player.getName();
-
         String displayRank = data.getRealRank();
-        boolean nicked = !data.getDatas()[5].equals(displayName);
-        if (nicked)
+
+        boolean nick = !data.getDatas()[5].equals(displayName);
+        if (nick)
             displayRank = data.getDatas()[1];
+
         //Perms
         Set<String> perms = Sets.newHashSet(data.getDatas()[2].split("\\|"));
         perms.remove("");
         perms.addAll(Rank.rankByName.get(data.getRealRank()).getPerms());
         Set<String> groups = perms.stream().filter(s -> User.group.matcher(s).matches() && Rank.grouppermissions.containsKey(s.substring(6))).map(s -> s.substring(6)).collect(Collectors.toSet());
         groups.forEach(a -> perms.addAll(Rank.grouppermissions.get(a)));
+
         //User
         User user = new User(player, displayRank, data.getRealRank(), perms, Integer.parseInt(data.getDatas()[3]), Integer.parseInt(data.getDatas()[4]), data.getDatas()[6].equals("1"), data.getBungeeData(), data.getDatas()[6].equals("1"), data.getDatas()[5]);
+
         //OP
         player.setOp(user.hasPermission("perm.op"));
-        //Guild
-        String tag = Database.connection.select("tag").from("guild").where("name='" + data.getDatas()[7] + "'").getString();
-        tag = nicked ? "" : (tag == null ? "" : " §6[" + tag + "]");
-        //Packets
-        String extracted = Rank.getCode(user.displayRank) + RankSystem.playerNameEncode(displayName);
-        user.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
-        user.joinPacket = new OutScoreboardTeam().a(extracted).c(user.getFormat(false).getPrefix()).d(tag).g(Collections.singletonList(displayName)).h(0).packet;
-        //formatting
+
+        //packet
+        user.createTeamPacket(nick, displayName);
+
+        //send packets
         for (User u : User.getUsers()) {
             user.sendPacket(u.leavePacket, u.joinPacket);
-            if (u != user)
+            if (u != user) {
                 u.sendPacket(user.leavePacket, user.joinPacket);
+            }
         }
-        //vanish
-        if (user.vanished)
-            for (Player p : Bukkit.getOnlinePlayers())
-                p.hidePlayer(player);
-        for (User u : User.getUsers())
-            if (u.vanished) player.hidePlayer(u.player);
-        //nick
-        if (nicked)
-            user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(data.getRealRank()) + RankSystem.playerNameEncode(data.getDatas()[5])).c(Rank.getFormat(data.getRealRank(), user.id).getPrefix()).d(tag).g(Collections.singletonList(data.getDatas()[5])).h(0).packet);
 
+        //nick
+        if (nick)
+            user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(data.getRealRank()) + RankSystem.playerNameEncode(user.realName)).c(Rank.getFormat(data.getRealRank(), user.id).getPrefix()).d(user.getGuildTag(true)).g(Collections.singletonList(data.getDatas()[5])).h(0).packet);
+
+        //vanish
+        for (User u : User.getUsers()) {
+            if (u.vanished) {
+                player.hidePlayer(u.player);
+            }
+            if (user.vanished) {
+                u.bHidePlayer(player);
+            }
+        }
+
+        //crash
         if (Configuration.onlineCrash.contains(player.getUniqueId().toString()) || Configuration.onlineCrash.contains(player.getAddress().getAddress().getHostAddress())) {
             speedcubingServer.scheduledPool.schedule(() -> PlayerUtils.crashAll(player), 50, TimeUnit.MILLISECONDS);
         }
