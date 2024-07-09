@@ -31,6 +31,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.IDPlayer;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
+import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
@@ -61,6 +62,7 @@ public class User extends IDPlayer {
     }
 
     public final Player player;
+    public Hologram cpsHologram;
     public String lastTabbed;
     public Set<String> permissions;
     public double[] velocities;
@@ -246,7 +248,14 @@ public class User extends IDPlayer {
         String extracted = Rank.getCode(displayRank) + RankSystem.playerNameEncode(displayName);
         this.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
         this.joinPacket = new OutScoreboardTeam().a(extracted).c(getFormat(false).getPrefix()).d(getGuildTag(nick)).g(Collections.singletonList(displayName)).h(0).packet;
+    }
 
+    public void removeCPSHologram(){
+        if (cpsHologram != null) {
+            cpsHologram.despawn();
+            cpsHologram.delete();
+            cpsHologram = null;
+        }
     }
 
     //db

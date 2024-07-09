@@ -27,6 +27,7 @@ public class PostListen implements Listener {
         Player player = e.getPlayer();
         User user = User.getUser(player);
         AuthData.map.remove(user);
+        user.removeCPSHologram();
         User.usersByID.remove(user.id);
         User.usersByUUID.remove(player.getUniqueId());
         nick.settingNick.remove(e.getPlayer().getUniqueId());

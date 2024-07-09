@@ -37,6 +37,11 @@ public class CubingTick {
                         if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
                             Bukkit.getScheduler().runTask(speedcubingServer.getInstance(), () -> user.player.kickPlayer("You are clicking too fast !"));
                         */
+
+            if (user.cpsHologram != null) {
+                user.cpsHologram.setName("[CPS " + user.leftClick + " | " + user.rightClick + "]");
+            }
+
             user.leftClick = 0;
             user.rightClick = 0;
             if (user.nicked() && user.vanished)

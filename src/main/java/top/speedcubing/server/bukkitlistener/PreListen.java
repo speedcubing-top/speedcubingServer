@@ -1,6 +1,14 @@
 package top.speedcubing.server.bukkitlistener;
 
 import com.google.common.collect.Sets;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
 import org.bukkit.Bukkit;
@@ -32,15 +40,6 @@ import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.Configuration;
 import top.speedcubing.server.utils.RankSystem;
-
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collections;
-import java.util.Set;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 public class PreListen implements Listener {
 
@@ -172,7 +171,7 @@ public class PreListen implements Listener {
         AuthEventHandlers.onPlayerJoin(e);
 
         //腦癱時間
-        if (Bukkit.getServerName().equalsIgnoreCase("lobby")) {
+        if (Bukkit.getServerName().equalsIgnoreCase("lobby") && false) {
             LocalTime start = LocalTime.of(0, 0);
             LocalTime end = LocalTime.of(6, 0);
             LocalTime now = LocalTime.parse(user.getCurrentTime());
