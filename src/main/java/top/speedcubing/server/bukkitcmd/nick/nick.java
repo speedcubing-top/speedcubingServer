@@ -244,8 +244,8 @@ public class nick implements CommandExecutor, Listener {
         switch (type) {
             case EULA:
                 book = new BookBuilder("eula", "system")
-                        .addPage(new TextBuilder().str("匿名功能允許你使用不同的玩家名稱以防止被認出\n\n你仍然必須遵守所有規定,你一樣可以被檢舉,並且所有匿名紀錄將被保留")
-                                .both("\n\n➤ §n我了解,開始設置我的匿稱", TextClickEvent.runCommand("/nick nickrank"), TextHoverEvent.showText("點擊這裡已繼續"))
+                        .addPage(new TextBuilder().str("Nicknames allow you to\nplay tih a different\n\n All rules still apply.\nYou can still be\nreported and all name\nhistory is stored.")
+                                .both("\n\n➤ §nI understand, set up my nickname", TextClickEvent.runCommand("/nick nickrank"), TextHoverEvent.showText("Click here to proceed"))
                                 .toBungee())
                         .build();
                 BookBuilder.openBook(book, player);
@@ -253,19 +253,21 @@ public class nick implements CommandExecutor, Listener {
             case RANK:
                 if (User.getUser(player).hasPermission("perm.nick.nickrank")) {
                     book = new BookBuilder("rank", "system")
-                            .addPage(new TextBuilder().str("讓我們開始設置你的暱稱!\n首先,請選擇一個你在匿名時顯示的§lRANK\n\n")
-                                    .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("點擊這裡來選擇 §8DEFAULT"))
-                                    .both("§0➤ §3CHAMP\n", TextClickEvent.runCommand("/nick nickskinchamp"), TextHoverEvent.showText("點擊這裡來選擇 §3CHAMP"))
-                                    .both("§0➤ §6PRIME\n", TextClickEvent.runCommand("/nick nickskinprime"), TextHoverEvent.showText("點擊這裡來選擇 §6PRIME"))
-                                    .both("§0➤ §dVIP\n", TextClickEvent.runCommand("/nick nickskinvip"), TextHoverEvent.showText("點擊這裡來選擇 §dVIP"))
-                                    .both("§0➤ §5YT\n", TextClickEvent.runCommand("/nick nickskinyt"), TextHoverEvent.showText("點擊這裡來選擇 §5YT"))
-                                    .both("§0➤ §4YT+\n", TextClickEvent.runCommand("/nick nickskinytplus"), TextHoverEvent.showText("點擊這裡來選擇 §4YT+"))
+                            .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\nyou would like to be\n" +
+                                            "shown as when nicked.\n\n")
+                                    .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("Click her to be shown as §8DEFAULT"))
+                                    .both("§0➤ §3CHAMP\n", TextClickEvent.runCommand("/nick nickskinchamp"), TextHoverEvent.showText("Click her to be shown as §3CHAMP"))
+                                    .both("§0➤ §6PRIME\n", TextClickEvent.runCommand("/nick nickskinprime"), TextHoverEvent.showText("Click her to be shown as §6PRIME"))
+                                    .both("§0➤ §dVIP\n", TextClickEvent.runCommand("/nick nickskinvip"), TextHoverEvent.showText("Click her to be shown as §dVIP"))
+                                    .both("§0➤ §5YT\n", TextClickEvent.runCommand("/nick nickskinyt"), TextHoverEvent.showText("Click her to be shown as §5YT"))
+                                    .both("§0➤ §4YT+\n", TextClickEvent.runCommand("/nick nickskinytplus"), TextHoverEvent.showText("Click her to be shown as §4YT+"))
                                     .toBungee())
                             .build();
                 } else {
                     book = new BookBuilder("rank", "system")
-                            .addPage(new TextBuilder().str("讓我們開始設置你的暱稱!\n首先,請選擇一個你在匿名時顯示的§lRANK\n\n")
-                                    .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("點擊這裡來選擇 §8DEFAULT"))
+                            .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\nyou would like to be\n" +
+                                            "shown as when nicked.\n\n")
+                                    .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("Click her to be shown as §8DEFAULT"))
                                     .toBungee())
                             .build();
                 }
@@ -273,10 +275,10 @@ public class nick implements CommandExecutor, Listener {
                 break;
             case SKIN:
                 book = new BookBuilder("skin", "system")
-                        .addPage(new TextBuilder().str("很好! 現在選擇一個在你匿名時的 §lSKIN§r§0\n\n")
-                                .both("➤ 我的 skin\n", TextClickEvent.runCommand("/nick nicknamechoosemyskin"), TextHoverEvent.showText("點擊這裡來使用你自己的skin"))
-                                .both("➤ Steve/Alex skin\n", TextClickEvent.runCommand("/nick nicknamechoosesaskin"), TextHoverEvent.showText("點擊這裡來使用Steve或是Alex的skin"))
-                                .both("➤ 隨機 skin\n", TextClickEvent.runCommand("/nick nicknamechooserandomskin"), TextHoverEvent.showText("點擊這裡來使用隨機skin"))
+                        .addPage(new TextBuilder().str("Awesome! Now, which §lSKIN would you like to\nhave while nicked?\n\n")
+                                .both("➤ My normal skin skin\n", TextClickEvent.runCommand("/nick nicknamechoosemyskin"), TextHoverEvent.showText("Click here to use your normal skin"))
+                                .both("➤ Steve/Alex skin\n", TextClickEvent.runCommand("/nick nicknamechoosesaskin"), TextHoverEvent.showText("Click here to use Steve/Alex skin"))
+                                .both("➤ Random skin\n", TextClickEvent.runCommand("/nick nicknamechooserandomskin"), TextHoverEvent.showText("Click here to use random preset skin"))
                                 .toBungee())
                         .build();
                 BookBuilder.openBook(book, player);
@@ -285,37 +287,37 @@ public class nick implements CommandExecutor, Listener {
                 String data = Database.connection.select("nickname").from("playersdata").where("id=" + User.getUser(player).id).getString();
                 if (User.getUser(player).hasPermission("perm.nick.customname")) {
                     book = new BookBuilder("name", "system")
-                            .addPage(new TextBuilder().str("現在你需要選擇一個暱稱名稱來使用\n")
-                                    .both("➤ 輸入一個名稱\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("點擊這裡來使用自訂名稱"))
-                                    .both("➤ 使用隨機名稱\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("點擊這裡來使用隨機名稱"))
-                                    .both("➤ 繼續使用 '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("點擊這裡來使用上次的名稱"))
-                                    .str("如果你想要解除匿名狀態可以輸入\n§l/unnick")
+                            .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!\n\n")
+                                    .both("➤ Enter a name\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to enter a custom name"))
+                                    .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name"))
+                                    .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
+                                    .str("To go back to being\nyour usual self, type:\n§l/unnick")
                                     .toBungee())
                             .build();
                 } else {
                     book = new BookBuilder("name", "system")
-                            .addPage(new TextBuilder().str("現在你需要選擇一個暱稱名稱來使用\n")
-                                    .both("➤ 使用隨機名稱\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("點擊這裡來使用隨機名稱"))
-                                    .both("➤ 繼續使用 '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("點擊這裡來使用上次的名稱"))
-                                    .str("如果你想要解除匿名狀態可以輸入\n§l/unnick")
+                            .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!\n\n")
+                                    .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name"))
+                                    .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
+                                    .str("To go back to being\nyour usual self, type:\n§l/unnick")
                                     .toBungee())
                             .build();
                 }
                 BookBuilder.openBook(book, player);
                 break;
             case NAMECUSTOM:
-                String[] lines = {"", "請輸入自訂名稱"};
+                String[] lines = {"", "Please enter a name"};
                 SignBuilder.openSign(player, -50, 99, 47, lines);
                 break;
             case NAMERANDOM:
-                player.sendMessage("§e正在生成隨機名稱,請稍後...");
+                player.sendMessage("§eGenerating a unique random name. Please wait...");
                 speedcubingServer.scheduledPool.execute(() -> {
                     String name = generateRandomString();
                     ItemStack b = new BookBuilder("random", "system")
-                            .addPage(new TextBuilder().str("我們為你生成了一個隨機名稱:\n§l" + name + "\n\n")
+                            .addPage(new TextBuilder().str("We've generated a\nrandom username for\nyou:\n§l" + name + "\n\n")
                                     .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"),
-                                            TextHoverEvent.showText("點擊這裡來使用這個名稱"))
-                                    .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("點擊這裡來產生新的名稱"))
+                                            TextHoverEvent.showText("Click here to use this name."))
+                                    .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to generate another name."))
                                     .both("\n§0§n或是點擊這裡來使用自訂名稱", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("點擊這裡來自訂名稱"))
                                     .toBungee())
                             .build();

@@ -13,6 +13,10 @@ public class cpsdisplay implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
+        if (strings.length != 1) {
+            commandSender.sendMessage("/cpsdisplay <player>");
+            return true;
+        }
         String target = strings[0];
         Player player = Bukkit.getPlayerExact(target);
         if (player == null) {
@@ -28,8 +32,6 @@ public class cpsdisplay implements CommandExecutor {
         h.follow(Bukkit.getPlayerExact(target), new Vector(0, 2, 0));
         h.spawn();
         user.cpsHologram = h;
-//        if (commandSender instanceof Player)
-//            JoinEasterEgg.start((Player) commandSender);
         return true;
     }
 }
