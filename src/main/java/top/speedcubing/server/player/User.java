@@ -88,6 +88,7 @@ public class User extends IDPlayer {
     public final String realRank;
     public long lastMove = System.currentTimeMillis();
     public String timeZone;
+    public String status;
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
     public static Map<Integer, ProfileSkin> defaultSkins = new HashMap<>();
 
@@ -105,6 +106,7 @@ public class User extends IDPlayer {
         this.allowOp = allowOp;
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString();
+        this.status = dbSelect("status").getString();
         if (!nicked()) {
             defaultSkins.put(id, getSkin());
         }

@@ -248,7 +248,7 @@ public class nick implements CommandExecutor, Listener {
         switch (type) {
             case EULA:
                 book = new BookBuilder("eula", "system")
-                        .addPage(new TextBuilder().str("Nicknames allow you to\nplay tih a different\n\n All rules still apply.\nYou can still be\nreported and all name\nhistory is stored.")
+                        .addPage(new TextBuilder().str("Nicknames allow you to\nplay with a different\n\n All rules still apply.\nYou can still be\nreported and all name\nhistory is stored.")
                                 .both("\n\n➤ §nI understand, set up my nickname", TextClickEvent.runCommand("/nick nickrank"), TextHoverEvent.showText("Click here to proceed."))
                                 .toBungee())
                         .build();
@@ -330,7 +330,7 @@ public class nick implements CommandExecutor, Listener {
                 break;
             case RULE:
                 book = new BookBuilder("rule", "system")
-                        .addPage(new TextBuilder().str("You have finished\nsetting up your\nnickname!\n\nYour nickname is:\n" + User.getUser(player).bGetName() + "." +
+                        .addPage(new TextBuilder().str("You have finished\nsetting up your\nnickname!\n\nYour nickname is:\n" + User.getUser(player).getPrefixName(false) + "§0." +
                                         "\n\n§0To go back to being\nyour usual self, type:\n§l/unnick")
                                 .toBungee())
                         .build();

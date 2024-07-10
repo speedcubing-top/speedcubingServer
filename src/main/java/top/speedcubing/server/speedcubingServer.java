@@ -82,7 +82,6 @@ public class speedcubingServer extends JavaPlugin {
                 new Configuration());
         registerCommands();
         registerListeners();
-        System.setProperty("wordnet.database.dir", "/storage/WNdb-3.0/dict");
         CommonLib.init();
         SocketReader.init(new HostAndPort("127.0.0.1", Bukkit.getPort() + 1000));
         try {

@@ -27,9 +27,11 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.util.Java15Compat;
+import org.bukkit.util.Vector;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.bukkit.PlayerUtils;
+import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
@@ -147,6 +149,13 @@ public class PreListen implements Listener {
             if (u != user) {
                 u.sendPacket(user.leavePacket, user.joinPacket);
             }
+        }
+
+        if (user.status != null && user.status.equalsIgnoreCase("cps")) {
+            Hologram h = new Hologram("", true, true).world("world");
+            h.follow(player, new Vector(0, 2.5, 0));
+            h.spawn();
+            user.cpsHologram = h;
         }
 
         //nick

@@ -52,6 +52,8 @@ commands:
     usage: /getitemtype
   sendpacket:
     usage: /sendpacket
+  status:
+    usage: /status
   serverconfig:
     usage: /serverconfig
 
