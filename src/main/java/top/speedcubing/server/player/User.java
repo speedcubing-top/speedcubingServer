@@ -10,6 +10,9 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
+
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.Packet;
@@ -33,6 +36,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.IDPlayer;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
+import top.speedcubing.lib.api.mojang.ProfileSkin;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
@@ -84,6 +88,7 @@ public class User extends IDPlayer {
     public final String realRank;
     public long lastMove = System.currentTimeMillis();
     public String timeZone;
+    public ProfileSkin defaultSkin;
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
     public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
@@ -100,10 +105,19 @@ public class User extends IDPlayer {
         this.allowOp = allowOp;
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString();
+        this.defaultSkin = getSkin();
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         usersByID.put(id, this);
         usersByUUID.put(bGetUniqueId(), this);
+    }
+    private ProfileSkin getSkin() {
+        EntityPlayer playerNMS = ((CraftPlayer) player).getHandle();
+        GameProfile profile = playerNMS.getProfile();
+        Property property = profile.getProperties().get("textures").iterator().next();
+        String texture = property.getValue();
+        String signature = property.getSignature();
+        return new ProfileSkin(player.getName(), player.getUniqueId().toString(), texture, signature);
     }
 
     public boolean nicked() {

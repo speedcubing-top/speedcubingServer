@@ -13,8 +13,10 @@ import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 
-public class skin implements CommandExecutor {
+import java.util.HashMap;
+import java.util.Map;
 
+public class skin implements CommandExecutor {
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
         if (!((SkinEvent) new SkinEvent(player).call()).isCancelled()) {
@@ -25,7 +27,7 @@ public class skin implements CommandExecutor {
             else if (strings.length == 1)
                 target = strings[0];
             else player.sendMessage("/skin , /skin <player>");
-            if (!target.isEmpty()) {
+            if (!target.isEmpty() && !target.equals(user.realName)) {
                 ProfileSkin skin;
                 try {
                     skin = MojangAPI.getSkinByName(target);
@@ -38,6 +40,10 @@ public class skin implements CommandExecutor {
                     return true;
                 }
                 updateSkin(user, skin.getValue(), skin.getSignature(), target);
+            } else if (user.defaultSkin != null) {
+                updateSkin(user, user.defaultSkin.getValue(), user.defaultSkin.getSignature(), target);
+            } else {
+                player.sendMessage("§Default skin not found");
             }
         }
         return true;

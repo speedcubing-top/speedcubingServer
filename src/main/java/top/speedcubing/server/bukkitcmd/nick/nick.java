@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.api.MojangAPI;
+import top.speedcubing.lib.api.mojang.ProfileSkin;
 import top.speedcubing.lib.bukkit.inventory.BookBuilder;
 import top.speedcubing.lib.bukkit.inventory.SignBuilder;
 import top.speedcubing.lib.math.scMath;
@@ -105,306 +106,324 @@ public class nick implements CommandExecutor, Listener {
                             }
                             break;
                         case "nicknamechooserandomskin":
-                            int userid = new Random().nextInt(40000) + 1;
-                            String name = Database.connection.select("name").from("playersdata").where("id=" + userid).getString();
-                            player.performCommand("skin " + name);
-                            player.sendMessage("§aSet your skin to " + name + ".");
-                            break;
-                    }
-                    openNickBook(player, NickBook.NAMECHOOSE);
-                    return true;
-                } else if (strings[0].equalsIgnoreCase("nicknamecustom") && settingNick.get(player.getUniqueId())) {
-                    openNickBook(player, NickBook.NAMECUSTOM);
-                    return true;
-                } else if (strings[0].equalsIgnoreCase("nicknamerandom") && settingNick.get(player.getUniqueId())) {
-                    openNickBook(player, NickBook.NAMERANDOM);
-                    return true;
-                } else if (strings[0].equalsIgnoreCase("nickrule") && settingNick.get(player.getUniqueId())) {
-                    openNickBook(player, NickBook.RULE);
-                    return true;
-                } else if (strings[0].equalsIgnoreCase("reuse")) {
-                    String[] datas = Database.connection.select("nickname,nickpriority").from("playersdata").where("id=" + User.getUser(commandSender).id).getStringArray();
-                    if (datas[0].equals(""))
-                        commandSender.sendMessage("You didn't nicked before! please use /nick <nickname>");
-                    else if (datas[0].equals(commandSender.getName()))
-                        User.getUser(commandSender).sendLangMessage(GlobalString.alreadyNicked);
-                    else {
-                        nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender, false);
-                        openNickBook((Player) commandSender, NickBook.RULE);
-                    }
-                    return true;
-                }
-                String name = strings[0];
-                User user = User.getUser(commandSender);
-                if (name.equals(commandSender.getName()))
-                    user.sendLangMessage(GlobalString.nicksameusername);
-                else if (name.equals(user.realName))
-                    user.sendLangMessage(GlobalString.nickdefaultusername);
-                else
-                    nickCheck(user, name, user.player, user.dbSelect("nickpriority").getString(), false);
-            } else if (strings.length == 2) {
-                User user = User.getUser(commandSender);
-                if (user.hasPermission("perm.nick.nickrank")) {
-                    String name = strings[0];
-                    if (Rank.rankByName.containsKey(strings[1].toLowerCase())) {
-                        nickCheck(user, name, user.player, strings[1].toLowerCase(), false);
-                        user.dbUpdate("nickpriority='" + strings[1].toLowerCase() + "'");
-                    } else
-                        user.sendLangMessage(GlobalString.unknownRank);
-                } else commandSender.sendMessage("/nick <nickname>\n/nick (use the previous nick)");
-            } else if (strings.length == 3) {
-                User user = User.getUser(commandSender);
-                if (user.hasPermission("perm.nick.nickrank") || nickRank.get(player.getUniqueId()).equals("default")) {
-                    String name = strings[0];
-                    if (Rank.rankByName.containsKey(strings[1].toLowerCase())) {
-                        nickCheck(user, name, user.player, strings[1].toLowerCase(), Boolean.parseBoolean(strings[2]));
-                        user.dbUpdate("nickpriority='" + strings[1].toLowerCase() + "'");
-                        if (strings[2].equalsIgnoreCase("true")) {
-                            openNickBook(player, NickBook.RULE);
+                            ProfileSkin skinData = generateRandomSkin();
+                            if (skinData == null) {
+                                player.sendMessage("§cFailed to generate a random skin.");
+                                return true;
+                            }
+                                skin.updateSkin(User.getUser(player), skinData.getValue(), skinData.getSignature());
+                                player.sendMessage("§aSet your skin to " + skinData.getName() + ".");
+                                break;
+                            }
+                            openNickBook(player, NickBook.NAMECHOOSE);
+                            return true;
+                    } else if (strings[0].equalsIgnoreCase("nicknamecustom") && settingNick.get(player.getUniqueId())) {
+                        openNickBook(player, NickBook.NAMECUSTOM);
+                        return true;
+                    } else if (strings[0].equalsIgnoreCase("nicknamerandom") && settingNick.get(player.getUniqueId())) {
+                        openNickBook(player, NickBook.NAMERANDOM);
+                        return true;
+                    } else if (strings[0].equalsIgnoreCase("nickrule") && settingNick.get(player.getUniqueId())) {
+                        openNickBook(player, NickBook.RULE);
+                        return true;
+                    } else if (strings[0].equalsIgnoreCase("reuse")) {
+                        String[] datas = Database.connection.select("nickname,nickpriority").from("playersdata").where("id=" + User.getUser(commandSender).id).getStringArray();
+                        if (datas[0].equals(""))
+                            commandSender.sendMessage("You didn't nicked before! please use /nick <nickname>");
+                        else if (datas[0].equals(commandSender.getName()))
+                            User.getUser(commandSender).sendLangMessage(GlobalString.alreadyNicked);
+                        else {
+                            nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender, false);
+                            openNickBook((Player) commandSender, NickBook.RULE);
                         }
-                    } else
-                        user.sendLangMessage(GlobalString.unknownRank);
+                        return true;
+                    }
+                    String name = strings[0];
+                    User user = User.getUser(commandSender);
+                    if (name.equals(commandSender.getName()))
+                        user.sendLangMessage(GlobalString.nicksameusername);
+                    else if (name.equals(user.realName))
+                        user.sendLangMessage(GlobalString.nickdefaultusername);
+                    else
+                        nickCheck(user, name, user.player, user.dbSelect("nickpriority").getString(), false);
+                } else if (strings.length == 2) {
+                    User user = User.getUser(commandSender);
+                    if (user.hasPermission("perm.nick.nickrank")) {
+                        String name = strings[0];
+                        if (Rank.rankByName.containsKey(strings[1].toLowerCase())) {
+                            nickCheck(user, name, user.player, strings[1].toLowerCase(), false);
+                            user.dbUpdate("nickpriority='" + strings[1].toLowerCase() + "'");
+                        } else
+                            user.sendLangMessage(GlobalString.unknownRank);
+                    } else commandSender.sendMessage("/nick <nickname>\n/nick (use the previous nick)");
+                } else if (strings.length == 3) {
+                    User user = User.getUser(commandSender);
+                    if (user.hasPermission("perm.nick.nickrank") || nickRank.get(player.getUniqueId()).equals("default")) {
+                        String name = strings[0];
+                        if (Rank.rankByName.containsKey(strings[1].toLowerCase())) {
+                            nickCheck(user, name, user.player, strings[1].toLowerCase(), Boolean.parseBoolean(strings[2]));
+                            user.dbUpdate("nickpriority='" + strings[1].toLowerCase() + "'");
+                            if (strings[2].equalsIgnoreCase("true")) {
+                                openNickBook(player, NickBook.RULE);
+                            }
+                        } else
+                            user.sendLangMessage(GlobalString.unknownRank);
+                    } else commandSender.sendMessage("/nick <nickname>\n/nick (use the previous nick)");
+                } else if (strings.length == 0) {
+                    settingNick.put(player.getUniqueId(), true);
+                    openNickBook(player, NickBook.EULA);
                 } else commandSender.sendMessage("/nick <nickname>\n/nick (use the previous nick)");
-            } else if (strings.length == 0) {
-                settingNick.put(player.getUniqueId(), true);
+            }
+            return true;
+        }
+
+
+        private void nickCheck (User user, String name, Player player, String rank,boolean openBook){
+            System.out.println(user.realName + " " + name + " " + player.getName() + " " + rank + " " + openBook);
+            if (!user.hasPermission("perm.nick.customname") && !settingNick.containsKey(user.bGetUniqueId())) {
                 openNickBook(player, NickBook.EULA);
-            } else commandSender.sendMessage("/nick <nickname>\n/nick (use the previous nick)");
-        }
-        return true;
-    }
+                settingNick.put(user.bGetUniqueId(), true);
+                return;
+            }
 
-
-    private void nickCheck(User user, String name, Player player, String rank, boolean openBook) {
-        System.out.println(user.realName + " " + name + " " + player.getName() + " " + rank + " " + openBook);
-        if (!user.hasPermission("perm.nick.customname") && !settingNick.containsKey(user.bGetUniqueId())) {
-            openNickBook(player, NickBook.EULA);
-            settingNick.put(user.bGetUniqueId(), true);
-            return;
-        }
-
-        boolean allow = (user.hasPermission("perm.nick.legacyregex") ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.connection.exist("playersdata", "name='" + name + "' OR id!='" + user.id + "' AND nickname='" + name + "'");
-        if (allow) {
-            if (!user.hasPermission("perm.nick.anyname")) {
-                try {
-                    if (MojangAPI.getByName(name) != null)
-                        allow = false;
-                } catch (IOException ignored) {
+            boolean allow = (user.hasPermission("perm.nick.legacyregex") ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.connection.exist("playersdata", "name='" + name + "' OR id!='" + user.id + "' AND nickname='" + name + "'");
+            if (allow) {
+                if (!user.hasPermission("perm.nick.anyname")) {
+                    try {
+                        if (MojangAPI.getByName(name) != null)
+                            allow = false;
+                    } catch (IOException ignored) {
+                    }
                 }
             }
-        }
-        if (allow)
-            nickPlayer(name, rank, true, player, openBook);
-        else {
-            settingNick.remove(player.getUniqueId());
-            nickName.remove(player.getUniqueId());
-            nickRank.remove(player.getUniqueId());
-            user.sendLangMessage(GlobalString.nicknotavaliable);
-        }
-    }
-
-    static void nickPlayer(String displayName, String displayRank, boolean nick, Player player, boolean openBook) {
-        User user = User.getUser(player);
-        EntityPlayer entityPlayer = user.toNMS();
-
-        user.displayRank = displayRank;
-
-        ReflectionUtils.setField(entityPlayer.getProfile(), "name", displayName);
-
-        settingNick.remove(user.bGetUniqueId());
-        nickName.remove(user.bGetUniqueId());
-        nickRank.remove(user.bGetUniqueId());
-
-        //packet
-        user.createTeamPacket(nick, displayName);
-
-        //send packets
-        for (User u : User.getUsers()) {
-            if (u.player.canSee(player)) {
-                u.bHidePlayer(player);
-                u.bShowPlayer(player);
-            }
-            u.sendPacket(user.joinPacket);
-        }
-
-        user.sendPacket(
-                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer),
-                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer));
-
-        user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + displayName + "',nickpriority='" + displayRank + "'" : ""));
-        Database.connection.update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);
-        TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(displayRank).writeUTF(displayName).toByteArray());
-
-        if (openBook) {
-            openNickBook(player, NickBook.RULE);
-        }
-    }
-
-    public static void openNickBook(Player player, NickBook type) {
-        ItemStack book;
-        switch (type) {
-            case EULA:
-                book = new BookBuilder("eula", "system")
-                        .addPage(new TextBuilder().str("Nicknames allow you to\nplay tih a different\n\n All rules still apply.\nYou can still be\nreported and all name\nhistory is stored.")
-                                .both("\n\n➤ §nI understand, set up my nickname", TextClickEvent.runCommand("/nick nickrank"), TextHoverEvent.showText("Click here to proceed."))
-                                .toBungee())
-                        .build();
-                BookBuilder.openBook(book, player);
-                break;
-            case RANK:
-                if (User.getUser(player).hasPermission("perm.nick.nickrank")) {
-                    book = new BookBuilder("rank", "system")
-                            .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\n§r§0you would like to be\n" +
-                                            "shown as when nicked.\n\n")
-                                    .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("Click her to be shown as §8DEFAULT"))
-                                    .both("§0➤ §3CHAMP\n", TextClickEvent.runCommand("/nick nickskinchamp"), TextHoverEvent.showText("Click her to be shown as §3CHAMP"))
-                                    .both("§0➤ §6PRIME\n", TextClickEvent.runCommand("/nick nickskinprime"), TextHoverEvent.showText("Click her to be shown as §6PRIME"))
-                                    .both("§0➤ §dVIP\n", TextClickEvent.runCommand("/nick nickskinvip"), TextHoverEvent.showText("Click her to be shown as §dVIP"))
-                                    .both("§0➤ §5YT\n", TextClickEvent.runCommand("/nick nickskinyt"), TextHoverEvent.showText("Click her to be shown as §5YT"))
-                                    .both("§0➤ §4YT+\n", TextClickEvent.runCommand("/nick nickskinytplus"), TextHoverEvent.showText("Click her to be shown as §4YT+"))
-                                    .toBungee())
-                            .build();
-                } else {
-                    book = new BookBuilder("rank", "system")
-                            .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\n§r§0you would like to be\n" +
-                                            "shown as when nicked.\n\n")
-                                    .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("Click her to be shown as §8DEFAULT"))
-                                    .toBungee())
-                            .build();
-                }
-                BookBuilder.openBook(book, player);
-                break;
-            case SKIN:
-                book = new BookBuilder("skin", "system")
-                        .addPage(new TextBuilder().str("Awesome! Now, which §lSKIN §r§0would you like to\nhave while nicked?\n\n")
-                                .both("➤ My normal skin\n", TextClickEvent.runCommand("/nick nicknamechoosemyskin"), TextHoverEvent.showText("Click here to use your normal skin."))
-                                .both("➤ Steve/Alex skin\n", TextClickEvent.runCommand("/nick nicknamechoosesaskin"), TextHoverEvent.showText("Click here to use Steve/Alex skin."))
-                                .both("➤ Random skin\n", TextClickEvent.runCommand("/nick nicknamechooserandomskin"), TextHoverEvent.showText("Click here to use random preset skin."))
-                                .toBungee())
-                        .build();
-                BookBuilder.openBook(book, player);
-                break;
-            case NAMECHOOSE:
-                String data = Database.connection.select("nickname").from("playersdata").where("id=" + User.getUser(player).id).getString();
-                if (User.getUser(player).hasPermission("perm.nick.customname")) {
-                    book = new BookBuilder("name", "system")
-                            .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
-                                    .both("➤ Enter a name\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to enter a custom name."))
-                                    .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name."))
-                                    .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
-                                    .str("To go back to being\nyour usual self, type:\n§l/unnick")
-                                    .toBungee())
-                            .build();
-                } else {
-                    book = new BookBuilder("name", "system")
-                            .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
-                                    .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name."))
-                                    .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
-                                    .str("To go back to being\nyour usual self, type:\n§l/unnick")
-                                    .toBungee())
-                            .build();
-                }
-                BookBuilder.openBook(book, player);
-                break;
-            case NAMECUSTOM:
-                String[] lines = {"", "Enter a name"};
-                SignBuilder.openSign(player, -50, 99, 47, lines);
-                break;
-            case NAMERANDOM:
-                player.sendMessage("§eGenerating a unique random name. Please wait...");
-                speedcubingServer.scheduledPool.execute(() -> {
-                    String name = generateRandomString();
-                    ItemStack b = new BookBuilder("random", "system")
-                            .addPage(new TextBuilder().str("We've generated a\nrandom username for\nyou:\n§l" + name + "\n\n")
-                                    .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"),
-                                            TextHoverEvent.showText("Click here to use this name."))
-                                    .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to generate another name."))
-                                    .both("\n§0§nOr click here to use custom name", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to use custom name."))
-                                    .toBungee())
-                            .build();
-                    BookBuilder.openBook(b, player);
-                });
-                break;
-            case RULE:
-                book = new BookBuilder("rule", "system")
-                        .addPage(new TextBuilder().str("You have finished\nsetting up your\nnickname!\n\nYour nickname is:\n" + User.getUser(player).bGetName() + "." +
-                                        "\n\n§0To go back to being\nyour usual self, type:\n§l/unnick")
-                                .toBungee())
-                        .build();
-                BookBuilder.openBook(book, player);
-                break;
-        }
-    }
-
-    public static String generateRandomString() {
-        String name = "";
-        Random random = new Random();
-        int r = random.nextInt(5);
-        switch (r) {
-            case 0:
-                name = getRandomAdjective() + getRandomWord() + getRandomWord();
-                break;
-            case 1:
-                name = getRandomAdjective() + getRandomWord() + getRandomNumber();
-                break;
-            case 2:
-                name = getRandomWord() + getRandomAdjective();
-                break;
-            case 3:
-                name = getRandomAdjective() + getRandomVerb();
-                break;
-            case 4:
-                name = getRandomWord() + getRandomAdjective() + getRandomNumber();
-                break;
-        }
-        if (name.length() > 16) {
-            return generateRandomString();
-        }
-        return name;
-    }
-
-    public static String upper(String s) {
-        return Character.toUpperCase(s.charAt(0)) + s.substring(1);
-    }
-
-    public static String getRandomAdjective() {
-        return upper(getRandomWord(POS.ADJECTIVE));
-    }
-
-    public static String getRandomVerb() {
-        return upper(getRandomWord(POS.VERB));
-    }
-
-    public static String getRandomAdverb() {
-        return upper(getRandomWord(POS.ADVERB));
-    }
-
-    public static String getRandomWord() {
-        return upper(getRandomWord(POS.NOUN));
-    }
-
-    public static int getRandomNumber() {
-        return scMath.randomInt(1990, 2010);
-    }
-
-    public static String getRandomWord(POS pos) {
-        if (dict == null) {
-            System.out.println("WordNet dictionary not initialized!");
-            return "unknown";
-        }
-        List<String> words = new ArrayList<>();
-        for (Iterator<IIndexWord> it = dict.getIndexWordIterator(pos); it.hasNext(); ) {
-            IIndexWord indexWord = it.next();
-            String lemma = indexWord.getLemma();
-            if (!lemma.contains(" ") && !lemma.contains("-")) {
-                words.add(lemma);
+            if (allow)
+                nickPlayer(name, rank, true, player, openBook);
+            else {
+                settingNick.remove(player.getUniqueId());
+                nickName.remove(player.getUniqueId());
+                nickRank.remove(player.getUniqueId());
+                user.sendLangMessage(GlobalString.nicknotavaliable);
             }
         }
-        if (words.isEmpty()) {
-            System.out.println("No words found in WordNet for POS: " + pos);
-            return "unknown";
-        }
-        Random random = new Random();
-        return words.get(random.nextInt(words.size()));
-    }
 
-}
+        static void nickPlayer (String displayName, String displayRank,boolean nick, Player player,boolean openBook){
+            User user = User.getUser(player);
+            EntityPlayer entityPlayer = user.toNMS();
+
+            user.displayRank = displayRank;
+
+            ReflectionUtils.setField(entityPlayer.getProfile(), "name", displayName);
+
+            settingNick.remove(user.bGetUniqueId());
+            nickName.remove(user.bGetUniqueId());
+            nickRank.remove(user.bGetUniqueId());
+
+            //packet
+            user.createTeamPacket(nick, displayName);
+
+            //send packets
+            for (User u : User.getUsers()) {
+                if (u.player.canSee(player)) {
+                    u.bHidePlayer(player);
+                    u.bShowPlayer(player);
+                }
+                u.sendPacket(user.joinPacket);
+            }
+
+            user.sendPacket(
+                    new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer),
+                    new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer));
+
+            user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + displayName + "',nickpriority='" + displayRank + "'" : ""));
+            Database.connection.update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);
+            TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(displayRank).writeUTF(displayName).toByteArray());
+
+            if (openBook) {
+                openNickBook(player, NickBook.RULE);
+            }
+        }
+
+        public static void openNickBook (Player player, NickBook type){
+            ItemStack book;
+            switch (type) {
+                case EULA:
+                    book = new BookBuilder("eula", "system")
+                            .addPage(new TextBuilder().str("Nicknames allow you to\nplay tih a different\n\n All rules still apply.\nYou can still be\nreported and all name\nhistory is stored.")
+                                    .both("\n\n➤ §nI understand, set up my nickname", TextClickEvent.runCommand("/nick nickrank"), TextHoverEvent.showText("Click here to proceed."))
+                                    .toBungee())
+                            .build();
+                    BookBuilder.openBook(book, player);
+                    break;
+                case RANK:
+                    if (User.getUser(player).hasPermission("perm.nick.nickrank")) {
+                        book = new BookBuilder("rank", "system")
+                                .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\n§r§0you would like to be\n" +
+                                                "shown as when nicked.\n\n")
+                                        .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("Click her to be shown as §8DEFAULT"))
+                                        .both("§0➤ §3CHAMP\n", TextClickEvent.runCommand("/nick nickskinchamp"), TextHoverEvent.showText("Click her to be shown as §3CHAMP"))
+                                        .both("§0➤ §6PRIME\n", TextClickEvent.runCommand("/nick nickskinprime"), TextHoverEvent.showText("Click her to be shown as §6PRIME"))
+                                        .both("§0➤ §dVIP\n", TextClickEvent.runCommand("/nick nickskinvip"), TextHoverEvent.showText("Click her to be shown as §dVIP"))
+                                        .both("§0➤ §5YT\n", TextClickEvent.runCommand("/nick nickskinyt"), TextHoverEvent.showText("Click her to be shown as §5YT"))
+                                        .both("§0➤ §4YT+\n", TextClickEvent.runCommand("/nick nickskinytplus"), TextHoverEvent.showText("Click her to be shown as §4YT+"))
+                                        .toBungee())
+                                .build();
+                    } else {
+                        book = new BookBuilder("rank", "system")
+                                .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\n§r§0you would like to be\n" +
+                                                "shown as when nicked.\n\n")
+                                        .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("Click her to be shown as §8DEFAULT"))
+                                        .toBungee())
+                                .build();
+                    }
+                    BookBuilder.openBook(book, player);
+                    break;
+                case SKIN:
+                    book = new BookBuilder("skin", "system")
+                            .addPage(new TextBuilder().str("Awesome! Now, which §lSKIN §r§0would you like to\nhave while nicked?\n\n")
+                                    .both("➤ My normal skin\n", TextClickEvent.runCommand("/nick nicknamechoosemyskin"), TextHoverEvent.showText("Click here to use your normal skin."))
+                                    .both("➤ Steve/Alex skin\n", TextClickEvent.runCommand("/nick nicknamechoosesaskin"), TextHoverEvent.showText("Click here to use Steve/Alex skin."))
+                                    .both("➤ Random skin\n", TextClickEvent.runCommand("/nick nicknamechooserandomskin"), TextHoverEvent.showText("Click here to use random preset skin."))
+                                    .toBungee())
+                            .build();
+                    BookBuilder.openBook(book, player);
+                    break;
+                case NAMECHOOSE:
+                    String data = Database.connection.select("nickname").from("playersdata").where("id=" + User.getUser(player).id).getString();
+                    if (User.getUser(player).hasPermission("perm.nick.customname")) {
+                        book = new BookBuilder("name", "system")
+                                .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
+                                        .both("➤ Enter a name\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to enter a custom name."))
+                                        .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name."))
+                                        .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
+                                        .str("To go back to being\nyour usual self, type:\n§l/unnick")
+                                        .toBungee())
+                                .build();
+                    } else {
+                        book = new BookBuilder("name", "system")
+                                .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
+                                        .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name."))
+                                        .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
+                                        .str("To go back to being\nyour usual self, type:\n§l/unnick")
+                                        .toBungee())
+                                .build();
+                    }
+                    BookBuilder.openBook(book, player);
+                    break;
+                case NAMECUSTOM:
+                    String[] lines = {"", "Enter a name"};
+                    SignBuilder.openSign(player, -50, 99, 47, lines);
+                    break;
+                case NAMERANDOM:
+                    player.sendMessage("§eGenerating a unique random name. Please wait...");
+                    speedcubingServer.scheduledPool.execute(() -> {
+                        String name = generateRandomString();
+                        ItemStack b = new BookBuilder("random", "system")
+                                .addPage(new TextBuilder().str("We've generated a\nrandom username for\nyou:\n§l" + name + "\n\n")
+                                        .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"),
+                                                TextHoverEvent.showText("Click here to use this name."))
+                                        .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to generate another name."))
+                                        .both("\n§0§nOr click here to use custom name", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to use custom name."))
+                                        .toBungee())
+                                .build();
+                        BookBuilder.openBook(b, player);
+                    });
+                    break;
+                case RULE:
+                    book = new BookBuilder("rule", "system")
+                            .addPage(new TextBuilder().str("You have finished\nsetting up your\nnickname!\n\nYour nickname is:\n" + User.getUser(player).bGetName() + "." +
+                                            "\n\n§0To go back to being\nyour usual self, type:\n§l/unnick")
+                                    .toBungee())
+                            .build();
+                    BookBuilder.openBook(book, player);
+                    break;
+            }
+        }
+        private ProfileSkin generateRandomSkin () {
+            int userid = new Random().nextInt(40000) + 1;
+            String name = Database.connection.select("name").from("playersdata").where("id=" + userid).getString();
+            ProfileSkin skinData;
+            try {
+                skinData = MojangAPI.getSkinByName(name);
+                if (skinData == null) {
+                    generateRandomSkin();
+                }
+                return skinData;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        public static String generateRandomString () {
+            String name = "";
+            Random random = new Random();
+            int r = random.nextInt(5);
+            switch (r) {
+                case 0:
+                    name = getRandomAdjective() + getRandomWord() + getRandomWord();
+                    break;
+                case 1:
+                    name = getRandomAdjective() + getRandomWord() + getRandomNumber();
+                    break;
+                case 2:
+                    name = getRandomWord() + getRandomAdjective();
+                    break;
+                case 3:
+                    name = getRandomAdjective() + getRandomVerb();
+                    break;
+                case 4:
+                    name = getRandomWord() + getRandomAdjective() + getRandomNumber();
+                    break;
+            }
+            if (name.length() > 16) {
+                return generateRandomString();
+            }
+            return name;
+        }
+
+        public static String upper (String s){
+            return Character.toUpperCase(s.charAt(0)) + s.substring(1);
+        }
+
+        public static String getRandomAdjective () {
+            return upper(getRandomWord(POS.ADJECTIVE));
+        }
+
+        public static String getRandomVerb () {
+            return upper(getRandomWord(POS.VERB));
+        }
+
+        public static String getRandomAdverb () {
+            return upper(getRandomWord(POS.ADVERB));
+        }
+
+        public static String getRandomWord () {
+            return upper(getRandomWord(POS.NOUN));
+        }
+
+        public static int getRandomNumber () {
+            return scMath.randomInt(1990, 2010);
+        }
+
+        public static String getRandomWord (POS pos){
+            if (dict == null) {
+                System.out.println("WordNet dictionary not initialized!");
+                return "unknown";
+            }
+            List<String> words = new ArrayList<>();
+            for (Iterator<IIndexWord> it = dict.getIndexWordIterator(pos); it.hasNext(); ) {
+                IIndexWord indexWord = it.next();
+                String lemma = indexWord.getLemma();
+                if (!lemma.contains(" ") && !lemma.contains("-")) {
+                    words.add(lemma);
+                }
+            }
+            if (words.isEmpty()) {
+                System.out.println("No words found in WordNet for POS: " + pos);
+                return "unknown";
+            }
+            Random random = new Random();
+            return words.get(random.nextInt(words.size()));
+        }
+
+    }

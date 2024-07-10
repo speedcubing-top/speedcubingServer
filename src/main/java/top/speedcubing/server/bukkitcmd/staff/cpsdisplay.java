@@ -29,7 +29,7 @@ public class cpsdisplay implements CommandExecutor {
             return true;
         }
         Hologram h = new Hologram("", true, true).world("world");
-        h.follow(Bukkit.getPlayerExact(target), new Vector(0, 2, 0));
+        h.follow(Bukkit.getPlayerExact(target), new Vector(0, 2.5, 0));
         h.spawn();
         user.cpsHologram = h;
         return true;

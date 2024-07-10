@@ -171,7 +171,7 @@ public class PreListen implements Listener {
         AuthEventHandlers.onPlayerJoin(e);
 
         //腦癱時間
-        if (Bukkit.getServerName().equalsIgnoreCase("lobby") && false) {
+        if (Bukkit.getServerName().equalsIgnoreCase("lobby")) {
             LocalTime start = LocalTime.of(0, 0);
             LocalTime end = LocalTime.of(6, 0);
             LocalTime now = LocalTime.parse(user.getCurrentTime());
