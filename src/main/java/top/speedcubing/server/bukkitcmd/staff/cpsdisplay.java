@@ -26,12 +26,14 @@ public class cpsdisplay implements CommandExecutor {
         User user = User.getUser(player);
         if (user.cpsHologram != null) {
             user.removeCPSHologram();
+            user.dbUpdate("status=" + null);
             return true;
         }
         Hologram h = new Hologram("", true, true).world("world");
         h.follow(Bukkit.getPlayerExact(target), new Vector(0, 2.5, 0));
         h.spawn();
         user.cpsHologram = h;
+        user.dbUpdate("status='cps'");
         return true;
     }
 }

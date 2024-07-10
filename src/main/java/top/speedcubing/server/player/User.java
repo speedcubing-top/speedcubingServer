@@ -89,8 +89,8 @@ public class User extends IDPlayer {
     public long lastMove = System.currentTimeMillis();
     public String timeZone;
     public String status;
+    public ProfileSkin defaultSkin;
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
-    public static Map<Integer, ProfileSkin> defaultSkins = new HashMap<>();
 
     public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
         super(realName, player.getUniqueId(), id);
@@ -107,21 +107,16 @@ public class User extends IDPlayer {
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString();
         this.status = dbSelect("status").getString();
-        if (!nicked()) {
-            defaultSkins.put(id, getSkin());
-        }
+        this.defaultSkin = getSkin();
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         usersByID.put(id, this);
         usersByUUID.put(bGetUniqueId(), this);
     }
     private ProfileSkin getSkin() {
-        EntityPlayer playerNMS = ((CraftPlayer) player).getHandle();
-        GameProfile profile = playerNMS.getProfile();
-        Property property = profile.getProperties().get("textures").iterator().next();
-        String texture = property.getValue();
-        String signature = property.getSignature();
-        return new ProfileSkin(player.getName(), player.getUniqueId().toString(), texture, signature);
+        String[] datas = dbSelect("profile_textures_value,profile_textures_signature").getStringArray();
+        if (datas.length == 0) return null;
+        return new ProfileSkin(player.getName(), player.getUniqueId().toString(), datas[0], datas[1]);
     }
 
     public boolean nicked() {

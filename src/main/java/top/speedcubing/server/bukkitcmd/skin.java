@@ -27,7 +27,7 @@ public class skin implements CommandExecutor {
             else if (strings.length == 1)
                 target = strings[0];
             else player.sendMessage("/skin , /skin <player>");
-            if (!target.isEmpty() && !target.equals(user.realName)) {
+            if (!target.isEmpty() && !target.equalsIgnoreCase(user.realName)) {
                 ProfileSkin skin;
                 try {
                     skin = MojangAPI.getSkinByName(target);
@@ -40,8 +40,8 @@ public class skin implements CommandExecutor {
                     return true;
                 }
                 updateSkin(user, skin.getValue(), skin.getSignature(), target);
-            } else if (User.defaultSkins.containsKey(user.id)) {
-                updateSkin(user, User.defaultSkins.get(user.id).getValue(), User.defaultSkins.get(user.id).getSignature(), target);
+            } else if (target.equalsIgnoreCase(user.realName)) {
+                updateSkin(user, user.defaultSkin.getValue(), user.defaultSkin.getSignature(), target);
             } else {
                 player.sendMessage("§cDefault skin not found");
             }
