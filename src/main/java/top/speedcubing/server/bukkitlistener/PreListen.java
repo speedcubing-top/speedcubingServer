@@ -20,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -27,13 +28,12 @@ import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.util.Java15Compat;
-import org.bukkit.util.Vector;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.bukkit.PlayerUtils;
-import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
+import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.login.LoginJoinData;
@@ -113,6 +113,14 @@ public class PreListen implements Listener {
         AuthEventHandlers.onInteraction(e);
     }
 
+    @EventHandler(priority = EventPriority.LOW)
+    public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
+        User user = User.getUser(e.getPlayer());
+        if (user.cpsHologram != null) {
+            System.out.println("changeWorld");
+            user.cpsHologram.changeWorld(e.getPlayer().getWorld().getName());
+        }
+    }
 
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerJoinEvent(PlayerJoinEvent e) {
@@ -152,10 +160,7 @@ public class PreListen implements Listener {
         }
 
         if (user.status != null && user.status.equalsIgnoreCase("cps")) {
-            Hologram h = new Hologram("", true, true).world("world");
-            h.follow(player, new Vector(0, 2.5, 0));
-            h.spawn();
-            user.cpsHologram = h;
+            cpsdisplay.update(player);
         }
 
         //nick
