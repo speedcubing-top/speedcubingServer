@@ -117,7 +117,6 @@ public class PreListen implements Listener {
     public void PlayerChangedWorldEvent(PlayerChangedWorldEvent e) {
         User user = User.getUser(e.getPlayer());
         if (user.cpsHologram != null) {
-            System.out.println("changeWorld");
             user.cpsHologram.changeWorld(e.getPlayer().getWorld().getName());
         }
     }
