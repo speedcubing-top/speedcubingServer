@@ -40,10 +40,10 @@ public class skin implements CommandExecutor {
                     return true;
                 }
                 updateSkin(user, skin.getValue(), skin.getSignature(), target);
-            } else if (user.defaultSkin != null) {
-                updateSkin(user, user.defaultSkin.getValue(), user.defaultSkin.getSignature(), target);
+            } else if (User.defaultSkins.containsKey(user.id)) {
+                updateSkin(user, User.defaultSkins.get(user.id).getValue(), User.defaultSkins.get(user.id).getSignature(), target);
             } else {
-                player.sendMessage("§Default skin not found");
+                player.sendMessage("§cDefault skin not found");
             }
         }
         return true;

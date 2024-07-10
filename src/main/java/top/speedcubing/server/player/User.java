@@ -88,8 +88,8 @@ public class User extends IDPlayer {
     public final String realRank;
     public long lastMove = System.currentTimeMillis();
     public String timeZone;
-    public ProfileSkin defaultSkin;
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
+    public static Map<Integer, ProfileSkin> defaultSkins = new HashMap<>();
 
     public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
         super(realName, player.getUniqueId(), id);
@@ -105,7 +105,9 @@ public class User extends IDPlayer {
         this.allowOp = allowOp;
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString();
-        this.defaultSkin = getSkin();
+        if (!nicked()) {
+            defaultSkins.put(id, getSkin());
+        }
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         usersByID.put(id, this);
