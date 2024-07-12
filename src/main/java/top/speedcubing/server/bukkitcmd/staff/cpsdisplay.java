@@ -23,17 +23,21 @@ public class cpsdisplay implements CommandExecutor {
             commandSender.sendMessage("DNE");
             return true;
         }
+        update(player);
+        return true;
+    }
+
+    public static void update(Player player) {
         User user = User.getUser(player);
         if (user.cpsHologram != null) {
             user.removeCPSHologram();
             user.dbUpdate("status=" + null);
-            return true;
+            return;
         }
-        Hologram h = new Hologram("", true, true).world("world");
-        h.follow(Bukkit.getPlayerExact(target), new Vector(0, 2.5, 0));
+        Hologram h = new Hologram("", true, true).world(player.getWorld().getName());
+        h.follow(player, new Vector(0, 2.5, 0));
         h.spawn();
         user.cpsHologram = h;
         user.dbUpdate("status='cps'");
-        return true;
     }
 }
