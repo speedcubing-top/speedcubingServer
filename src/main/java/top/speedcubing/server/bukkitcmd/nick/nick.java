@@ -311,21 +311,32 @@ public class nick implements CommandExecutor, Listener {
                 break;
             case NAMECUSTOM:
                 String[] lines = {"", "Enter a name"};
-                SignBuilder.openSign(player, -50, 99, 47, lines);
+                SignBuilder.openSign(player, -61, 1, 41, lines);
                 break;
             case NAMERANDOM:
                 player.sendMessage("§eGenerating a unique random name. Please wait...");
                 speedcubingServer.scheduledPool.execute(() -> {
                     String name = generateRandomString();
-                    ItemStack b = new BookBuilder("random", "system")
-                            .addPage(new TextBuilder().str("We've generated a\nrandom username for\nyou:\n§l" + name + "\n\n")
-                                    .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"),
-                                            TextHoverEvent.showText("Click here to use this name."))
-                                    .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to generate another name."))
-                                    .both("\n§0§nOr click here to use custom name", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to use custom name."))
-                                    .toBungee())
-                            .build();
-                    BookBuilder.openBook(b, player);
+                    if (User.getUser(player).hasPermission("perm.nick.customname")) {
+                        ItemStack b = new BookBuilder("random", "system")
+                                .addPage(new TextBuilder().str("We've generated a\nrandom username for\nyou:\n§l" + name + "\n\n")
+                                        .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"),
+                                                TextHoverEvent.showText("Click here to use this name."))
+                                        .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to generate another name."))
+                                        .both("\n§0§nOr click here to use custom name", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to use custom name."))
+                                        .toBungee())
+                                .build();
+                        BookBuilder.openBook(b, player);
+                    } else {
+                        ItemStack b = new BookBuilder("random", "system")
+                                .addPage(new TextBuilder().str("We've generated a\nrandom username for\nyou:\n§l" + name + "\n\n")
+                                        .both("   §a§nUSE NAME§r\n", TextClickEvent.runCommand("/nick " + name + " " + nickRank.get(player.getUniqueId()) + " true"),
+                                                TextHoverEvent.showText("Click here to use this name."))
+                                        .both("   §c§nTRY AGAIN§r\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to generate another name."))
+                                        .toBungee())
+                                .build();
+                        BookBuilder.openBook(b, player);
+                    }
                 });
                 break;
             case RULE:
