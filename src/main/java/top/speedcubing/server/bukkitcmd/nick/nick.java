@@ -387,7 +387,7 @@ public class nick implements CommandExecutor, Listener {
                 name = getRandomWord() + getRandomAdjective() + getRandomNumber();
                 break;
         }
-        if (name.length() > 16) {
+        if (!speedcubingServer.nameRegex.matcher(name).matches()) {
             return generateRandomString();
         }
         return name;
