@@ -20,7 +20,7 @@ public class announce implements CommandExecutor {
         }
 
         String result = builder.substring(1);
-        result = ChatColor.translateAlternateColorCodes('&', result.substring(1));
+        result = ChatColor.translateAlternateColorCodes('&', result);
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             p.sendMessage(result);
