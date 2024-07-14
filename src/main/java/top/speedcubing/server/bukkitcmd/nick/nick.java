@@ -1,5 +1,7 @@
 package top.speedcubing.server.bukkitcmd.nick;
 
+import edu.mit.jwi.item.IIndexWord;
+import edu.mit.jwi.item.POS;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,9 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-
-import edu.mit.jwi.item.IIndexWord;
-import edu.mit.jwi.item.POS;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
 import org.bukkit.command.Command;
@@ -206,6 +205,8 @@ public class nick implements CommandExecutor, Listener {
         }
     }
 
+    private static final UUID emptyUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+
     static void nickPlayer(String displayName, String displayRank, boolean nick, Player player, boolean openBook) {
         User user = User.getUser(player);
         EntityPlayer entityPlayer = user.toNMS();
@@ -213,6 +214,7 @@ public class nick implements CommandExecutor, Listener {
         user.displayRank = displayRank;
 
         ReflectionUtils.setField(entityPlayer.getProfile(), "name", displayName);
+        ReflectionUtils.setField(entityPlayer.getProfile(), "id", emptyUUID);
 
         settingNick.remove(user.bGetUniqueId());
         nickName.remove(user.bGetUniqueId());
@@ -226,6 +228,7 @@ public class nick implements CommandExecutor, Listener {
             if (u.player.canSee(player)) {
                 u.bHidePlayer(player);
                 u.bShowPlayer(player);
+
             }
             u.sendPacket(user.joinPacket);
         }
