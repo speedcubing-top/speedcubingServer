@@ -205,7 +205,7 @@ public class nick implements CommandExecutor, Listener {
         }
     }
 
-    private static final UUID emptyUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
+    public static final UUID emptyUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
 
     static void nickPlayer(String displayName, String displayRank, boolean nick, Player player, boolean openBook) {
         User user = User.getUser(player);

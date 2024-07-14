@@ -32,7 +32,9 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
+import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
+import top.speedcubing.server.bukkitcmd.nick.nick;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.lang.GlobalString;
@@ -130,10 +132,11 @@ public class PreListen implements Listener {
         String displayName = player.getName();
         String displayRank = data.getRealRank();
 
-        boolean nick = !data.getDatas()[5].equals(displayName);
-        if (nick)
+        boolean nicked = !data.getDatas()[5].equals(displayName);
+        if (nicked) {
             displayRank = data.getDatas()[1];
-
+            ReflectionUtils.setField(((CraftPlayer) player).getHandle(), "id", nick.emptyUUID);
+        }
         //Perms
         Set<String> perms = Sets.newHashSet(data.getDatas()[2].split("\\|"));
         perms.remove("");
@@ -148,7 +151,7 @@ public class PreListen implements Listener {
         player.setOp(user.hasPermission("perm.op"));
 
         //packet
-        user.createTeamPacket(nick, displayName);
+        user.createTeamPacket(nicked, displayName);
 
         //send packets
         for (User u : User.getUsers()) {
@@ -163,7 +166,7 @@ public class PreListen implements Listener {
         }
 
         //nick
-        if (nick)
+        if (nicked)
             user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(data.getRealRank()) + RankSystem.playerNameEncode(user.realName)).c(Rank.getFormat(data.getRealRank(), user.id).getPrefix()).d(user.getGuildTag(true)).g(Collections.singletonList(data.getDatas()[5])).h(0).packet);
 
         //vanish
