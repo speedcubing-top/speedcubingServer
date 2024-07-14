@@ -70,14 +70,17 @@ public class nick implements CommandExecutor, Listener {
                         case "nickskindefault":
                             nickRank.put(player.getUniqueId(), "default");
                             break;
-                        case "nickskinchamp":
-                            nickRank.put(player.getUniqueId(), "champ");
-                            break;
-                        case "nickskinprime":
-                            nickRank.put(player.getUniqueId(), "prime");
-                            break;
                         case "nickskinvip":
                             nickRank.put(player.getUniqueId(), "vip");
+                            break;
+                        case "nickskinvipplus":
+                            nickRank.put(player.getUniqueId(), "vipplus");
+                            break;
+                        case "nickskinpremium":
+                            nickRank.put(player.getUniqueId(), "premium");
+                            break;
+                        case "nickskinpremiumplus":
+                            nickRank.put(player.getUniqueId(), "premiumplus");
                             break;
                         case "nickskinyt":
                             nickRank.put(player.getUniqueId(), "yt");
@@ -214,7 +217,11 @@ public class nick implements CommandExecutor, Listener {
         user.displayRank = displayRank;
 
         ReflectionUtils.setField(entityPlayer.getProfile(), "name", displayName);
-        ReflectionUtils.setField(entityPlayer.getProfile(), "id", emptyUUID);
+        if (nick) {
+            ReflectionUtils.setField(entityPlayer.getProfile(), "id", emptyUUID);
+        } else {
+            ReflectionUtils.setField(entityPlayer.getProfile(), "id", user.bGetUniqueId());
+        }
 
         settingNick.remove(user.bGetUniqueId());
         nickName.remove(user.bGetUniqueId());
@@ -260,21 +267,26 @@ public class nick implements CommandExecutor, Listener {
             case RANK:
                 if (User.getUser(player).hasPermission("perm.nick.nickrank")) {
                     book = new BookBuilder("rank", "system")
-                            .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\n§r§0you would like to be\n" +
+                            .addPage(new TextBuilder().str("Let's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\n§r§0you would like to be\n" +
                                             "shown as when nicked.\n\n")
                                     .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("Click her to be shown as §8DEFAULT"))
-                                    .both("§0➤ §3CHAMP\n", TextClickEvent.runCommand("/nick nickskinchamp"), TextHoverEvent.showText("Click her to be shown as §3CHAMP"))
-                                    .both("§0➤ §6PRIME\n", TextClickEvent.runCommand("/nick nickskinprime"), TextHoverEvent.showText("Click her to be shown as §6PRIME"))
                                     .both("§0➤ §dVIP\n", TextClickEvent.runCommand("/nick nickskinvip"), TextHoverEvent.showText("Click her to be shown as §dVIP"))
+                                    .both("§0➤ §dVIP+\n", TextClickEvent.runCommand("/nick nickskinvipplus"), TextHoverEvent.showText("Click her to be shown as §dVIP+"))
+                                    .both("§0➤ §6PREMIUM\n", TextClickEvent.runCommand("/nick nickskinpremium"), TextHoverEvent.showText("Click her to be shown as §6PREMIUM"))
+                                    .both("§0➤ §6PREMIUM+\n", TextClickEvent.runCommand("/nick nickskinpremiumplus"), TextHoverEvent.showText("Click her to be shown as §6PREMIUM+"))
                                     .both("§0➤ §5YT\n", TextClickEvent.runCommand("/nick nickskinyt"), TextHoverEvent.showText("Click her to be shown as §5YT"))
                                     .both("§0➤ §4YT+\n", TextClickEvent.runCommand("/nick nickskinytplus"), TextHoverEvent.showText("Click her to be shown as §4YT+"))
                                     .toBungee())
                             .build();
                 } else {
                     book = new BookBuilder("rank", "system")
-                            .addPage(new TextBuilder().str("Lets's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\n§r§0you would like to be\n" +
+                            .addPage(new TextBuilder().str("Let's get you set up\nwith your nickname!\nFirst, you'll need to\n choose which §lRANK\n§r§0you would like to be\n" +
                                             "shown as when nicked.\n\n")
                                     .both("§0➤ §8DEFAULT\n", TextClickEvent.runCommand("/nick nickskindefault"), TextHoverEvent.showText("Click her to be shown as §8DEFAULT"))
+                                    .both("§0➤ §dVIP\n", TextClickEvent.runCommand("/nick nickskinvip"), TextHoverEvent.showText("Click her to be shown as §dVIP"))
+                                    .both("§0➤ §dVIP+\n", TextClickEvent.runCommand("/nick nickskinvipplus"), TextHoverEvent.showText("Click her to be shown as §dVIP+"))
+                                    .both("§0➤ §6PREMIUM\n", TextClickEvent.runCommand("/nick nickskinpremium"), TextHoverEvent.showText("Click her to be shown as §6PREMIUM"))
+                                    .both("§0➤ §6PREMIUM+\n", TextClickEvent.runCommand("/nick nickskinpremiumplus"), TextHoverEvent.showText("Click her to be shown as §6PREMIUM+"))
                                     .toBungee())
                             .build();
                 }
