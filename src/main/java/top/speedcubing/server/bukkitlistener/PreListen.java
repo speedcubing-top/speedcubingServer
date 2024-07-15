@@ -34,7 +34,6 @@ import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
-import top.speedcubing.server.bukkitcmd.nick.nick;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.lang.GlobalString;
@@ -123,19 +122,54 @@ public class PreListen implements Listener {
         }
     }
 
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void PlayerLoginEvent(PlayerLoginEvent e) {
+        Player player = e.getPlayer();
+        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
+        int id = Integer.parseInt(datas[4]);
+        String realRank = Rank.getRank(datas[0], id);
+
+        //maintenance
+        if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (datas[8].equals("0"))) {
+            e.setKickMessage("§cThis server is currently under maintenance.");
+            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            speedcubingServer.preLoginStorage.remove(id);
+            return;
+        }
+
+        //bungee-data-not-found
+        PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(id);
+        if (bungeeData == null) {
+            e.setKickMessage("§cError occurred.");
+            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            return;
+        }
+
+        data = new LoginJoinData(realRank, datas, bungeeData);
+        speedcubingServer.preLoginStorage.remove(id);
+    }
+
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         Player player = e.getPlayer();
 
         //Check Nick
+        boolean lobby = Bukkit.getServerName().equalsIgnoreCase("lobby");
+
         String displayName = player.getName();
         String displayRank = data.getRealRank();
+
+        if (lobby) {
+            displayName = data.getDatas()[5];
+            displayRank = data.getRealRank();
+            ReflectionUtils.setField(((CraftPlayer) player).getProfile(), "name", displayName);
+        }
 
         boolean nicked = !data.getDatas()[5].equals(displayName);
         if (nicked) {
             displayRank = data.getDatas()[1];
-            ReflectionUtils.setField(((CraftPlayer) player).getHandle(), "id", nick.emptyUUID);
         }
         //Perms
         Set<String> perms = Sets.newHashSet(data.getDatas()[2].split("\\|"));
@@ -145,7 +179,7 @@ public class PreListen implements Listener {
         groups.forEach(a -> perms.addAll(Rank.grouppermissions.get(a)));
 
         //User
-        User user = new User(player, displayRank, data.getRealRank(), perms, Integer.parseInt(data.getDatas()[3]), Integer.parseInt(data.getDatas()[4]), data.getDatas()[6].equals("1"), data.getBungeeData(), data.getDatas()[6].equals("1"), data.getDatas()[5]);
+        User user = new User(player, displayRank, data.getRealRank(), perms, Integer.parseInt(data.getDatas()[3]), Integer.parseInt(data.getDatas()[4]), data.getDatas()[6].equals("1"), data.getBungeeData(), data.getDatas()[6].equals("1"), data.getDatas()[5], data.getDatas()[10], data.getDatas()[11]);
 
         //OP
         player.setOp(user.hasPermission("perm.op"));
@@ -211,33 +245,6 @@ public class PreListen implements Listener {
         CraftPlayer craftPlayer = (CraftPlayer) player;
         PacketPlayOutBed packetPlayOutBed = new PacketPlayOutBed(craftPlayer.getHandle(), new BlockPosition(player.getLocation().getBlockX(), player.getLocation().getBlockY(), player.getLocation().getBlockZ()));
         craftPlayer.getHandle().u().getTracker().a(craftPlayer.getHandle(), packetPlayOutBed);
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void PlayerLoginEvent(PlayerLoginEvent e) {
-        Player player = e.getPlayer();
-        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
-        int id = Integer.parseInt(datas[4]);
-        String realRank = Rank.getRank(datas[0], id);
-
-        //maintenance
-        if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (datas[8].equals("0"))) {
-            e.setKickMessage("§cThis server is currently under maintenance.");
-            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            speedcubingServer.preLoginStorage.remove(id);
-            return;
-        }
-
-        //bungee-data-not-found
-        PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(id);
-        if (bungeeData == null) {
-            e.setKickMessage("§cError occurred.");
-            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            return;
-        }
-
-        data = new LoginJoinData(realRank, datas, bungeeData);
-        speedcubingServer.preLoginStorage.remove(id);
     }
 
     @EventHandler(priority = EventPriority.LOW)

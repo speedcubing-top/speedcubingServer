@@ -217,11 +217,6 @@ public class nick implements CommandExecutor, Listener {
         user.displayRank = displayRank;
 
         ReflectionUtils.setField(entityPlayer.getProfile(), "name", displayName);
-        if (nick) {
-            ReflectionUtils.setField(entityPlayer.getProfile(), "id", emptyUUID);
-        } else {
-            ReflectionUtils.setField(entityPlayer.getProfile(), "id", user.bGetUniqueId());
-        }
 
         settingNick.remove(user.bGetUniqueId());
         nickName.remove(user.bGetUniqueId());
@@ -231,18 +226,17 @@ public class nick implements CommandExecutor, Listener {
         user.createTeamPacket(nick, displayName);
 
         //send packets
-        for (User u : User.getUsers()) {
-            if (u.player.canSee(player)) {
-                u.bHidePlayer(player);
-                u.bShowPlayer(player);
+//        for (User u : User.getUsers()) {
+//            if (u.player.canSee(player)) {
+//                u.bHidePlayer(player);
+//                u.bShowPlayer(player);
+//            }
+//            u.sendPacket(user.joinPacket);
+//        }
 
-            }
-            u.sendPacket(user.joinPacket);
-        }
-
-        user.sendPacket(
-                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer),
-                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer));
+//        user.sendPacket(
+//                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer),
+//                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer));
 
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + displayName + "',nickpriority='" + displayRank + "'" : ""));
         Database.connection.update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);

@@ -38,7 +38,7 @@ public class skin implements CommandExecutor {
                 }
                 updateSkin(user, skin.getValue(), skin.getSignature(), target);
             } else if (target.equalsIgnoreCase(user.realName)) {
-                updateSkin(user, user.defaultSkin.getValue(), user.defaultSkin.getSignature(), target);
+                updateSkin(user, user.defaultSkinValue, user.defaultSkinSignature, target);
             } else {
                 player.sendMessage("§cDefault skin not found");
             }

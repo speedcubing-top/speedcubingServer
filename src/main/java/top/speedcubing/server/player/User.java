@@ -1,5 +1,6 @@
 package top.speedcubing.server.player;
 
+import java.security.NoSuchAlgorithmException;
 import java.time.ZoneId;
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -10,9 +11,6 @@ import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
-
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.Packet;
@@ -36,10 +34,10 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.IDPlayer;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
-import top.speedcubing.lib.api.mojang.ProfileSkin;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.utils.CryptoUtils;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.internet.HostAndPort;
@@ -55,12 +53,16 @@ public class User extends IDPlayer {
     public static Map<Integer, User> usersByID = new HashMap<>();
     public static Map<UUID, User> usersByUUID = new HashMap<>();
 
+
+    public static User getUser(CommandSender sender) {
+        return getUser(((Player) sender).getUniqueId());
+    }
     public static User getUser(int id) {
         return usersByID.get(id);
     }
 
-    public static User getUser(CommandSender sender) {
-        return usersByUUID.get(((Player) sender).getUniqueId());
+    public static User getUser(UUID uuid) {
+        return usersByUUID.get(uuid);
     }
 
     public static Collection<User> getUsers() {
@@ -89,10 +91,10 @@ public class User extends IDPlayer {
     public long lastMove = System.currentTimeMillis();
     public String timeZone;
     public String status;
-    public ProfileSkin defaultSkin;
+    public String defaultSkinValue, defaultSkinSignature;
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
-    public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName) {
+    public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName, String defaultSkinValue, String defaultSkinSignature) {
         super(realName, player.getUniqueId(), id);
         this.player = player;
         this.permissions = permissions;
@@ -107,20 +109,25 @@ public class User extends IDPlayer {
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString();
         this.status = dbSelect("status").getString();
-        this.defaultSkin = getSkin();
+        this.defaultSkinValue = defaultSkinValue;
+        this.defaultSkinSignature = defaultSkinSignature;
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         usersByID.put(id, this);
         usersByUUID.put(bGetUniqueId(), this);
     }
-    private ProfileSkin getSkin() {
-        String[] datas = dbSelect("profile_textures_value,profile_textures_signature").getStringArray();
-        if (datas.length == 0) return null;
-        return new ProfileSkin(player.getName(), player.getUniqueId().toString(), datas[0], datas[1]);
-    }
 
     public boolean nicked() {
         return !realName.equalsIgnoreCase(player.getName());
+    }
+
+    public String calculateNickHash() {
+        try {
+            return CryptoUtils.toMD5(player.getName().getBytes());
+        } catch (NoSuchAlgorithmException ex) {
+            ex.printStackTrace();
+            return null;
+        }
     }
 
     //guild
@@ -260,7 +267,6 @@ public class User extends IDPlayer {
     }
 
     public void createTeamPacket(boolean nick, String displayName) {
-
         String extracted = Rank.getCode(displayRank) + RankSystem.playerNameEncode(displayName);
         this.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
         this.joinPacket = new OutScoreboardTeam().a(extracted).c(getFormat(false).getPrefix()).d(getGuildTag(nick)).g(Collections.singletonList(displayName)).h(0).packet;
@@ -394,5 +400,10 @@ public class User extends IDPlayer {
 
     public boolean bIsSneaking() {
         return player.isSneaking();
+    }
+
+    @Override
+    public String toString() {
+        return "User{uuid=" + uuid + ",name=" + realName + "}";
     }
 }
