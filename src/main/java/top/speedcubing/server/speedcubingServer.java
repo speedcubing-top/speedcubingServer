@@ -4,6 +4,7 @@ import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
 import java.io.File;
 import java.net.URL;
+import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -17,6 +18,7 @@ import org.spigotmc.RestartCommand;
 import top.speedcubing.common.CommonLib;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.io.SocketReader;
+import top.speedcubing.lib.api.mojang.Skin;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SystemUtils;
@@ -215,5 +217,12 @@ public class speedcubingServer extends JavaPlugin {
     public static void restart() {
         if (canRestart)
             RestartCommand.restart();
+    }
+
+    public static Skin generateRandomSkin() {
+        int size = Database.connection.select("COUNT(*)").from("playersdata").where("profile_textures_value != ''").getInt();
+        int index = new SecureRandom().nextInt(size);
+        String[] data = Database.connection.select("profile_textures_value,profile_textures_signature").from("playersdata").where("profile_textures_value != ''").limit(index, 1).getStringArray();
+        return new Skin(data[0], data[1]);
     }
 }

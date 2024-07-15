@@ -6,6 +6,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.api.mojang.ProfileSkin;
+import top.speedcubing.lib.api.mojang.Skin;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.sockets.TCPClient;
@@ -25,10 +26,10 @@ public class skin implements CommandExecutor {
                 target = strings[0];
             else player.sendMessage("/skin , /skin <player>");
             if (!target.isEmpty() && !target.equalsIgnoreCase(user.realName)) {
-                ProfileSkin skin;
+                ProfileSkin profileSkin;
                 try {
-                    skin = MojangAPI.getSkinByName(target);
-                    if (skin == null) {
+                    profileSkin = MojangAPI.getSkinByName(target);
+                    if (profileSkin == null) {
                         user.sendLangMessage(GlobalString.invalidName);
                         return true;
                     }
@@ -36,9 +37,9 @@ public class skin implements CommandExecutor {
                     e.printStackTrace();
                     return true;
                 }
-                updateSkin(user, skin.getValue(), skin.getSignature(), target);
+                updateSkin(user, profileSkin.getSkin(), target);
             } else if (target.equalsIgnoreCase(user.realName)) {
-                updateSkin(user, user.defaultSkinValue, user.defaultSkinSignature, target);
+                updateSkin(user, user.defaultSkin, target);
             } else {
                 player.sendMessage("§cDefault skin not found");
             }
@@ -46,12 +47,8 @@ public class skin implements CommandExecutor {
         return true;
     }
 
-    public static void updateSkin(User user, String value, String signature) {
-        updateSkin(user, value, signature, null);
-    }
-
-    private static void updateSkin(User user, String value, String signature, String target) {
-        PlayerUtils.changeSkin(user.player, value, signature);
+    public static void updateSkin(User user, Skin skin, String target) {
+        PlayerUtils.changeSkin(user.player, skin.getValue(), skin.getSignature());
 
         for (User u : User.getUsers()) {
             if (u.player.canSee(user.player)) {
@@ -61,9 +58,9 @@ public class skin implements CommandExecutor {
         }
 
         if (target != null && target.equalsIgnoreCase(user.realName)) {
-            user.uploadSkin("", "");
-        } else user.uploadSkin(value, signature);
+            user.uploadSkin(new Skin("", ""));
+        } else user.uploadSkin(skin);
 
-        TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("skin").writeInt(user.id).writeUTF(value).writeUTF(signature).toByteArray());
+        TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("skin").writeInt(user.id).writeUTF(skin.getValue()).writeUTF(skin.getSignature()).toByteArray());
     }
 }

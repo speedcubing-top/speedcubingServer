@@ -34,6 +34,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.IDPlayer;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
+import top.speedcubing.lib.api.mojang.Skin;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
@@ -83,7 +84,6 @@ public class User extends IDPlayer {
     public boolean allowOp;
     public boolean chatFilt;
     public boolean listened;
-    public boolean nickState;
     public PacketPlayOutScoreboardTeam joinPacket;
     public PacketPlayOutScoreboardTeam leavePacket;
     public Queue<Integer> leftClickQueue = new ArrayDeque<>(), rightClickQueue = new ArrayDeque<>();
@@ -95,7 +95,7 @@ public class User extends IDPlayer {
     public long lastMove = System.currentTimeMillis();
     public String timeZone;
     public String status;
-    public String defaultSkinValue, defaultSkinSignature;
+    public Skin defaultSkin;
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
     public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName, String defaultSkinValue, String defaultSkinSignature) {
@@ -113,8 +113,7 @@ public class User extends IDPlayer {
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString();
         this.status = dbSelect("status").getString();
-        this.defaultSkinValue = defaultSkinValue;
-        this.defaultSkinSignature = defaultSkinSignature;
+        this.defaultSkin = new Skin(defaultSkinValue, defaultSkinSignature);
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         usersByID.put(id, this);
@@ -126,11 +125,11 @@ public class User extends IDPlayer {
     }
 
     public boolean nickState() {
-        return nickState;
+        return dbSelect("nickname").getString().equals(this.realName);
     }
 
-    public void uploadSkin(String value, String signature) {
-        dbUpdate("skinvalue='" + value + "',skinsignature='" + signature + "'");
+    public void uploadSkin(Skin skin) {
+        dbUpdate("skinvalue='" + skin.getValue() + "',skinsignature='" + skin.getSignature() + "'");
     }
 
     public UUID calculateNickHashUUID() {
