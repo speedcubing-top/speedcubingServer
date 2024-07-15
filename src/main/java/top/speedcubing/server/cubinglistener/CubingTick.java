@@ -39,12 +39,19 @@ public class CubingTick {
                         */
 
             if (user.nickState() && user.vanished)
-                PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED §fand §cVANISHED");
+                if (Bukkit.getServerName().equals("lobby")) {
+                    PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED (in games only) §fand §cVANISHED");
+                } else {
+                    PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED §fand §cVANISHED");
+                }
             else if (user.vanished)
                 PlayerUtils.sendActionBar(user.player, "You are currently §cVANISHED");
             else if (user.nickState())
-                PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED");
-
+                if (Bukkit.getServerName().equals("lobby")) {
+                    PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED (in games only)");
+                } else {
+                    PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED");
+                }
             if (!Bukkit.getServerName().equals("limbo"))
                 if (t - user.lastMove > 300000)
                     BungeePluginMessage.switchServer(user.player, "limbo");
