@@ -241,6 +241,7 @@ public class nick implements CommandExecutor, Listener {
         Database.connection.update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);
         TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(displayRank).writeUTF(displayName).toByteArray());
 
+        user.nickState = nick;
         if (openBook) {
             openNickBook(player, NickBook.RULE);
         }

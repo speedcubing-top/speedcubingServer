@@ -128,7 +128,7 @@ public class PreListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
+        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature,nicked").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
         int id = Integer.parseInt(datas[4]);
         String realRank = Rank.getRank(datas[0], id);
 
@@ -180,6 +180,7 @@ public class PreListen implements Listener {
             displayRank = data.getDatas()[1];
         }
 
+
         //Perms
         Set<String> perms = Sets.newHashSet(data.getDatas()[2].split("\\|"));
         perms.remove("");
@@ -192,6 +193,9 @@ public class PreListen implements Listener {
 
         //OP
         player.setOp(user.hasPermission("perm.op"));
+
+        //nick state
+        user.nickState = data.getDatas()[12].equals("1");
 
         //packet
         user.createTeamPacket(nicked, displayName);
