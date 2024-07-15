@@ -52,13 +52,18 @@ public class skin implements CommandExecutor {
 
     private static void updateSkin(User user, String value, String signature, String target) {
         PlayerUtils.changeSkin(user.player, value, signature);
+
         for (User u : User.getUsers()) {
             if (u.player.canSee(user.player)) {
                 u.bHidePlayer(user.player);
                 u.bShowPlayer(user.player);
             }
         }
-        user.dbUpdate((target != null && target.equalsIgnoreCase(user.realName)) ? "skinvalue='',skinsignature=''" : ("skinvalue='" + value + "',skinsignature='" + signature + "'"));
+
+        if (target != null && target.equalsIgnoreCase(user.realName)) {
+            user.uploadSkin("", "");
+        } else user.uploadSkin(value, signature);
+
         TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("skin").writeInt(user.id).writeUTF(value).writeUTF(signature).toByteArray());
     }
 }

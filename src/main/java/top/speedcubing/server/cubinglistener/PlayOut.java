@@ -16,7 +16,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import top.speedcubing.lib.bukkit.events.packet.PlayOutEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.lib.utils.ReflectionUtils;
-import top.speedcubing.lib.utils.UUIDUtils;
 import top.speedcubing.server.bukkitcmd.troll.sendpacket;
 import top.speedcubing.server.player.User;
 
@@ -64,7 +63,7 @@ public class PlayOut {
             UUID uuid = (UUID) ReflectionUtils.getField(packet, "b");
             User user = User.usersByUUID.get(uuid);
             if (user != null && user.nicked()) {
-                ReflectionUtils.setField(packet, "b", UUID.fromString(UUIDUtils.dash(user.calculateNickHash())));
+                ReflectionUtils.setField(packet, "b", user.calculateNickHashUUID());
             }
         } else if (e.getPacket() instanceof PacketPlayOutPlayerInfo packet) {
             PacketPlayOutPlayerInfo.EnumPlayerInfoAction action = (PacketPlayOutPlayerInfo.EnumPlayerInfoAction) ReflectionUtils.getField(packet, "a");
@@ -85,7 +84,7 @@ public class PlayOut {
 
                     if (user.nicked()) {
                         Property oldPF = user.toNMS().getProfile().getProperties().get("textures").iterator().next();
-                        GameProfile profile = new GameProfile(UUID.fromString(UUIDUtils.dash(user.calculateNickHash())), user.bGetName());
+                        GameProfile profile = new GameProfile(user.calculateNickHashUUID(), user.bGetName());
                         profile.getProperties().put("textures", oldPF);
                         datas.set(i, packet.new PlayerInfoData(profile, data.b(), data.c(), data.d()));
                     }

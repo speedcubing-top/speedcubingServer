@@ -15,7 +15,7 @@ public class unnick implements CommandExecutor {
         Player player = (Player) commandSender;
         if (!((NickEvent) new NickEvent(player).call()).isCancelled()) {
             User user = User.getUser(player);
-            if (!user.nicked())
+            if (!user.nickState())
                 User.getUser(commandSender).sendLangMessage(GlobalString.notNicked);
             else if (strings.length == 0) {
                 nick.nickPlayer(user.realName, Rank.getRank(user.realRank, User.getUser(commandSender).id), false, player, false);

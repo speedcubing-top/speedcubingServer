@@ -1,6 +1,8 @@
 package top.speedcubing.server.bukkitlistener;
 
 import com.google.common.collect.Sets;
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
@@ -162,15 +164,22 @@ public class PreListen implements Listener {
         String displayRank = data.getRealRank();
 
         if (lobby) {
+            //reset nick in lobby
             displayName = data.getDatas()[5];
             displayRank = data.getRealRank();
-            ReflectionUtils.setField(((CraftPlayer) player).getProfile(), "name", displayName);
+
+            //reset skin in lobby
+            GameProfile gameProfile = ((CraftPlayer) player).getProfile();
+            ReflectionUtils.setField(gameProfile, "name", displayName);
+            gameProfile.getProperties().removeAll("textures");
+            gameProfile.getProperties().put("textures", new Property("textures", data.getDatas()[10], data.getDatas()[11]));
         }
 
         boolean nicked = !data.getDatas()[5].equals(displayName);
         if (nicked) {
             displayRank = data.getDatas()[1];
         }
+
         //Perms
         Set<String> perms = Sets.newHashSet(data.getDatas()[2].split("\\|"));
         perms.remove("");

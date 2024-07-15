@@ -39,6 +39,8 @@ import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.CryptoUtils;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.StringUtils;
+import top.speedcubing.lib.utils.UUIDUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.lib.utils.sockets.TCPClient;
@@ -57,6 +59,7 @@ public class User extends IDPlayer {
     public static User getUser(CommandSender sender) {
         return getUser(((Player) sender).getUniqueId());
     }
+
     public static User getUser(int id) {
         return usersByID.get(id);
     }
@@ -80,6 +83,7 @@ public class User extends IDPlayer {
     public boolean allowOp;
     public boolean chatFilt;
     public boolean listened;
+    public boolean nickState;
     public PacketPlayOutScoreboardTeam joinPacket;
     public PacketPlayOutScoreboardTeam leavePacket;
     public Queue<Integer> leftClickQueue = new ArrayDeque<>(), rightClickQueue = new ArrayDeque<>();
@@ -121,9 +125,19 @@ public class User extends IDPlayer {
         return !realName.equalsIgnoreCase(player.getName());
     }
 
-    public String calculateNickHash() {
+    public boolean nickState() {
+        return nickState;
+    }
+
+    public void uploadSkin(String value, String signature) {
+        dbUpdate("skinvalue='" + value + "',skinsignature='" + signature + "'");
+    }
+
+    public UUID calculateNickHashUUID() {
         try {
-            return CryptoUtils.toMD5(player.getName().getBytes());
+            String hex = CryptoUtils.toMD5(player.getName().getBytes());
+            hex = StringUtils.setChar(hex, 12, '0');
+            return UUID.fromString(UUIDUtils.dash(hex));
         } catch (NoSuchAlgorithmException ex) {
             ex.printStackTrace();
             return null;

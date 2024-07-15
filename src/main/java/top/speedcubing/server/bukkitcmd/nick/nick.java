@@ -56,6 +56,7 @@ public class nick implements CommandExecutor, Listener {
         RULE
     }
 
+    @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if (!((NickEvent) new NickEvent((Player) commandSender).call()).isCancelled()) {
             Player player = (Player) commandSender;
@@ -113,7 +114,7 @@ public class nick implements CommandExecutor, Listener {
                                 player.sendMessage("§cFailed to generate a random skin.");
                                 return true;
                             }
-                            skin.updateSkin(User.getUser(player), skinData.getValue(), skinData.getSignature());
+                            User.getUser(player).uploadSkin(skinData.getValue(), skinData.getSignature());
                             player.sendMessage("§aSet your skin to " + skinData.getName() + ".");
                             break;
                     }

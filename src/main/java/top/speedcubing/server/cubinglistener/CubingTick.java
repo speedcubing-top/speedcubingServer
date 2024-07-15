@@ -38,12 +38,13 @@ public class CubingTick {
                             Bukkit.getScheduler().runTask(speedcubingServer.getInstance(), () -> user.player.kickPlayer("You are clicking too fast !"));
                         */
 
-            if (user.nicked() && user.vanished)
+            if (user.nickState() && user.vanished)
                 PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED §fand §cVANISHED");
             else if (user.vanished)
                 PlayerUtils.sendActionBar(user.player, "You are currently §cVANISHED");
-            else if (user.nicked())
+            else if (user.nickState())
                 PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED");
+
             if (!Bukkit.getServerName().equals("limbo"))
                 if (t - user.lastMove > 300000)
                     BungeePluginMessage.switchServer(user.player, "limbo");
