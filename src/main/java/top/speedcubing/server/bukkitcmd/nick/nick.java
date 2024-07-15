@@ -111,9 +111,10 @@ public class nick implements CommandExecutor, Listener {
 //                            if (profileSkin == null) {
 //                                player.sendMessage("§cFailed to generate a random skin.");
 //                                return true;
-//                            }
-                            User.getUser(player).uploadSkin(speedcubingServer.generateRandomSkin());
-                            //player.sendMessage("§aSet your skin to " + profileSkin.getName() + ".");
+//
+                            ProfileSkin profileSkin = speedcubingServer.generateRandomSkin();
+                            User.getUser(player).uploadSkin(profileSkin.getSkin());
+                            player.sendMessage("§aSet your skin to " + profileSkin.getName() + ".");
                             break;
                     }
                     openNickBook(player, NickBook.NAMECHOOSE);

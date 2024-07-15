@@ -38,7 +38,7 @@ public class CubingTick {
                             Bukkit.getScheduler().runTask(speedcubingServer.getInstance(), () -> user.player.kickPlayer("You are clicking too fast !"));
                         */
 
-            if (user.nickState() && user.vanished)
+            if (user.nicked() && user.vanished)
                 if (Bukkit.getServerName().equals("lobby")) {
                     PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED (in games only) §fand §cVANISHED");
                 } else {
@@ -46,7 +46,7 @@ public class CubingTick {
                 }
             else if (user.vanished)
                 PlayerUtils.sendActionBar(user.player, "You are currently §cVANISHED");
-            else if (user.nickState())
+            else if (user.nicked())
                 if (Bukkit.getServerName().equals("lobby")) {
                     PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED (in games only)");
                 } else {
