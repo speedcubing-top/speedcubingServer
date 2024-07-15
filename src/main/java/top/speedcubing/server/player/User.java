@@ -121,11 +121,11 @@ public class User extends IDPlayer {
     }
 
     public boolean nicked() {
-        return !realName.equalsIgnoreCase(player.getName());
+        return !realName.equals(player.getName());
     }
 
     public boolean nickState() {
-        return dbSelect("nickname").getString().equals(this.realName);
+        return !dbSelect("nickname").getString().equals(this.realName);
     }
 
     public void uploadSkin(Skin skin) {

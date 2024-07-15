@@ -194,9 +194,6 @@ public class PreListen implements Listener {
         //OP
         player.setOp(user.hasPermission("perm.op"));
 
-        //nick state
-        user.nickState = data.getDatas()[12].equals("1");
-
         //packet
         user.createTeamPacket(nicked, displayName);
 
