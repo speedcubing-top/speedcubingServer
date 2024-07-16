@@ -2,14 +2,6 @@ package top.speedcubing.server.bukkitcmd.nick;
 
 import edu.mit.jwi.item.IIndexWord;
 import edu.mit.jwi.item.POS;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -32,6 +24,15 @@ import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 import static top.speedcubing.server.speedcubingServer.dict;
 
@@ -95,7 +96,7 @@ public class nick implements CommandExecutor, Listener {
                             break;
                         case "nicknamechoosesaskin":
                             boolean random = new Random().nextBoolean();
-                            User.getUser(player).updateSkin(random ? STEVESKIN : ALEXSKIN, null);
+                            User.getUser(player).uploadSkin(random ? STEVESKIN : ALEXSKIN);
                             if (random) {
                                 player.sendMessage("§aSet your skin to Steve.");
                             } else {
@@ -103,10 +104,6 @@ public class nick implements CommandExecutor, Listener {
                             }
                             break;
                         case "nicknamechooserandomskin":
-//                            if (profileSkin == null) {
-//                                player.sendMessage("§cFailed to generate a random skin.");
-//                                return true;
-//
                             ProfileSkin profileSkin = speedcubingServer.generateRandomSkinFromDB();
                             User.getUser(player).uploadSkin(profileSkin.getSkin());
                             player.sendMessage("§aSet your skin to " + profileSkin.getName() + ".");
@@ -154,7 +151,9 @@ public class nick implements CommandExecutor, Listener {
                 } else commandSender.sendMessage("/nick <nickname>\n/nick (use the previous nick)");
             } else if (strings.length == 3) {
                 User user = User.getUser(commandSender);
-                if (user.hasPermission("perm.nick.nickrank") || nickRank.get(player.getUniqueId()).equals("default")) {
+                if (user.hasPermission("perm.nick.nickrank") || nickRank.get(player.getUniqueId()).equals("default")
+                        || nickRank.get(player.getUniqueId()).equals("vip") || nickRank.get(player.getUniqueId()).equals("vipplus")
+                        || nickRank.get(player.getUniqueId()).equals("premium") || nickRank.get(player.getUniqueId()).equals("premiumplus")) {
                     String name = strings[0];
                     if (Rank.rankByName.containsKey(strings[1].toLowerCase())) {
                         nickCheck(user, name, user.player, strings[1].toLowerCase(), Boolean.parseBoolean(strings[2]));
@@ -203,9 +202,6 @@ public class nick implements CommandExecutor, Listener {
     static void nickPlayer(String displayName, String displayRank, boolean nick, Player player, boolean openBook) {
         User user = User.getUser(player);
 
-        settingNick.remove(user.bGetUniqueId());
-        nickName.remove(user.bGetUniqueId());
-        nickRank.remove(user.bGetUniqueId());
 
         //packet
         //user.createTeamPacket(nick, displayName);
@@ -230,6 +226,7 @@ public class nick implements CommandExecutor, Listener {
         if (openBook) {
             openNickBook(player, NickBook.RULE);
         }
+        settingNick.remove(player.getUniqueId());
     }
 
     public static void openNickBook(Player player, NickBook type) {
@@ -265,7 +262,6 @@ public class nick implements CommandExecutor, Listener {
                                     .both("§0➤ §dVIP\n", TextClickEvent.runCommand("/nick nickskinvip"), TextHoverEvent.showText("Click her to be shown as §dVIP"))
                                     .both("§0➤ §dVIP+\n", TextClickEvent.runCommand("/nick nickskinvipplus"), TextHoverEvent.showText("Click her to be shown as §dVIP+"))
                                     .both("§0➤ §6PREMIUM\n", TextClickEvent.runCommand("/nick nickskinpremium"), TextHoverEvent.showText("Click her to be shown as §6PREMIUM"))
-                                    .both("§0➤ §6PREMIUM+\n", TextClickEvent.runCommand("/nick nickskinpremiumplus"), TextHoverEvent.showText("Click her to be shown as §6PREMIUM+"))
                                     .toBungee())
                             .build();
                 }
@@ -283,6 +279,7 @@ public class nick implements CommandExecutor, Listener {
                 break;
             case NAMECHOOSE:
                 String data = Database.connection.select("nickname").from("playersdata").where("id=" + User.getUser(player).id).getString();
+                nickName.put(player.getUniqueId(), data);
                 if (User.getUser(player).hasPermission("perm.nick.customname")) {
                     book = new BookBuilder("name", "system")
                             .addPage(new TextBuilder().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
@@ -311,6 +308,7 @@ public class nick implements CommandExecutor, Listener {
                 player.sendMessage("§eGenerating a unique random name. Please wait...");
                 speedcubingServer.scheduledPool.execute(() -> {
                     String name = generateRandomString();
+                    nickName.put(player.getUniqueId(), name);
                     if (User.getUser(player).hasPermission("perm.nick.customname")) {
                         ItemStack b = new BookBuilder("random", "system")
                                 .addPage(new TextBuilder().str("We've generated a\nrandom username for\nyou:\n§l" + name + "\n\n")
@@ -335,7 +333,7 @@ public class nick implements CommandExecutor, Listener {
                 break;
             case RULE:
                 book = new BookBuilder("rule", "system")
-                        .addPage(new TextBuilder().str("You have finished\nsetting up your\nnickname!\n\nYour nickname is:\n" + User.getUser(player).getPrefixName(false) + "§0." +
+                        .addPage(new TextBuilder().str("You have finished\nsetting up your\nnickname!\n\nYour nickname is:\n" + Rank.rankByName.get(nickRank.get(player.getUniqueId())).getFormat().getPrefix() + nickName.get(player.getUniqueId()) + "§0." +
                                         "\n\n§0To go back to being\nyour usual self, type:\n§l/unnick")
                                 .toBungee())
                         .build();

@@ -31,6 +31,7 @@ public class unnick implements CommandExecutor {
 
         nick.nickPlayer(user.realName, Rank.getRank(user.realRank, User.getUser(commandSender).id), false, player, false);
         user.updateSkin(user.defaultSkin, user.realName);
+        commandSender.sendMessage("§aYou have unnicked successfully.");
         return true;
     }
 }

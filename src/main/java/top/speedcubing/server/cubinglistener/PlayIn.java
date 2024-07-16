@@ -57,6 +57,7 @@ public class PlayIn {
             if (nick.settingNick.containsKey(e.getPlayer().getUniqueId())) {
                 Bukkit.getScheduler().runTask(speedcubingServer.instance, () -> {
                     try {
+                        nick.nickName.put(e.getPlayer().getUniqueId(), name);
                         e.getPlayer().performCommand("nick " + name + " " + nick.nickRank.get(e.getPlayer().getUniqueId()) + " true");
                         nick.openNickBook(e.getPlayer(), nick.NickBook.RULE);
                     } catch (Exception ex) {
