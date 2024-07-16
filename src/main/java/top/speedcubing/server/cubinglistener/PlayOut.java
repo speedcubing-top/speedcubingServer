@@ -83,7 +83,7 @@ public class PlayOut {
                     }
 
                     if (user.nicked()) {
-                        Property oldPF = user.toNMS().getProfile().getProperties().get("textures").iterator().next();
+                        Property oldPF = user.getTextures();
                         GameProfile profile = new GameProfile(user.calculateNickHashUUID(), user.bGetName());
                         profile.getProperties().put("textures", oldPF);
                         datas.set(i, packet.new PlayerInfoData(profile, data.b(), data.c(), data.d()));

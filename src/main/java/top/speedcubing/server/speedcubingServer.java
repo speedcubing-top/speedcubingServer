@@ -222,7 +222,7 @@ public class speedcubingServer extends JavaPlugin {
             RestartCommand.restart();
     }
 
-    public static ProfileSkin generateRandomSkin() {
+    public static ProfileSkin generateRandomSkinFromDB() {
         int size = Database.connection.select("COUNT(*)").from("playersdata").where("profile_textures_value != ''").getInt();
         int index = new SecureRandom().nextInt(size);
         String[] data = Database.connection.select("name,uuid,profile_textures_value,profile_textures_signature").from("playersdata").where("profile_textures_value != ''").limit(index, 1).getStringArray();

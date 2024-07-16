@@ -32,13 +32,13 @@ public class CubingTick {
         );
         for (User user : User.usersByID.values()) {
             if (user.listened)
-                TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("cps").writeInt(user.id).writeInt(user.leftCPS).writeInt(user.rightCPS).toByteArray());
+                user.writeToProxy(new ByteArrayBuffer().writeUTF("cps").writeInt(user.id).writeInt(user.leftCPS).writeInt(user.rightCPS).toByteArray());
                         /*
                         if (user.leftClick >= config.LeftCpsLimit || user.rightClick >= config.RightCpsLimit)
                             Bukkit.getScheduler().runTask(speedcubingServer.getInstance(), () -> user.player.kickPlayer("You are clicking too fast !"));
                         */
 
-            if (user.nicked() && user.vanished)
+            if (user.nickState() && user.vanished)
                 if (Bukkit.getServerName().equals("lobby")) {
                     PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED (in games only) §fand §cVANISHED");
                 } else {
@@ -46,7 +46,7 @@ public class CubingTick {
                 }
             else if (user.vanished)
                 PlayerUtils.sendActionBar(user.player, "You are currently §cVANISHED");
-            else if (user.nicked())
+            else if (user.nickState())
                 if (Bukkit.getServerName().equals("lobby")) {
                     PlayerUtils.sendActionBar(user.player, "You are currently §cNICKED (in games only)");
                 } else {

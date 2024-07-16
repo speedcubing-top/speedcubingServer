@@ -1,5 +1,6 @@
 package top.speedcubing.server.player;
 
+import com.mojang.authlib.properties.Property;
 import java.security.NoSuchAlgorithmException;
 import java.time.ZoneId;
 import java.util.ArrayDeque;
@@ -35,6 +36,7 @@ import top.speedcubing.common.rank.IDPlayer;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.lib.api.mojang.Skin;
+import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
@@ -120,12 +122,37 @@ public class User extends IDPlayer {
         usersByUUID.put(bGetUniqueId(), this);
     }
 
-    public boolean nicked() {
-        return !realName.equals(player.getName());
+    public boolean nicked() { //if player is disguised now
+        return !this.realName.equals(player.getName());
     }
 
-    public boolean nickState() {
-        return !dbSelect("nickname").getString().equals(this.realName);
+    public boolean nickState() { //if player is switched to nick mode
+        return dbSelect("nicked").getBoolean();
+    }
+
+    public Property getTextures(){
+        return toNMS().getProfile().getProperties().get("textures").iterator().next();
+    }
+    public void updateSkin(Skin skin, String target) {
+        Property property = getTextures();
+        if (property.getValue().equals(skin.getValue()) && property.getSignature().equals(skin.getSignature())) {
+            return;
+        }
+
+        PlayerUtils.changeSkin(player, skin.getValue(), skin.getSignature());
+
+        for (User u : User.getUsers()) {
+            if (u.player.canSee(player)) {
+                u.bHidePlayer(player);
+                u.bShowPlayer(player);
+            }
+        }
+
+        if (target != null && target.equalsIgnoreCase(realName)) { //it is your own skin
+            uploadSkin(new Skin("", ""));
+        } else uploadSkin(skin);
+
+        writeToProxy(new ByteArrayBuffer().writeUTF("skin").writeInt(id).writeUTF(skin.getValue()).writeUTF(skin.getSignature()).toByteArray());
     }
 
     public void uploadSkin(Skin skin) {
@@ -200,7 +227,7 @@ public class User extends IDPlayer {
     }
 
     public void setInput(boolean add) {
-        TCPClient.write(proxy, new ByteArrayBuffer().writeUTF("inputmode").writeInt(id).writeBoolean(add).toByteArray());
+        writeToProxy(new ByteArrayBuffer().writeUTF("inputmode").writeInt(id).writeBoolean(add).toByteArray());
     }
 
     public String getCurrentTime() {
@@ -291,6 +318,11 @@ public class User extends IDPlayer {
             cpsHologram.delete();
             cpsHologram = null;
         }
+    }
+
+    //bungee
+    public void writeToProxy(byte[] bytes) {
+        TCPClient.write(proxy, bytes);
     }
 
     //db

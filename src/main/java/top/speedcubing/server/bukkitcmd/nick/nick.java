@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,10 +27,7 @@ import top.speedcubing.lib.math.scMath;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
-import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
-import top.speedcubing.lib.utils.sockets.TCPClient;
-import top.speedcubing.server.bukkitcmd.skin;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
@@ -99,8 +95,7 @@ public class nick implements CommandExecutor, Listener {
                             break;
                         case "nicknamechoosesaskin":
                             boolean random = new Random().nextBoolean();
-                            Skin sk = random ? STEVESKIN : ALEXSKIN;
-                            skin.updateSkin(User.getUser(player), sk, null);
+                            User.getUser(player).updateSkin(random ? STEVESKIN : ALEXSKIN, null);
                             if (random) {
                                 player.sendMessage("§aSet your skin to Steve.");
                             } else {
@@ -112,7 +107,7 @@ public class nick implements CommandExecutor, Listener {
 //                                player.sendMessage("§cFailed to generate a random skin.");
 //                                return true;
 //
-                            ProfileSkin profileSkin = speedcubingServer.generateRandomSkin();
+                            ProfileSkin profileSkin = speedcubingServer.generateRandomSkinFromDB();
                             User.getUser(player).uploadSkin(profileSkin.getSkin());
                             player.sendMessage("§aSet your skin to " + profileSkin.getName() + ".");
                             break;
@@ -208,15 +203,8 @@ public class nick implements CommandExecutor, Listener {
         }
     }
 
-    public static final UUID emptyUUID = UUID.fromString("00000000-0000-0000-0000-000000000000");
-
     static void nickPlayer(String displayName, String displayRank, boolean nick, Player player, boolean openBook) {
         User user = User.getUser(player);
-        EntityPlayer entityPlayer = user.toNMS();
-
-        user.displayRank = displayRank;
-
-        ReflectionUtils.setField(entityPlayer.getProfile(), "name", displayName);
 
         settingNick.remove(user.bGetUniqueId());
         nickName.remove(user.bGetUniqueId());
@@ -240,7 +228,7 @@ public class nick implements CommandExecutor, Listener {
 
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + displayName + "',nickpriority='" + displayRank + "'" : ""));
         Database.connection.update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);
-        TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(displayRank).writeUTF(displayName).toByteArray());
+        user.writeToProxy(new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(displayRank).writeUTF(displayName).toByteArray());
 
         if (openBook) {
             openNickBook(player, NickBook.RULE);
@@ -356,22 +344,6 @@ public class nick implements CommandExecutor, Listener {
                         .build();
                 BookBuilder.openBook(book, player);
                 break;
-        }
-    }
-
-    private ProfileSkin generateRandomSkin() {
-        int userid = new Random().nextInt(40000) + 1;
-        String name = Database.connection.select("name").from("playersdata").where("id=" + userid).getString();
-        ProfileSkin skinData;
-        try {
-            skinData = MojangAPI.getSkinByName(name);
-            if (skinData == null) {
-                generateRandomSkin();
-            }
-            return skinData;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
         }
     }
 

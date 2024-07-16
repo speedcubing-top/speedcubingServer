@@ -25,6 +25,7 @@ public class skin implements CommandExecutor {
             else if (strings.length == 1)
                 target = strings[0];
             else player.sendMessage("/skin , /skin <player>");
+
             if (!target.isEmpty() && !target.equalsIgnoreCase(user.realName)) {
                 ProfileSkin profileSkin;
                 try {
@@ -37,30 +38,13 @@ public class skin implements CommandExecutor {
                     e.printStackTrace();
                     return true;
                 }
-                updateSkin(user, profileSkin.getSkin(), target);
+                user.updateSkin(profileSkin.getSkin(), target);
             } else if (target.equalsIgnoreCase(user.realName)) {
-                updateSkin(user, user.defaultSkin, target);
+                user.updateSkin(user.defaultSkin, target);
             } else {
                 player.sendMessage("§cDefault skin not found");
             }
         }
         return true;
-    }
-
-    public static void updateSkin(User user, Skin skin, String target) {
-        PlayerUtils.changeSkin(user.player, skin.getValue(), skin.getSignature());
-
-        for (User u : User.getUsers()) {
-            if (u.player.canSee(user.player)) {
-                u.bHidePlayer(user.player);
-                u.bShowPlayer(user.player);
-            }
-        }
-
-        if (target != null && target.equalsIgnoreCase(user.realName)) {
-            user.uploadSkin(new Skin("", ""));
-        } else user.uploadSkin(skin);
-
-        TCPClient.write(user.proxy, new ByteArrayBuffer().writeUTF("skin").writeInt(user.id).writeUTF(skin.getValue()).writeUTF(skin.getSignature()).toByteArray());
     }
 }
