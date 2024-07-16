@@ -1,12 +1,10 @@
 package top.speedcubing.server.cubinglistener;
 
 import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
@@ -67,27 +65,33 @@ public class PlayOut {
                 ReflectionUtils.setField(packet, "b", user.calculateNickHashUUID());
             }
         } else if (e.getPacket() instanceof PacketPlayOutPlayerInfo packet) {
-            PacketPlayOutPlayerInfo.EnumPlayerInfoAction action = (PacketPlayOutPlayerInfo.EnumPlayerInfoAction) ReflectionUtils.getField(packet, "a");
             List<PacketPlayOutPlayerInfo.PlayerInfoData> datas = (List<PacketPlayOutPlayerInfo.PlayerInfoData>) ReflectionUtils.getField(packet, "b");
 
             for (int i = 0; i < datas.size(); i++) {
                 PacketPlayOutPlayerInfo.PlayerInfoData data = datas.get(i);
-                UUID receivedUUID = data.a().getId();
-                if (receivedUUID.equals(e.getPlayer().getUniqueId())) {
+                UUID targetID = data.a().getId();
+
+                if (targetID.equals(e.getPlayer().getUniqueId())) {
                     continue;
                 }
 
-                User user = User.usersByUUID.get(receivedUUID);
-                if (user == null) {
-                    continue;
+                User target = User.getUser(targetID);
+                if (target == null) {
+                    User user = User.getUser(e.getPlayer());
+                    if(user.calculateNickHashUUID().equals(targetID)) {
+                        target = user;
+                        targetID = e.getPlayer().getUniqueId();
+                    } else continue;
+                } else {
+                    if (!target.nicked()) {
+                        continue;
+                    }
+                    targetID = target.calculateNickHashUUID();
                 }
 
-                if (user.nicked()) {
-                    Property oldPF = user.getTextures();
-                    GameProfile profile = new GameProfile(user.calculateNickHashUUID(), user.bGetName());
-                    profile.getProperties().put("textures", oldPF);
-                    datas.set(i, packet.new PlayerInfoData(profile, data.b(), data.c(), data.d()));
-                }
+                GameProfile profile = new GameProfile(targetID, target.bGetName());
+                profile.getProperties().put("textures", data.a().getProperties().get("textures").iterator().next());
+                datas.set(i, packet.new PlayerInfoData(profile, data.b(), data.c(), data.d()));
             }
         }
     }

@@ -1,6 +1,7 @@
 package top.speedcubing.server.bukkitlistener;
 
 import com.google.common.collect.Sets;
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +12,6 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import net.minecraft.server.v1_8_R3.BlockPosition;
-import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -39,7 +39,6 @@ import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.lang.GlobalString;
-import top.speedcubing.server.login.LoginJoinData;
 import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
@@ -48,7 +47,6 @@ import top.speedcubing.server.utils.RankSystem;
 
 public class PreListen implements Listener {
 
-    private LoginJoinData data;
 
     static class CommandElement {
         public final String command;
@@ -124,11 +122,11 @@ public class PreListen implements Listener {
         }
     }
 
-
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
         String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature,nicked,skinvalue,skinsignature,nickname").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
+
         int id = Integer.parseInt(datas[4]);
         String realRank = Rank.getRank(datas[0], id);
 
@@ -148,66 +146,63 @@ public class PreListen implements Listener {
             return;
         }
 
-        data = new LoginJoinData(realRank, datas, bungeeData);
         speedcubingServer.preLoginStorage.remove(id);
+
+        //Perms
+        Set<String> perms = Sets.newHashSet(datas[2].split("\\|"));
+        perms.remove("");
+        perms.addAll(Rank.rankByName.get(realRank).getPerms());
+        Set<String> groups = perms.stream().filter(s -> User.group.matcher(s).matches() && Rank.grouppermissions.containsKey(s.substring(6))).map(s -> s.substring(6)).collect(Collectors.toSet());
+        groups.forEach(a -> perms.addAll(Rank.grouppermissions.get(a)));
+
+        //Check Nick
+        boolean lobby = Bukkit.getServerName().equalsIgnoreCase("lobby");
+
+        String displayName = player.getName();
+        String displayRank = realRank;
+
+        String skinValue = "";
+        String skinSignature = "";
+
+        boolean nickState = datas[12].equals("1");
+
+        if (lobby) {
+            displayRank = realRank;
+            displayName = datas[5];
+        } else {
+            if (nickState) {
+                displayRank = datas[1];
+                displayName = datas[15];
+            }
+            skinValue = datas[13];
+            skinSignature = datas[14];
+        }
+
+        //User
+        User user = new User(player, displayRank, realRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[6].equals("1"), datas[5], datas[10], datas[11]);
+
+
+        //modify things
+        GameProfile profile = ((CraftPlayer) player).getProfile();
+        ReflectionUtils.setField(profile, "name", displayName);
+
+        if (!skinValue.equals("")) {
+            profile.getProperties().removeAll("textures");
+            profile.getProperties().put("textures", new Property("textures", skinValue, skinSignature));
+        }
     }
 
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         Player player = e.getPlayer();
-        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
-
-        //Check Nick
-        boolean lobby = Bukkit.getServerName().equalsIgnoreCase("lobby");
-
-        String displayName = player.getName();
-        String displayRank = data.getRealRank();
-
-        String skinValue = "";
-        String skinSignature = "";
-
-        boolean nickState = data.getDatas()[12].equals("1");
-
-        if (lobby) {
-            displayRank = data.getRealRank();
-            displayName = data.getDatas()[5];
-        } else {
-            if (nickState) {
-                displayRank = data.getDatas()[1];
-                displayName = data.getDatas()[15];
-            }
-            skinValue = data.getDatas()[13];
-            skinSignature = data.getDatas()[14];
-        }
-
-        //Perms
-        Set<String> perms = Sets.newHashSet(data.getDatas()[2].split("\\|"));
-        perms.remove("");
-        perms.addAll(Rank.rankByName.get(data.getRealRank()).getPerms());
-        Set<String> groups = perms.stream().filter(s -> User.group.matcher(s).matches() && Rank.grouppermissions.containsKey(s.substring(6))).map(s -> s.substring(6)).collect(Collectors.toSet());
-        groups.forEach(a -> perms.addAll(Rank.grouppermissions.get(a)));
-
-        //User
-        User user = new User(player, displayRank, data.getRealRank(), perms, Integer.parseInt(data.getDatas()[3]), Integer.parseInt(data.getDatas()[4]), data.getDatas()[6].equals("1"), data.getBungeeData(), data.getDatas()[6].equals("1"), data.getDatas()[5], data.getDatas()[10], data.getDatas()[11]);
-
-        //modify things
-        ReflectionUtils.setField(((CraftPlayer) player).getProfile(), "name", displayName);
-//        if (user.nickState())
-//            ReflectionUtils.setField(((CraftPlayer) player).getProfile(), "id", user.calculateNickHashUUID());
-
-        if (!skinValue.equals("")) {
-            entityPlayer.getProfile().getProperties().removeAll("textures");
-            entityPlayer.getProfile().getProperties().put("textures", new Property("textures", skinValue, skinSignature));
-        }
+        User user = User.getUser(player);
 
         //OP
         player.setOp(user.hasPermission("perm.op"));
 
-        //packet
-        user.createTeamPacket(user.nicked(), displayName);
-
         //send packets
+        user.createTeamPacket();
         for (User u : User.getUsers()) {
             user.sendPacket(u.leavePacket, u.joinPacket);
             if (u != user) {
@@ -221,7 +216,7 @@ public class PreListen implements Listener {
 
         //nick
         if (user.nicked())
-            user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(data.getRealRank()) + RankSystem.playerNameEncode(user.realName)).c(Rank.getFormat(data.getRealRank(), user.id).getPrefix()).d(user.getGuildTag(true)).g(Collections.singletonList(data.getDatas()[5])).h(0).packet);
+            user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(user.realRank) + RankSystem.playerNameEncode(user.realName)).c(Rank.getFormat(user.realRank, user.id).getPrefix()).d(user.getGuildTag(true)).g(Collections.singletonList(user.realName)).h(0).packet);
 
         //vanish
         for (User u : User.getUsers()) {

@@ -305,10 +305,10 @@ public class User extends IDPlayer {
         return nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
     }
 
-    public void createTeamPacket(boolean nick, String displayName) {
-        String extracted = Rank.getCode(displayRank) + RankSystem.playerNameEncode(displayName);
+    public void createTeamPacket() {
+        String extracted = Rank.getCode(displayRank) + RankSystem.playerNameEncode(bGetName());
         this.leavePacket = new OutScoreboardTeam().a(extracted).h(1).packet;
-        this.joinPacket = new OutScoreboardTeam().a(extracted).c(getFormat(false).getPrefix()).d(getGuildTag(nick)).g(Collections.singletonList(displayName)).h(0).packet;
+        this.joinPacket = new OutScoreboardTeam().a(extracted).c(getFormat(false).getPrefix()).d(getGuildTag(nicked())).g(Collections.singletonList(bGetName())).h(0).packet;
     }
 
     public void removeCPSHologram() {

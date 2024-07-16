@@ -29,7 +29,8 @@ public class PostListen implements Listener {
         User user = User.getUser(player);
 
         //modify profile id for packets after event
-        ReflectionUtils.setField(user.toNMS().getProfile(),"id",user.calculateNickHashUUID());
+        if (user.nicked())
+            ReflectionUtils.setField(user.toNMS().getProfile(), "id", user.calculateNickHashUUID());
 
         AuthData.map.remove(user);
         user.removeCPSHologram();
