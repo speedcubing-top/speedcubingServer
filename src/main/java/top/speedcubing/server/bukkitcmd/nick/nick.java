@@ -149,7 +149,6 @@ public class nick implements CommandExecutor, Listener {
                     String name = strings[0];
                     if (Rank.rankByName.containsKey(strings[1].toLowerCase())) {
                         nickCheck(user, name, user.player, strings[1].toLowerCase(), false);
-                        user.dbUpdate("nickpriority='" + strings[1].toLowerCase() + "'");
                     } else
                         user.sendLangMessage(GlobalString.unknownRank);
                 } else commandSender.sendMessage("/nick <nickname>\n/nick (use the previous nick)");
@@ -159,7 +158,6 @@ public class nick implements CommandExecutor, Listener {
                     String name = strings[0];
                     if (Rank.rankByName.containsKey(strings[1].toLowerCase())) {
                         nickCheck(user, name, user.player, strings[1].toLowerCase(), Boolean.parseBoolean(strings[2]));
-                        user.dbUpdate("nickpriority='" + strings[1].toLowerCase() + "'");
                         if (strings[2].equalsIgnoreCase("true")) {
                             openNickBook(player, NickBook.RULE);
                         }
@@ -176,7 +174,6 @@ public class nick implements CommandExecutor, Listener {
 
 
     private void nickCheck(User user, String name, Player player, String rank, boolean openBook) {
-        System.out.println(user.realName + " " + name + " " + player.getName() + " " + rank + " " + openBook);
         if (!user.hasPermission("perm.nick.customname") && !settingNick.containsKey(user.bGetUniqueId())) {
             openNickBook(player, NickBook.EULA);
             settingNick.put(user.bGetUniqueId(), true);

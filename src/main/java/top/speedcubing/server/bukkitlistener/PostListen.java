@@ -7,6 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.authenticator.AuthData;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.bukkitcmd.nick.nick;
@@ -26,6 +27,10 @@ public class PostListen implements Listener {
         e.setQuitMessage("");
         Player player = e.getPlayer();
         User user = User.getUser(player);
+
+        //modify profile id for packets after event
+        ReflectionUtils.setField(user.toNMS().getProfile(),"id",user.calculateNickHashUUID());
+
         AuthData.map.remove(user);
         user.removeCPSHologram();
         User.usersByID.remove(user.id);

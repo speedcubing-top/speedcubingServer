@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
@@ -69,25 +70,23 @@ public class PlayOut {
             PacketPlayOutPlayerInfo.EnumPlayerInfoAction action = (PacketPlayOutPlayerInfo.EnumPlayerInfoAction) ReflectionUtils.getField(packet, "a");
             List<PacketPlayOutPlayerInfo.PlayerInfoData> datas = (List<PacketPlayOutPlayerInfo.PlayerInfoData>) ReflectionUtils.getField(packet, "b");
 
-            if (action == PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER) {
-                for (int i = 0; i < datas.size(); i++) {
-                    PacketPlayOutPlayerInfo.PlayerInfoData data = datas.get(i);
-                    UUID receivedUUID = data.a().getId();
-                    if (receivedUUID.equals(e.getPlayer().getUniqueId())) {
-                        continue;
-                    }
+            for (int i = 0; i < datas.size(); i++) {
+                PacketPlayOutPlayerInfo.PlayerInfoData data = datas.get(i);
+                UUID receivedUUID = data.a().getId();
+                if (receivedUUID.equals(e.getPlayer().getUniqueId())) {
+                    continue;
+                }
 
-                    User user = User.usersByUUID.get(receivedUUID);
-                    if (user == null) {
-                        continue;
-                    }
+                User user = User.usersByUUID.get(receivedUUID);
+                if (user == null) {
+                    continue;
+                }
 
-                    if (user.nicked()) {
-                        Property oldPF = user.getTextures();
-                        GameProfile profile = new GameProfile(user.calculateNickHashUUID(), user.bGetName());
-                        profile.getProperties().put("textures", oldPF);
-                        datas.set(i, packet.new PlayerInfoData(profile, data.b(), data.c(), data.d()));
-                    }
+                if (user.nicked()) {
+                    Property oldPF = user.getTextures();
+                    GameProfile profile = new GameProfile(user.calculateNickHashUUID(), user.bGetName());
+                    profile.getProperties().put("textures", oldPF);
+                    datas.set(i, packet.new PlayerInfoData(profile, data.b(), data.c(), data.d()));
                 }
             }
         }

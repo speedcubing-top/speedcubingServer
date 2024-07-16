@@ -130,10 +130,15 @@ public class User extends IDPlayer {
         return dbSelect("nicked").getBoolean();
     }
 
-    public Property getTextures(){
+    public Property getTextures() {
         return toNMS().getProfile().getProperties().get("textures").iterator().next();
     }
+
     public void updateSkin(Skin skin, String target) {
+        if (target != null && target.equalsIgnoreCase(realName)) { //it is your own skin
+            uploadSkin(new Skin("", ""));
+        } else uploadSkin(skin);
+
         Property property = getTextures();
         if (property.getValue().equals(skin.getValue()) && property.getSignature().equals(skin.getSignature())) {
             return;
@@ -147,12 +152,6 @@ public class User extends IDPlayer {
                 u.bShowPlayer(player);
             }
         }
-
-        if (target != null && target.equalsIgnoreCase(realName)) { //it is your own skin
-            uploadSkin(new Skin("", ""));
-        } else uploadSkin(skin);
-
-        writeToProxy(new ByteArrayBuffer().writeUTF("skin").writeInt(id).writeUTF(skin.getValue()).writeUTF(skin.getSignature()).toByteArray());
     }
 
     public void uploadSkin(Skin skin) {

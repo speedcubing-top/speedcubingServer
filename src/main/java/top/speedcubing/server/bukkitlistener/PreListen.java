@@ -1,7 +1,6 @@
 package top.speedcubing.server.bukkitlistener;
 
 import com.google.common.collect.Sets;
-import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -12,6 +11,7 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import net.minecraft.server.v1_8_R3.BlockPosition;
+import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
@@ -128,7 +128,7 @@ public class PreListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature,nicked").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
+        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature,nicked,skinvalue,skinsignature,nickname").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
         int id = Integer.parseInt(datas[4]);
         String realRank = Rank.getRank(datas[0], id);
 
@@ -156,6 +156,7 @@ public class PreListen implements Listener {
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         Player player = e.getPlayer();
+        EntityPlayer entityPlayer = ((CraftPlayer) player).getHandle();
 
         //Check Nick
         boolean lobby = Bukkit.getServerName().equalsIgnoreCase("lobby");
@@ -163,23 +164,22 @@ public class PreListen implements Listener {
         String displayName = player.getName();
         String displayRank = data.getRealRank();
 
+        String skinValue = "";
+        String skinSignature = "";
+
+        boolean nickState = data.getDatas()[12].equals("1");
+
         if (lobby) {
-            //reset nick in lobby
-            displayName = data.getDatas()[5];
             displayRank = data.getRealRank();
-
-            //reset skin in lobby
-            GameProfile gameProfile = ((CraftPlayer) player).getProfile();
-            ReflectionUtils.setField(gameProfile, "name", displayName);
-            gameProfile.getProperties().removeAll("textures");
-            gameProfile.getProperties().put("textures", new Property("textures", data.getDatas()[10], data.getDatas()[11]));
+            displayName = data.getDatas()[5];
+        } else {
+            if (nickState) {
+                displayRank = data.getDatas()[1];
+                displayName = data.getDatas()[15];
+            }
+            skinValue = data.getDatas()[13];
+            skinSignature = data.getDatas()[14];
         }
-
-        boolean nicked = !data.getDatas()[5].equals(displayName);
-        if (nicked) {
-            displayRank = data.getDatas()[1];
-        }
-
 
         //Perms
         Set<String> perms = Sets.newHashSet(data.getDatas()[2].split("\\|"));
@@ -191,11 +191,21 @@ public class PreListen implements Listener {
         //User
         User user = new User(player, displayRank, data.getRealRank(), perms, Integer.parseInt(data.getDatas()[3]), Integer.parseInt(data.getDatas()[4]), data.getDatas()[6].equals("1"), data.getBungeeData(), data.getDatas()[6].equals("1"), data.getDatas()[5], data.getDatas()[10], data.getDatas()[11]);
 
+        //modify things
+        ReflectionUtils.setField(((CraftPlayer) player).getProfile(), "name", displayName);
+//        if (user.nickState())
+//            ReflectionUtils.setField(((CraftPlayer) player).getProfile(), "id", user.calculateNickHashUUID());
+
+        if (!skinValue.equals("")) {
+            entityPlayer.getProfile().getProperties().removeAll("textures");
+            entityPlayer.getProfile().getProperties().put("textures", new Property("textures", skinValue, skinSignature));
+        }
+
         //OP
         player.setOp(user.hasPermission("perm.op"));
 
         //packet
-        user.createTeamPacket(nicked, displayName);
+        user.createTeamPacket(user.nicked(), displayName);
 
         //send packets
         for (User u : User.getUsers()) {
@@ -210,7 +220,7 @@ public class PreListen implements Listener {
         }
 
         //nick
-        if (nicked)
+        if (user.nicked())
             user.sendPacket(new OutScoreboardTeam().a(Rank.getCode(data.getRealRank()) + RankSystem.playerNameEncode(user.realName)).c(Rank.getFormat(data.getRealRank(), user.id).getPrefix()).d(user.getGuildTag(true)).g(Collections.singletonList(data.getDatas()[5])).h(0).packet);
 
         //vanish
