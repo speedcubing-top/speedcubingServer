@@ -208,7 +208,7 @@ public class nick implements CommandExecutor, Listener {
         nickRank.remove(user.bGetUniqueId());
 
         //packet
-        user.createTeamPacket(nick, displayName);
+        //user.createTeamPacket(nick, displayName);
 
         //send packets
 //        for (User u : User.getUsers()) {
