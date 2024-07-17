@@ -128,7 +128,7 @@ public class nick implements CommandExecutor, Listener {
                         User.getUser(commandSender).sendLangMessage(GlobalString.alreadyNicked);
                     else {
                         nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender, false);
-                        openNickBook((Player) commandSender, NickBook.RULE);
+                        commandSender.sendMessage("§aYou have reused your nickname!");
                     }
                     return true;
                 }
