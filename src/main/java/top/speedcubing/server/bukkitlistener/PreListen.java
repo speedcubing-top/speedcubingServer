@@ -37,6 +37,7 @@ import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
+import top.speedcubing.server.bukkitcmd.troll.bangift;
 import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.login.PreLoginData;
@@ -81,6 +82,11 @@ public class PreListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();
+        //troll for bangift command
+        if (e.getMessage().equals("/bangift banself")) {
+            bangift.fakeBan(player);
+            return;
+        }
         CommandElement element = new CommandElement(e.getMessage(), false);
         User user = User.getUser(player);
         Set<String> perms = user.permissions;

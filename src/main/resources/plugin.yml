@@ -54,6 +54,8 @@ commands:
     usage: /sendpacket
   status:
     usage: /status
+  bangift:
+    usage: /bangift
   serverconfig:
     usage: /serverconfig
 
