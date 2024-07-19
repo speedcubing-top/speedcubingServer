@@ -5,6 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import net.minecraft.server.v1_8_R3.PacketPlayOutKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
@@ -92,6 +94,11 @@ public class PlayOut {
                 GameProfile profile = new GameProfile(targetID, target.bGetName());
                 profile.getProperties().put("textures", data.a().getProperties().get("textures").iterator().next());
                 datas.set(i, packet.new PlayerInfoData(profile, data.b(), data.c(), data.d()));
+            }
+        } else if (e.getPacket() instanceof PacketPlayOutKeepAlive) {
+            User user = User.getUser(e.getPlayer());
+            if (user.isCrashed) {
+                e.setCancelled(true);
             }
         }
     }

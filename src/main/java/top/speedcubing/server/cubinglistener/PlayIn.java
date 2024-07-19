@@ -66,6 +66,11 @@ public class PlayIn {
                     }
                 });
             }
+        } else if (e.getPacket() instanceof PacketPlayInKeepAlive) {
+            User user = User.getUser(e.getPlayer());
+            if (user.isCrashed) {
+                e.setCancelled(true);
+            }
         }
     }
 }

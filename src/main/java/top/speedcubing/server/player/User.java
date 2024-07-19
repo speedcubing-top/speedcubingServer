@@ -98,6 +98,7 @@ public class User extends IDPlayer {
     public String timeZone;
     public String status;
     public Skin defaultSkin;
+    public boolean isCrashed;
     public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
     public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName, String defaultSkinValue, String defaultSkinSignature) {
@@ -116,6 +117,7 @@ public class User extends IDPlayer {
         this.timeZone = dbSelect("timezone").getString();
         this.status = dbSelect("status").getString();
         this.defaultSkin = new Skin(defaultSkinValue, defaultSkinSignature);
+        this.isCrashed = false;
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
         usersByID.put(id, this);

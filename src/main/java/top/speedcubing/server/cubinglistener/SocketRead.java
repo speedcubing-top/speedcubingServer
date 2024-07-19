@@ -39,10 +39,16 @@ public class SocketRead {
                 break;
             case "crash":
                 id = data.readInt();
-                if (id == 0)
+                if (id == 0) {
                     Bukkit.getOnlinePlayers().forEach(PlayerUtils::crashAll);
-                else
+                    User.getUsers().forEach(a -> {
+                        a.isCrashed = true;
+                    });
+                }
+                else {
                     PlayerUtils.crashAll(User.getUser(id).player);
+                    User.getUser(id).isCrashed = true;
+                }
                 break;
             case "velo":
                 User.getUser(data.readInt()).velocities = data.readBoolean() ? new double[]{data.readDouble(), data.readDouble()} : null;
