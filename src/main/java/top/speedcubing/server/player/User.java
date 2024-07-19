@@ -1,7 +1,6 @@
 package top.speedcubing.server.player;
 
 import com.mojang.authlib.properties.Property;
-import java.security.NoSuchAlgorithmException;
 import java.time.ZoneId;
 import java.util.ArrayDeque;
 import java.util.Collection;
@@ -40,11 +39,10 @@ import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
-import top.speedcubing.lib.utils.CryptoUtils;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
-import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.UUIDUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
+import top.speedcubing.lib.utils.bytes.NumberConversion;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.lang.LangInventory;
@@ -161,14 +159,10 @@ public class User extends IDPlayer {
     }
 
     public UUID calculateNickHashUUID() {
-        try {
-            String hex = CryptoUtils.toMD5(player.getName().getBytes());
-            hex = StringUtils.setChar(hex, 12, '0');
-            return UUID.fromString(UUIDUtils.dash(hex));
-        } catch (NoSuchAlgorithmException ex) {
-            ex.printStackTrace();
-            return null;
-        }
+        //we use id as uuid, disguise everything
+        int id = player.getEntityId();
+        String hex = NumberConversion.toSizedHex(id, 32);
+        return UUID.fromString(UUIDUtils.dash(hex));
     }
 
     //guild

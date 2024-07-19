@@ -63,7 +63,7 @@ public class PlayOut {
         } else if (e.getPacket() instanceof PacketPlayOutNamedEntitySpawn packet) {
             UUID uuid = (UUID) ReflectionUtils.getField(packet, "b");
             User user = User.usersByUUID.get(uuid);
-            if (user != null && user.nicked()) {
+            if (user != null) {
                 ReflectionUtils.setField(packet, "b", user.calculateNickHashUUID());
             }
         } else if (e.getPacket() instanceof PacketPlayOutPlayerInfo packet) {
@@ -85,9 +85,6 @@ public class PlayOut {
                         targetID = e.getPlayer().getUniqueId();
                     } else continue;
                 } else {
-                    if (!target.nicked()) {
-                        continue;
-                    }
                     targetID = target.calculateNickHashUUID();
                 }
 
