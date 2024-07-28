@@ -36,6 +36,7 @@ import top.speedcubing.server.bukkitcmd.limbo;
 import top.speedcubing.server.bukkitcmd.nick.nick;
 import top.speedcubing.server.bukkitcmd.nick.unnick;
 import top.speedcubing.server.bukkitcmd.overrided.plugins;
+import top.speedcubing.server.bukkitcmd.ranks;
 import top.speedcubing.server.bukkitcmd.skin;
 import top.speedcubing.server.bukkitcmd.staff.announce;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
@@ -199,6 +200,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("sendpacket").setExecutor(new sendpacket());
         Bukkit.getPluginCommand("cpsdisplay").setExecutor(new cpsdisplay());
         Bukkit.getPluginCommand("bangift").setExecutor(new bangift());
+        Bukkit.getPluginCommand("ranks").setExecutor(new ranks());
     }
 
     private void registerListeners() {
