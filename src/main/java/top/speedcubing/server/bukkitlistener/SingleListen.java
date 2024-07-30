@@ -16,7 +16,8 @@ public class SingleListen implements Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     public void CreatureSpawnEvent(CreatureSpawnEvent e) {
-        if (Bukkit.getServerName().equals("Bedwars")) return;
+        String serverName = Bukkit.getServerName();
+        if (serverName.equals("Bedwars") || serverName.equalsIgnoreCase("knockbackffa") || serverName.equalsIgnoreCase("fastbuilder_test")) return;
         if (e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER && e.getSpawnReason() != CreatureSpawnEvent.SpawnReason.SPAWNER_EGG)
             e.setCancelled(true);
     }
