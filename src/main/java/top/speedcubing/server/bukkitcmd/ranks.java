@@ -24,17 +24,66 @@ public class ranks implements CommandExecutor {
         InventoryBuilder inv = new InventoryBuilder(54, "§bSpeedcubing Server §aRanks");
         ItemStack grayGlass = new ItemBuilder(Material.STAINED_GLASS_PANE).name(" ").durability(7).build();
         ItemStack vip = new ItemBuilder(Material.IRON_BLOCK).name("§d[VIP]").
-                lore("§7- do some shit.", getFormatName(player, "vip")).
-                build();
+                lore(
+                        "§7- Chat Prefix: §d[VIP]",
+                        "§7- §3KnockBackFFA §7All §aKill Effects.",
+                        "§7- §3KnockBackFFA §7All §aProjectile Effects.",
+                        "§7- /fly in §3lobby",
+                        "§7- /reset in §3MLGRush",
+                        "§7Preview: " + getFormatName(player, "vip"),
+                        "§7Coming Soon...",
+                        "",
+                        "§7Price: §65$",
+                        "§7Buy: §aspeedcubing.top/discord §7Open a ticket."
+                )
+                .build();
         ItemStack vipPlus = new ItemBuilder(Material.IRON_BLOCK).name("§d[VIP+]").glow().
-                lore("§7- do some shit", getFormatName(player, "vipplus")).
-                build();
+                lore(
+                        "§7- Chat Prefix: §d[VIP+]",
+                        "§7- §3KnockBackFFA §7All §aKill Effects.",
+                        "§7- §3KnockBackFFA §7All §aProjectile Effects.",
+                        "§7- /fly in §3lobby",
+                        "§7- /reset in §3MLGRush",
+                        "§7Preview: " + getFormatName(player, "vipplus"),
+                        "§7Coming Soon...",
+                        "",
+                        "§7Price: §610$",
+                        "§7Buy: §aspeedcubing.top/discord §7Open a ticket."
+                )
+
+                .build();
         ItemStack premium = new ItemBuilder(Material.GOLD_BLOCK).name("§6[Premium]").
-                lore("§7- do some shit", getFormatName(player, "premium")).
-                build();
+                lore(
+                        "§7- Chat Prefix: §6[Premium]",
+                        "§7- §3KnockBackFFA §7All §aKill Effects.",
+                        "§7- §3KnockBackFFA §7All §aProjectile Effects.",
+                        "§7- /fly in §3lobby",
+                        "§7- /reset in §3MLGRush",
+                        "§7- /skin <name> - §aChange Your Skin",
+                        "§7Preview: " + getFormatName(player, "premium"),
+                        "§7Coming Soon...",
+                        "",
+                        "§7Price: §615$",
+                        "§7Buy: §aspeedcubing.top/discord §7Open a ticket."
+                )
+                .build();
         ItemStack premiumPlus = new ItemBuilder(Material.GOLD_BLOCK).name("§6[Premium+]").glow().
-                lore("§7- do some shit", getFormatName(player, "premiumplus")).
-                build();
+                lore(
+                        "§7- Chat Prefix: §6[Premium+]",
+                        "§7- §3KnockBackFFA §7All §aKill Effects.",
+                        "§7- §3KnockBackFFA §7All §aProjectile Effects.",
+                        "§7- /fly in §3lobby",
+                        "§7- /reset in §3MLGRush",
+                        "§7- /skin <name> - §aChange Your Skin",
+                        "§7- /nick - §aHide Your Real Name In Game",
+                        "§7Preview: " + getFormatName(player, "premiumplus"),
+                        "§7Coming Soon...",
+                        "",
+                        "§7Price: §63$/month",
+                        "§7Note: You need have §6[Premium] §7to buy this rank.",
+                        "§7Buy: §aspeedcubing.top/discord §7Open a ticket."
+                )
+                .build();
         //more ranks
         for (int i = 0; i < 9; i++) {
             inv.setItem(grayGlass, i);
