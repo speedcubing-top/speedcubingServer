@@ -46,6 +46,7 @@ import top.speedcubing.server.bukkitcmd.staff.history;
 import top.speedcubing.server.bukkitcmd.staff.proxycommand;
 import top.speedcubing.server.bukkitcmd.staff.serverconfig;
 import top.speedcubing.server.bukkitcmd.staff.testkb;
+import top.speedcubing.server.bukkitcmd.status;
 import top.speedcubing.server.bukkitcmd.troll.bangift;
 import top.speedcubing.server.bukkitcmd.troll.deepfry;
 import top.speedcubing.server.bukkitcmd.troll.kaboom;
@@ -201,6 +202,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("cpsdisplay").setExecutor(new cpsdisplay());
         Bukkit.getPluginCommand("bangift").setExecutor(new bangift());
         Bukkit.getPluginCommand("ranks").setExecutor(new ranks());
+        Bukkit.getPluginCommand("status").setExecutor(new status());
     }
 
     private void registerListeners() {

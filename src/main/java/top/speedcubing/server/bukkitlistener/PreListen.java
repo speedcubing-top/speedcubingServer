@@ -20,6 +20,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -78,7 +79,6 @@ public class PreListen implements Listener {
         //auth
         AuthEventHandlers.onInventoryOpen(e);
     }
-
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();

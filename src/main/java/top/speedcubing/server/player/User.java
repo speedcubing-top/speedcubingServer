@@ -113,7 +113,7 @@ public class User extends IDPlayer {
         this.allowOp = allowOp;
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString();
-        this.status = dbSelect("status").getString();
+        this.status = dbSelect("status").getString() == null ? "null" : dbSelect("status").getString();
         this.defaultSkin = new Skin(defaultSkinValue, defaultSkinSignature);
         this.isCrashed = false;
         if (!bungeeData.hor.equals("null"))

@@ -30,7 +30,7 @@ public class PostListen implements Listener {
 
         //modify profile id for packets after event
         ReflectionUtils.setField(user.toNMS().getProfile(), "id", user.calculateNickHashUUID());
-
+        user.dbUpdate("status='" + user.status + "'");
         AuthData.map.remove(user);
         user.removeCPSHologram();
         User.usersByID.remove(user.id);
