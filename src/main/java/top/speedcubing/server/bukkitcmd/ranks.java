@@ -42,7 +42,7 @@ public class ranks implements CommandExecutor {
                         "§7- Chat Prefix: §d[VIP+]",
                         "§7- §3KnockBackFFA §7All §aKill Effects.",
                         "§7- §3KnockBackFFA §7All §aProjectile Effects.",
-                        "§7- §3KnockBackFFA §7Custom Armor Color.",
+                        "§7- §3KnockBackFFA §aCustom Armor Color.",
                         "§7- /fly in §3lobby",
                         "§7- /reset in §3MLGRush",
                         "§7Preview: " + getFormatName(player, "vipplus"),
