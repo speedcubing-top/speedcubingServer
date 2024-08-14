@@ -7,11 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import top.speedcubing.common.rank.Rank;
-import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.server.player.User;
-import top.speedcubing.server.utils.RankSystem;
 
 public class ranks implements CommandExecutor {
     @Override
@@ -58,6 +56,7 @@ public class ranks implements CommandExecutor {
                         "§7- Chat Prefix: §6[Premium]",
                         "§7- §3KnockBackFFA §7All §aKill Effects.",
                         "§7- §3KnockBackFFA §7All §aProjectile Effects.",
+                        "§7- §3KnockBackFFA §aCustom Armor Color.",
                         "§7- /fly in §3lobby",
                         "§7- /reset in §3MLGRush",
                         "§7- /skin <name> - §aChange Your Skin",
@@ -73,6 +72,7 @@ public class ranks implements CommandExecutor {
                         "§7- Chat Prefix: §6[Premium+]",
                         "§7- §3KnockBackFFA §7All §aKill Effects.",
                         "§7- §3KnockBackFFA §7All §aProjectile Effects.",
+                        "§7- §3KnockBackFFA §aCustom Armor Color.",
                         "§7- /fly in §3lobby",
                         "§7- /reset in §3MLGRush",
                         "§7- /skin <name> - §aChange Your Skin",

@@ -17,11 +17,13 @@ import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
+import top.speedcubing.server.player.User;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class history implements CommandExecutor, Listener {
@@ -181,7 +183,7 @@ public class history implements CommandExecutor, Listener {
                 long remain = getPunishRemain(punishment.getAt(), punishment.getDays(), punishment.getPardon(), SystemUtils.getCurrentSecond());
                 inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eBanned logs")
                         .addLore("§eName: §a" + values[0],
-                                "§eOperator: §a" + punishment.getOperator(),
+                                "§eOperator: §a" + (punishment.getOperator().length() == 36 ? Database.connection.select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").getString() : punishment.getOperator()),
                                 "§eReason: §a" + punishment.getReason(),
                                 "§eBanID: §a" + punishment.getId(),
                                 "§eDuration: §a" + punishment.getDays(),
@@ -250,7 +252,7 @@ public class history implements CommandExecutor, Listener {
                 long remain = getPunishRemain(punishment.getAt(), punishment.getDays(), punishment.getPardon(), SystemUtils.getCurrentSecond());
                 inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eMuted logs")
                         .addLore("§eName: §a" + values[0],
-                                "§eOperator: §a" + punishment.getOperator(),
+                                "§eOperator: §a" + (punishment.getOperator().length() == 36 ? Database.connection.select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").getString() : punishment.getOperator()),
                                 "§eReason: §a" + punishment.getReason(),
                                 "§eMuteID: §a" + punishment.getId(),
                                 "§eDuration: §a" + punishment.getDays(),
