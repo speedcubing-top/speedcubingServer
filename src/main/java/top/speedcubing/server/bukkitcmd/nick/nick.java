@@ -19,6 +19,7 @@ import top.speedcubing.lib.math.scMath;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
+import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.lang.GlobalString;
@@ -222,7 +223,7 @@ public class nick implements CommandExecutor, Listener {
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + displayName + "',nickpriority='" + displayRank + "'" : ""));
         Database.connection.update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);
         user.writeToProxy(new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(displayRank).writeUTF(displayName).toByteArray());
-
+        Database.systemConnection.insert("nicknames", "uuid,name,nickname,nicktime").values("'" + user.uuid + "','" + user.realName + "','" + displayName + "'," + SystemUtils.getCurrentSecond()).execute();
         if (openBook) {
             openNickBook(player, NickBook.RULE);
         }
