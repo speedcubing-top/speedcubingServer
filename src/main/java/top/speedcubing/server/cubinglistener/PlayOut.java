@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import net.minecraft.server.v1_8_R3.PacketPlayOutKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
@@ -63,7 +62,7 @@ public class PlayOut {
         } else if (e.getPacket() instanceof PacketPlayOutNamedEntitySpawn packet) {
             UUID uuid = (UUID) ReflectionUtils.getField(packet, "b");
             User user = User.usersByUUID.get(uuid);
-            if (user != null) {
+            if (user != null && user.nicked()) {
                 ReflectionUtils.setField(packet, "b", user.calculateNickHashUUID());
             }
         } else if (e.getPacket() instanceof PacketPlayOutPlayerInfo packet) {
@@ -73,19 +72,23 @@ public class PlayOut {
                 PacketPlayOutPlayerInfo.PlayerInfoData data = datas.get(i);
                 UUID targetID = data.a().getId();
 
-                if (targetID.equals(e.getPlayer().getUniqueId())) {
+                if (targetID.equals(e.getPlayer().getUniqueId())) { //if the target = self
                     continue;
                 }
 
                 User target = User.getUser(targetID);
-                if (target == null) {
+
+                if (target == null) { //if targetID isnt a player
                     User user = User.getUser(e.getPlayer());
-                    if(user.calculateNickHashUUID().equals(targetID)) {
-                        target = user;
-                        targetID = e.getPlayer().getUniqueId();
+                    if (user.calculateNickHashUUID().equals(targetID)) { //if target = self nick -> modify
+                        target = user; //result name = self
+                        targetID = user.uuid; //result uuid = self uuid
                     } else continue;
                 } else {
-                    targetID = target.calculateNickHashUUID();
+                    if (!target.nicked()) {
+                        continue;
+                    }
+                    targetID = target.calculateNickHashUUID(); //result uuid = targetID -> user -> nick uuid
                 }
 
                 GameProfile profile = new GameProfile(targetID, target.bGetName());
