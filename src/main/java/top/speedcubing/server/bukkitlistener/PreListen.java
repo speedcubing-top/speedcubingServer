@@ -6,6 +6,7 @@ import com.mojang.authlib.properties.Property;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -158,8 +159,12 @@ public class PreListen implements Listener {
         Set<String> perms = Sets.newHashSet(datas[2].split("\\|"));
         perms.remove("");
         perms.addAll(Rank.rankByName.get(realRank).getPerms());
-        Set<String> groups = perms.stream().filter(s -> User.group.matcher(s).matches() && Rank.grouppermissions.containsKey(s.substring(6))).map(s -> s.substring(6)).collect(Collectors.toSet());
-        groups.forEach(a -> perms.addAll(Rank.grouppermissions.get(a)));
+
+        for (String s : perms) {
+            if (User.group.matcher(s).matches() && Rank.grouppermissions.containsKey(s.substring(6))) {
+                perms.addAll(Rank.grouppermissions.get(s.substring(6)));
+            }
+        }
 
         //Check Nick
         boolean lobby = Bukkit.getServerName().equalsIgnoreCase("lobby");
