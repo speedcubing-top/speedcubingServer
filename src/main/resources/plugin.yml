@@ -33,8 +33,6 @@ commands:
     usage: /unnick
   testkb:
     usage: /testkb
-  limbo:
-    usage: /limbo
   kaboom:
     usage: /kaboom
   deepfry:
