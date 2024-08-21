@@ -6,10 +6,11 @@ import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import org.bukkit.Bukkit;
 
 public class CubingCommandLoader {
-    public static boolean loadCommands(String dir){
-        dir = dir.replace(".","/");
+    public static void loadCommands(String packageName) {
+        packageName = packageName.replace(".", "/") + "/";
         try {
             File jarFile = new File(CubingCommandLoader.class.getProtectionDomain().getCodeSource().getLocation().toURI());
             String jarFilePath = jarFile.getAbsolutePath();
@@ -19,21 +20,23 @@ public class CubingCommandLoader {
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
                     String entryName = entry.getName();
-                    if (entryName.endsWith(".class") && entryName.startsWith("top/speedcubing/server/cubingcmd/")) {
+                    if (entryName.endsWith(".class") && entryName.startsWith(packageName)) {
                         String className = entryName.replace('/', '.').substring(0, entryName.length() - 6);
                         try {
-                            Class.forName(className).getDeclaredConstructor().newInstance();
-                            System.out.println("Loaded command: " + className);
+                            CubingCommand command = (CubingCommand) Class.forName(className).getDeclaredConstructor().newInstance();
+                            if (command.shouldLoad()) {
+                                command.load();
+                                System.out.println("Loaded command class: " + className + ", command: " + command.getAlias());
+                            }
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
                 }
             }
-            return true;
         } catch (URISyntaxException | IOException ex) {
             ex.printStackTrace();
-            return false;
+            Bukkit.getServer().shutdown();
         }
     }
 }

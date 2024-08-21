@@ -90,7 +90,8 @@ public class speedcubingServer extends JavaPlugin {
 
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", new FMLHSListener());
 
-        CubingCommandLoader.loadCommands("top.speedcuibng");
+        CubingCommandLoader.loadCommands("top.speedcubing.server.cubingcmd");
+
         TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
         new LogListener().reloadFilter();
 

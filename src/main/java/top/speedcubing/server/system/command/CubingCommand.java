@@ -17,12 +17,19 @@ public abstract class CubingCommand {
 
     public CubingCommand(String... command) {
         this.alias = Sets.hashSet(command);
-        CubingCommandManager.register(this);
     }
 
     public abstract void execute(CommandSender sender, String command, String[] strings);
 
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args, Location location) {
         return null;
+    }
+
+    public boolean shouldLoad() {
+        return true;
+    }
+
+    public void load() {
+        CubingCommandManager.register(this);
     }
 }
