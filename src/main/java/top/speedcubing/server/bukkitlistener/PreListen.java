@@ -88,11 +88,11 @@ public class PreListen implements Listener {
         }
         CommandElement element = new CommandElement(e.getMessage(), false);
         User user = User.getUser(player);
-        Set<String> perms = user.permissions;
-        if (!(perms.contains("cmd." + element.command) || perms.contains("cmd.*"))) {
-            user.sendLangMessage(perms.contains("view." + element.command) || perms.contains("view.*") ?
-                    GlobalString.NoPermCommand : GlobalString.UnknownCommand);
-            e.setCancelled(true);
+            Set<String> perms = user.permissions;
+            if (!(perms.contains("cmd." + element.command) || perms.contains("cmd.*"))) {
+                user.sendLangMessage(perms.contains("view." + element.command) || perms.contains("view.*") ?
+                        GlobalString.NoPermCommand : GlobalString.UnknownCommand);
+                e.setCancelled(true);
         }
         if (!e.isCancelled()) {
             e.setCancelled(CubingCommandManager.execute(player, element.command, element.strings));

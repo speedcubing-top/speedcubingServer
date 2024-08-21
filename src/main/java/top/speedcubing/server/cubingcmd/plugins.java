@@ -9,7 +9,7 @@ public class plugins extends CubingCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, String command, String[] strings) {
+    public void execute(CommandSender sender, String command, String[] args) {
         sender.sendMessage("Plugins (3): §aspeedcubing§f, §aspeedcubingLib§f, §aspeedcubingServer");
     }
 }

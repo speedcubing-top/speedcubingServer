@@ -15,15 +15,15 @@ public class skin extends CubingCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, String command, String[] strings) {
+    public void execute(CommandSender sender, String command, String[] args) {
         Player player = (Player) sender;
         if (!((SkinEvent) new SkinEvent(player).call()).isCancelled()) {
             User user = User.getUser(sender);
             String target = "";
-            if (strings.length == 0)
+            if (args.length == 0)
                 target = user.realName;
-            else if (strings.length == 1)
-                target = strings[0];
+            else if (args.length == 1)
+                target = args[0];
             else player.sendMessage("/skin , /skin <player>");
 
             if (!target.isEmpty() && !target.equalsIgnoreCase(user.realName)) {

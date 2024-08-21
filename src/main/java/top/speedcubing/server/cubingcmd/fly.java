@@ -13,8 +13,8 @@ public class fly extends CubingCommand {
     }
 
     @Override
-    public void execute(CommandSender commandSender, String command, String[] strings) {
-        if (strings.length == 0) {
+    public void execute(CommandSender commandSender, String command, String[] args) {
+        if (args.length == 0) {
             Player player = (Player) commandSender;
             if (!((ToggleFlyEvent) new ToggleFlyEvent(player).call()).isCancelled()) {
                 boolean allowFlight = player.getAllowFlight();

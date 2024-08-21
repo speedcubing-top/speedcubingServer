@@ -10,7 +10,7 @@ public class limbo extends CubingCommand {
         super("limbo");
     }
     @Override
-    public void execute(CommandSender sender, String command, String[] strings) {
+    public void execute(CommandSender sender, String command, String[] args) {
         BungeePluginMessage.switchServer((Player) sender, "limbo");
     }
 }

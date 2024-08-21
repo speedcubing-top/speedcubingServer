@@ -13,7 +13,7 @@ public class gc extends CubingCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, String command, String[] strings) {
+    public void execute(CommandSender sender, String command, String[] args) {
         long t = System.currentTimeMillis();
         sender.sendMessage("Before: " + getMemoryUsageInfo());
         System.gc();

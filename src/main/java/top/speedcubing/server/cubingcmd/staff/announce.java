@@ -12,13 +12,13 @@ public class announce extends CubingCommand {
     }
 
     @Override
-    public void execute(CommandSender commandSender, String s, String[] strings) {
-        if (strings.length == 0) {
+    public void execute(CommandSender commandSender, String s, String[] args) {
+        if (args.length == 0) {
             return;
         }
 
         StringBuilder builder = new StringBuilder();
-        for (String str : strings) {
+        for (String str : args) {
             builder.append(" ").append(str);
         }
 

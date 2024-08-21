@@ -11,7 +11,7 @@ public class terms extends CubingCommand {
     }
 
     @Override
-    public void execute(CommandSender sender, String command, String[] strings) {
+    public void execute(CommandSender sender, String command, String[] args) {
         User.getUser(sender).sendLangMessage(GlobalString.terms);
     }
 }
