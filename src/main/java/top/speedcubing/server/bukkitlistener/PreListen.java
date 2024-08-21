@@ -160,11 +160,13 @@ public class PreListen implements Listener {
         perms.remove("");
         perms.addAll(Rank.rankByName.get(realRank).getPerms());
 
+        Set<String> toAdd = new HashSet<>();
         for (String s : perms) {
             if (User.group.matcher(s).matches() && Rank.grouppermissions.containsKey(s.substring(6))) {
-                perms.addAll(Rank.grouppermissions.get(s.substring(6)));
+                toAdd.addAll(Rank.grouppermissions.get(s.substring(6)));
             }
         }
+        perms.addAll(toAdd);
 
         //Check Nick
         boolean lobby = Bukkit.getServerName().equalsIgnoreCase("lobby");

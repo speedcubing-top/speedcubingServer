@@ -36,6 +36,5 @@ public class Configuration {
         Configuration.blacklistedMod.clear();
         ServerConfig.config.get("blacklistedmod").getAsJsonArray().forEach(a -> Configuration.blacklistedMod.add(Pattern.compile(a.getAsString())));
         Configuration.discordWebook = Database.systemConnection.select("discord_webhook").from("servers").where("name=\"" + Bukkit.getServer().getServerName() + "\"").getString();
-
     }
 }
