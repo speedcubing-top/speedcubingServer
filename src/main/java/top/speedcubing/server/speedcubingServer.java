@@ -1,17 +1,12 @@
 package top.speedcubing.server;
 
-import edu.mit.jwi.Dictionary;
-import edu.mit.jwi.IDictionary;
-
 import java.io.File;
-import java.net.URL;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Pattern;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -31,12 +26,9 @@ import top.speedcubing.server.bukkitcmd.fly;
 import top.speedcubing.server.bukkitcmd.getitemtype;
 import top.speedcubing.server.bukkitcmd.hub;
 import top.speedcubing.server.bukkitcmd.image;
-import top.speedcubing.server.bukkitcmd.limbo;
 import top.speedcubing.server.bukkitcmd.nick.nick;
 import top.speedcubing.server.bukkitcmd.nick.unnick;
-import top.speedcubing.server.bukkitcmd.overrided.plugins;
 import top.speedcubing.server.bukkitcmd.ranks;
-import top.speedcubing.server.bukkitcmd.skin;
 import top.speedcubing.server.bukkitcmd.staff.announce;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.bukkitcmd.staff.freeze;
@@ -54,7 +46,6 @@ import top.speedcubing.server.bukkitlistener.PostListen;
 import top.speedcubing.server.bukkitlistener.PreListen;
 import top.speedcubing.server.bukkitlistener.SingleListen;
 import top.speedcubing.server.bukkitlistener.pluginchannel.FMLHSListener;
-import top.speedcubing.server.commandoverrider.OverrideCommandManager;
 import top.speedcubing.server.cubinglistener.CubingTick;
 import top.speedcubing.server.cubinglistener.PlayIn;
 import top.speedcubing.server.cubinglistener.PlayOut;
@@ -63,8 +54,10 @@ import top.speedcubing.server.cubinglistener.SocketRead;
 import top.speedcubing.server.lang.LanguageSystem;
 import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
+import top.speedcubing.server.system.command.CubingCommandLoader;
 import top.speedcubing.server.utils.Configuration;
 import top.speedcubing.server.utils.LogListener;
+import top.speedcubing.server.utils.WordDictionary;
 
 public class speedcubingServer extends JavaPlugin {
     public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
@@ -75,7 +68,6 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean restartable = false; //is it time to restart ?
     public static speedcubingServer instance;
     public static ScheduledExecutorService scheduledPool = Executors.newScheduledThreadPool(10);
-    public static IDictionary dict;
 
     @Override
     public void onEnable() {
@@ -91,14 +83,6 @@ public class speedcubingServer extends JavaPlugin {
         registerListeners();
         CommonLib.init();
         SocketReader.init(new HostAndPort("127.0.0.1", Bukkit.getPort() + 1000));
-        try {
-            URL url = new URL("file", null, "/storage/WNdb-3.0/dict");
-            dict = new Dictionary(url);
-            dict.open();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-
 
         LanguageSystem.init();
 
@@ -106,8 +90,8 @@ public class speedcubingServer extends JavaPlugin {
 
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", new FMLHSListener());
 
-        OverrideCommandManager.register(new plugins());
-        TabCompleteUtils.registerEmptyTabComplete("announce", "proxycommand", "heal", "fly", "hub", "skin", "discord", "nick", "unnick", "resetpassword", "premium");
+        CubingCommandLoader.loadCommands("top.speedcubing.server.cubingcmd", speedcubingServer.class);
+
         new LogListener().reloadFilter();
 
         Database.systemConnection.update("servers",
@@ -174,18 +158,16 @@ public class speedcubingServer extends JavaPlugin {
                 "onlinecount=-1,ram_max=-1,ram_heap=-1,ram_used=-1,tps1=-1,tps2=-1,tps3=-1",
                 "name='" + Bukkit.getServerName() + "'"
         );
-        dict.close();
+        WordDictionary.dict.close();
     }
 
     private void registerCommands() {
         Bukkit.getPluginCommand("nick").setExecutor(new nick());
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("discord").setExecutor(new discord());
-        Bukkit.getPluginCommand("skin").setExecutor(new skin());
         Bukkit.getPluginCommand("hub").setExecutor(new hub());
         Bukkit.getPluginCommand("fly").setExecutor(new fly());
         Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
-        Bukkit.getPluginCommand("limbo").setExecutor(new limbo());
         Bukkit.getPluginCommand("heal").setExecutor(new heal());
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
         Bukkit.getPluginCommand("announce").setExecutor(new announce());

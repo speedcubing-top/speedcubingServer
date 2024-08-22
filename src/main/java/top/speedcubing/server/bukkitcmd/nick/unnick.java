@@ -10,7 +10,6 @@ import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 
 public class unnick implements CommandExecutor {
-
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         Player player = (Player) commandSender;
 

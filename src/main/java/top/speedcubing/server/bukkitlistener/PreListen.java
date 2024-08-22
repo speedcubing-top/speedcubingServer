@@ -6,11 +6,11 @@ import com.mojang.authlib.properties.Property;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
 import org.bukkit.Bukkit;
@@ -20,7 +20,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -39,7 +38,7 @@ import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.bukkitcmd.troll.bangift;
-import top.speedcubing.server.commandoverrider.OverrideCommandManager;
+import top.speedcubing.server.system.command.CubingCommandManager;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
@@ -89,16 +88,15 @@ public class PreListen implements Listener {
         }
         CommandElement element = new CommandElement(e.getMessage(), false);
         User user = User.getUser(player);
-        Set<String> perms = user.permissions;
-        if (!(perms.contains("cmd." + element.command) || perms.contains("cmd.*"))) {
-            user.sendLangMessage(perms.contains("view." + element.command) || perms.contains("view.*") ?
-                    GlobalString.NoPermCommand : GlobalString.UnknownCommand);
-            e.setCancelled(true);
+            Set<String> perms = user.permissions;
+            if (!(perms.contains("cmd." + element.command) || perms.contains("cmd.*"))) {
+                user.sendLangMessage(perms.contains("view." + element.command) || perms.contains("view.*") ?
+                        GlobalString.NoPermCommand : GlobalString.UnknownCommand);
+                e.setCancelled(true);
         }
         if (!e.isCancelled()) {
-            e.setCancelled(OverrideCommandManager.dispatchOverride(player, element.command, element.strings));
+            e.setCancelled(CubingCommandManager.execute(player, element.command, element.strings));
         }
-
         //auth
         AuthEventHandlers.onCmdExecute(e);
     }
@@ -158,8 +156,14 @@ public class PreListen implements Listener {
         Set<String> perms = Sets.newHashSet(datas[2].split("\\|"));
         perms.remove("");
         perms.addAll(Rank.rankByName.get(realRank).getPerms());
-        Set<String> groups = perms.stream().filter(s -> User.group.matcher(s).matches() && Rank.grouppermissions.containsKey(s.substring(6))).map(s -> s.substring(6)).collect(Collectors.toSet());
-        groups.forEach(a -> perms.addAll(Rank.grouppermissions.get(a)));
+
+        Set<String> toAdd = new HashSet<>();
+        for (String s : perms) {
+            if (User.group.matcher(s).matches() && Rank.grouppermissions.containsKey(s.substring(6))) {
+                toAdd.addAll(Rank.grouppermissions.get(s.substring(6)));
+            }
+        }
+        perms.addAll(toAdd);
 
         //Check Nick
         boolean lobby = Bukkit.getServerName().equalsIgnoreCase("lobby");
@@ -277,7 +281,7 @@ public class PreListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void ServerCommandEvent(ServerCommandEvent e) {
         CommandElement element = new CommandElement(e.getCommand(), true);
-        e.setCancelled(OverrideCommandManager.dispatchOverride(e.getSender(), element.command, element.strings));
+        e.setCancelled(CubingCommandManager.execute(e.getSender(), element.command, element.strings));
         System.out.print("[CONSOLE] " + e.getCommand());
     }
 }

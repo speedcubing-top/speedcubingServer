@@ -1,29 +1,29 @@
-package top.speedcubing.server.bukkitcmd;
+package top.speedcubing.server.cubingcmd;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.lib.api.MojangAPI;
 import top.speedcubing.lib.api.mojang.ProfileSkin;
-import top.speedcubing.lib.api.mojang.Skin;
-import top.speedcubing.lib.bukkit.PlayerUtils;
-import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
-import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.events.player.SkinEvent;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
+import top.speedcubing.server.system.command.CubingCommand;
 
-public class skin implements CommandExecutor {
-    public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
-        Player player = (Player) commandSender;
+public class skin extends CubingCommand {
+    public skin() {
+        super("skin");
+    }
+
+    @Override
+    public void execute(CommandSender sender, String command, String[] args) {
+        Player player = (Player) sender;
         if (!((SkinEvent) new SkinEvent(player).call()).isCancelled()) {
-            User user = User.getUser(commandSender);
+            User user = User.getUser(sender);
             String target = "";
-            if (strings.length == 0)
+            if (args.length == 0)
                 target = user.realName;
-            else if (strings.length == 1)
-                target = strings[0];
+            else if (args.length == 1)
+                target = args[0];
             else player.sendMessage("/skin , /skin <player>");
 
             if (!target.isEmpty() && !target.equalsIgnoreCase(user.realName)) {
@@ -32,11 +32,11 @@ public class skin implements CommandExecutor {
                     profileSkin = MojangAPI.getSkinByName(target);
                     if (profileSkin == null) {
                         user.sendLangMessage(GlobalString.invalidName);
-                        return true;
+                        return;
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    return true;
+                    return;
                 }
                 user.updateSkin(profileSkin.getSkin(), target);
             } else if (target.equalsIgnoreCase(user.realName)) {
@@ -45,6 +45,5 @@ public class skin implements CommandExecutor {
                 player.sendMessage("§cDefault skin not found");
             }
         }
-        return true;
     }
 }

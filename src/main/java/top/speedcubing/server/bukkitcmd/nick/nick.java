@@ -35,7 +35,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 
-import static top.speedcubing.server.speedcubingServer.dict;
+import top.speedcubing.server.utils.WordDictionary;
 
 public class nick implements CommandExecutor, Listener {
     public static final Map<UUID, Boolean> settingNick = new HashMap<>();
@@ -397,12 +397,8 @@ public class nick implements CommandExecutor, Listener {
     }
 
     public static String getRandomWord(POS pos) {
-        if (dict == null) {
-            System.out.println("WordNet dictionary not initialized!");
-            return "unknown";
-        }
         List<String> words = new ArrayList<>();
-        for (Iterator<IIndexWord> it = dict.getIndexWordIterator(pos); it.hasNext(); ) {
+        for (Iterator<IIndexWord> it = WordDictionary.dict.getIndexWordIterator(pos); it.hasNext(); ) {
             IIndexWord indexWord = it.next();
             String lemma = indexWord.getLemma();
             if (!lemma.contains(" ") && !lemma.contains("-")) {
