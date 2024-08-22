@@ -21,7 +21,6 @@ import top.speedcubing.common.CommonLib;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.io.SocketReader;
 import top.speedcubing.lib.api.mojang.ProfileSkin;
-import top.speedcubing.lib.api.mojang.Skin;
 import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SystemUtils;
