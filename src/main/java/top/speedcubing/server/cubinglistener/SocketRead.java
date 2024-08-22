@@ -60,7 +60,8 @@ public class SocketRead {
                 if (vanish)
                     Bukkit.getScheduler().runTask(speedcubingServer.getInstance(), () -> {
                         for (Player p : Bukkit.getOnlinePlayers())
-                            p.hidePlayer(user.player);
+                            if (!User.getUser(p).isStaff)
+                                p.hidePlayer(user.player);
                     });
                 else
                     Bukkit.getScheduler().runTask(speedcubingServer.getInstance(), () -> {
