@@ -85,6 +85,88 @@ public class ranks implements CommandExecutor {
                         "§7Buy: §aspeedcubing.top/discord §7Open a ticket."
                 )
                 .build();
+        ItemStack yt = new ItemBuilder(Material.WOOL).durability(10).name("§5[YT]").glow().
+                lore(
+                        "§7- Chat Prefix: §5[YT]",
+                        "§7- §3KnockBackFFA §7All §aKill Effects.",
+                        "§7- §3KnockBackFFA §7All §aProjectile Effects.",
+                        "§7- §3KnockBackFFA §aCustom Armor Color.",
+                        "§7- /fly in §3lobby",
+                        "§7- /reset in §3MLGRush",
+                        "§7- /skin <name> - §aChange Your Skin",
+                        "§7- /nick - §aHide Your Real Name In Game",
+                        "§7Preview: " + getFormatName(player, "yt"),
+                        "§7Coming Soon...",
+                        "",
+                        "§7Require: §c1000 Subscribers",
+                        "§7Note: Other social media application conditions can be found at speedcubing.top/discord.",
+                        "§7Application: §aspeedcubing.top/discord §7Open a ticket."
+                ).build();
+        ItemStack ytPlus = new ItemBuilder(Material.WOOL).durability(14).name("§4[YT+]").glow().
+                lore(
+                        "§7- Chat Prefix: §4[YT+]",
+                        "§7- §3KnockBackFFA §7All §aKill Effects.",
+                        "§7- §3KnockBackFFA §7All §aProjectile Effects.",
+                        "§7- §3KnockBackFFA §aCustom Armor Color.",
+                        "§7- /fly in §3lobby",
+                        "§7- /reset in §3MLGRush",
+                        "§7- /skin <name> - §aChange Your Skin",
+                        "§7- /nick - §aHide Your Real Name In Game (Custom Name)",
+                        "§7Preview: " + getFormatName(player, "ytplus"),
+                        "§7Coming Soon...",
+                        "",
+                        "§7Require: §c5000 Subscribers",
+                        "§7Note: Other social media application conditions can be found at speedcubing.top/discord.",
+                        "§7Application: §aspeedcubing.top/discord §7Open a ticket."
+                ).build();
+        ItemStack builder = new ItemBuilder(Material.EMERALD_BLOCK).name("§3[Builder]").
+                lore(
+                        "§7- Chat Prefix: §3[Builder]",
+                        "§7- §3All",
+                        "§7Preview: " + getFormatName(player, "builder"),
+                        "",
+                        "§7Apply: Not Available"
+                ).build();
+        ItemStack helper = new ItemBuilder(Material.getMaterial(351)).durability(4).name("§9[Helper]").
+                lore(
+                        "§7- Chat Prefix: §9[Helper]",
+                        "§7- §3All",
+                        "§7Preview: " + getFormatName(player, "helper"),
+                        "",
+                        "§7Apply: Not Available"
+                ).build();
+        ItemStack mod = new ItemBuilder(Material.REDSTONE).name("§c[Mod]").
+                lore(
+                        "§7- Chat Prefix: §c[Mod]",
+                        "§7- §3All",
+                        "§7Preview: " + getFormatName(player, "mod"),
+                        "",
+                        "§7Apply: Not Available"
+                ).build();
+        ItemStack dev = new ItemBuilder(Material.LAPIS_BLOCK).name("§b[Dev]").
+                lore(
+                        "§7- Chat Prefix: §b[Dev]",
+                        "§7- §3All",
+                        "§7Preview: " + getFormatName(player, "developer"),
+                        "",
+                        "§7Apply: Not Available"
+                ).build();
+        ItemStack admin = new ItemBuilder(Material.REDSTONE_BLOCK).name("§4[Admin]").
+                lore(
+                        "§7- Chat Prefix: §4[Admin]",
+                        "§7- §3All",
+                        "§7Preview: " + getFormatName(player, "admin"),
+                        "",
+                        "§7Apply: Not Available"
+                ).build();
+        ItemStack owner = new ItemBuilder(Material.BARRIER).name("§4[Owner]").
+                lore(
+                        "§7- Chat Prefix: §4[Owner]",
+                        "§7- §3All",
+                        "§7Preview: " + getFormatName(player, "owner"),
+                        "",
+                        "§7Apply: Not Available"
+                ).build();
         //more ranks
         for (int i = 0; i < 9; i++) {
             inv.setItem(grayGlass, i);
@@ -98,6 +180,14 @@ public class ranks implements CommandExecutor {
         inv.setItem(vipPlus, 11);
         inv.setItem(premium, 12);
         inv.setItem(premiumPlus, 13);
+        inv.setItem(yt, 14);
+        inv.setItem(ytPlus, 15);
+        inv.setItem(builder, 16);
+        inv.setItem(helper, 19);
+        inv.setItem(mod, 20);
+        inv.setItem(dev, 21);
+        inv.setItem(admin, 22);
+        inv.setItem(owner, 23);
 
         inv.setClickable(false);
         player.openInventory(inv.getInventory());
