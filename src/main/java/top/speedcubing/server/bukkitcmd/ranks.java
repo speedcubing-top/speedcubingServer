@@ -21,6 +21,18 @@ public class ranks implements CommandExecutor {
     private void open(Player player) {
         InventoryBuilder inv = new InventoryBuilder(54, "§bSpeedcubing Server §aRanks");
         ItemStack grayGlass = new ItemBuilder(Material.STAINED_GLASS_PANE).name(" ").durability(7).build();
+        ItemStack champ = new ItemBuilder(Material.WATCH).name("§3[Champ]").
+                lore(
+                        "§7- Chat Prefix: §3[Champ]",
+                        "§7- §3KnockBackFFA §7Champ §aKill Effects.",
+                        "§7- §3KnockBackFFA §7Champ §aProjectile Effects.",
+                        "§7- /fly in §3lobby",
+                        "§7Preview: " + getFormatName(player, "champ"),
+                        "§7Coming Soon...",
+                        "",
+                        "§7Require: Lifetime/Daily §6Top 1 §7in §3KnockBackFFA"
+                )
+                .build();
         ItemStack vip = new ItemBuilder(Material.IRON_BLOCK).name("§d[VIP]").
                 lore(
                         "§7- Chat Prefix: §d[VIP]",
@@ -180,18 +192,19 @@ public class ranks implements CommandExecutor {
             inv.setItem(grayGlass, i * 9);
             inv.setItem(grayGlass, i * 9 + 8);
         }
-        inv.setItem(vip,10);
-        inv.setItem(vipPlus, 11);
-        inv.setItem(premium, 12);
-        inv.setItem(premiumPlus, 13);
-        inv.setItem(yt, 14);
-        inv.setItem(ytPlus, 15);
-        inv.setItem(builder, 16);
-        inv.setItem(helper, 19);
-        inv.setItem(mod, 20);
-        inv.setItem(dev, 21);
-        inv.setItem(admin, 22);
-        inv.setItem(owner, 23);
+        inv.setItem(champ, 10);
+        inv.setItem(vip,11);
+        inv.setItem(vipPlus, 12);
+        inv.setItem(premium, 13);
+        inv.setItem(premiumPlus, 14);
+        inv.setItem(yt, 15);
+        inv.setItem(ytPlus, 16);
+        inv.setItem(builder, 19);
+        inv.setItem(helper, 20);
+        inv.setItem(mod, 21);
+        inv.setItem(dev, 22);
+        inv.setItem(admin, 23);
+        inv.setItem(owner, 24);
 
         inv.setClickable(false);
         player.openInventory(inv.getInventory());
