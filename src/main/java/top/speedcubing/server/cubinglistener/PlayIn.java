@@ -20,6 +20,12 @@ public class PlayIn {
 
     @CubingEventHandler
     public void PlayInEvent(PlayInEvent e) {
+        if (User.getUser(e.getPlayer()).isCrashed) {
+            if (!(e.getPacket() instanceof PacketPlayInKeepAlive || !(e.getPacket() instanceof PacketPlayInCustomPayload))) {
+                e.setCancelled(true);
+            }
+
+        }
         if (e.getPacket() instanceof PacketPlayInTabComplete) {
             String s = ((PacketPlayInTabComplete) e.getPacket()).a();
             String command = s.split(" ")[0].substring(1).toLowerCase();
@@ -65,11 +71,6 @@ public class PlayIn {
                         e.getPlayer().sendMessage("§cError executing command: " + ex.getMessage());
                     }
                 });
-            }
-        } else if (e.getPacket() instanceof PacketPlayInKeepAlive) {
-            User user = User.getUser(e.getPlayer());
-            if (user.isCrashed) {
-                e.setCancelled(true);
             }
         }
     }

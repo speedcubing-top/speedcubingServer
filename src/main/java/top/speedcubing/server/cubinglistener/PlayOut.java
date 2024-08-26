@@ -1,10 +1,6 @@
 package top.speedcubing.server.cubinglistener;
 
 import com.mojang.authlib.GameProfile;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 import net.minecraft.server.v1_8_R3.PacketPlayOutKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
@@ -14,10 +10,16 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutStatistic;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTabComplete;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import top.speedcubing.lib.bukkit.events.packet.PlayOutEvent;
+import top.speedcubing.lib.bukkit.handler.PacketPlayOutHandler;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.bukkitcmd.troll.sendpacket;
 import top.speedcubing.server.player.User;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class PlayOut {
 
@@ -25,6 +27,11 @@ public class PlayOut {
 
     @CubingEventHandler
     public void PlayOutEvent(PlayOutEvent e) {
+        if (User.getUser(e.getPlayer()).isCrashed) {
+            if (!(e.getPacket() instanceof PacketPlayOutKeepAlive || !(e.getPacket() instanceof PacketPlayOutHandler))) {
+                e.setCancelled(true);
+            }
+        }
         if (e.getPacket() instanceof PacketPlayOutStatistic packet) {
             Map<?, Integer> stats = (Map<?, Integer>) ReflectionUtils.getField(packet, "a");
             stats.replaceAll((k, v) -> 0);
@@ -94,11 +101,6 @@ public class PlayOut {
                 GameProfile profile = new GameProfile(targetID, target.bGetName());
                 profile.getProperties().put("textures", data.a().getProperties().get("textures").iterator().next());
                 datas.set(i, packet.new PlayerInfoData(profile, data.b(), data.c(), data.d()));
-            }
-        } else if (e.getPacket() instanceof PacketPlayOutKeepAlive) {
-            User user = User.getUser(e.getPlayer());
-            if (user.isCrashed) {
-                e.setCancelled(true);
             }
         }
     }
