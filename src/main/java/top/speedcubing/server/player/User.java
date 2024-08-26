@@ -97,7 +97,6 @@ public class User extends IDPlayer {
     public String status;
     public Skin defaultSkin;
     public boolean isCrashed;
-    public static Pattern group = Pattern.compile("^group\\.[^|*.]+$");
 
     public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName, String defaultSkinValue, String defaultSkinSignature) {
         super(realName, player.getUniqueId(), id);

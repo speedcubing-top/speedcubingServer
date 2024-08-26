@@ -6,7 +6,6 @@ import com.mojang.authlib.properties.Property;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -31,6 +30,7 @@ import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.util.Java15Compat;
 import top.speedcubing.common.database.Database;
+import top.speedcubing.common.rank.PermissionSet;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
@@ -38,11 +38,11 @@ import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.bukkitcmd.troll.bangift;
-import top.speedcubing.server.system.command.CubingCommandManager;
 import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
+import top.speedcubing.server.system.command.CubingCommandManager;
 import top.speedcubing.server.utils.Configuration;
 import top.speedcubing.server.utils.RankSystem;
 
@@ -78,6 +78,7 @@ public class PreListen implements Listener {
         //auth
         AuthEventHandlers.onInventoryOpen(e);
     }
+
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();
@@ -88,11 +89,11 @@ public class PreListen implements Listener {
         }
         CommandElement element = new CommandElement(e.getMessage(), false);
         User user = User.getUser(player);
-            Set<String> perms = user.permissions;
-            if (!(perms.contains("cmd." + element.command) || perms.contains("cmd.*"))) {
-                user.sendLangMessage(perms.contains("view." + element.command) || perms.contains("view.*") ?
-                        GlobalString.NoPermCommand : GlobalString.UnknownCommand);
-                e.setCancelled(true);
+        Set<String> perms = user.permissions;
+        if (!(perms.contains("cmd." + element.command) || perms.contains("cmd.*"))) {
+            user.sendLangMessage(perms.contains("view." + element.command) || perms.contains("view.*") ?
+                    GlobalString.NoPermCommand : GlobalString.UnknownCommand);
+            e.setCancelled(true);
         }
         if (!e.isCancelled()) {
             e.setCancelled(CubingCommandManager.execute(player, element.command, element.strings));
@@ -154,16 +155,8 @@ public class PreListen implements Listener {
 
         //Perms
         Set<String> perms = Sets.newHashSet(datas[2].split("\\|"));
-        perms.remove("");
         perms.addAll(Rank.rankByName.get(realRank).getPerms());
-
-        Set<String> toAdd = new HashSet<>();
-        for (String s : perms) {
-            if (User.group.matcher(s).matches() && Rank.grouppermissions.containsKey(s.substring(6))) {
-                toAdd.addAll(Rank.grouppermissions.get(s.substring(6)));
-            }
-        }
-        perms.addAll(toAdd);
+        PermissionSet.findGroups(perms);
 
         //Check Nick
         boolean lobby = Bukkit.getServerName().equalsIgnoreCase("lobby");
