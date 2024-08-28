@@ -20,7 +20,6 @@ public class CubingCommandLoader {
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
                     String entryName = entry.getName();
-                    System.out.println(entryName);
                     if (entryName.endsWith(".class") && entryName.startsWith(packageName)) {
                         String className = entryName.replace('/', '.').substring(0, entryName.length() - 6);
                         try {
