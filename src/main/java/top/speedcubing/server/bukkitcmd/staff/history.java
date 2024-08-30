@@ -1,5 +1,10 @@
 package top.speedcubing.server.bukkitcmd.staff;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -11,20 +16,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import top.speedcubing.common.database.Database;
+import top.speedcubing.common.utils.CubingTimeFormat;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
-import top.speedcubing.server.player.User;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class history implements CommandExecutor, Listener {
     List<Inventory> banList = new ArrayList<>();
@@ -187,13 +185,13 @@ public class history implements CommandExecutor, Listener {
                                 "§eReason: §a" + punishment.getReason(),
                                 "§eBanID: §a" + punishment.getId(),
                                 "§eDuration: §a" + punishment.getDays(),
-                                "§eAt: §a" + TimeFormatter.unixToRealTime(punishment.getAt(), "yyyy/MM/dd HH:mm:ss", TimeUnit.SECONDS),
+                                "§eAt: §a" + CubingTimeFormat.toYMDHMS(punishment.getAt()),
                                 "§eIp: §a" + punishment.getIp(),
                                 "§eHideID: §a" + (punishment.getHideid().equals("1") ? "true" : "false"),
-                                "§eState: §a" + (remain > 0 ? "Expire in " + new TimeFormatter(remain, TimeUnit.SECONDS).format("%D%d ", true).format("%h%h %m%m %s%s", false).toString() : remain < 0 ? "Not Unbanned yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unbanned by " + punishment.getPardon()),
-                                "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : TimeFormatter.unixToRealTime(punishment.getPardonat(), "yyyy/MM/dd HH:mm:ss", TimeUnit.SECONDS)))
-                        .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
-                        .build());
+                                "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unbanned yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unbanned by " + punishment.getPardon()),
+                                "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.getPardonat())))
+                                        .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
+                                        .build());
                 if (itemIndex > 45) {
                     break;
                 }
@@ -256,9 +254,9 @@ public class history implements CommandExecutor, Listener {
                                 "§eReason: §a" + punishment.getReason(),
                                 "§eMuteID: §a" + punishment.getId(),
                                 "§eDuration: §a" + punishment.getDays(),
-                                "§eAt: §a" + TimeFormatter.unixToRealTime(punishment.getAt(), "yyyy/MM/dd HH:mm:ss", TimeUnit.SECONDS),
-                                "§eState: §a" + (remain > 0 ? "Expire in " + new TimeFormatter(remain, TimeUnit.SECONDS).format("%D%d ", true).format("%h%h %m%m %s%s", false).toString() : remain < 0 ? "Not Unmuted yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unmuted by " + punishment.getPardon()),
-                                "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : TimeFormatter.unixToRealTime(punishment.getPardonat(), "yyyy/MM/dd HH:mm:ss", TimeUnit.SECONDS)))
+                                "§eAt: §a" + CubingTimeFormat.toYMDHMS(punishment.getAt()),
+                                "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unmuted yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unmuted by " + punishment.getPardon()),
+                                "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.getPardonat())))
                         .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
                         .build());
                 if (itemIndex > 45) {

@@ -247,8 +247,7 @@ public class PreListen implements Listener {
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-                        String s = formatter.format(now);
+                        String s =  DateTimeFormatter.ofPattern("HH:mm").format(now);
                         player.sendMessage("§cCurrent time is " + s + " ,Please take a rest.");
                         for (User u : User.getUsers()) {
                             howToWin(u.player);

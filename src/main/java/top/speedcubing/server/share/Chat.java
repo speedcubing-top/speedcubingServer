@@ -14,6 +14,7 @@ import top.speedcubing.lib.discord.DiscordWebhook;
 import top.speedcubing.lib.minecraft.MinecraftConsole;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.StringUtils;
+import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
 import top.speedcubing.server.lang.LangMessage;
 import top.speedcubing.server.lang.LanguageSystem;
@@ -72,7 +73,7 @@ public class Chat {
     private static final Executor discordWebhookPool = Executors.newSingleThreadExecutor();
 
     private static void chatLogger(Player sender, String message) {
-        String timeFormat = TimeFormatter.unixToRealTime(System.currentTimeMillis(), "HH:mm:ss", TimeUnit.MILLISECONDS);
+        String timeFormat = TimeFormatter.unixToRealTime(SystemUtils.getCurrentSecond(), "HH:mm:ss", TimeUnit.SECONDS);
         DiscordWebhook discordWebhook = new DiscordWebhook(Configuration.discordWebook);
         message = ChatColor.stripColor(message.replaceAll("`", "'").replaceAll("\n", "/n"));
         discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + message + "```");
