@@ -35,6 +35,7 @@ import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.ReflectionUtils;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.bukkitcmd.troll.bangift;
@@ -130,13 +131,17 @@ public class PreListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
-        String[] datas = Database.connection.select("priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature,nicked,skinvalue,skinsignature,nickname").from("playersdata").where("uuid='" + player.getUniqueId() + "'").getStringArray();
 
-        int id = Integer.parseInt(datas[4]);
-        String realRank = Rank.getRank(datas[0], id);
+        datas = Database.connection.
+                prepare("SELECT priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature,nicked,skinvalue,skinsignature,nickname FROM playersdata WHERE uuid=?")
+                .setString(1, player.getUniqueId().toString())
+                .result().get(0);
+
+        int id = datas.getInt("id");
+        realRank = Rank.getRank(datas.getString("priority"), id);
 
         //maintenance
-        if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (datas[8].equals("0"))) {
+        if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (datas.getBoolean("serverwhitelist"))) {
             e.setKickMessage("§cThis server is currently under maintenance.");
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             speedcubingServer.preLoginStorage.remove(id);
@@ -144,17 +149,27 @@ public class PreListen implements Listener {
         }
 
         //bungee-data-not-found
-        PreLoginData bungeeData = speedcubingServer.preLoginStorage.get(id);
-        if (bungeeData == null) {
+        bungePacket = speedcubingServer.preLoginStorage.get(id);
+        if (bungePacket == null) {
             e.setKickMessage("§cError occurred.");
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             return;
         }
 
         speedcubingServer.preLoginStorage.remove(id);
+    }
+
+    SQLRow datas;
+    String realRank;
+    PreLoginData bungePacket;
+
+    @EventHandler(priority = EventPriority.LOW)
+    public void PlayerJoinEvent(PlayerJoinEvent e) {
+        e.setJoinMessage("");
+        Player player = e.getPlayer();
 
         //Perms
-        Set<String> perms = Sets.newHashSet(datas[2].split("\\|"));
+        Set<String> perms = Sets.newHashSet(datas.getString("perms").split("\\|"));
         perms.addAll(Rank.rankByName.get(realRank).getPerms());
         PermissionSet.findGroups(perms);
 
@@ -167,39 +182,31 @@ public class PreListen implements Listener {
         String skinValue = "";
         String skinSignature = "";
 
-        boolean nickState = datas[12].equals("1");
+        boolean nickState = datas.getBoolean("nicked");
 
         if (lobby) {
             displayRank = realRank;
-            displayName = datas[5];
+            displayName = datas.getString("name");
         } else {
             if (nickState) {
-                displayRank = datas[1];
-                displayName = datas[15];
+                displayRank = datas.getString("priority");
+                displayName = datas.getString("nickname");
             }
-            skinValue = datas[13];
-            skinSignature = datas[14];
+            skinValue = datas.getString("skinvalue");
+            skinSignature = datas.getString("skinsignature");
         }
 
         //User
-        User user = new User(player, displayRank, realRank, perms, Integer.parseInt(datas[3]), Integer.parseInt(datas[4]), datas[6].equals("1"), bungeeData, datas[6].equals("1"), datas[5], datas[10], datas[11]);
-
+        User user = new User(player, displayRank, realRank, perms, datas, bungePacket);
 
         //modify things
         GameProfile profile = ((CraftPlayer) player).getProfile();
         ReflectionUtils.setField(profile, "name", displayName);
 
-        if (!skinValue.equals("")) {
+        if (!skinValue.isEmpty()) {
             profile.getProperties().removeAll("textures");
             profile.getProperties().put("textures", new Property("textures", skinValue, skinSignature));
         }
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void PlayerJoinEvent(PlayerJoinEvent e) {
-        e.setJoinMessage("");
-        Player player = e.getPlayer();
-        User user = User.getUser(player);
 
         //OP
         player.setOp(user.hasPermission("perm.op"));
@@ -247,7 +254,7 @@ public class PreListen implements Listener {
                 new Timer().schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        String s =  DateTimeFormatter.ofPattern("HH:mm").format(now);
+                        String s = DateTimeFormatter.ofPattern("HH:mm").format(now);
                         player.sendMessage("§cCurrent time is " + s + " ,Please take a rest.");
                         for (User u : User.getUsers()) {
                             howToWin(u.player);

@@ -20,6 +20,9 @@ public class PlayIn {
 
     @CubingEventHandler
     public void PlayInEvent(PlayInEvent e) {
+        if (User.getUser(e.getPlayer()) == null) {
+            return;
+        }
         if (User.getUser(e.getPlayer()).isCrashed) {
             if (!(e.getPacket() instanceof PacketPlayInKeepAlive || !(e.getPacket() instanceof PacketPlayInCustomPayload))) {
                 e.setCancelled(true);

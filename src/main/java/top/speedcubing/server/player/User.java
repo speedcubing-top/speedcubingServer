@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
-import java.util.regex.Pattern;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.Packet;
@@ -40,6 +39,7 @@ import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.TextBuilder;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.lib.utils.UUIDUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.bytes.NumberConversion;
@@ -81,7 +81,6 @@ public class User extends IDPlayer {
     public int lang;
     public String displayRank;
     public HostAndPort proxy;
-    public boolean allowOp;
     public boolean chatFilt;
     public boolean listened;
     public PacketPlayOutScoreboardTeam joinPacket;
@@ -98,22 +97,21 @@ public class User extends IDPlayer {
     public Skin defaultSkin;
     public boolean isCrashed;
 
-    public User(Player player, String displayRank, String realRank, Set<String> permissions, int lang, int id, boolean allowOp, PreLoginData bungeeData, boolean chatFilt, String realName, String defaultSkinValue, String defaultSkinSignature) {
-        super(realName, player.getUniqueId(), id);
+    public User(Player player, String displayRank, String realRank, Set<String> permissions, SQLRow datas, PreLoginData bungeeData) {
+        super(datas.getString("name"), player.getUniqueId(), datas.getInt("id"));
         this.player = player;
         this.permissions = permissions;
         this.listened = bungeeData.cps;
-        this.lang = lang;
-        this.chatFilt = chatFilt;
+        this.lang = datas.getInt("lang");
+        this.chatFilt = datas.getBoolean("chatfilt");
         this.realRank = realRank;
         this.displayRank = displayRank;
         this.vanished = bungeeData.vanished;
         this.proxy = bungeeData.proxy;
-        this.allowOp = allowOp;
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString();
         this.status = dbSelect("status").getString() == null ? "null" : dbSelect("status").getString();
-        this.defaultSkin = new Skin(defaultSkinValue, defaultSkinSignature);
+        this.defaultSkin = new Skin( datas.getString("profile_textures_value"), datas.getString("profile_textures_signature"));
         this.isCrashed = false;
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
