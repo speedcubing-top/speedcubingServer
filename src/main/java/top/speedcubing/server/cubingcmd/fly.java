@@ -3,7 +3,6 @@ package top.speedcubing.server.cubingcmd;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.server.events.player.ToggleFlyEvent;
-import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.system.command.CubingCommand;
 
@@ -21,7 +20,7 @@ public class fly extends CubingCommand {
                 player.setAllowFlight(!allowFlight);
 
                 User user = User.getUser(player);
-                user.sendLangMessage(allowFlight ? GlobalString.FlyDisable : GlobalString.FlyEnable);
+                user.sendMessage(allowFlight ? "%lang_cmd_fly_disable%" : "%lang_cmd_fly_enable%");
 
                 user.dbUpdate("flying=" + (allowFlight ? 0 : 1));
             }

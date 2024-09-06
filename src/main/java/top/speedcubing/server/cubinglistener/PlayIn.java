@@ -42,8 +42,7 @@ public class PlayIn {
 //                System.out.println("cancel");
 //                e.isCancelled = true;
 //            }
-        } else if (e.getPacket() instanceof PacketPlayInCustomPayload) {
-            PacketPlayInCustomPayload packet = (PacketPlayInCustomPayload) e.getPacket();
+        } else if (e.getPacket() instanceof PacketPlayInCustomPayload packet) {
             if (packet.a().equals("labymod3:main")) {
                 PacketDataSerializer serializer = packet.b();
 
@@ -58,8 +57,7 @@ public class PlayIn {
                 JsonObject parser = JsonParser.parseString(json).getAsJsonObject();
                 System.out.println(parser);
             }
-        } else if (e.getPacket() instanceof PacketPlayInUpdateSign) {
-            PacketPlayInUpdateSign packet = (PacketPlayInUpdateSign) e.getPacket();
+        } else if (e.getPacket() instanceof PacketPlayInUpdateSign packet) {
             IChatBaseComponent[] components = packet.b();
             String name = components[0].getText();
 

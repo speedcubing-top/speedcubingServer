@@ -37,7 +37,7 @@ import top.speedcubing.lib.api.mojang.Skin;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
-import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.lib.utils.UUIDUtils;
@@ -45,9 +45,9 @@ import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.bytes.NumberConversion;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.lib.utils.sockets.TCPClient;
+import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.lang.LangInventory;
 import top.speedcubing.server.lang.LangItemStack;
-import top.speedcubing.server.lang.LangMessage;
 import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.utils.RankSystem;
 
@@ -111,7 +111,7 @@ public class User extends IDPlayer {
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString();
         this.status = dbSelect("status").getString() == null ? "null" : dbSelect("status").getString();
-        this.defaultSkin = new Skin( datas.getString("profile_textures_value"), datas.getString("profile_textures_signature"));
+        this.defaultSkin = new Skin(datas.getString("profile_textures_value"), datas.getString("profile_textures_signature"));
         this.isCrashed = false;
         if (!bungeeData.hor.equals("null"))
             this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
@@ -223,6 +223,7 @@ public class User extends IDPlayer {
     }
 
     public String getCurrentTime() {
+        sendMessage("%lang_cmd_discord " + 1232312 + " %lang_cmd_fly_disable", "1");
         ZoneId zone = ZoneId.of(timeZone);
         return java.time.LocalTime.now(zone).toString();
     }
@@ -234,31 +235,29 @@ public class User extends IDPlayer {
     }
 
     //lang
-    public void openLangInventory(LangInventory inventories) {
-        bOpenInventory(inventories.get(lang));
+
+    public void kick(String unformatted, String... param) {
+        player.kickPlayer(Lang.of(unformatted, param).getString(lang));
+    }
+
+    public void openLangInventory(LangInventory langInventory) {
+        langInventory.get(lang).open();
     }
 
     public void setLangItem(int slot, LangItemStack stack) {
         bGetInventory().setItem(slot, stack.get(lang));
     }
 
-    public void sendLangMessage(LangMessage message, String... replaces) {
-        if (replaces == null) {
-            bSendMessage(message.get(lang));
-        } else {
-            String text = message.get(lang);
-            for (int i = 0; i < replaces.length; i++)
-                text = text.replace("%" + (i + 1) + "%", replaces[i]);
-            bSendMessage(text);
-        }
+    public void sendMessage(String unformatted, String... param) {
+        sendMessage(Lang.of(unformatted, param));
     }
 
-    public void sendLangMessage(LangMessage message) {
-        sendLangMessage(message, null);
+    public void sendMessage(Lang message, String... param) {
+        sendComponent(message.param(param).get(lang));
     }
 
-    public void sendLangTextComp(TextBuilder[] s) {
-        sendComponent(s[lang].toBungee());
+    public void sendMessage(ComponentText s) {
+        sendComponent(s.toBungee());
     }
 
     public void sendComponent(TextComponent component) {

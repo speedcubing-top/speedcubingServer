@@ -6,7 +6,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.server.events.player.NickEvent;
-import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 
 public class unnick implements CommandExecutor {
@@ -19,7 +18,7 @@ public class unnick implements CommandExecutor {
 
         User user = User.getUser(player);
         if (!user.nickState()) {
-            User.getUser(commandSender).sendLangMessage(GlobalString.notNicked);
+            User.getUser(commandSender).sendMessage("%lang_nick_not%");
             return true;
         }
 

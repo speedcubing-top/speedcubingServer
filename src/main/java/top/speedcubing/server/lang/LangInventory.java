@@ -11,49 +11,36 @@ import top.speedcubing.server.player.User;
 public class LangInventory {
     public final InventoryBuilder[] s;
 
-    public Inventory get(Player player) {
+    public InventoryBuilder get(Player player) {
         return get(User.getUser(player));
     }
 
-    public Inventory get(User user) {
+    public InventoryBuilder get(User user) {
         return get(user.lang);
     }
 
-    public Inventory get(int lang) {
-        return s[lang].getInventory();
+    public InventoryBuilder get(int lang) {
+        return s[lang];
     }
 
-    public LangInventory(int size, LangMessage message) {
-        this(size, message.s);
+    public LangInventory(int size, String unformatted, String... param) {
+        this(null, size, Lang.of(unformatted), param);
     }
 
-    public LangInventory(int size, String s) {
-        this(size, LangMessage.load(s));
+    public LangInventory(int size, Lang title, String... param) {
+        this(null, size, title, param);
     }
 
+    public LangInventory(Player player, int size, String unformatted, String... param) {
+        this(player, size, Lang.of(unformatted), param);
+    }
 
-    public LangInventory(int size, String... s) {
+    public LangInventory(Player player, int size, Lang title, String... param) {
+        title.param(param);
         this.s = new InventoryBuilder[LanguageSystem.langCount];
         for (int i = 0; i < LanguageSystem.langCount; i++) {
-            this.s[i] = new InventoryBuilder(size, s[i]);
+            this.s[i] = new InventoryBuilder(player, size, title.getString(i));
         }
-    }
-
-    public LangInventory(LangMessage title, InventoryBuilder... s) {
-        this.s = s;
-        for (int i = 0; i < title.s.length; i++) {
-            s[i].setTitle(title.get(i));
-        }
-    }
-
-    public LangInventory(InventoryBuilder... s) {
-        this.s = s;
-    }
-
-    public LangInventory deleteOnClose(boolean flag) {
-        for (InventoryBuilder b : s)
-            b.deleteOnClose(flag);
-        return this;
     }
 
     public LangInventory setCloseInventory(Consumer<CloseInventoryEvent> e) {

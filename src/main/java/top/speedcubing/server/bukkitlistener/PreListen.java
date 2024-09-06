@@ -39,7 +39,7 @@ import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.bukkitcmd.troll.bangift;
-import top.speedcubing.server.lang.GlobalString;
+import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
@@ -92,8 +92,7 @@ public class PreListen implements Listener {
         User user = User.getUser(player);
         Set<String> perms = user.permissions;
         if (!(perms.contains("cmd." + element.command) || perms.contains("cmd.*"))) {
-            user.sendLangMessage(perms.contains("view." + element.command) || perms.contains("view.*") ?
-                    GlobalString.NoPermCommand : GlobalString.UnknownCommand);
+            user.sendMessage(perms.contains("view." + element.command) || perms.contains("view.*") ? "%lang_general_noperm%" : "%lang_general_unknown_cmd%");
             e.setCancelled(true);
         }
         if (!e.isCancelled()) {

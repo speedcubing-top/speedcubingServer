@@ -6,18 +6,14 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import top.speedcubing.lib.bukkit.entity.NPC;
 import top.speedcubing.lib.bukkit.inventory.BookBuilder;
-import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class bangift implements CommandExecutor {
     @Override
@@ -38,7 +34,7 @@ public class bangift implements CommandExecutor {
     private void openBook(Player player, Player target) {
         ItemStack book;
         book = new BookBuilder("book", "system")
-                .addPage(new TextBuilder()
+                .addPage(new ComponentText()
                         .str(User.getUser(player).getPrefixName(true) + " §0wants to give you §cBanned 365\n§0Days!\nWill you accept?\n\n")
                         .both("              §a§l§nYES§r\n\n", TextClickEvent.runCommand("/bangift banself"), TextHoverEvent.showText("Click here to accept!"))
                         .both("              §a§l§nYES\n\n", TextClickEvent.runCommand("/bangift banself"), TextHoverEvent.showText("Click here to accept!"))
@@ -47,6 +43,7 @@ public class bangift implements CommandExecutor {
                 .build();
         BookBuilder.openBook(book, target);
     }
+
     public static void fakeBan(Player player) {
         byte[] packet = new ByteArrayBuffer()
                 .writeUTF("proxycmd")

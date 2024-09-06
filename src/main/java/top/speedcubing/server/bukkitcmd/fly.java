@@ -5,7 +5,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.server.events.player.ToggleFlyEvent;
-import top.speedcubing.server.lang.GlobalString;
 import top.speedcubing.server.player.User;
 
 public class fly implements CommandExecutor {
@@ -18,7 +17,7 @@ public class fly implements CommandExecutor {
                 player.setAllowFlight(!allowFlight);
 
                 User user = User.getUser(player);
-                user.sendLangMessage(allowFlight ? GlobalString.FlyDisable : GlobalString.FlyEnable);
+                user.sendMessage(allowFlight ? "%lang_cmd_fly_disable%" : "%lang_cmd_fly_enable%");
 
                 user.dbUpdate("flying=" + (allowFlight ? 0 : 1));
             }

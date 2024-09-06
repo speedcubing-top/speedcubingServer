@@ -4,7 +4,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -18,11 +17,10 @@ import org.bukkit.inventory.Inventory;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.utils.CubingTimeFormat;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
-import top.speedcubing.lib.minecraft.text.TextBuilder;
+import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.lib.utils.SystemUtils;
-import top.speedcubing.lib.utils.TimeFormatter;
 
 public class history implements CommandExecutor, Listener {
     List<Inventory> banList = new ArrayList<>();
@@ -103,7 +101,7 @@ public class history implements CommandExecutor, Listener {
         e.setCancelled(true);
         switch (e.getRawSlot()) {
             case 1:
-                player.sendMessage(new TextBuilder().both("§eClick here to query " + name + "'s client"
+                player.sendMessage(new ComponentText().both("§eClick here to query " + name + "'s client"
                                 , TextClickEvent.runCommand("/clientinfo " + name)
                                 , TextHoverEvent.showText("§eClick me!"))
                         .toBungee());
@@ -190,8 +188,8 @@ public class history implements CommandExecutor, Listener {
                                 "§eHideID: §a" + (punishment.getHideid().equals("1") ? "true" : "false"),
                                 "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unbanned yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unbanned by " + punishment.getPardon()),
                                 "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.getPardonat())))
-                                        .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
-                                        .build());
+                        .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
+                        .build());
                 if (itemIndex > 45) {
                     break;
                 }
