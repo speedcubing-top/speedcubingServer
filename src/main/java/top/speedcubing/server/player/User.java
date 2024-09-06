@@ -241,7 +241,7 @@ public class User extends IDPlayer {
     }
 
     public void openLangInventory(LangInventory langInventory) {
-        langInventory.get(lang).open();
+        player.openInventory(langInventory.get(lang).getInventory());
     }
 
     public void setLangItem(int slot, LangItemStack stack) {

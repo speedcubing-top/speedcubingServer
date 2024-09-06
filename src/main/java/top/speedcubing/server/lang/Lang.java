@@ -24,7 +24,6 @@ public class Lang implements Cloneable {
     private Lang(ComponentText unformatted, String... param) {
         this.unformatted = unformatted;
         this.param = param;
-        param(param);
     }
 
     public Lang param(String... param) {
