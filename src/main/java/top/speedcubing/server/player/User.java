@@ -223,7 +223,6 @@ public class User extends IDPlayer {
     }
 
     public String getCurrentTime() {
-        sendMessage("%lang_cmd_discord " + 1232312 + " %lang_cmd_fly_disable", "1");
         ZoneId zone = ZoneId.of(timeZone);
         return java.time.LocalTime.now(zone).toString();
     }

@@ -9,15 +9,13 @@ import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.server.player.User;
 
 public class LangItemStack {
-    private final ItemStack[] s;
+    private final ItemStack[] s = new ItemStack[LanguageSystem.langCount];
 
     public LangItemStack(Material material, Lang m, Lang... lore) {
         this(new ItemBuilder(material), m, lore);
     }
 
     public LangItemStack(ItemBuilder item, Lang m, Lang... lore) {
-        this.s = new ItemStack[LanguageSystem.langCount];
-
         ItemStack stack = item.build();
         for (int i = 0; i < LanguageSystem.langCount; i++) {
             ItemStack s2 = stack.clone();

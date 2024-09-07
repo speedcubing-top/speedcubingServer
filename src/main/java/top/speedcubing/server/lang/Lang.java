@@ -8,10 +8,10 @@ import org.bukkit.command.ConsoleCommandSender;
 import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.server.player.User;
 
-public class Lang implements Cloneable {
+public class Lang {
     private static final Pattern pattern = Pattern.compile("%lang_([A-Za-z_]+)%");
     private final ComponentText unformatted;
-    private final String[] param;
+    private String[] param;
 
     public static Lang of(String unformatted, String... param) {
         return of(new ComponentText().str(unformatted), param);
@@ -30,7 +30,8 @@ public class Lang implements Cloneable {
         String[] merged = new String[this.param.length + param.length];
         System.arraycopy(this.param, 0, merged, 0, this.param.length);
         System.arraycopy(param, 0, merged, this.param.length, param.length);
-        return Lang.of(unformatted, merged);
+        this.param = merged;
+        return this;
     }
 
     public TextComponent get(int lang) {
@@ -51,15 +52,14 @@ public class Lang implements Cloneable {
 
     public ComponentText getComponent(int lang) {
         Matcher matcher = pattern.matcher(unformatted.serialize());
-        StringBuilder sb = new StringBuilder();
-        while (matcher.find()) {
-            String key = matcher.group(1);
-            matcher.appendReplacement(sb, LanguageSystem.lang[lang].get(key).getAsString());
-        }
-        String result = sb.toString();
+        String result = matcher.replaceAll(r -> LanguageSystem.lang[lang].get(matcher.group(1)).getAsString());
         for (String string : param) {
             result = result.replaceFirst("%p%", string);
         }
         return ComponentText.unSerialize(result);
+    }
+
+    public Lang clone() {
+        return Lang.of(unformatted, param);
     }
 }

@@ -1,6 +1,7 @@
 package top.speedcubing.server.lang;
 
 import java.util.function.Consumer;
+import org.bukkit.entity.Player;
 import top.speedcubing.lib.bukkit.events.inventory.ClickInventoryEvent;
 import top.speedcubing.lib.bukkit.events.inventory.CloseInventoryEvent;
 import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
@@ -14,11 +15,20 @@ public class LangInventory {
     }
 
     public LangInventory(int size, String unformatted, String... param) {
-        this(null, size, Lang.of(unformatted), param);
+        this((User) null, size, unformatted, param);
     }
 
     public LangInventory(int size, Lang title, String... param) {
-        this(null, size, title, param);
+        this((User) null, size, title, param);
+    }
+
+
+    public LangInventory(Player player, int size, String unformatted, String... param) {
+        this(User.getUser(player), size, unformatted, param);
+    }
+
+    public LangInventory(Player player, int size, Lang title, String... param) {
+        this(User.getUser(player), size, title, param);
     }
 
     public LangInventory(User user, int size, String unformatted, String... param) {

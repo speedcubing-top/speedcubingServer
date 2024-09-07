@@ -12,12 +12,10 @@ import org.bukkit.entity.Player;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.lib.discord.DiscordWebhook;
 import top.speedcubing.lib.minecraft.MinecraftConsole;
-import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
 import top.speedcubing.server.lang.Lang;
-import top.speedcubing.server.lang.LanguageSystem;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.Configuration;
 
@@ -39,14 +37,7 @@ public class Chat {
 
     public static void globalChat(Collection<? extends Player> players, Player sender, Lang format, String message, String... replace) {
         format.param(replace);
-        String filteredText = filter(message);
-        ComponentText[] filtered = new ComponentText[LanguageSystem.langCount];
-        ComponentText[] unfiltered = new ComponentText[LanguageSystem.langCount];
-        for (int i = 0; i < LanguageSystem.langCount; i++) {
-            String serial = format.getComponent(i).serialize();
-            unfiltered[i] = ComponentText.unSerialize(serial.replace("%3%", message));
-            filtered[i] = ComponentText.unSerialize(serial.replace("%3%", filteredText));
-        }
+        String filteredMessage = filter(message);
         String[] ignores = Database.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;
         c:
@@ -55,11 +46,13 @@ public class Chat {
             for (String s : ignores)
                 if (user.player.getUniqueId().toString().equals(s))
                     continue c;
-            user.sendMessage((user.chatFilt ? filtered : unfiltered)[user.lang]);
+            user.sendMessage(format, (user.chatFilt ? message : filteredMessage));
         }
 
-        MinecraftConsole.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + unfiltered[1].toColorText());
-        chatLogger(sender, unfiltered[1].toPlainText());
+        format.param(message);
+
+        MinecraftConsole.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + format.getString(0));
+        chatLogger(sender, format.getComponent(0).toPlainText());
     }
 
     private static final Executor discordWebhookPool = Executors.newSingleThreadExecutor();
