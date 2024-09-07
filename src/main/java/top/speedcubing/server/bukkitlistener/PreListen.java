@@ -188,7 +188,7 @@ public class PreListen implements Listener {
             displayName = datas.getString("name");
         } else {
             if (nickState) {
-                displayRank = datas.getString("priority");
+                displayRank = datas.getString("nickpriority");
                 displayName = datas.getString("nickname");
             }
             skinValue = datas.getString("skinvalue");
