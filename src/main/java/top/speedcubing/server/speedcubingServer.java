@@ -12,11 +12,11 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.RestartCommand;
+import org.spigotmc.SpigotConfig;
 import top.speedcubing.common.CommonLib;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.io.SocketReader;
 import top.speedcubing.lib.api.mojang.ProfileSkin;
-import top.speedcubing.lib.bukkit.TabCompleteUtils;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.internet.HostAndPort;
@@ -71,6 +71,10 @@ public class speedcubingServer extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        if (!SpigotConfig.bungee) {
+            System.out.println("[speedcubingServer] bungeecord shouldn't be false, shutting down server.");
+            Bukkit.getServer().shutdown();
+        }
         instance = this;
         CubingEventManager.registerListeners(
                 new CubingTick(),
