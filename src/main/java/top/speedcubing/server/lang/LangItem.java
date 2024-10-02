@@ -5,7 +5,7 @@ import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.server.player.User;
 
@@ -72,9 +72,9 @@ public class LangItem {
         return this;
     }
 
-    public LangItem potion(PotionEffect effect) {
+    public LangItem potion(PotionEffectType type, int duration, int amplifier) {
         for (ItemBuilder i : items) {
-            i.potion(effect);
+            i.potion(type, duration, amplifier);
         }
         return this;
     }
