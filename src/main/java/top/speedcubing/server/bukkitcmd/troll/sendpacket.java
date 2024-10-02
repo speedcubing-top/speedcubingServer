@@ -11,6 +11,7 @@ import net.minecraft.server.v1_8_R3.IBlockData;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAnimation;
 import net.minecraft.server.v1_8_R3.PacketPlayOutAttachEntity;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
+import net.minecraft.server.v1_8_R3.PacketPlayOutCollect;
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityDestroy;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
@@ -69,6 +70,9 @@ public class sendpacket implements CommandExecutor, Listener {
             case "gameend":
                 ganeEnd(target);
                 break;
+            case "pickup":
+                pickup(target);
+                break;
         }
 
         return true;
@@ -79,11 +83,11 @@ public class sendpacket implements CommandExecutor, Listener {
         whoWasFucked.remove(e.getPlayer());
     }
 
-    @EventHandler
-    public void onShot(EntityShootBowEvent e) {
-        if (e.getEntity() instanceof Player) {
-            Player player = (Player) e.getEntity();
-        }
+    private void pickup(Player player) {
+        CraftPlayer craftPlayer = (CraftPlayer) player;
+        if (player.getNearbyEntities(10,10,10).isEmpty()) return;
+        PacketPlayOutCollect packet = new PacketPlayOutCollect(player.getNearbyEntities(10,10,10).get(0).getEntityId(), player.getEntityId());
+        craftPlayer.getHandle().playerConnection.sendPacket(packet);
     }
 
     private void sleep(Player player) {
