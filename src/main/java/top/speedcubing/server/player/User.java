@@ -46,8 +46,8 @@ import top.speedcubing.lib.utils.bytes.NumberConversion;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.lang.Lang;
-import top.speedcubing.server.lang.LangInventory;
-import top.speedcubing.server.lang.LangItemStack;
+import top.speedcubing.server.lang.LangInv;
+import top.speedcubing.server.lang.LangItem;
 import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.utils.RankSystem;
 
@@ -239,11 +239,11 @@ public class User extends IDPlayer {
         player.kickPlayer(Lang.of(unformatted, param).getString(lang));
     }
 
-    public void openLangInventory(LangInventory langInventory) {
+    public void openLangInventory(LangInv langInventory) {
         player.openInventory(langInventory.get(lang).getInventory());
     }
 
-    public void setLangItem(int slot, LangItemStack stack) {
+    public void setLangItem(int slot, LangItem stack) {
         bGetInventory().setItem(slot, stack.get(lang));
     }
 

@@ -7,35 +7,34 @@ import top.speedcubing.lib.bukkit.events.inventory.CloseInventoryEvent;
 import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
 import top.speedcubing.server.player.User;
 
-public class LangInventory {
+public class LangInv {
     private final InventoryBuilder[] inventory = new InventoryBuilder[LanguageSystem.langCount];
 
     public InventoryBuilder get(int lang) {
         return inventory[lang];
     }
 
-    public LangInventory(int size, String unformatted, String... param) {
+    public LangInv(int size, String unformatted, String... param) {
         this((User) null, size, unformatted, param);
     }
 
-    public LangInventory(int size, Lang title, String... param) {
+    public LangInv(int size, Lang title, String... param) {
         this((User) null, size, title, param);
     }
 
-
-    public LangInventory(Player player, int size, String unformatted, String... param) {
+    public LangInv(Player player, int size, String unformatted, String... param) {
         this(User.getUser(player), size, unformatted, param);
     }
 
-    public LangInventory(Player player, int size, Lang title, String... param) {
+    public LangInv(Player player, int size, Lang title, String... param) {
         this(User.getUser(player), size, title, param);
     }
 
-    public LangInventory(User user, int size, String unformatted, String... param) {
+    public LangInv(User user, int size, String unformatted, String... param) {
         this(user, size, Lang.of(unformatted), param);
     }
 
-    public LangInventory(User user, int size, Lang title, String... param) {
+    public LangInv(User user, int size, Lang title, String... param) {
         title.param(param);
         if (user != null) {
             inventory[user.lang] = new InventoryBuilder(user.player, size, title.getString(user.lang));
@@ -46,7 +45,7 @@ public class LangInventory {
         }
     }
 
-    public LangInventory setCloseEvent(Consumer<CloseInventoryEvent> e) {
+    public LangInv setCloseEvent(Consumer<CloseInventoryEvent> e) {
         for (InventoryBuilder b : inventory) {
             if (b != null) {
                 b.setCloseEvent(e);
@@ -55,7 +54,7 @@ public class LangInventory {
         return this;
     }
 
-    public LangInventory setItem(LangItemStack stack, int... slots) {
+    public LangInv setItem(LangItem stack, int... slots) {
         for (int i = 0; i < LanguageSystem.langCount; i++) {
             if (inventory[i] != null) {
                 inventory[i].setItem(stack.get(i), slots);
@@ -64,7 +63,7 @@ public class LangInventory {
         return this;
     }
 
-    public LangInventory setItem(LangItemStack stack, int start, int end) {
+    public LangInv setItem(LangItem stack, int start, int end) {
         for (int i = 0; i < LanguageSystem.langCount; i++) {
             if (inventory[i] != null) {
                 inventory[i].setItem(stack.get(i), start, end);
@@ -73,7 +72,7 @@ public class LangInventory {
         return this;
     }
 
-    public LangInventory setItem(LangItemStack stack, Consumer<ClickInventoryEvent> event, int... slots) {
+    public LangInv setItem(LangItem stack, Consumer<ClickInventoryEvent> event, int... slots) {
         for (int i = 0; i < LanguageSystem.langCount; i++) {
             if (inventory[i] != null) {
                 inventory[i].setItem(stack.get(i), event, slots);
@@ -82,7 +81,7 @@ public class LangInventory {
         return this;
     }
 
-    public LangInventory setItem(LangItemStack stack, Consumer<ClickInventoryEvent> event, int start, int end) {
+    public LangInv setItem(LangItem stack, Consumer<ClickInventoryEvent> event, int start, int end) {
         for (int i = 0; i < LanguageSystem.langCount; i++) {
             if (inventory[i] != null) {
                 inventory[i].setItem(stack.get(i), event, start, end);
@@ -91,7 +90,7 @@ public class LangInventory {
         return this;
     }
 
-    public LangInventory setClickEvent(Consumer<ClickInventoryEvent> event, int... slots) {
+    public LangInv setClickEvent(Consumer<ClickInventoryEvent> event, int... slots) {
         for (InventoryBuilder b : inventory) {
             if (b != null) {
                 b.setClickEvent(event, slots);
@@ -100,7 +99,7 @@ public class LangInventory {
         return this;
     }
 
-    public LangInventory setClickEvent(Consumer<ClickInventoryEvent> event, int start, int end) {
+    public LangInv setClickEvent(Consumer<ClickInventoryEvent> event, int start, int end) {
         for (InventoryBuilder b : inventory) {
             if (b != null) {
                 b.setClickEvent(event, start, end);
@@ -109,7 +108,7 @@ public class LangInventory {
         return this;
     }
 
-    public LangInventory setAllClickEvent(Consumer<ClickInventoryEvent> event) {
+    public LangInv setAllClickEvent(Consumer<ClickInventoryEvent> event) {
         for (InventoryBuilder b : inventory) {
             if (b != null) {
                 b.setAllClickEvent(event);
@@ -118,7 +117,7 @@ public class LangInventory {
         return this;
     }
 
-    public LangInventory setClickable(boolean flag, int... slots) {
+    public LangInv setClickable(boolean flag, int... slots) {
         for (InventoryBuilder b : inventory) {
             if (b != null) {
                 b.setClickable(flag, slots);
@@ -127,7 +126,7 @@ public class LangInventory {
         return this;
     }
 
-    public LangInventory setClickable(boolean flag, int start, int end) {
+    public LangInv setClickable(boolean flag, int start, int end) {
         for (InventoryBuilder b : inventory) {
             if (b != null) {
                 b.setClickable(flag, start, end);

@@ -23,8 +23,6 @@ import java.util.UUID;
 
 public class PlayOut {
 
-    public static UUID rrr = UUID.randomUUID();
-
     @CubingEventHandler
     public void PlayOutEvent(PlayOutEvent e) {
         if (User.getUser(e.getPlayer()).isCrashed) {
