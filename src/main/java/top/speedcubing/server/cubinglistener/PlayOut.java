@@ -1,13 +1,20 @@
 package top.speedcubing.server.cubinglistener;
 
 import com.mojang.authlib.GameProfile;
+import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
 import net.minecraft.server.v1_8_R3.PacketPlayOutKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
+import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
+import net.minecraft.server.v1_8_R3.PacketPlayOutSetSlot;
+import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityLiving;
 import net.minecraft.server.v1_8_R3.PacketPlayOutStatistic;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTabComplete;
+import net.minecraft.server.v1_8_R3.PacketPlayOutTileEntityData;
+import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateAttributes;
+import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateTime;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import top.speedcubing.lib.bukkit.events.packet.PlayOutEvent;
 import top.speedcubing.lib.bukkit.handler.PacketPlayOutHandler;
@@ -25,6 +32,17 @@ public class PlayOut {
 
     @CubingEventHandler
     public void PlayOutEvent(PlayOutEvent e) {
+//        if (!(e.getPacket() instanceof PacketPlayOutScoreboardTeam) && !(e.getPacket() instanceof PacketPlayOutNamedEntitySpawn)
+//            && !(e.getPacket() instanceof PacketPlayOutPlayerInfo) && !(e.getPacket() instanceof PacketPlayOutMapChunk)
+//            && !(e.getPacket() instanceof PacketPlayOutMapChunkBulk) && !(e.getPacket() instanceof PacketPlayOutTabComplete)
+//            && !(e.getPacket() instanceof PacketPlayOutStatistic) && !(e.getPacket() instanceof PacketPlayOutEntityMetadata)
+//            && !(e.getPacket() instanceof PacketPlayOutTileEntityData) && !(e.getPacket() instanceof PacketPlayOutSpawnEntityLiving)
+//            && !(e.getPacket() instanceof PacketPlayOutSetSlot) && !(e.getPacket() instanceof PacketPlayOutKeepAlive)
+//            && !(e.getPacket() instanceof PacketPlayOutHandler) && !(e.getPacket() instanceof PacketPlayOutUpdateTime)
+//            && !(e.getPacket() instanceof PacketPlayOutUpdateAttributes)) {
+//            System.out.println(e.getPacket().getClass().getSimpleName());
+//        }
+
         if (User.getUser(e.getPlayer()).isCrashed) {
             if (!(e.getPacket() instanceof PacketPlayOutKeepAlive || !(e.getPacket() instanceof PacketPlayOutHandler))) {
                 e.setCancelled(true);

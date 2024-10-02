@@ -348,23 +348,14 @@ public class nick implements CommandExecutor, Listener {
         String name = "";
         Random random = new Random();
         int r = random.nextInt(5);
-        switch (r) {
-            case 0:
-                name = getRandomAdjective() + getRandomWord() + getRandomWord();
-                break;
-            case 1:
-                name = getRandomAdjective() + getRandomWord() + getRandomNumber();
-                break;
-            case 2:
-                name = getRandomWord() + getRandomAdjective();
-                break;
-            case 3:
-                name = getRandomAdjective() + getRandomVerb();
-                break;
-            case 4:
-                name = getRandomWord() + getRandomAdjective() + getRandomNumber();
-                break;
-        }
+        name = switch (r) {
+            case 0 -> getRandomAdjective() + getRandomWord() + getRandomWord();
+            case 1 -> getRandomAdjective() + getRandomWord() + getRandomNumber();
+            case 2 -> getRandomWord() + getRandomAdjective();
+            case 3 -> getRandomAdjective() + getRandomVerb();
+            case 4 -> getRandomWord() + getRandomAdjective() + getRandomNumber();
+            default -> name;
+        };
         if (!speedcubingServer.nameRegex.matcher(name).matches()) {
             return generateRandomString();
         }
