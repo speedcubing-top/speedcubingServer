@@ -7,8 +7,6 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import top.speedcubing.common.database.Database;
-import top.speedcubing.lib.bukkit.events.inventory.ClickInventoryEvent;
 import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.server.player.User;
@@ -41,7 +39,7 @@ public class status implements CommandExecutor {
                 player.playSound(player.getLocation(), Sound.ENDERMAN_TELEPORT, 1f, 0.5f);
                 player.sendMessage("§cYou don't have permission to use this status!");
             }
-        },10);
+        }, 10);
         for (int i = 0; i < 9; i++) {
             inv.setItem(grayGlass, i);
             inv.setItem(grayGlass, i + 45);

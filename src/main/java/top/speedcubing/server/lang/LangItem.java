@@ -2,66 +2,165 @@ package top.speedcubing.server.lang;
 
 import java.util.ArrayList;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.server.player.User;
 
 public class LangItem {
-    private final ItemStack[] s = new ItemStack[LanguageSystem.langCount];
+    private final ItemBuilder[] items = new ItemBuilder[LanguageSystem.langCount];
 
-    public LangItem(Material material, Lang m, Lang... lore) {
-        this(new ItemBuilder(material), m, lore);
-    }
-
-    public LangItem(ItemBuilder item, Lang m, Lang... lore) {
-        ItemStack stack = item.build();
+    public LangItem(Material material) {
         for (int i = 0; i < LanguageSystem.langCount; i++) {
-            ItemStack s2 = stack.clone();
-            ItemMeta meta = s2.getItemMeta();
-
-            if (m != null) {
-                meta.setDisplayName(m.getString(i));
-            }
-
-            s2.setItemMeta(meta);
-            this.s[i] = s2;
-        }
-
-        setLore(lore);
-    }
-
-    public void setLore(Lang... lore) {
-        for (int i = 0; i < LanguageSystem.langCount; i++) {
-            ItemMeta meta = s[i].getItemMeta();
-
-            ArrayList<String> arr = new ArrayList<>();
-            for (Lang l : lore) {
-                arr.add(l.getString(i));
-            }
-
-            meta.setLore(arr);
-
-            s[i].setItemMeta(meta);
+            items[i] = new ItemBuilder(material);
         }
     }
 
     public ItemStack get(Player player) {
-        if (s.length == 1)
-            return s[0];
-        return s[User.getUser(player).lang];
-    }
-
-    public ItemStack get(int lang) {
-        if (s.length == 1)
-            return s[0];
-        return s[lang];
+        return get(User.getUser(player));
     }
 
     public ItemStack get(User user) {
-        if (s.length == 1)
-            return s[0];
-        return s[user.lang];
+        return get(user.lang);
+    }
+
+    public ItemStack get(int lang) {
+        return items[lang].build();
+    }
+
+    //from itembuilder
+    public LangItem amount(int amount) {
+        for (ItemBuilder i : items) {
+            i.amount(amount);
+        }
+        return this;
+    }
+
+    public LangItem durability(int s) {
+        for (ItemBuilder i : items) {
+            i.durability(s);
+        }
+        return this;
+    }
+
+    public LangItem ench(Enchantment enchantment, int level) {
+        for (ItemBuilder i : items) {
+            i.ench(enchantment, level);
+        }
+        return this;
+    }
+
+
+    public LangItem name(String unformatted, String... param) {
+        name(Lang.of(unformatted, param));
+        return this;
+    }
+
+    public LangItem name(Lang lang) {
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
+            items[i].name(lang.getString(i));
+        }
+        return this;
+    }
+
+    public LangItem owner(String name) {
+        for (ItemBuilder i : items) {
+            i.owner(name);
+        }
+        return this;
+    }
+
+    public LangItem potion(PotionEffect effect) {
+        for (ItemBuilder i : items) {
+            i.potion(effect);
+        }
+        return this;
+    }
+
+    public LangItem unBreak() {
+        for (ItemBuilder i : items) {
+            i.unBreak();
+        }
+        return this;
+    }
+
+    public LangItem lore(Lang... lore) {
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
+            ArrayList<String> arr = new ArrayList<>();
+            for (Lang l : lore) {
+                arr.add(l.getString(i));
+            }
+            items[i].lore(arr);
+        }
+        return this;
+    }
+
+    public LangItem addLore(Lang... lore) {
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
+            ArrayList<String> arr = new ArrayList<>();
+            for (Lang l : lore) {
+                arr.add(l.getString(i));
+            }
+            items[i].addLore(arr);
+        }
+        return this;
+    }
+
+    public LangItem hideAttr() {
+        for (ItemBuilder i : items) {
+            i.hideAttr();
+        }
+        return this;
+    }
+
+    public LangItem hideEnch() {
+        for (ItemBuilder i : items) {
+            i.hideEnch();
+        }
+        return this;
+    }
+
+    public LangItem hidePotion() {
+        for (ItemBuilder i : items) {
+            i.hidePotion();
+        }
+        return this;
+    }
+
+    public LangItem hideUnbreak() {
+        for (ItemBuilder i : items) {
+            i.hideUnbreak();
+        }
+        return this;
+    }
+
+    public LangItem glow() {
+        for (ItemBuilder i : items) {
+            i.glow();
+        }
+        return this;
+    }
+
+    public LangItem skullBase64(String textureBase64) {
+        for (ItemBuilder i : items) {
+            i.skullBase64(textureBase64);
+        }
+        return this;
+    }
+
+    public LangItem skullFromURL(String url) {
+        for (ItemBuilder i : items) {
+            i.skullFromURL(url);
+        }
+        return this;
+    }
+
+    public LangItem skullFromProfileValue(String profileValueBase64) {
+        for (ItemBuilder i : items) {
+            i.skullFromProfileValue(profileValueBase64);
+        }
+        return this;
     }
 }
