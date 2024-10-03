@@ -3,6 +3,7 @@ package top.speedcubing.server.player;
 import com.mojang.authlib.properties.Property;
 import java.time.ZoneId;
 import java.util.ArrayDeque;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -27,6 +28,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 import top.speedcubing.common.database.Database;
@@ -241,6 +243,15 @@ public class User extends IDPlayer {
 
     public void openLangInventory(LangInv langInventory) {
         player.openInventory(langInventory.get(lang).getInventory());
+    }
+
+
+    public void setLangLore(Inventory inventory, int i, String unformatted,String param) {
+        Lang lore = Lang.of(unformatted,param);
+        ItemStack stack = inventory.getItem(i);
+        ItemMeta meta = stack.getItemMeta();
+        meta.setLore(Arrays.asList(lore.getString(lang).split("\n")));
+        stack.setItemMeta(meta);
     }
 
     public void setLangItem(int slot, LangItem stack) {
