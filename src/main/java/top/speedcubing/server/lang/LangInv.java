@@ -2,6 +2,7 @@ package top.speedcubing.server.lang;
 
 import java.util.function.Consumer;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import top.speedcubing.lib.bukkit.events.inventory.ClickInventoryEvent;
 import top.speedcubing.lib.bukkit.events.inventory.CloseInventoryEvent;
 import top.speedcubing.lib.bukkit.inventory.InventoryBuilder;
@@ -84,6 +85,42 @@ public class LangInv {
         for (int i = 0; i < LanguageSystem.langCount; i++) {
             if (inventory[i] != null) {
                 inventory[i].setItem(stack.get(i), event, start, end);
+            }
+        }
+        return this;
+    }
+
+    public LangInv setItem(ItemStack stack, int... slots) {
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
+            if (inventory[i] != null) {
+                inventory[i].setItem(stack, slots);
+            }
+        }
+        return this;
+    }
+
+    public LangInv setItem(ItemStack stack, int start, int end) {
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
+            if (inventory[i] != null) {
+                inventory[i].setItem(stack, start, end);
+            }
+        }
+        return this;
+    }
+
+    public LangInv setItem(ItemStack stack, Consumer<ClickInventoryEvent> event, int... slots) {
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
+            if (inventory[i] != null) {
+                inventory[i].setItem(stack, event, slots);
+            }
+        }
+        return this;
+    }
+
+    public LangInv setItem(ItemStack stack, Consumer<ClickInventoryEvent> event, int start, int end) {
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
+            if (inventory[i] != null) {
+                inventory[i].setItem(stack, event, start, end);
             }
         }
         return this;

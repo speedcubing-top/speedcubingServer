@@ -37,6 +37,7 @@ import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.lib.api.mojang.Skin;
 import top.speedcubing.lib.bukkit.PlayerUtils;
+import top.speedcubing.lib.bukkit.TitleType;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.ComponentText;
@@ -236,6 +237,9 @@ public class User extends IDPlayer {
     }
 
     //lang
+    public void sendLangTitle(TitleType titleType, String unformatted, String... param) {
+        PlayerUtils.sendTitle(player, titleType, Lang.of(unformatted, param).getString(lang));
+    }
 
     public void kick(String unformatted, String... param) {
         player.kickPlayer(Lang.of(unformatted, param).getString(lang));
@@ -246,16 +250,20 @@ public class User extends IDPlayer {
     }
 
 
-    public void setLangLore(Inventory inventory, int i, String unformatted,String param) {
-        Lang lore = Lang.of(unformatted,param);
+    public void setLangLore(Inventory inventory, int i, String unformatted, String param) {
+        Lang lore = Lang.of(unformatted, param);
         ItemStack stack = inventory.getItem(i);
         ItemMeta meta = stack.getItemMeta();
         meta.setLore(Arrays.asList(lore.getString(lang).split("\n")));
         stack.setItemMeta(meta);
     }
 
-    public void setLangItem(int slot, LangItem stack) {
-        bGetInventory().setItem(slot, stack.get(lang));
+    public void setLangItem(int slot, LangItem item) {
+        setLangItem(bGetInventory(), slot, item);
+    }
+
+    public void setLangItem(Inventory inventory, int slot, LangItem item) {
+        inventory.setItem(slot, item.get(lang));
     }
 
     public void sendMessage(String unformatted, String... param) {
