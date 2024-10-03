@@ -19,7 +19,7 @@ public abstract class CubingCommand {
         this.alias = Sets.hashSet(command);
     }
 
-    public abstract void execute(CommandSender sender, String command, String[] strings);
+    public abstract void execute(CommandSender sender, String command, String[] args);
 
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args, Location location) {
         return null;
