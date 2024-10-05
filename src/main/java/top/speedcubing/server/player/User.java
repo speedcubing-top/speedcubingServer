@@ -264,7 +264,7 @@ public class User extends IDPlayer {
     }
 
     //nms
-    public PlayerConnection playerConn() {
+    public PlayerConnection playerConnection() {
         return toNMS().playerConnection;
     }
 
@@ -273,7 +273,7 @@ public class User extends IDPlayer {
     }
 
     public void sendPacket(Packet<?>... packets) {
-        PlayerConnection c = playerConn();
+        PlayerConnection c = playerConnection();
         for (Packet<?> p : packets)
             c.sendPacket(p);
     }
@@ -288,7 +288,7 @@ public class User extends IDPlayer {
     }
 
     public void knockback(Vector v) {
-        playerConn().sendPacket(new PacketPlayOutEntityVelocity(player.getEntityId(), v.getX(), v.getY(), v.getZ()));
+        playerConnection().sendPacket(new PacketPlayOutEntityVelocity(player.getEntityId(), v.getX(), v.getY(), v.getZ()));
     }
 
     public String getGuildTag(boolean nick) {
