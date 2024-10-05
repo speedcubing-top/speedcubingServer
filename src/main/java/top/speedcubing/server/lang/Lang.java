@@ -9,7 +9,7 @@ import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.server.player.User;
 
 public class Lang {
-    private static final Pattern pattern = Pattern.compile("%lang_([A-Za-z_]+)%");
+    private static final Pattern pattern = Pattern.compile("%lang_([A-Za-z_\\d]+)%");
     private final ComponentText unformatted;
     private String[] param;
 
