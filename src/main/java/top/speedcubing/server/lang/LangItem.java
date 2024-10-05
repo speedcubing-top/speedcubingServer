@@ -86,6 +86,18 @@ public class LangItem {
         return this;
     }
 
+    public LangItem lore2(String unformatted, String... param) {
+        return lore2(Lang.of(unformatted, param));
+    }
+
+    public LangItem lore2(Lang lore) {
+        for (int i = 0; i < LanguageSystem.langCount; i++) {
+            String s = lore.getString(i);
+            items[i].lore(s.split("\n"));
+        }
+        return this;
+    }
+
     public LangItem lore(Lang... lore) {
         for (int i = 0; i < LanguageSystem.langCount; i++) {
             ArrayList<String> arr = new ArrayList<>();
