@@ -205,7 +205,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static HostAndPort getRandomBungee() {
-        return (!User.usersByID.values().isEmpty() ? User.usersByID.values().iterator().next().proxy : new HostAndPort("host.docker.internal", 25565 + 1000));
+        return (!User.usersByID.values().isEmpty() ? User.usersByID.values().iterator().next().proxy : new HostAndPort("127.0.0.1", 25565 + 1000));
     }
 
     public static void restart() {

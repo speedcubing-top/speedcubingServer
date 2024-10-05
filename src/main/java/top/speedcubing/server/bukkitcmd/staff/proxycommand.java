@@ -13,14 +13,14 @@ public class proxycommand implements CommandExecutor {
         if (strings.length == 0)
             commandSender.sendMessage("/proxycommand <command...>");
         else {
-            StringBuilder comamnd = new StringBuilder();
+            StringBuilder comamndStrings = new StringBuilder();
             for (String string : strings) {
-                comamnd.append(" ").append(string);
+                comamndStrings.append(" ").append(string);
             }
 
             byte[] packet = new ByteArrayBuffer()
                     .writeUTF("proxycmd")
-                    .writeUTF(comamnd.substring(1))
+                    .writeUTF(comamndStrings.substring(1))
                     .toByteArray();
 
             TCPClient.write(speedcubingServer.getRandomBungee(), packet);
