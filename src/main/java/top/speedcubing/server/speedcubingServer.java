@@ -22,7 +22,6 @@ import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.server.authenticator.AuthenticatorCommand;
 import top.speedcubing.server.bukkitcmd.discord;
-import top.speedcubing.server.bukkitcmd.fly;
 import top.speedcubing.server.bukkitcmd.getitemtype;
 import top.speedcubing.server.bukkitcmd.hub;
 import top.speedcubing.server.bukkitcmd.image;
@@ -170,7 +169,6 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("discord").setExecutor(new discord());
         Bukkit.getPluginCommand("hub").setExecutor(new hub());
-        Bukkit.getPluginCommand("fly").setExecutor(new fly());
         Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
         Bukkit.getPluginCommand("heal").setExecutor(new heal());
         Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
