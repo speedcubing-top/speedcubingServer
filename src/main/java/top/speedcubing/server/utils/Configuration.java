@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import top.speedcubing.common.configuration.ServerConfig;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.events.ConfigReloadEvent;
+import top.speedcubing.common.server.MinecraftServer;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 
 public class Configuration {
@@ -35,6 +36,6 @@ public class Configuration {
         ServerConfig.config.get("onlinecrash").getAsJsonArray().forEach(a -> Configuration.onlineCrash.add(a.getAsString()));
         Configuration.blacklistedMod.clear();
         ServerConfig.config.get("blacklistedmod").getAsJsonArray().forEach(a -> Configuration.blacklistedMod.add(Pattern.compile(a.getAsString())));
-        Configuration.discordWebook = Database.systemConnection.select("discord_webhook").from("servers").where("name=\"" + Bukkit.getServer().getServerName() + "\"").getString();
+        Configuration.discordWebook = Database.configConnection.select("discord_webhook").from("servers").where("name=\"" + Bukkit.getServer().getServerName() + "\"").getString();
     }
 }
