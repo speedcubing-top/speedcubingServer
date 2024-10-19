@@ -18,7 +18,6 @@ public class Configuration {
     public static Set<Pattern> blockedLog = new HashSet<>();
     public static Set<Pattern> blockedMod = new HashSet<>();
     public static Set<Pattern> blacklistedMod = new HashSet<>();
-    public static String discordWebook;
     public static boolean removeLogs;
 
     @CubingEventHandler
@@ -36,6 +35,5 @@ public class Configuration {
         ServerConfig.config.get("onlinecrash").getAsJsonArray().forEach(a -> Configuration.onlineCrash.add(a.getAsString()));
         Configuration.blacklistedMod.clear();
         ServerConfig.config.get("blacklistedmod").getAsJsonArray().forEach(a -> Configuration.blacklistedMod.add(Pattern.compile(a.getAsString())));
-        Configuration.discordWebook = Database.configConnection.select("discord_webhook").from("servers").where("name=\"" + Bukkit.getServer().getServerName() + "\"").getString();
-    }
+   }
 }

@@ -7,9 +7,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import top.speedcubing.common.database.Database;
+import top.speedcubing.common.server.MinecraftServer;
 import top.speedcubing.lib.discord.DiscordWebhook;
 import top.speedcubing.lib.minecraft.MinecraftConsole;
 import top.speedcubing.lib.utils.StringUtils;
@@ -59,7 +61,7 @@ public class Chat {
 
     private static void chatLogger(Player sender, String message) {
         String timeFormat = TimeFormatter.unixToRealTime(SystemUtils.getCurrentSecond(), "HH:mm:ss", TimeUnit.SECONDS);
-        DiscordWebhook discordWebhook = new DiscordWebhook(Configuration.discordWebook);
+        DiscordWebhook discordWebhook = new DiscordWebhook(MinecraftServer.getServer(Bukkit.getServerName()).getWebhook());
         message = ChatColor.stripColor(message.replaceAll("`", "'").replaceAll("\n", "/n"));
         discordWebhook.setContent("```[" + timeFormat + "] " + "[" + sender.getWorld().getName() + "] " + message + "```");
         discordWebhookPool.execute(() -> {
