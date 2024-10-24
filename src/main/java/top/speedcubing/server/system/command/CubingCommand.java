@@ -13,7 +13,7 @@ public abstract class CubingCommand {
 
     private final Set<String> alias;
 
-    public Set<String> getAlias() {
+    public final Set<String> getAlias() {
         return alias;
     }
 
@@ -31,7 +31,7 @@ public abstract class CubingCommand {
         return true;
     }
 
-    public void load() {
+    final void load() {
         CubingCommandManager.register(this);
     }
 }
