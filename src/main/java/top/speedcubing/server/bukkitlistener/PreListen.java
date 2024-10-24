@@ -28,7 +28,6 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
 import org.bukkit.event.server.ServerCommandEvent;
-import org.bukkit.util.Java15Compat;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.PermissionSet;
 import top.speedcubing.common.rank.Rank;
@@ -38,28 +37,15 @@ import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
-import top.speedcubing.server.bukkitcmd.troll.bangift;
-import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.login.PreLoginData;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.system.command.CubingCommandManager;
+import top.speedcubing.server.utils.CommandParser;
 import top.speedcubing.server.utils.Configuration;
 import top.speedcubing.server.utils.RankSystem;
 
 public class PreListen implements Listener {
-
-
-    static class CommandElement {
-        public final String command;
-        public final String[] strings;
-
-        public CommandElement(String message, boolean console) {
-            String[] args = (console ? message : message.substring(1)).split(" ");
-            this.command = args[0].toLowerCase();
-            this.strings = Java15Compat.Arrays_copyOfRange(args, 1, args.length);
-        }
-    }
 
     @EventHandler(priority = EventPriority.LOW)
     public void InventoryClickEvent(InventoryClickEvent e) {
@@ -83,20 +69,12 @@ public class PreListen implements Listener {
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerCommandPreprocessEvent(PlayerCommandPreprocessEvent e) {
         Player player = e.getPlayer();
-        //troll for bangift command
-        if (e.getMessage().equals("/bangift banself")) {
-            bangift.fakeBan(player);
-            return;
-        }
-        CommandElement element = new CommandElement(e.getMessage(), false);
+        CommandParser command = CommandParser.parse(e.getMessage());
         User user = User.getUser(player);
         Set<String> perms = user.permissions;
-        if (!(perms.contains("cmd." + element.command) || perms.contains("cmd.*"))) {
-            user.sendMessage(perms.contains("view." + element.command) || perms.contains("view.*") ? "%lang_general_noperm%" : "%lang_general_unknown_cmd%");
+        if (!(perms.contains("cmd." + command.command) || perms.contains("cmd.*"))) {
+            user.sendMessage(perms.contains("view." + command.command) || perms.contains("view.*") ? "%lang_general_noperm%" : "%lang_general_unknown_cmd%");
             e.setCancelled(true);
-        }
-        if (!e.isCancelled()) {
-            e.setCancelled(CubingCommandManager.execute(player, element.command, element.strings));
         }
         //auth
         AuthEventHandlers.onCmdExecute(e);
@@ -274,12 +252,5 @@ public class PreListen implements Listener {
     public void PlayerVelocityEvent(PlayerVelocityEvent e) {
         Player player = e.getPlayer();
         player.setVelocity(User.getUser(player).applyKnockback(player.getVelocity()));
-    }
-
-    @EventHandler(priority = EventPriority.LOW)
-    public void ServerCommandEvent(ServerCommandEvent e) {
-        CommandElement element = new CommandElement(e.getCommand(), true);
-        e.setCancelled(CubingCommandManager.execute(e.getSender(), element.command, element.strings));
-        System.out.print("[CONSOLE] " + e.getCommand());
     }
 }

@@ -1,27 +1,35 @@
 package top.speedcubing.server.system.command;
 
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_8_R3.CraftServer;
+import top.speedcubing.lib.utils.ReflectionUtils;
 
 public class CubingCommandManager {
-    private static final Map<String, CubingCommand> cmds = new HashMap<>();
 
-    public static void register(CubingCommand... commandManagers) {
-        for (CubingCommand s : commandManagers) {
-            for (String ss : s.getAlias()) {
-                cmds.put(ss, s);
+    public static void register(CubingCommand... commands) {
+        for (CubingCommand command : commands) {
+            for (String name : command.getAlias()) {
+                Map<String, Command> knownCommands = (Map<String, Command>) ReflectionUtils.getField(((CraftServer) Bukkit.getServer()).getCommandMap(), "knownCommands");
+                Command cmd = new Command(name) {
+                    @Override
+                    public boolean execute(CommandSender commandSender, String s, String[] strings) {
+                        command.execute(commandSender, s, strings);
+                        return true;
+                    }
+
+                    @Override
+                    public List<String> tabComplete(CommandSender sender, String alias, String[] args, Location location) throws IllegalArgumentException {
+                        return command.onTabComplete(sender, alias, args, location);
+                    }
+                };
+                cmd.timings = co.aikar.timings.TimingsManager.getCommandTiming("minecraft", cmd);
+                knownCommands.put(name, cmd);
             }
         }
-    }
-
-    public static boolean execute(CommandSender sender, String command, String[] strings) {
-        CubingCommand cubingCommand = cmds.get(command);
-        if (cubingCommand != null) {
-            cubingCommand.execute(sender, command, strings);
-            return true;
-        }
-        return false;
     }
 }

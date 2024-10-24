@@ -9,11 +9,14 @@ import net.minecraft.server.v1_8_R3.PacketPlayInKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayInTabComplete;
 import net.minecraft.server.v1_8_R3.PacketPlayInUpdateSign;
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import top.speedcubing.lib.bukkit.events.packet.PlayInEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.server.bukkitcmd.nick.nick;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
+import top.speedcubing.server.system.command.CubingCommandManager;
+import top.speedcubing.server.utils.CommandParser;
 
 public class PlayIn {
 
@@ -27,21 +30,15 @@ public class PlayIn {
             if (!(e.getPacket() instanceof PacketPlayInKeepAlive || !(e.getPacket() instanceof PacketPlayInCustomPayload))) {
                 e.setCancelled(true);
             }
-
         }
-        if (e.getPacket() instanceof PacketPlayInTabComplete) {
-            String s = ((PacketPlayInTabComplete) e.getPacket()).a();
-            String command = s.split(" ")[0].substring(1).toLowerCase();
+        if (e.getPacket() instanceof PacketPlayInTabComplete p) {
+            String s = p.a();
+            CommandParser command = CommandParser.parse(s);
             User user = User.getUser(e.getPlayer());
-            user.lastTabbed = command;
-            if (user.hasPermission("cmd." + command) || user.hasPermission("cmd.*"))
-                return;
-            e.setCancelled(true);
-        } else if (e.getPacket() instanceof PacketPlayInKeepAlive) {
-//            if(e.player.getName().equals("speedcubing")) {
-//                System.out.println("cancel");
-//                e.isCancelled = true;
-//            }
+            user.lastTabbed = command.command;
+            if (!user.hasPermission("cmd." + command) && !user.hasPermission("cmd.*")) {
+                e.setCancelled(true);
+            }
         } else if (e.getPacket() instanceof PacketPlayInCustomPayload packet) {
             if (packet.a().equals("labymod3:main")) {
                 PacketDataSerializer serializer = packet.b();

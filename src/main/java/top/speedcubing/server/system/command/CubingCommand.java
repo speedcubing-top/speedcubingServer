@@ -1,7 +1,9 @@
 package top.speedcubing.server.system.command;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.server.v1_8_R3.BlockPosition;
 import org.bukkit.Location;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -21,8 +23,8 @@ public abstract class CubingCommand {
 
     public abstract void execute(CommandSender sender, String command, String[] args);
 
-    public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args, Location location) {
-        return null;
+    public List<String> onTabComplete(CommandSender sender, String command, String[] args, Location location) {
+        return Collections.emptyList();
     }
 
     public boolean shouldLoad() {

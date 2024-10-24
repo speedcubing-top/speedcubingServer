@@ -21,6 +21,11 @@ public class bangift implements CommandExecutor {
         if (!(sender instanceof Player player)) return true;
         Player target = Bukkit.getPlayerExact(args[0]);
         if (args.length == 1) {
+            //troll for bangift command
+            if (args[0].equals("banself")) {
+                bangift.fakeBan(player);
+                return true;
+            }
             if (target == null) {
                 player.sendMessage("§cPlayer not found.");
                 return true;
