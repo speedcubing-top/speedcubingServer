@@ -109,10 +109,10 @@ public class PreListen implements Listener {
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
 
-        datas = Database.connection.
+        datas = Database.getCubing().
                 prepare("SELECT priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature,nicked,skinvalue,skinsignature,nickname FROM playersdata WHERE uuid=?")
                 .setString(1, player.getUniqueId().toString())
-                .result().get(0);
+                .executeResult().get(0);
 
         int id = datas.getInt("id");
         realRank = Rank.getRank(datas.getString("priority"), id);

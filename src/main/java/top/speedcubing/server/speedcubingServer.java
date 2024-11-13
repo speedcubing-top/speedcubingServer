@@ -97,7 +97,7 @@ public class speedcubingServer extends JavaPlugin {
 
         new LogListener().reloadFilter();
 
-        Database.systemConnection.update("servers",
+        Database.getSystem().update("servers",
                 "launchtime=" + SystemUtils.getCurrentSecond() +
                         ",ram_max=" + SystemUtils.getXmx() / 1048576
                 , "name='" + Bukkit.getServerName() + "'");
@@ -156,7 +156,7 @@ public class speedcubingServer extends JavaPlugin {
     @Override
     public void onDisable() {
         CommonLib.shutdown();
-        Database.systemConnection.update(
+        Database.getSystem().update(
                 "servers",
                 "onlinecount=-1,ram_max=-1,ram_heap=-1,ram_used=-1,tps1=-1,tps2=-1,tps3=-1",
                 "name='" + Bukkit.getServerName() + "'"
@@ -212,9 +212,9 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static ProfileSkin generateRandomSkinFromDB() {
-        int size = Database.connection.select("COUNT(*)").from("playersdata").where("profile_textures_value != ''").getInt();
+        int size = Database.getCubing().select("COUNT(*)").from("playersdata").where("profile_textures_value != ''").getInt();
         int index = new SecureRandom().nextInt(size);
-        String[] data = Database.connection.select("name,uuid,profile_textures_value,profile_textures_signature").from("playersdata").where("profile_textures_value != ''").limit(index, 1).getStringArray();
+        String[] data = Database.getCubing().select("name,uuid,profile_textures_value,profile_textures_signature").from("playersdata").where("profile_textures_value != ''").limit(index, 1).getStringArray();
         return new ProfileSkin(data[0], data[1], data[2], data[3]);
     }
 }

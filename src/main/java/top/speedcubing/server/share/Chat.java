@@ -40,7 +40,7 @@ public class Chat {
     public static void globalChat(Collection<? extends Player> players, Player sender, Lang format, String message, String... replace) {
         format.param(replace);
         String filteredMessage = filter(message);
-        String[] ignores = Database.connection.select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
+        String[] ignores = Database.getCubing().select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
         User user;
         c:
         for (Player p : players) {

@@ -311,7 +311,7 @@ public class User extends IDPlayer {
     }
 
     public String getGuildTag(boolean nick) {
-        String tag = Database.connection.select("tag").from("guild").where("name='" + getGuild() + "'").getString();
+        String tag = Database.getCubing().select("tag").from("guild").where("name='" + getGuild() + "'").getString();
         return nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
     }
 
@@ -337,11 +337,11 @@ public class User extends IDPlayer {
     //db
 
     public void dbUpdate(String field) {
-        Database.connection.update("playersdata", field, "id=" + id);
+        Database.getCubing().update("playersdata", field, "id=" + id);
     }
 
     public SQLConnection.SQLPrepare dbSelect(String field) {
-        return Database.connection.select(field).from("playersdata").where("id=" + id);
+        return Database.getCubing().select(field).from("playersdata").where("id=" + id);
     }
 
     //bukkit

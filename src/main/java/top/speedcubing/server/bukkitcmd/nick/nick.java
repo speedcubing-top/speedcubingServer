@@ -121,7 +121,7 @@ public class nick implements CommandExecutor, Listener {
                     openNickBook(player, NickBook.RULE);
                     return true;
                 } else if (strings[0].equalsIgnoreCase("reuse")) {
-                    String[] datas = Database.connection.select("nickname,nickpriority").from("playersdata").where("id=" + User.getUser(commandSender).id).getStringArray();
+                    String[] datas = Database.getCubing().select("nickname,nickpriority").from("playersdata").where("id=" + User.getUser(commandSender).id).getStringArray();
                     if (datas[0].isEmpty())
                         commandSender.sendMessage("You didn't nicked before! please use /nick <nickname>");
                     else if (datas[0].equals(commandSender.getName()))
@@ -179,7 +179,7 @@ public class nick implements CommandExecutor, Listener {
             return;
         }
 
-        boolean allow = (user.hasPermission("perm.nick.legacyregex") ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.connection.exist("playersdata", "name='" + name + "' OR id!='" + user.id + "' AND nickname='" + name + "'");
+        boolean allow = (user.hasPermission("perm.nick.legacyregex") ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.getCubing().exist("playersdata", "name='" + name + "' OR id!='" + user.id + "' AND nickname='" + name + "'");
         if (allow) {
             if (!user.hasPermission("perm.nick.anyname")) {
                 try {
@@ -220,10 +220,10 @@ public class nick implements CommandExecutor, Listener {
 //                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer));
 
         user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + displayName + "',nickpriority='" + displayRank + "'" : ""));
-        Database.connection.update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);
+        Database.getCubing().update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);
         user.writeToProxy(new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(displayRank).writeUTF(displayName).toByteArray());
         if (nick) {
-            Database.systemConnection.insert("nicknames", "uuid,name,nickname,nicktime").values("'" + user.uuid + "','" + user.realName + "','" + displayName + "'," + SystemUtils.getCurrentSecond()).execute();
+            Database.getSystem().insert("nicknames", "uuid,name,nickname,nicktime").values("'" + user.uuid + "','" + user.realName + "','" + displayName + "'," + SystemUtils.getCurrentSecond()).execute();
         }
         if (openBook) {
             openNickBook(player, NickBook.RULE);
@@ -280,7 +280,7 @@ public class nick implements CommandExecutor, Listener {
                 BookBuilder.openBook(book, player);
                 break;
             case NAMECHOOSE:
-                String data = Database.connection.select("nickname").from("playersdata").where("id=" + User.getUser(player).id).getString();
+                String data = Database.getCubing().select("nickname").from("playersdata").where("id=" + User.getUser(player).id).getString();
                 nickName.put(player.getUniqueId(), data);
                 if (User.getUser(player).hasPermission("perm.nick.customname")) {
                     book = new BookBuilder("name", "system")

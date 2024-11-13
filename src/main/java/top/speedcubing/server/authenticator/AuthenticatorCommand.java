@@ -116,12 +116,12 @@ public class AuthenticatorCommand implements CommandExecutor {
             } else if (args[0].equalsIgnoreCase("reset")) {
                 if (!(sender instanceof Player)) {
                     String targetName = args[1];
-                    String realTargetName = Database.connection.select("name").from("playersdata").where("name='" + targetName + "'").getString();
+                    String realTargetName = Database.getCubing().select("name").from("playersdata").where("name='" + targetName + "'").getString();
                     if (realTargetName == null) {
                         sender.sendMessage("§cThe player you entered does not exist.");
                         return true;
                     }
-                    int id = Database.connection.select("id").from("playersdata").where("name='" + targetName + "'").getInt();
+                    int id = Database.getCubing().select("id").from("playersdata").where("name='" + targetName + "'").getInt();
                     AuthData.map.get(User.getUser(id)).setSession(false);
                     sender.sendMessage("§aSuccessfully reset " + realTargetName + " trusted sessions");
                 } else {

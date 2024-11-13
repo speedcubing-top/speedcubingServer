@@ -16,7 +16,7 @@ public class resetpassword implements CommandExecutor {
             else if (l < 8)
                 commandSender.sendMessage("The password is too short. You need atleast 8 characters");
             else if (strings[0].equals(strings[1])) {
-                Database.connection.update("playersdata").set("password=?").where("id=" + User.getUser(commandSender).id).setString(0, strings[0]).execute();
+                Database.getCubing().update("playersdata").set("password=?").where("id=" + User.getUser(commandSender).id).setString(0, strings[0]).execute();
                 ((Player) commandSender).kickPlayer("§cReset §6password for user \"§b" + commandSender.getName() + "§6\".");
             } else commandSender.sendMessage("The password and confirm password do not match.");
         } else commandSender.sendMessage("/register <password> <confirm password>");

@@ -24,7 +24,7 @@ public class CubingTick {
         long t = System.currentTimeMillis();
         MemoryUsage usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
         double[] tps = MinecraftServer.getServer().recentTps;
-        Database.systemConnection.update(
+        Database.getSystem().update(
                 "servers",
                 "onlinecount=" + Bukkit.getOnlinePlayers().size() +
                         ",ram_heap=" + usage.getCommitted() / 1048576 +
