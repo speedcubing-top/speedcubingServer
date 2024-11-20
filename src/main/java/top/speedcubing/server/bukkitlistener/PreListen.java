@@ -6,9 +6,12 @@ import com.mojang.authlib.properties.Property;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import net.minecraft.server.v1_8_R3.BlockPosition;
 import net.minecraft.server.v1_8_R3.PacketPlayOutBed;
@@ -27,7 +30,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerLoginEvent;
 import org.bukkit.event.player.PlayerVelocityEvent;
-import org.bukkit.event.server.ServerCommandEvent;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.PermissionSet;
 import top.speedcubing.common.rank.Rank;
@@ -37,10 +39,10 @@ import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
-import top.speedcubing.server.login.PreLoginData;
+import top.speedcubing.server.login.BungeePacket;
+import top.speedcubing.server.login.LoginContext;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
-import top.speedcubing.server.system.command.CubingCommandManager;
 import top.speedcubing.server.utils.CommandParser;
 import top.speedcubing.server.utils.Configuration;
 import top.speedcubing.server.utils.RankSystem;
@@ -109,72 +111,78 @@ public class PreListen implements Listener {
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
 
-        datas = Database.getCubing().
+        SQLRow row = Database.getCubing().
                 prepare("SELECT priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature,nicked,skinvalue,skinsignature,nickname FROM playersdata WHERE uuid=?")
                 .setString(1, player.getUniqueId().toString())
                 .executeResult().get(0);
 
-        int id = datas.getInt("id");
-        realRank = Rank.getRank(datas.getString("priority"), id);
+        int id = row.getInt("id");
+        String realRank = Rank.getRank(row.getString("priority"), id);
 
         //maintenance
-        if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (datas.getBoolean("serverwhitelist"))) {
+        if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (row.getBoolean("serverwhitelist"))) {
             e.setKickMessage("§cThis server is currently under maintenance.");
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            speedcubingServer.preLoginStorage.remove(id);
+            speedcubingServer.bungeePacketStorage.remove(id);
             return;
         }
 
         //bungee-data-not-found
-        bungePacket = speedcubingServer.preLoginStorage.get(id);
+        BungeePacket bungePacket = speedcubingServer.bungeePacketStorage.get(id);
         if (bungePacket == null) {
             e.setKickMessage("§cError occurred.");
             e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
             return;
         }
 
-        speedcubingServer.preLoginStorage.remove(id);
+        speedcubingServer.bungeePacketStorage.remove(id);
+        ctxMap.put(player.getUniqueId(), new LoginContext(row, realRank, bungePacket));
     }
 
-    SQLRow datas;
-    String realRank;
-    PreLoginData bungePacket;
+    Map<UUID, LoginContext> ctxMap = new HashMap<>();
 
     @EventHandler(priority = EventPriority.LOW)
     public void PlayerJoinEvent(PlayerJoinEvent e) {
         e.setJoinMessage("");
         Player player = e.getPlayer();
 
+        if (ctxMap.containsKey(player.getUniqueId())) {
+            player.kickPlayer("error (4)");
+            return;
+        }
+        LoginContext ctx = ctxMap.get(player.getUniqueId());
+        ctxMap.remove(player.getUniqueId());
+
         //Perms
-        Set<String> perms = Sets.newHashSet(datas.getString("perms").split("\\|"));
-        perms.addAll(Rank.rankByName.get(realRank).getPerms());
+        Set<String> perms = Sets.newHashSet(ctx.getRow().getString("perms").split("\\|"));
+        perms.addAll(Rank.rankByName.get(ctx.getRealRank()).getPerms());
         PermissionSet.findGroups(perms);
 
         //Check Nick
         boolean lobby = Bukkit.getServerName().equalsIgnoreCase("lobby");
 
         String displayName = player.getName();
-        String displayRank = realRank;
+        String displayRank = ctx.getRealRank();
 
         String skinValue = "";
         String skinSignature = "";
 
-        boolean nickState = datas.getBoolean("nicked");
+        boolean nickState = ctx.getRow().getBoolean("nicked");
 
         if (lobby) {
-            displayRank = realRank;
-            displayName = datas.getString("name");
+            displayRank = ctx.getRealRank();
+            displayName = ctx.getRow().getString("name");
         } else {
             if (nickState) {
-                displayRank = datas.getString("nickpriority");
-                displayName = datas.getString("nickname");
+                displayRank = ctx.getRow().getString("nickpriority");
+                displayName = ctx.getRow().getString("nickname");
             }
-            skinValue = datas.getString("skinvalue");
-            skinSignature = datas.getString("skinsignature");
+            skinValue = ctx.getRow().getString("skinvalue");
+            skinSignature = ctx.getRow().getString("skinsignature");
         }
 
         //User
-        User user = new User(player, displayRank, realRank, perms, datas, bungePacket);
+        User user = new User(player, displayRank, perms, ctx);
 
         //modify things
         GameProfile profile = ((CraftPlayer) player).getProfile();

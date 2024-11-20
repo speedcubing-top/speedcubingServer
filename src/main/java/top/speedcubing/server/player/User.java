@@ -41,7 +41,7 @@ import top.speedcubing.lib.bukkit.TitleType;
 import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.ComponentText;
-import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.SQL.SQLPrepare;
 import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.lib.utils.UUIDUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
@@ -51,7 +51,8 @@ import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.lang.LangInv;
 import top.speedcubing.server.lang.LangItem;
-import top.speedcubing.server.login.PreLoginData;
+import top.speedcubing.server.login.BungeePacket;
+import top.speedcubing.server.login.LoginContext;
 import top.speedcubing.server.utils.RankSystem;
 
 public class User extends IDPlayer {
@@ -100,24 +101,24 @@ public class User extends IDPlayer {
     public Skin defaultSkin;
     public boolean isCrashed;
 
-    public User(Player player, String displayRank, String realRank, Set<String> permissions, SQLRow datas, PreLoginData bungeeData) {
-        super(datas.getString("name"), player.getUniqueId(), datas.getInt("id"));
+    public User(Player player, String displayRank, Set<String> permissions, LoginContext ctx) {
+        super(ctx.getRow().getString("name"), player.getUniqueId(), ctx.getRow().getInt("id"));
         this.player = player;
         this.permissions = permissions;
-        this.listened = bungeeData.cps;
-        this.lang = datas.getInt("lang");
-        this.chatFilt = datas.getBoolean("chatfilt");
-        this.realRank = realRank;
+        this.listened = ctx.getBungePacket().cps;
+        this.lang = ctx.getRow().getInt("lang");
+        this.chatFilt = ctx.getRow().getBoolean("chatfilt");
+        this.realRank = ctx.getRealRank();
         this.displayRank = displayRank;
-        this.vanished = bungeeData.vanished;
-        this.proxy = bungeeData.proxy;
+        this.vanished = ctx.getBungePacket().vanished;
+        this.proxy = ctx.getBungePacket().proxy;
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString();
         this.status = dbSelect("status").getString() == null ? "null" : dbSelect("status").getString();
-        this.defaultSkin = new Skin(datas.getString("profile_textures_value"), datas.getString("profile_textures_signature"));
+        this.defaultSkin = new Skin(ctx.getRow().getString("profile_textures_value"), ctx.getRow().getString("profile_textures_signature"));
         this.isCrashed = false;
-        if (!bungeeData.hor.equals("null"))
-            this.velocities = new double[]{Double.parseDouble(bungeeData.hor), Double.parseDouble(bungeeData.ver)};
+        if (!ctx.getBungePacket().hor.equals("null"))
+            this.velocities = new double[]{Double.parseDouble(ctx.getBungePacket().hor), Double.parseDouble(ctx.getBungePacket().ver)};
         usersByID.put(id, this);
         usersByUUID.put(bGetUniqueId(), this);
     }
@@ -340,7 +341,7 @@ public class User extends IDPlayer {
         Database.getCubing().update("playersdata", field, "id=" + id);
     }
 
-    public SQLConnection.SQLPrepare dbSelect(String field) {
+    public SQLPrepare dbSelect(String field) {
         return Database.getCubing().select(field).from("playersdata").where("id=" + id);
     }
 

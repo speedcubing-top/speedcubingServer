@@ -51,7 +51,7 @@ import top.speedcubing.server.cubinglistener.PlayOut;
 import top.speedcubing.server.cubinglistener.SocketInput;
 import top.speedcubing.server.cubinglistener.SocketRead;
 import top.speedcubing.server.lang.LanguageSystem;
-import top.speedcubing.server.login.PreLoginData;
+import top.speedcubing.server.login.BungeePacket;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.system.command.CubingCommandLoader;
 import top.speedcubing.server.utils.Configuration;
@@ -61,7 +61,7 @@ import top.speedcubing.server.utils.WordDictionary;
 public class speedcubingServer extends JavaPlugin {
     public static final Pattern nameRegex = Pattern.compile("^\\w{3,16}$");
     public static final Pattern legacyNameRegex = Pattern.compile("^\\w{1,16}$");
-    public static Map<Integer, PreLoginData> preLoginStorage = new HashMap<>();
+    public static Map<Integer, BungeePacket> bungeePacketStorage = new HashMap<>();
 
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
