@@ -1,20 +1,17 @@
 package top.speedcubing.server.cubinglistener;
 
 import com.mojang.authlib.GameProfile;
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import net.minecraft.server.v1_8_R3.PacketPlayOutKeepAlive;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
 import net.minecraft.server.v1_8_R3.PacketPlayOutPlayerInfo;
-import net.minecraft.server.v1_8_R3.PacketPlayOutScoreboardTeam;
-import net.minecraft.server.v1_8_R3.PacketPlayOutSetSlot;
-import net.minecraft.server.v1_8_R3.PacketPlayOutSpawnEntityLiving;
 import net.minecraft.server.v1_8_R3.PacketPlayOutStatistic;
 import net.minecraft.server.v1_8_R3.PacketPlayOutTabComplete;
-import net.minecraft.server.v1_8_R3.PacketPlayOutTileEntityData;
-import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateAttributes;
-import net.minecraft.server.v1_8_R3.PacketPlayOutUpdateTime;
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import top.speedcubing.lib.bukkit.events.packet.PlayOutEvent;
 import top.speedcubing.lib.bukkit.handler.PacketPlayOutHandler;
@@ -22,11 +19,6 @@ import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.lib.utils.ReflectionUtils;
 import top.speedcubing.server.bukkitcmd.troll.sendpacket;
 import top.speedcubing.server.player.User;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class PlayOut {
 
@@ -42,12 +34,6 @@ public class PlayOut {
 //            && !(e.getPacket() instanceof PacketPlayOutUpdateAttributes)) {
 //            System.out.println(e.getPacket().getClass().getSimpleName());
 //        }
-
-        if (User.getUser(e.getPlayer()).isCrashed) {
-            if (!(e.getPacket() instanceof PacketPlayOutKeepAlive || !(e.getPacket() instanceof PacketPlayOutHandler))) {
-                e.setCancelled(true);
-            }
-        }
         if (e.getPacket() instanceof PacketPlayOutStatistic packet) {
             Map<?, Integer> stats = (Map<?, Integer>) ReflectionUtils.getField(packet, "a");
             stats.replaceAll((k, v) -> 0);

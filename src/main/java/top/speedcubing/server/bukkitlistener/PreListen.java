@@ -146,7 +146,7 @@ public class PreListen implements Listener {
         e.setJoinMessage("");
         Player player = e.getPlayer();
 
-        if (ctxMap.containsKey(player.getUniqueId())) {
+        if (!ctxMap.containsKey(player.getUniqueId())) {
             player.kickPlayer("error (4)");
             return;
         }
