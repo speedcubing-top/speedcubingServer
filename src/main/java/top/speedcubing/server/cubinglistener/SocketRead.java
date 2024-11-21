@@ -24,7 +24,7 @@ public class SocketRead {
                 User user = User.getUser(id);
                 if (user != null)
                     user.listened = data.readBoolean();
-                else speedcubingServer.preLoginStorage.get(id).cps = true;
+                else speedcubingServer.bungeePacketStorage.get(id).cps = true;
                 break;
             case "cfg":
                 ServerConfig.reload(false);
