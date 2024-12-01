@@ -3,6 +3,7 @@ package top.speedcubing.server.bukkitlistener.pluginchannel;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.regex.Pattern;
+import javax.xml.crypto.Data;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
@@ -42,9 +43,10 @@ public class FMLHSListener implements PluginMessageListener {
                 i = end;
             }
             String mods = new String(bytes, StandardCharsets.UTF_8);
+            int id = User.getUser(player).id;
             System.out.println(mods);
             System.out.println(Arrays.toString(bytes));
-            User.getUser(player).dbUpdate("forgemod='" + new String(bytes, StandardCharsets.UTF_8) + "'");
+            Database.getCubing().prepare("UPDATE `playersdata` SET forgemod=? WHERE id=?").setString(1, mods).setInt(2, id).executeUpdate();
         }
     }
 }
