@@ -14,6 +14,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.server.MinecraftServer;
 import top.speedcubing.lib.discord.DiscordWebhook;
 import top.speedcubing.lib.minecraft.MinecraftConsole;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
@@ -40,15 +41,23 @@ public class Chat {
     public static void globalChat(Collection<? extends Player> players, Player sender, Lang format, String message, String... replace) {
         format.param(replace);
         String filteredMessage = filter(message);
-        String[] ignores = Database.getCubing().select("uuid").from("ignorelist").where("target='" + sender.getUniqueId() + "'").getStringArray();
-        User user;
-        c:
-        for (Player p : players) {
-            user = User.getUser(p);
-            for (String s : ignores)
-                if (user.player.getUniqueId().toString().equals(s))
-                    continue c;
-            user.sendMessage(format, (user.chatFilt ? message : filteredMessage));
+
+        try (SQLConnection connection = Database.getCubing()) {
+            String[] ignores = connection.select("uuid")
+                    .from("ignorelist")
+                    .where("target='" + sender.getUniqueId() + "'")
+                    .getStringArray();
+            User user;
+            c:
+            for (Player p : players) {
+                user = User.getUser(p);
+                for (String s : ignores) {
+                    if (user.player.getUniqueId().toString().equals(s)) {
+                        continue c;
+                    }
+                }
+                user.sendMessage(format, (user.chatFilt ? message : filteredMessage));
+            }
         }
 
         format.param(message);

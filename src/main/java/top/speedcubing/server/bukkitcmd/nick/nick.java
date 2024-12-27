@@ -19,22 +19,16 @@ import top.speedcubing.lib.math.scMath;
 import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
+import top.speedcubing.server.utils.WordDictionary;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-
-import top.speedcubing.server.utils.WordDictionary;
+import java.util.*;
 
 public class nick implements CommandExecutor, Listener {
     public static final Map<UUID, Boolean> settingNick = new HashMap<>();
@@ -121,16 +115,22 @@ public class nick implements CommandExecutor, Listener {
                     openNickBook(player, NickBook.RULE);
                     return true;
                 } else if (strings[0].equalsIgnoreCase("reuse")) {
-                    String[] datas = Database.getCubing().select("nickname,nickpriority").from("playersdata").where("id=" + User.getUser(commandSender).id).getStringArray();
-                    if (datas[0].isEmpty())
-                        commandSender.sendMessage("You didn't nicked before! please use /nick <nickname>");
-                    else if (datas[0].equals(commandSender.getName()))
-                        User.getUser(commandSender).sendMessage("%lang_nick_already%");
-                    else {
-                        nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender, false);
-                        commandSender.sendMessage("§aYou have reused your nickname!");
+                    try (SQLConnection connection = Database.getCubing()) {
+                        String[] datas = connection.select("nickname,nickpriority")
+                                .from("playersdata")
+                                .where("id=" + User.getUser(commandSender).id)
+                                .getStringArray();
+                        if (datas[0].isEmpty()) {
+                            commandSender.sendMessage("You didn't nicked before! please use /nick <nickname>");
+                        } else if (datas[0].equals(commandSender.getName())) {
+                            User.getUser(commandSender).sendMessage("%lang_nick_already%");
+                        } else {
+                            nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender, false);
+                            commandSender.sendMessage("§aYou have reused your nickname!");
+                        }
+                        return true;
                     }
-                    return true;
+
                 }
                 String name = strings[0];
                 User user = User.getUser(commandSender);
@@ -179,7 +179,17 @@ public class nick implements CommandExecutor, Listener {
             return;
         }
 
-        boolean allow = (user.hasPermission("perm.nick.legacyregex") ? speedcubingServer.legacyNameRegex : speedcubingServer.nameRegex).matcher(name).matches() && !Database.getCubing().exist("playersdata", "name='" + name + "' OR id!='" + user.id + "' AND nickname='" + name + "'");
+        boolean allow;
+
+        try (SQLConnection connection = Database.getCubing()) {
+            allow = (user.hasPermission("perm.nick.legacyregex") ?
+                    speedcubingServer.legacyNameRegex :
+                    speedcubingServer.nameRegex)
+                    .matcher(name).matches() &&
+                    !connection.exist("playersdata",
+                            "name='" + name + "' OR id!='" + user.id + "' AND nickname='" + name + "'");
+        }
+
         if (allow) {
             if (!user.hasPermission("perm.nick.anyname")) {
                 try {
@@ -218,16 +228,24 @@ public class nick implements CommandExecutor, Listener {
 //        user.sendPacket(
 //                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.REMOVE_PLAYER, entityPlayer),
 //                new PacketPlayOutPlayerInfo(PacketPlayOutPlayerInfo.EnumPlayerInfoAction.ADD_PLAYER, entityPlayer));
-
-        user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + displayName + "',nickpriority='" + displayRank + "'" : ""));
-        Database.getCubing().update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);
-        user.writeToProxy(new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(displayRank).writeUTF(displayName).toByteArray());
-        if (nick) {
-            Database.getSystem().insert("nicknames", "uuid,name,nickname,nicktime").values("'" + user.uuid + "','" + user.realName + "','" + displayName + "'," + SystemUtils.getCurrentSecond()).execute();
+        try (SQLConnection connection = Database.getCubing()) {
+            user.dbUpdate("nicked=" + (nick ? 1 : 0) + (nick ? ",nickname='" + displayName + "',nickpriority='" + displayRank + "'" : ""));
+            connection.update("onlineplayer", "displayname='" + displayName + "',displayrank='" + displayRank + "'", "id=" + user.id);
+            user.writeToProxy(new ByteArrayBuffer().writeUTF("nick").writeInt(user.id).writeUTF(displayRank).writeUTF(displayName).toByteArray());
         }
+
+        if (nick) {
+            try (SQLConnection connection = Database.getSystem()) {
+                connection.insert("nicknames", "uuid,name,nickname,nicktime")
+                        .values("'" + user.uuid + "','" + user.realName + "','" + displayName + "'," + SystemUtils.getCurrentSecond())
+                        .execute();
+            }
+        }
+
         if (openBook) {
             openNickBook(player, NickBook.RULE);
         }
+
         settingNick.remove(player.getUniqueId());
     }
 
@@ -280,27 +298,34 @@ public class nick implements CommandExecutor, Listener {
                 BookBuilder.openBook(book, player);
                 break;
             case NAMECHOOSE:
-                String data = Database.getCubing().select("nickname").from("playersdata").where("id=" + User.getUser(player).id).getString();
-                nickName.put(player.getUniqueId(), data);
-                if (User.getUser(player).hasPermission("perm.nick.customname")) {
-                    book = new BookBuilder("name", "system")
-                            .addPage(new ComponentText().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
-                                    .both("➤ Enter a name\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to enter a custom name."))
-                                    .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name."))
-                                    .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
-                                    .str("To go back to being\nyour usual self, type:\n§l/unnick")
-                                    .toBungee())
-                            .build();
-                } else {
-                    book = new BookBuilder("name", "system")
-                            .addPage(new ComponentText().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
-                                    .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name."))
-                                    .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
-                                    .str("To go back to being\nyour usual self, type:\n§l/unnick")
-                                    .toBungee())
-                            .build();
+                try (SQLConnection connection = Database.getCubing()) {
+                    String data = connection.select("nickname")
+                            .from("playersdata")
+                            .where("id=" + User.getUser(player).id)
+                            .getString();
+                    nickName.put(player.getUniqueId(), data);
+
+                    if (User.getUser(player).hasPermission("perm.nick.customname")) {
+                        book = new BookBuilder("name", "system")
+                                .addPage(new ComponentText().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
+                                        .both("➤ Enter a name\n", TextClickEvent.runCommand("/nick nicknamecustom"), TextHoverEvent.showText("Click here to enter a custom name."))
+                                        .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name."))
+                                        .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
+                                        .str("To go back to being\nyour usual self, type:\n§l/unnick")
+                                        .toBungee())
+                                .build();
+                    } else {
+                        book = new BookBuilder("name", "system")
+                                .addPage(new ComponentText().str("Alright, now you'll need\nto choose the §lNAME to use!§r§0\n\n")
+                                        .both("➤ Use a random name\n", TextClickEvent.runCommand("/nick nicknamerandom"), TextHoverEvent.showText("Click here to use randomly generated name."))
+                                        .both("➤ Reuse '" + data + "'\n\n", TextClickEvent.runCommand("/nick " + data + " " + nickRank.get(player.getUniqueId()) + " true"), TextHoverEvent.showText("Click here to reuse '" + data + "'"))
+                                        .str("To go back to being\nyour usual self, type:\n§l/unnick")
+                                        .toBungee())
+                                .build();
+                    }
+                    BookBuilder.openBook(book, player);
                 }
-                BookBuilder.openBook(book, player);
+
                 break;
             case NAMECUSTOM:
                 String[] lines = {"", "Enter a name"};

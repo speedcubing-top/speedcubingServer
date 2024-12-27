@@ -14,6 +14,7 @@ import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.bukkit.pluginMessage.BungeePluginMessage;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.server.player.User;
 
@@ -24,16 +25,19 @@ public class CubingTick {
         long t = System.currentTimeMillis();
         MemoryUsage usage = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage();
         double[] tps = MinecraftServer.getServer().recentTps;
-        Database.getSystem().update(
-                "servers",
-                "onlinecount=" + Bukkit.getOnlinePlayers().size() +
-                        ",ram_heap=" + usage.getCommitted() / 1048576 +
-                        ",ram_used=" + usage.getUsed() / 1048576 +
-                        ",tps1=" + Math.round(tps[0] * 100.0) / 100.0 +
-                        ",tps2=" + Math.round(tps[1] * 100.0) / 100.0 +
-                        ",tps3=" + Math.round(tps[2] * 100.0) / 100.0,
-                "name='" + Bukkit.getServerName() + "'"
-        );
+        try (SQLConnection connection = Database.getSystem()) {
+            connection.update(
+                    "servers",
+                    "onlinecount=" + Bukkit.getOnlinePlayers().size() +
+                            ",ram_heap=" + usage.getCommitted() / 1048576 +
+                            ",ram_used=" + usage.getUsed() / 1048576 +
+                            ",tps1=" + Math.round(tps[0] * 100.0) / 100.0 +
+                            ",tps2=" + Math.round(tps[1] * 100.0) / 100.0 +
+                            ",tps3=" + Math.round(tps[2] * 100.0) / 100.0,
+                    "name='" + Bukkit.getServerName() + "'"
+            );
+        }
+
         for (User user : User.usersByID.values()) {
             if (user.listened)
                 user.writeToProxy(new ByteArrayBuffer().writeUTF("cps").writeInt(user.id).writeInt(user.leftCPS).writeInt(user.rightCPS).toByteArray());

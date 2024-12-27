@@ -36,6 +36,7 @@ import top.speedcubing.common.rank.Rank;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.utils.ReflectionUtils;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.authenticator.AuthEventHandlers;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
@@ -111,32 +112,34 @@ public class PreListen implements Listener {
     public void PlayerLoginEvent(PlayerLoginEvent e) {
         Player player = e.getPlayer();
 
-        SQLRow row = Database.getCubing().
-                prepare("SELECT priority,nickpriority,perms,lang,id,name,chatfilt,guild,serverwhitelist,agreement,profile_textures_value,profile_textures_signature,nicked,skinvalue,skinsignature,nickname FROM playersdata WHERE uuid=?")
-                .setString(1, player.getUniqueId().toString())
-                .executeResult().get(0);
+        try (SQLConnection connection = Database.getCubing()) {
+            SQLRow row = connection.prepare(
+                            "SELECT priority, nickpriority, perms, lang, id, name, chatfilt, guild, serverwhitelist, agreement, profile_textures_value, profile_textures_signature, nicked, skinvalue, skinsignature, nickname FROM playersdata WHERE uuid=?")
+                    .setString(1, player.getUniqueId().toString())
+                    .executeResult().get(0);
 
-        int id = row.getInt("id");
-        String realRank = Rank.getRank(row.getString("priority"), id);
+            int id = row.getInt("id");
+            String realRank = Rank.getRank(row.getString("priority"), id);
 
-        //maintenance
-        if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (row.getBoolean("serverwhitelist"))) {
-            e.setKickMessage("§cThis server is currently under maintenance.");
-            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+            // maintenance
+            if (!Rank.isStaff(realRank) && Bukkit.hasWhitelist() && (row.getBoolean("serverwhitelist"))) {
+                e.setKickMessage("§cThis server is currently under maintenance.");
+                e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+                speedcubingServer.bungeePacketStorage.remove(id);
+                return;
+            }
+
+            // bungee-data-not-found
+            BungeePacket bungePacket = speedcubingServer.bungeePacketStorage.get(id);
+            if (bungePacket == null) {
+                e.setKickMessage("§cError occurred.");
+                e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
+                return;
+            }
+
             speedcubingServer.bungeePacketStorage.remove(id);
-            return;
+            ctxMap.put(player.getUniqueId(), new LoginContext(row, realRank, bungePacket));
         }
-
-        //bungee-data-not-found
-        BungeePacket bungePacket = speedcubingServer.bungeePacketStorage.get(id);
-        if (bungePacket == null) {
-            e.setKickMessage("§cError occurred.");
-            e.setResult(PlayerLoginEvent.Result.KICK_OTHER);
-            return;
-        }
-
-        speedcubingServer.bungeePacketStorage.remove(id);
-        ctxMap.put(player.getUniqueId(), new LoginContext(row, realRank, bungePacket));
     }
 
     Map<UUID, LoginContext> ctxMap = new HashMap<>();

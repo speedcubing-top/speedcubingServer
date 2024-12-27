@@ -1,9 +1,5 @@
 package top.speedcubing.server.bukkitcmd.staff;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -20,7 +16,13 @@ import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SystemUtils;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class history implements CommandExecutor, Listener {
     List<Inventory> banList = new ArrayList<>();
@@ -140,25 +142,31 @@ public class history implements CommandExecutor, Listener {
     }
 
     private boolean openHistoryGui(Player sender, String name) {
-        String[] data = Database.getCubing().select("name,profile_textures_value,uuid").from("playersdata").where("name='" + name + "'").getStringArray();
-        if (data.length == 0) return false;
+        try (SQLConnection connection = Database.getCubing()) {
+            String[] data = connection.select("name,profile_textures_value,uuid")
+                    .from("playersdata")
+                    .where("name='" + name + "'")
+                    .getStringArray();
+            if (data.length == 0) return false;
 
-        Inventory inventory = Bukkit.createInventory(null, 9, "Punishment History");
+            Inventory inventory = Bukkit.createInventory(null, 9, "Punishment History");
 
-        inventory.setItem(0, new ItemBuilder(Material.SKULL_ITEM).name("§a" + data[0] + "'s punishment history")
-                .addLore("§eLeft Click to view ban history.", "§eRight Click to view mute history.", "§eUUID: " + data[2]).durability(3)
-                .owner(name)
-                .build());
-        inventory.setItem(1, new ItemBuilder(Material.PAPER).name("§aINFORMATION")
-                .addLore(data[0], data[1], data[2])
-                .build());
-        for (int i = 2; i < 8; i++) {
-            inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name(" ").build());
+            inventory.setItem(0, new ItemBuilder(Material.SKULL_ITEM).name("§a" + data[0] + "'s punishment history")
+                    .addLore("§eLeft Click to view ban history.", "§eRight Click to view mute history.", "§eUUID: " + data[2]).durability(3)
+                    .owner(name)
+                    .build());
+            inventory.setItem(1, new ItemBuilder(Material.PAPER).name("§aINFORMATION")
+                    .addLore(data[0], data[1], data[2])
+                    .build());
+            for (int i = 2; i < 8; i++) {
+                inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name(" ").build());
+            }
+            inventory.setItem(8, new ItemBuilder(Material.BARRIER).name("§cCLOSE").build());
+            sender.openInventory(inventory);
+            return true;
         }
-        inventory.setItem(8, new ItemBuilder(Material.BARRIER).name("§cCLOSE").build());
-        sender.openInventory(inventory);
-        return true;
     }
+
 
     private List<Inventory> generateBanGUI(String[] values) {
         List<BanPunishment> datas = getBanPunishmentHistory(values[2]);
@@ -177,19 +185,23 @@ public class history implements CommandExecutor, Listener {
 
                 BanPunishment punishment = datas.get(i);
                 long remain = getPunishRemain(punishment.getAt(), punishment.getDays(), punishment.getPardon(), SystemUtils.getCurrentSecond());
-                inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eBanned logs")
-                        .addLore("§eName: §a" + values[0],
-                                "§eOperator: §a" + (punishment.getOperator().length() == 36 ? Database.getCubing().select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").getString() : punishment.getOperator()),
-                                "§eReason: §a" + punishment.getReason(),
-                                "§eBanID: §a" + punishment.getId(),
-                                "§eDuration: §a" + punishment.getDays(),
-                                "§eAt: §a" + CubingTimeFormat.toYMDHMS(punishment.getAt()),
-                                "§eIp: §a" + punishment.getIp(),
-                                "§eHideID: §a" + (punishment.getHideid().equals("1") ? "true" : "false"),
-                                "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unbanned yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unbanned by " + punishment.getPardon()),
-                                "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.getPardonat())))
-                        .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
-                        .build());
+                try (SQLConnection connection = Database.getCubing()) {
+                    inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eBanned logs")
+                            .addLore("§eName: §a" + values[0],
+                                    "§eOperator: §a" + (punishment.getOperator().length() == 36 ?
+                                            connection.select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").getString() :
+                                            punishment.getOperator()),
+                                    "§eReason: §a" + punishment.getReason(),
+                                    "§eBanID: §a" + punishment.getId(),
+                                    "§eDuration: §a" + punishment.getDays(),
+                                    "§eAt: §a" + CubingTimeFormat.toYMDHMS(punishment.getAt()),
+                                    "§eIp: §a" + punishment.getIp(),
+                                    "§eHideID: §a" + (punishment.getHideid().equals("1") ? "true" : "false"),
+                                    "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unbanned yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unbanned by " + punishment.getPardon()),
+                                    "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.getPardonat())))
+                            .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
+                            .build());
+                }
                 if (itemIndex > 45) {
                     break;
                 }
@@ -246,17 +258,19 @@ public class history implements CommandExecutor, Listener {
 
                 MutePunishment punishment = datas.get(i);
                 long remain = getPunishRemain(punishment.getAt(), punishment.getDays(), punishment.getPardon(), SystemUtils.getCurrentSecond());
-                inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eMuted logs")
-                        .addLore("§eName: §a" + values[0],
-                                "§eOperator: §a" + (punishment.getOperator().length() == 36 ? Database.getCubing().select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").getString() : punishment.getOperator()),
-                                "§eReason: §a" + punishment.getReason(),
-                                "§eMuteID: §a" + punishment.getId(),
-                                "§eDuration: §a" + punishment.getDays(),
-                                "§eAt: §a" + CubingTimeFormat.toYMDHMS(punishment.getAt()),
-                                "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unmuted yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unmuted by " + punishment.getPardon()),
-                                "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.getPardonat())))
-                        .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
-                        .build());
+                try (SQLConnection connection = Database.getCubing()) {
+                    inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eMuted logs")
+                            .addLore("§eName: §a" + values[0],
+                                    "§eOperator: §a" + (punishment.getOperator().length() == 36 ? connection.select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").getString() : punishment.getOperator()),
+                                    "§eReason: §a" + punishment.getReason(),
+                                    "§eMuteID: §a" + punishment.getId(),
+                                    "§eDuration: §a" + punishment.getDays(),
+                                    "§eAt: §a" + CubingTimeFormat.toYMDHMS(punishment.getAt()),
+                                    "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unmuted yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unmuted by " + punishment.getPardon()),
+                                    "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.getPardonat())))
+                            .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
+                            .build());
+                }
                 if (itemIndex > 45) {
                     break;
                 }
@@ -269,11 +283,11 @@ public class history implements CommandExecutor, Listener {
 
     private List<BanPunishment> getBanPunishmentHistory(String uuid) {
         List<BanPunishment> resultList = new ArrayList<>();
-        try {
-            ResultSet resultSet = Database.getCubing().select("id,uuid,ip,hideid,at,reason,operator,days,pardon,pardonat")
-                    .from("banlist")
-                    .where("uuid='" + uuid + "'")
-                    .executeQuery();
+        try (SQLConnection connection = Database.getCubing();
+             ResultSet resultSet = connection.select("id,uuid,ip,hideid,at,reason,operator,days,pardon,pardonat")
+                     .from("banlist")
+                     .where("uuid='" + uuid + "'")
+                     .executeQuery()) {
 
             while (resultSet.next()) {
                 String id = resultSet.getString("id");
@@ -301,11 +315,11 @@ public class history implements CommandExecutor, Listener {
 
     private List<MutePunishment> getMutePunishmentHistory(String uuid) {
         List<MutePunishment> resultList = new ArrayList<>();
-        try {
-            ResultSet resultSet = Database.getCubing().select("id,uuid,at,reason,operator,days,pardon,pardonat")
-                    .from("mutelist")
-                    .where("uuid='" + uuid + "'")
-                    .executeQuery();
+        try (SQLConnection connection = Database.getCubing();
+             ResultSet resultSet = connection.select("id,uuid,at,reason,operator,days,pardon,pardonat")
+                     .from("mutelist")
+                     .where("uuid='" + uuid + "'")
+                     .executeQuery()) {
 
             while (resultSet.next()) {
                 String id = resultSet.getString("id");

@@ -10,6 +10,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import top.speedcubing.common.database.Database;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.sockets.TCPClient;
@@ -114,19 +115,23 @@ public class AuthenticatorCommand implements CommandExecutor {
                     player.sendMessage("§c2FA is disabled");
                 }
             } else if (args[0].equalsIgnoreCase("reset")) {
-                if (!(sender instanceof Player)) {
-                    String targetName = args[1];
-                    String realTargetName = Database.getCubing().select("name").from("playersdata").where("name='" + targetName + "'").getString();
+                if (sender instanceof Player) {
+                    sender.sendMessage("§cThis command is console only.");
+                    return true;
+                }
+
+                String targetName = args[1];
+                try (SQLConnection connection = Database.getCubing()) {
+                    String realTargetName = connection.select("name").from("playersdata").where("name='" + targetName + "'").getString();
                     if (realTargetName == null) {
                         sender.sendMessage("§cThe player you entered does not exist.");
                         return true;
                     }
-                    int id = Database.getCubing().select("id").from("playersdata").where("name='" + targetName + "'").getInt();
+                    int id = connection.select("id").from("playersdata").where("name='" + targetName + "'").getInt();
                     AuthData.map.get(User.getUser(id)).setSession(false);
                     sender.sendMessage("§aSuccessfully reset " + realTargetName + " trusted sessions");
-                } else {
-                    sender.sendMessage("§cThis command is console only.");
                 }
+
             }
         }
         return true;

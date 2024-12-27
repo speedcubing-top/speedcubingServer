@@ -18,6 +18,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.io.SocketReader;
 import top.speedcubing.lib.api.mojang.ProfileSkin;
 import top.speedcubing.lib.eventbus.CubingEventManager;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.server.authenticator.AuthenticatorCommand;
@@ -97,10 +98,13 @@ public class speedcubingServer extends JavaPlugin {
 
         new LogListener().reloadFilter();
 
-        Database.getSystem().update("servers",
-                "launchtime=" + SystemUtils.getCurrentSecond() +
-                        ",ram_max=" + SystemUtils.getXmx() / 1048576
-                , "name='" + Bukkit.getServerName() + "'");
+        try (SQLConnection connection = Database.getSystem()) {
+            connection.update("servers",
+                    "launchtime=" + SystemUtils.getCurrentSecond() +
+                            ",ram_max=" + SystemUtils.getXmx() / 1048576,
+                    "name='" + Bukkit.getServerName() + "'"
+            );
+        }
 
         //restart
 //        new Timer("Cubing-Restart-Thread").schedule(new TimerTask() {
@@ -156,11 +160,15 @@ public class speedcubingServer extends JavaPlugin {
     @Override
     public void onDisable() {
         CommonLib.shutdown();
-        Database.getSystem().update(
-                "servers",
-                "onlinecount=-1,ram_max=-1,ram_heap=-1,ram_used=-1,tps1=-1,tps2=-1,tps3=-1",
-                "name='" + Bukkit.getServerName() + "'"
-        );
+
+        try (SQLConnection connection = Database.getSystem()) {
+            connection.update(
+                    "servers",
+                    "onlinecount=-1,ram_max=-1,ram_heap=-1,ram_used=-1,tps1=-1,tps2=-1,tps3=-1",
+                    "name='" + Bukkit.getServerName() + "'"
+            );
+        }
+
         WordDictionary.dict.close();
     }
 
@@ -212,9 +220,18 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     public static ProfileSkin generateRandomSkinFromDB() {
-        int size = Database.getCubing().select("COUNT(*)").from("playersdata").where("profile_textures_value != ''").getInt();
-        int index = new SecureRandom().nextInt(size);
-        String[] data = Database.getCubing().select("name,uuid,profile_textures_value,profile_textures_signature").from("playersdata").where("profile_textures_value != ''").limit(index, 1).getStringArray();
-        return new ProfileSkin(data[0], data[1], data[2], data[3]);
+        try (SQLConnection connection = Database.getCubing()) {
+            int size = connection.select("COUNT(*)")
+                    .from("playersdata")
+                    .where("profile_textures_value != ''")
+                    .getInt();
+            int index = new SecureRandom().nextInt(size);
+            String[] data = connection.select("name,uuid,profile_textures_value,profile_textures_signature")
+                    .from("playersdata")
+                    .where("profile_textures_value != ''")
+                    .limit(index, 1)
+                    .getStringArray();
+            return new ProfileSkin(data[0], data[1], data[2], data[3]);
+        }
     }
 }
