@@ -160,7 +160,6 @@ public class speedcubingServer extends JavaPlugin {
     @Override
     public void onDisable() {
         CommonLib.shutdown();
-
         try (SQLConnection connection = Database.getSystem()) {
             connection.update(
                     "servers",
@@ -224,13 +223,13 @@ public class speedcubingServer extends JavaPlugin {
             int size = connection.select("COUNT(*)")
                     .from("playersdata")
                     .where("profile_textures_value != ''")
-                    .getInt();
+                    .executeResult().getInt();
             int index = new SecureRandom().nextInt(size);
             String[] data = connection.select("name,uuid,profile_textures_value,profile_textures_signature")
                     .from("playersdata")
                     .where("profile_textures_value != ''")
                     .limit(index, 1)
-                    .getStringArray();
+                    .executeResult().getStringArray();
             return new ProfileSkin(data[0], data[1], data[2], data[3]);
         }
     }

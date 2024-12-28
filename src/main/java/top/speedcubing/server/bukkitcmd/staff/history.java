@@ -146,7 +146,7 @@ public class history implements CommandExecutor, Listener {
             String[] data = connection.select("name,profile_textures_value,uuid")
                     .from("playersdata")
                     .where("name='" + name + "'")
-                    .getStringArray();
+                    .executeResult().getStringArray();
             if (data.length == 0) return false;
 
             Inventory inventory = Bukkit.createInventory(null, 9, "Punishment History");
@@ -189,7 +189,7 @@ public class history implements CommandExecutor, Listener {
                     inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eBanned logs")
                             .addLore("§eName: §a" + values[0],
                                     "§eOperator: §a" + (punishment.getOperator().length() == 36 ?
-                                            connection.select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").getString() :
+                                            connection.select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").executeResult().getString() :
                                             punishment.getOperator()),
                                     "§eReason: §a" + punishment.getReason(),
                                     "§eBanID: §a" + punishment.getId(),
@@ -261,7 +261,7 @@ public class history implements CommandExecutor, Listener {
                 try (SQLConnection connection = Database.getCubing()) {
                     inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eMuted logs")
                             .addLore("§eName: §a" + values[0],
-                                    "§eOperator: §a" + (punishment.getOperator().length() == 36 ? connection.select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").getString() : punishment.getOperator()),
+                                    "§eOperator: §a" + (punishment.getOperator().length() == 36 ? connection.select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").executeResult().getString() : punishment.getOperator()),
                                     "§eReason: §a" + punishment.getReason(),
                                     "§eMuteID: §a" + punishment.getId(),
                                     "§eDuration: §a" + punishment.getDays(),

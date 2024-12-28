@@ -42,9 +42,9 @@ import top.speedcubing.lib.bukkit.entity.Hologram;
 import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
-import top.speedcubing.lib.utils.SQL.SQLPrepare;
-import top.speedcubing.lib.utils.SQL.SQLRow;
+import top.speedcubing.lib.utils.SQL.SQLResult;
 import top.speedcubing.lib.utils.UUIDUtils;
+import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.bytes.NumberConversion;
 import top.speedcubing.lib.utils.internet.HostAndPort;
@@ -52,7 +52,6 @@ import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.lang.LangInv;
 import top.speedcubing.server.lang.LangItem;
-import top.speedcubing.server.login.BungeePacket;
 import top.speedcubing.server.login.LoginContext;
 import top.speedcubing.server.utils.RankSystem;
 
@@ -313,8 +312,9 @@ public class User extends IDPlayer {
     }
 
     public String getGuildTag(boolean nick) {
+
         try (SQLConnection connection = Database.getCubing()) {
-            String tag = connection.select("tag").from("guild").where("name='" + getGuild() + "'").getString();
+            String tag = connection.select("tag").from("guild").where("name='" + getGuild() + "'").executeResult().getString();
             return nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
         }
     }
@@ -347,9 +347,9 @@ public class User extends IDPlayer {
         }
     }
 
-    public SQLPrepare dbSelect(String field) {
+    public SQLResult dbSelect(String field) {
         try (SQLConnection connection = Database.getCubing()) {
-            return connection.select(field).from("playersdata").where("id=" + id);
+            return connection.select(field).from("playersdata").where("id=" + id).executeResult();
         }
     }
 

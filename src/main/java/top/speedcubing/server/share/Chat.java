@@ -46,7 +46,7 @@ public class Chat {
             String[] ignores = connection.select("uuid")
                     .from("ignorelist")
                     .where("target='" + sender.getUniqueId() + "'")
-                    .getStringArray();
+                    .executeResult().getStringArray();
             User user;
             c:
             for (Player p : players) {

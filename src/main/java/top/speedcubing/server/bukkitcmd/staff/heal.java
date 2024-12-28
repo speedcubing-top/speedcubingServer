@@ -1,10 +1,14 @@
 package top.speedcubing.server.bukkitcmd.staff;
 
+import com.zaxxer.hikari.HikariDataSource;
+import java.sql.SQLException;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import top.speedcubing.common.database.Database;
+import top.speedcubing.lib.utils.SQL.SQLConnection;
 
 public class heal implements CommandExecutor {
 

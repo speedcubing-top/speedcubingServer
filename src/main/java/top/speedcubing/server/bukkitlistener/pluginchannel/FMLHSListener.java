@@ -27,6 +27,7 @@ public class FMLHSListener implements PluginMessageListener {
             bypass = connection.select("modbypass")
                     .from("playersdata")
                     .where("id=" + User.getUser(player).id)
+                    .executeResult()
                     .getBoolean();
         }
 

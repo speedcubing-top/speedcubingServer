@@ -119,7 +119,7 @@ public class nick implements CommandExecutor, Listener {
                         String[] datas = connection.select("nickname,nickpriority")
                                 .from("playersdata")
                                 .where("id=" + User.getUser(commandSender).id)
-                                .getStringArray();
+                                .executeResult().getStringArray();
                         if (datas[0].isEmpty()) {
                             commandSender.sendMessage("You didn't nicked before! please use /nick <nickname>");
                         } else if (datas[0].equals(commandSender.getName())) {
@@ -302,7 +302,7 @@ public class nick implements CommandExecutor, Listener {
                     String data = connection.select("nickname")
                             .from("playersdata")
                             .where("id=" + User.getUser(player).id)
-                            .getString();
+                            .executeResult().getString();
                     nickName.put(player.getUniqueId(), data);
 
                     if (User.getUser(player).hasPermission("perm.nick.customname")) {
