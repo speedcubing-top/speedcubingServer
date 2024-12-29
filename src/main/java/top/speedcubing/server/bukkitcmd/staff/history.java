@@ -1,5 +1,9 @@
 package top.speedcubing.server.bukkitcmd.staff;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -17,12 +21,9 @@ import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.SQL.SQLResult;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.lib.utils.SystemUtils;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class history implements CommandExecutor, Listener {
     List<Inventory> banList = new ArrayList<>();
@@ -143,20 +144,23 @@ public class history implements CommandExecutor, Listener {
 
     private boolean openHistoryGui(Player sender, String name) {
         try (SQLConnection connection = Database.getCubing()) {
-            String[] data = connection.select("name,profile_textures_value,uuid")
+            SQLResult result = connection.select("name,profile_textures_value,uuid")
                     .from("playersdata")
                     .where("name='" + name + "'")
-                    .executeResult().getStringArray();
-            if (data.length == 0) return false;
+                    .executeResult();
+            if (result.size() == 0)
+                return false;
+
+            SQLRow r = result.get(0);
 
             Inventory inventory = Bukkit.createInventory(null, 9, "Punishment History");
 
-            inventory.setItem(0, new ItemBuilder(Material.SKULL_ITEM).name("§a" + data[0] + "'s punishment history")
-                    .addLore("§eLeft Click to view ban history.", "§eRight Click to view mute history.", "§eUUID: " + data[2]).durability(3)
+            inventory.setItem(0, new ItemBuilder(Material.SKULL_ITEM).name("§a" + r.getString(0) + "'s punishment history")
+                    .addLore("§eLeft Click to view ban history.", "§eRight Click to view mute history.", "§eUUID: " + r.getString(2)).durability(3)
                     .owner(name)
                     .build());
             inventory.setItem(1, new ItemBuilder(Material.PAPER).name("§aINFORMATION")
-                    .addLore(data[0], data[1], data[2])
+                    .addLore(r.getString(0), r.getString(1), r.getString(2))
                     .build());
             for (int i = 2; i < 8; i++) {
                 inventory.setItem(i, new ItemBuilder(Material.STAINED_GLASS_PANE).durability(7).name(" ").build());

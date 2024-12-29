@@ -15,6 +15,8 @@ import top.speedcubing.common.server.MinecraftServer;
 import top.speedcubing.lib.discord.DiscordWebhook;
 import top.speedcubing.lib.minecraft.MinecraftConsole;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.SQL.SQLResult;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
@@ -43,16 +45,16 @@ public class Chat {
         String filteredMessage = filter(message);
 
         try (SQLConnection connection = Database.getCubing()) {
-            String[] ignores = connection.select("uuid")
+            SQLResult result = connection.select("uuid")
                     .from("ignorelist")
                     .where("target='" + sender.getUniqueId() + "'")
-                    .executeResult().getStringArray();
+                    .executeResult();
             User user;
             c:
             for (Player p : players) {
                 user = User.getUser(p);
-                for (String s : ignores) {
-                    if (user.player.getUniqueId().toString().equals(s)) {
+                for (SQLRow r : result) {
+                    if (user.player.getUniqueId().toString().equals(r.getString("uuid"))) {
                         continue c;
                     }
                 }

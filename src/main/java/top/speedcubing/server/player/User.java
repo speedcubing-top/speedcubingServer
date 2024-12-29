@@ -43,6 +43,7 @@ import top.speedcubing.lib.bukkit.packetwrapper.OutScoreboardTeam;
 import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SQL.SQLResult;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.lib.utils.UUIDUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
@@ -113,8 +114,8 @@ public class User extends IDPlayer {
         this.vanished = ctx.getBungePacket().vanished;
         this.proxy = ctx.getBungePacket().proxy;
         this.isStaff = Rank.isStaff(realRank);
-        this.timeZone = dbSelect("timezone").getString();
-        this.status = dbSelect("status").getString() == null ? "null" : dbSelect("status").getString();
+        this.timeZone = dbSelect("timezone").getString(0);
+        this.status = dbSelect("status").getString(0) == null ? "null" : dbSelect("status").getString(0);
         this.defaultSkin = new Skin(ctx.getRow().getString("profile_textures_value"), ctx.getRow().getString("profile_textures_signature"));
         this.isCrashed = false;
         if (!ctx.getBungePacket().hor.equals("null"))
@@ -128,7 +129,7 @@ public class User extends IDPlayer {
     }
 
     public boolean nickState() { //if player is switched to nick mode
-        return dbSelect("nicked").getBoolean();
+        return dbSelect("nicked").getBoolean(0);
     }
 
     public Property getTextures() {
@@ -168,7 +169,7 @@ public class User extends IDPlayer {
 
     //guild
     public String getGuild() {
-        return dbSelect("guild").getString();
+        return dbSelect("guild").getString(0);
     }
     //perm
 
@@ -314,8 +315,12 @@ public class User extends IDPlayer {
     public String getGuildTag(boolean nick) {
 
         try (SQLConnection connection = Database.getCubing()) {
-            String tag = connection.select("tag").from("guild").where("name='" + getGuild() + "'").executeResult().getString();
-            return nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
+            SQLResult result = connection.select("tag").from("guild").where("name='" + getGuild() + "'").executeResult();
+            if(!result.isEmpty()) {
+                String tag = result.getString();
+                return nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
+            }
+            return "";
         }
     }
 
@@ -337,20 +342,6 @@ public class User extends IDPlayer {
     //bungee
     public void writeToProxy(byte[] bytes) {
         TCPClient.write(proxy, bytes);
-    }
-
-    //db
-
-    public void dbUpdate(String field) {
-        try (SQLConnection connection = Database.getCubing()) {
-            connection.update("playersdata", field, "id=" + id);
-        }
-    }
-
-    public SQLResult dbSelect(String field) {
-        try (SQLConnection connection = Database.getCubing()) {
-            return connection.select(field).from("playersdata").where("id=" + id).executeResult();
-        }
     }
 
     //bukkit

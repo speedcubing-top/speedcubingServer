@@ -11,7 +11,7 @@ public class MapManager {
         System.out.println("[MapManager] copying \"" + fileName + "\" to \"" + map + "\"");
         new ProcessBuilder("rm", "-r", map).start().waitFor();
         String file = fileName + ".tar.gz";
-        new ProcessBuilder("mv", "/storage/maps/" + file, "./").start().waitFor();
+        new ProcessBuilder("cp", "/storage/maps/" + file, "./").start().waitFor();
         new ProcessBuilder("tar", "-xvzf", file).start().waitFor();
         new ProcessBuilder("mv", fileName, map).start().waitFor();
         new ProcessBuilder("rm", file).start().waitFor();

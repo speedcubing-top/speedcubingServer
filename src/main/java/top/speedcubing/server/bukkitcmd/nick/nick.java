@@ -2,6 +2,14 @@ package top.speedcubing.server.bukkitcmd.nick;
 
 import edu.mit.jwi.item.IIndexWord;
 import edu.mit.jwi.item.POS;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -20,15 +28,13 @@ import top.speedcubing.lib.minecraft.text.ComponentText;
 import top.speedcubing.lib.minecraft.text.TextClickEvent;
 import top.speedcubing.lib.minecraft.text.TextHoverEvent;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.WordDictionary;
-
-import java.io.IOException;
-import java.util.*;
 
 public class nick implements CommandExecutor, Listener {
     public static final Map<UUID, Boolean> settingNick = new HashMap<>();
@@ -115,22 +121,16 @@ public class nick implements CommandExecutor, Listener {
                     openNickBook(player, NickBook.RULE);
                     return true;
                 } else if (strings[0].equalsIgnoreCase("reuse")) {
-                    try (SQLConnection connection = Database.getCubing()) {
-                        String[] datas = connection.select("nickname,nickpriority")
-                                .from("playersdata")
-                                .where("id=" + User.getUser(commandSender).id)
-                                .executeResult().getStringArray();
-                        if (datas[0].isEmpty()) {
-                            commandSender.sendMessage("You didn't nicked before! please use /nick <nickname>");
-                        } else if (datas[0].equals(commandSender.getName())) {
-                            User.getUser(commandSender).sendMessage("%lang_nick_already%");
-                        } else {
-                            nick.nickPlayer(datas[0], datas[1], true, (Player) commandSender, false);
-                            commandSender.sendMessage("§aYou have reused your nickname!");
-                        }
-                        return true;
+                    SQLRow result = User.getUser(commandSender).dbSelect("nickname,nickpriority");
+                    if (result.getString(0).isEmpty()) {
+                        commandSender.sendMessage("You didn't nicked before! please use /nick <nickname>");
+                    } else if (result.getString(0).equals(commandSender.getName())) {
+                        User.getUser(commandSender).sendMessage("%lang_nick_already%");
+                    } else {
+                        nick.nickPlayer(result.getString(0), result.getString(1), true, (Player) commandSender, false);
+                        commandSender.sendMessage("§aYou have reused your nickname!");
                     }
-
+                    return true;
                 }
                 String name = strings[0];
                 User user = User.getUser(commandSender);
@@ -139,7 +139,7 @@ public class nick implements CommandExecutor, Listener {
                 else if (name.equals(user.realName))
                     user.sendMessage("%lang_nick_default%");
                 else
-                    nickCheck(user, name, user.player, user.dbSelect("nickpriority").getString(), false);
+                    nickCheck(user, name, user.player, user.dbSelect("nickpriority").getString(0), false);
             } else if (strings.length == 2) {
                 User user = User.getUser(commandSender);
                 if (user.hasPermission("perm.nick.nickrank%")) {

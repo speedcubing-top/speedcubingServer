@@ -1,8 +1,10 @@
 package top.speedcubing.server.authenticator;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import top.speedcubing.lib.utils.Preconditions;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.server.player.User;
 
 public class AuthData {
@@ -17,13 +19,13 @@ public class AuthData {
     public String ip;
 
     public AuthData(User user) {
-        String[] data = user.dbSelect("auth_bypass,auth_enable,auth_key,auth_sessions,auth_ip").getStringArray();
+        SQLRow r = user.dbSelect("auth_bypass,auth_enable,auth_key,auth_sessions,auth_ip");
         this.user = user;
-        this.isAuthBypass = data[0].equals("1");
-        this.isAuthEnable = data[1].equals("1");
-        this.key = data[2].isEmpty() ? null : data[2];
-        this.hasSessions = data[3].equals("1");
-        this.ip = data[4];
+        this.isAuthBypass = r.getBoolean(0);
+        this.isAuthEnable = r.getBoolean(1);
+        this.key = r.getString(2).isEmpty() ? null : r.getString(2);
+        this.hasSessions = r.getBoolean(3);
+        this.ip = r.getString(4);
     }
 
     public boolean isAuthBypass() {

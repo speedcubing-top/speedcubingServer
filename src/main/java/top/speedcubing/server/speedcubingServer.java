@@ -19,6 +19,7 @@ import top.speedcubing.common.io.SocketReader;
 import top.speedcubing.lib.api.mojang.ProfileSkin;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.internet.HostAndPort;
 import top.speedcubing.server.authenticator.AuthenticatorCommand;
@@ -225,12 +226,12 @@ public class speedcubingServer extends JavaPlugin {
                     .where("profile_textures_value != ''")
                     .executeResult().getInt();
             int index = new SecureRandom().nextInt(size);
-            String[] data = connection.select("name,uuid,profile_textures_value,profile_textures_signature")
+            SQLRow r = connection.select("name,uuid,profile_textures_value,profile_textures_signature")
                     .from("playersdata")
                     .where("profile_textures_value != ''")
                     .limit(index, 1)
-                    .executeResult().getStringArray();
-            return new ProfileSkin(data[0], data[1], data[2], data[3]);
+                    .executeResult().get(0);
+            return new ProfileSkin(r.getString(0), r.getString(1), r.getString(2), r.getString(3));
         }
     }
 }
