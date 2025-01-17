@@ -87,7 +87,7 @@ public class speedcubingServer extends JavaPlugin {
         registerCommands();
         registerListeners();
         CommonLib.init();
-        SocketReader.init(new HostAndPort("127.0.0.1", Bukkit.getPort() + 1000));
+        SocketReader.init(new HostAndPort("0.0.0.0", Bukkit.getPort() + 1000));
 
         LanguageSystem.init();
 
@@ -160,7 +160,6 @@ public class speedcubingServer extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        CommonLib.shutdown();
         try (SQLConnection connection = Database.getSystem()) {
             connection.update(
                     "servers",
@@ -169,6 +168,7 @@ public class speedcubingServer extends JavaPlugin {
             );
         }
 
+        CommonLib.shutdown();
         WordDictionary.dict.close();
     }
 
