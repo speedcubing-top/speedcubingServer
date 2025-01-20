@@ -39,6 +39,7 @@ import top.speedcubing.server.bukkitcmd.staff.history;
 import top.speedcubing.server.bukkitcmd.staff.proxycommand;
 import top.speedcubing.server.bukkitcmd.staff.serverconfig;
 import top.speedcubing.server.bukkitcmd.staff.testkb;
+import top.speedcubing.server.bukkitcmd.staff.proxyban;
 import top.speedcubing.server.bukkitcmd.status;
 import top.speedcubing.server.bukkitcmd.troll.bangift;
 import top.speedcubing.server.bukkitcmd.troll.deepfry;
@@ -95,6 +96,7 @@ public class speedcubingServer extends JavaPlugin {
         sendpacket.initFuckPeople();
 
         Bukkit.getMessenger().registerIncomingPluginChannel(this, "FML|HS", new FMLHSListener());
+        Bukkit.getMessenger().registerOutgoingPluginChannel(this, "velocity:ban");
 
         CubingCommandLoader.loadCommands("top.speedcubing.server.cubingcmd", speedcubingServer.class);
 
@@ -195,6 +197,7 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("bangift").setExecutor(new bangift());
         Bukkit.getPluginCommand("ranks").setExecutor(new ranks());
         Bukkit.getPluginCommand("status").setExecutor(new status());
+        Bukkit.getPluginCommand("proxyban").setExecutor(new proxyban(this));
     }
 
     private void registerListeners() {

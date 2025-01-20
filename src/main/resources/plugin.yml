@@ -58,7 +58,8 @@ commands:
     usage: /ranks
   serverconfig:
     usage: /serverconfig
-
+  proxyban:
+    usage: /proxyban <player>
 
 
 
