@@ -23,7 +23,7 @@ public class proxycommand implements CommandExecutor {
                     .writeUTF(comamndStrings.substring(1))
                     .toByteArray();
 
-            TCPClient.write(speedcubingServer.getRandomBungee(), packet);
+            speedcubingServer.writeToRandomProxy(packet);
         }
         return true;
     }

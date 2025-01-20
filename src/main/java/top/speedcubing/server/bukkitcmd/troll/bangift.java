@@ -56,6 +56,6 @@ public class bangift implements CommandExecutor {
                         "\n\n§bspeedcubing.top/discord §cfor mor information.")
                 .toByteArray();
 
-        TCPClient.write(speedcubingServer.getRandomBungee(), packet);
+        speedcubingServer.writeToRandomProxy(packet);
     }
 }
