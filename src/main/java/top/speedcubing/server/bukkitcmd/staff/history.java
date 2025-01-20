@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
@@ -24,6 +25,7 @@ import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.SQL.SQLResult;
 import top.speedcubing.lib.utils.SQL.SQLRow;
 import top.speedcubing.lib.utils.SystemUtils;
+import top.speedcubing.server.player.User;
 
 public class history implements CommandExecutor, Listener {
     List<Inventory> banList = new ArrayList<>();
@@ -31,10 +33,9 @@ public class history implements CommandExecutor, Listener {
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
-        if (!(sender instanceof Player)) return true;
-        Player player = (Player) sender;
+        if (!(sender instanceof Player player)) return true;
         if (args.length == 0) {
-            openHistoryGui(player, player.getName());
+            openHistoryGui(player, User.getUser(player).realName);
             return true;
         }
         if (args.length == 1) {
@@ -148,7 +149,7 @@ public class history implements CommandExecutor, Listener {
                     .from("playersdata")
                     .where("name='" + name + "'")
                     .executeResult();
-            if (result.size() == 0)
+            if (result.isEmpty())
                 return false;
 
             SQLRow r = result.get(0);
@@ -188,21 +189,21 @@ public class history implements CommandExecutor, Listener {
                 GUISettings(values, inv);
 
                 BanPunishment punishment = datas.get(i);
-                long remain = getPunishRemain(punishment.getAt(), punishment.getDays(), punishment.getPardon(), SystemUtils.getCurrentSecond());
+                long remain = getPunishRemain(punishment.at(), punishment.days(), punishment.pardon(), SystemUtils.getCurrentSecond());
                 try (SQLConnection connection = Database.getCubing()) {
                     inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eBanned logs")
                             .addLore("§eName: §a" + values[0],
-                                    "§eOperator: §a" + (punishment.getOperator().length() == 36 ?
-                                            connection.select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").executeResult().getString() :
-                                            punishment.getOperator()),
-                                    "§eReason: §a" + punishment.getReason(),
-                                    "§eBanID: §a" + punishment.getId(),
-                                    "§eDuration: §a" + punishment.getDays(),
-                                    "§eAt: §a" + CubingTimeFormat.toYMDHMS(punishment.getAt()),
-                                    "§eIp: §a" + punishment.getIp(),
-                                    "§eHideID: §a" + (punishment.getHideid().equals("1") ? "true" : "false"),
-                                    "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unbanned yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unbanned by " + punishment.getPardon()),
-                                    "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.getPardonat())))
+                                    "§eOperator: §a" + (punishment.operator().length() == 36 ?
+                                            connection.select("name").from("playersdata").where("uuid='" + punishment.operator() + "'").executeResult().getString() :
+                                            punishment.operator()),
+                                    "§eReason: §a" + punishment.reason(),
+                                    "§eBanID: §a" + punishment.id(),
+                                    "§eDuration: §a" + punishment.days(),
+                                    "§eAt: §a" + CubingTimeFormat.toYMDHMS(punishment.at()),
+                                    "§eIp: §a" + punishment.ip(),
+                                    "§eHideID: §a" + (punishment.hideid().equals("1") ? "true" : "false"),
+                                    "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unbanned yet" : punishment.pardon().isEmpty() ? "§aExpired" : "Unbanned by " + punishment.pardon()),
+                                    "§ePardon at: §a" + (punishment.pardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.pardonat())))
                             .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
                             .build());
                 }
@@ -261,17 +262,17 @@ public class history implements CommandExecutor, Listener {
                 GUISettings(values, inv);
 
                 MutePunishment punishment = datas.get(i);
-                long remain = getPunishRemain(punishment.getAt(), punishment.getDays(), punishment.getPardon(), SystemUtils.getCurrentSecond());
+                long remain = getPunishRemain(punishment.at(), punishment.days(), punishment.pardon(), SystemUtils.getCurrentSecond());
                 try (SQLConnection connection = Database.getCubing()) {
                     inv.setItem(itemIndex++, new ItemBuilder(Material.WOOL).name("§eMuted logs")
                             .addLore("§eName: §a" + values[0],
-                                    "§eOperator: §a" + (punishment.getOperator().length() == 36 ? connection.select("name").from("playersdata").where("uuid='" + punishment.getOperator() + "'").executeResult().getString() : punishment.getOperator()),
-                                    "§eReason: §a" + punishment.getReason(),
-                                    "§eMuteID: §a" + punishment.getId(),
-                                    "§eDuration: §a" + punishment.getDays(),
-                                    "§eAt: §a" + CubingTimeFormat.toYMDHMS(punishment.getAt()),
-                                    "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unmuted yet" : punishment.getPardon().isEmpty() ? "§aExpired" : "Unmuted by " + punishment.getPardon()),
-                                    "§ePardon at: §a" + (punishment.getPardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.getPardonat())))
+                                    "§eOperator: §a" + (punishment.operator().length() == 36 ? connection.select("name").from("playersdata").where("uuid='" + punishment.operator() + "'").executeResult().getString() : punishment.operator()),
+                                    "§eReason: §a" + punishment.reason(),
+                                    "§eMuteID: §a" + punishment.id(),
+                                    "§eDuration: §a" + punishment.days(),
+                                    "§eAt: §a" + CubingTimeFormat.toYMDHMS(punishment.at()),
+                                    "§eState: §a" + (remain > 0 ? "Expire in " + CubingTimeFormat.period(remain) : remain < 0 ? "Not Unmuted yet" : punishment.pardon().isEmpty() ? "§aExpired" : "Unmuted by " + punishment.pardon()),
+                                    "§ePardon at: §a" + (punishment.pardonat() == 0 ? "null" : CubingTimeFormat.toYMDHMS(punishment.pardonat())))
                             .durability(remain > 0 ? 14 : remain < 0 ? 14 : 5)
                             .build());
                 }
@@ -308,7 +309,7 @@ public class history implements CommandExecutor, Listener {
                 BanPunishment punishment = new BanPunishment(id, playerUuid, ip, hideid, at, reason, operator, days, pardon, pardonat);
                 resultList.add(punishment);
             }
-            resultList.sort((o1, o2) -> Long.compare(o2.getAt(), o1.getAt()));
+            resultList.sort((o1, o2) -> Long.compare(o2.at(), o1.at()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -338,7 +339,7 @@ public class history implements CommandExecutor, Listener {
                 MutePunishment punishment = new MutePunishment(id, playerUuid, at, reason, operator, days, pardon, pardonat);
                 resultList.add(punishment);
             }
-            resultList.sort((o1, o2) -> Long.compare(o2.getAt(), o1.getAt()));
+            resultList.sort((o1, o2) -> Long.compare(o2.at(), o1.at()));
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -352,128 +353,15 @@ public class history implements CommandExecutor, Listener {
 
     public static long getPunishRemain(long at, int days, String pardon, long unix) {
         long l = days * 86400L + at - unix;
-        return pardon.equals("") && (days == 0 || l > 0) ? l : 0;
+        return pardon.isEmpty() && (days == 0 || l > 0) ? l : 0;
     }
 
 }
 
-class BanPunishment {
-    private String id;
-    private String uuid;
-    private String ip;
-    private String hideid;
-    private long at;
-    private String reason;
-    private String operator;
-    private int days;
-    private String pardon;
-    private long pardonat;
-
-    public BanPunishment(String id, String uuid, String ip, String hideid, long at, String reason, String operator, int days, String pardon, long pardonat) {
-        this.id = id;
-        this.uuid = uuid;
-        this.ip = ip;
-        this.hideid = hideid;
-        this.at = at;
-        this.reason = reason;
-        this.operator = operator;
-        this.days = days;
-        this.pardon = pardon;
-        this.pardonat = pardonat;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public String getHideid() {
-        return hideid;
-    }
-
-    public long getAt() {
-        return at;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public String getOperator() {
-        return operator;
-    }
-
-    public int getDays() {
-        return days;
-    }
-
-    public String getPardon() {
-        return pardon;
-    }
-
-    public long getPardonat() {
-        return pardonat;
-    }
+record BanPunishment(String id, String uuid, String ip, String hideid, long at, String reason, String operator,
+                     int days, String pardon, long pardonat) {
 }
 
-class MutePunishment {
-    private String id;
-    private String uuid;
-    private long at;
-    private String reason;
-    private String operator;
-    private int days;
-    private String pardon;
-    private long pardonat;
-
-    public MutePunishment(String id, String uuid, long at, String reason, String operator, int days, String pardon, long pardonat) {
-        this.id = id;
-        this.uuid = uuid;
-        this.at = at;
-        this.reason = reason;
-        this.operator = operator;
-        this.days = days;
-        this.pardon = pardon;
-        this.pardonat = pardonat;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getUuid() {
-        return uuid;
-    }
-
-
-    public long getAt() {
-        return at;
-    }
-
-    public String getReason() {
-        return reason;
-    }
-
-    public String getOperator() {
-        return operator;
-    }
-
-    public int getDays() {
-        return days;
-    }
-
-    public String getPardon() {
-        return pardon;
-    }
-
-    public long getPardonat() {
-        return pardonat;
-    }
+record MutePunishment(String id, String uuid, long at, String reason, String operator, int days, String pardon,
+                      long pardonat) {
 }
