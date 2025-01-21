@@ -35,6 +35,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.common.rank.IDPlayer;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
+import top.speedcubing.common.server.MinecraftProxy;
 import top.speedcubing.lib.api.mojang.Skin;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.bukkit.TitleType;
@@ -85,7 +86,7 @@ public class User extends IDPlayer {
     public double[] velocities;
     public int lang;
     public String displayRank;
-    public HostAndPort proxy;
+    public MinecraftProxy proxy;
     public boolean chatFilt;
     public boolean listened;
     public PacketPlayOutScoreboardTeam joinPacket;
@@ -112,7 +113,7 @@ public class User extends IDPlayer {
         this.realRank = ctx.getRealRank();
         this.displayRank = displayRank;
         this.vanished = ctx.getBungePacket().vanished;
-        this.proxy = ctx.getBungePacket().proxy;
+        this.proxy = MinecraftProxy.getProxy(ctx.getBungePacket().proxy);
         this.isStaff = Rank.isStaff(realRank);
         this.timeZone = dbSelect("timezone").getString(0);
         this.status = dbSelect("status").getString(0) == null ? "null" : dbSelect("status").getString(0);
@@ -316,7 +317,7 @@ public class User extends IDPlayer {
 
         try (SQLConnection connection = Database.getCubing()) {
             SQLResult result = connection.select("tag").from("guild").where("name='" + getGuild() + "'").executeResult();
-            if(!result.isEmpty()) {
+            if (!result.isEmpty()) {
                 String tag = result.getString();
                 return nick ? "" : (tag == null ? "" : " §6[" + tag + "]");
             }
@@ -341,7 +342,7 @@ public class User extends IDPlayer {
 
     //bungee
     public void writeToProxy(byte[] bytes) {
-        TCPClient.write(proxy, bytes);
+        proxy.write(bytes);
     }
 
     //bukkit

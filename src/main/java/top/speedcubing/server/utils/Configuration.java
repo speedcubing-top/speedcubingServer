@@ -35,5 +35,5 @@ public class Configuration {
         ServerConfig.config.get("onlinecrash").getAsJsonArray().forEach(a -> Configuration.onlineCrash.add(a.getAsString()));
         Configuration.blacklistedMod.clear();
         ServerConfig.config.get("blacklistedmod").getAsJsonArray().forEach(a -> Configuration.blacklistedMod.add(Pattern.compile(a.getAsString())));
-   }
+    }
 }

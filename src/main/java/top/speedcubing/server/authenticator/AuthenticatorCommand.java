@@ -13,6 +13,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.StringUtils;
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
+import top.speedcubing.server.mulitproxy.BungeeProxy;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -60,8 +61,7 @@ public class AuthenticatorCommand implements CommandExecutor {
                                     verifedCount.put(player.getUniqueId(), score + 1);
                                 } else {
                                     verifedCount.remove(player.getUniqueId());
-                                    String banCmd = "ban " + player.getName() + " 0 Suspicious activities detected on your account , contact support for assistance. -hideid";
-                                    speedcubingServer.writeToRandomProxy(new ByteArrayBuffer().writeUTF("proxycmd").writeUTF(banCmd).toByteArray());
+                                    BungeeProxy.proxyCommand("ban " + player.getName() + " 0 Suspicious activities detected on your account , contact support for assistance. -hideid");
                                 }
                             } else {
                                 verifedCount.put(player.getUniqueId(), 1);

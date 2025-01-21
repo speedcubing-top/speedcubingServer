@@ -2,16 +2,11 @@ package top.speedcubing.server.cubinglistener;
 
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryUsage;
-
-import net.minecraft.server.v1_8_R3.BlockGlass;
 import net.minecraft.server.v1_8_R3.MinecraftServer;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.events.CubingTickEvent;
 import top.speedcubing.lib.bukkit.PlayerUtils;
-import top.speedcubing.lib.bukkit.inventory.ItemBuilder;
 import top.speedcubing.lib.bukkit.pluginMessage.BungeePluginMessage;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 import top.speedcubing.lib.utils.SQL.SQLConnection;

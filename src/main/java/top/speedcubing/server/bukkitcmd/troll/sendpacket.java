@@ -85,8 +85,8 @@ public class sendpacket implements CommandExecutor, Listener {
 
     private void pickup(Player player) {
         CraftPlayer craftPlayer = (CraftPlayer) player;
-        if (player.getNearbyEntities(10,10,10).isEmpty()) return;
-        PacketPlayOutCollect packet = new PacketPlayOutCollect(player.getNearbyEntities(10,10,10).get(0).getEntityId(), player.getEntityId());
+        if (player.getNearbyEntities(10, 10, 10).isEmpty()) return;
+        PacketPlayOutCollect packet = new PacketPlayOutCollect(player.getNearbyEntities(10, 10, 10).get(0).getEntityId(), player.getEntityId());
         craftPlayer.getHandle().playerConnection.sendPacket(packet);
     }
 

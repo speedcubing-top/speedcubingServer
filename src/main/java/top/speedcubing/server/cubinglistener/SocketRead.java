@@ -44,8 +44,7 @@ public class SocketRead {
                     User.getUsers().forEach(a -> {
                         a.isCrashed = true;
                     });
-                }
-                else {
+                } else {
                     PlayerUtils.crashAll(User.getUser(id).player);
                     User.getUser(id).isCrashed = true;
                 }

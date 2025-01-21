@@ -211,8 +211,8 @@ public class speedcubingServer extends JavaPlugin {
         }
     }
 
-    public static void writeToRandomProxy(byte[] b) {
-         MinecraftProxy.getProxy("internal").write(b);
+    public static void writeToInternal(byte[] b) {
+        MinecraftProxy.getProxy("internal").write(b);
     }
 
     public static void restart() {

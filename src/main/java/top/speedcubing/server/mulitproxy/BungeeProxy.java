@@ -1,12 +1,25 @@
 package top.speedcubing.server.mulitproxy;
 
 import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
-import top.speedcubing.lib.utils.internet.HostAndPort;
-import top.speedcubing.lib.utils.sockets.TCPClient;
+import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
 public class BungeeProxy {
     public static void switchServer(int id, String server) {
-        speedcubingServer.writeToRandomProxy(new ByteArrayBuffer().writeUTF("connectionreq").writeInt(id).writeUTF("").writeUTF(server).toByteArray());
+        User user = User.getUser(id);
+        if (user != null) {
+            user.proxy.write(new ByteArrayBuffer().writeUTF("connectionreq").writeInt(id).writeUTF("").writeUTF(server).toByteArray());
+            return;
+        }
+        speedcubingServer.writeToInternal(new ByteArrayBuffer().writeUTF("connectionreq").writeInt(id).writeUTF("").writeUTF(server).toByteArray());
+    }
+
+    public static void proxyCommand(String command) {
+        byte[] packet = new ByteArrayBuffer()
+                .writeUTF("proxycmd")
+                .writeUTF(command)
+                .toByteArray();
+
+        speedcubingServer.writeToInternal(packet);
     }
 }

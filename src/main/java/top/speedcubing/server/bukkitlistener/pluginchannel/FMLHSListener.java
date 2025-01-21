@@ -1,16 +1,15 @@
 package top.speedcubing.server.bukkitlistener.pluginchannel;
 
-import org.bukkit.Bukkit;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.regex.Pattern;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
+import top.speedcubing.server.mulitproxy.BungeeProxy;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.utils.Configuration;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.regex.Pattern;
 
 public class FMLHSListener implements PluginMessageListener {
     @Override
@@ -39,7 +38,7 @@ public class FMLHSListener implements PluginMessageListener {
                 if (!punished) {
                     for (Pattern p : Configuration.blacklistedMod) {
                         if (p.matcher(a2).matches()) {
-                            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "proxycommand ban " + player.getName() + " 0 Suspicious activities detected on your account.");
+                            BungeeProxy.proxyCommand("proxycommand ban " + player.getName() + " 0 Suspicious activities detected on your account.");
                             punished = true;
                             break;
                         }

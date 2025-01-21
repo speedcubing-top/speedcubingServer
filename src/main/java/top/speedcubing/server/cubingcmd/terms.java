@@ -5,7 +5,7 @@ import top.speedcubing.server.player.User;
 import top.speedcubing.server.system.command.CubingCommand;
 
 public class terms extends CubingCommand {
-    public terms(){
+    public terms() {
         super("terms");
     }
 
