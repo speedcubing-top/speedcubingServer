@@ -1,4 +1,4 @@
-package top.speedcubing.server.bukkitcmd.troll;
+package top.speedcubing.server.bukkitcmd.trolls;
 
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;

@@ -56,11 +56,10 @@ commands:
     usage: /bangift
   ranks:
     usage: /ranks
+  music:
+    usage: /music
   serverconfig:
     usage: /serverconfig
-
-
-
 
 depend:
   - speedcubingLib

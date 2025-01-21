@@ -1,4 +1,4 @@
-package top.speedcubing.server.bukkitcmd.troll;
+package top.speedcubing.server.bukkitcmd.trolls;
 
 import java.util.Collections;
 import java.util.Set;
@@ -28,7 +28,6 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityShootBowEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public class sendpacket implements CommandExecutor, Listener {

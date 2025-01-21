@@ -1,4 +1,4 @@
-package top.speedcubing.server.bukkitcmd.troll;
+package top.speedcubing.server.bukkitcmd.trolls;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -36,7 +36,7 @@ public class bangift implements CommandExecutor {
         return true;
     }
 
-    private void openBook(Player player, Player target) {
+    private static void openBook(Player player, Player target) {
         ItemStack book;
         book = new BookBuilder("book", "system")
                 .addPage(new ComponentText()
