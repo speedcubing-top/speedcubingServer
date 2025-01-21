@@ -18,6 +18,7 @@ import org.spigotmc.SpigotConfig;
 import top.speedcubing.common.CommonLib;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.common.io.SocketReader;
+import top.speedcubing.common.server.MinecraftProxy;
 import top.speedcubing.lib.api.mojang.ProfileSkin;
 import top.speedcubing.lib.eventbus.CubingEventManager;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
@@ -214,8 +215,8 @@ public class speedcubingServer extends JavaPlugin {
         }
     }
 
-    public static HostAndPort getRandomBungee() {
-        return (!User.usersByID.values().isEmpty() ? User.usersByID.values().iterator().next().proxy : new HostAndPort("127.0.0.1", 25565 + 1000));
+    public static void writeToRandomProxy(byte[] b) {
+         MinecraftProxy.getProxy("internal").write(b);
     }
 
     public static void restart() {
