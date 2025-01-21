@@ -1,4 +1,4 @@
-package top.speedcubing.server.bukkitcmd.troll;
+package top.speedcubing.server.bukkitcmd.trolls;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
