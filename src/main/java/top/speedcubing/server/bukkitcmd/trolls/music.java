@@ -107,7 +107,7 @@ public class music implements CommandExecutor {
                 player.sendMessage("§cPlayer not found.");
                 return true;
             }
-            radioSongPlayer.addPlayer(player);
+            radioSongPlayer.addPlayer(target);
             player.sendMessage("§aAdded " + target.getName() + " to song player.");
             return true;
         }
@@ -125,7 +125,7 @@ public class music implements CommandExecutor {
                 player.sendMessage("§cPlayer not found.");
                 return true;
             }
-            radioSongPlayer.removePlayer(player);
+            radioSongPlayer.removePlayer(target);
             player.sendMessage("§aRemoved " + target.getName() + " from song player.");
             return true;
         }
