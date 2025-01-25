@@ -202,7 +202,7 @@ public class speedcubingServer extends JavaPlugin {
     }
 
     private void registerListeners() {
-        registerListeners(new PreListen(), new PostListen(), new SingleListen(), new history(), new sendpacket());
+        registerListeners(new PreListen(), new PostListen(), new SingleListen(), new history(), new sendpacket(), new music());
     }
 
     public static Plugin getInstance() {

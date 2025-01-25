@@ -11,12 +11,18 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.io.File;
 
-public class music implements CommandExecutor {
+public class music implements CommandExecutor, Listener {
     public static Song song;
     public static RadioSongPlayer radioSongPlayer;
+    public static boolean broadcast = false;
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String s, String[] args) {
 //        if (!Bukkit.getServerName().equalsIgnoreCase("lobby")) {
@@ -25,7 +31,7 @@ public class music implements CommandExecutor {
 //        }
         if (!(sender instanceof Player player)) return true;
         if (args.length == 0) {
-            player.sendMessage("§cUsage: /music <play|resume|pause|loop|stop|add|remove>");
+            player.sendMessage("§cUsage: /music <play|resume|pause|loop|stop|add|remove|broadcast>");
             return true;
         }
         if (args[0].equalsIgnoreCase("play")) {
@@ -54,6 +60,8 @@ public class music implements CommandExecutor {
             radioSongPlayer.setPlaying(true);
             radioSongPlayer.setChannelMode(stereoMode);
             player.sendMessage("§aPlaying song.");
+            player.sendMessage("§aLoop: " + (radioSongPlayer.getRepeatMode() == RepeatMode.ALL ? "On" : "Off"));
+            player.sendMessage("§aBroadcast: " + (broadcast ? "On" : "Off"));
             return true;
         }
         if (args[0].equalsIgnoreCase("resume")) {
@@ -90,6 +98,7 @@ public class music implements CommandExecutor {
             }
             radioSongPlayer.setPlaying(false);
             radioSongPlayer.destroy();
+            radioSongPlayer.getPlayerUUIDs().forEach(radioSongPlayer::removePlayer);
             player.sendMessage("§aStopped song.");
             return true;
         }
@@ -107,7 +116,7 @@ public class music implements CommandExecutor {
                 player.sendMessage("§cPlayer not found.");
                 return true;
             }
-            radioSongPlayer.addPlayer(player);
+            radioSongPlayer.addPlayer(target);
             player.sendMessage("§aAdded " + target.getName() + " to song player.");
             return true;
         }
@@ -125,12 +134,24 @@ public class music implements CommandExecutor {
                 player.sendMessage("§cPlayer not found.");
                 return true;
             }
-            radioSongPlayer.removePlayer(player);
+            radioSongPlayer.removePlayer(target);
             player.sendMessage("§aRemoved " + target.getName() + " from song player.");
             return true;
         }
+        if (args[0].equalsIgnoreCase("broadcast")) {
+            broadcast = !broadcast;
+            player.sendMessage("§aBroadcast " + (broadcast ? "On" : "Off"));
+        }
 
         return true;
+    }
+    @EventHandler
+    public void onPlayerJoin(PlayerJoinEvent e) {
+        if (radioSongPlayer != null && broadcast) radioSongPlayer.addPlayer(e.getPlayer());
+    }
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent e) {
+        if (radioSongPlayer != null) radioSongPlayer.removePlayer(e.getPlayer());
     }
 
 }
