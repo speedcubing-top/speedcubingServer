@@ -197,7 +197,7 @@ public class PreListen implements Listener {
         }
 
         //OP
-        player.setOp(user.hasPermission("perm.op"));
+        player.setOp(user.hasPermission("group.op"));
 
         //send packets
         user.createTeamPacket();
