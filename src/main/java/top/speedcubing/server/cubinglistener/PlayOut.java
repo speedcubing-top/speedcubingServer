@@ -88,6 +88,9 @@ public class PlayOut {
 
                 if (target == null) { //if targetID isnt a player
                     User user = User.getUser(e.getPlayer());
+                    if(user == null) {
+                        return;
+                    }
                     if (user.calculateNickHashUUID().equals(targetID)) { //if target = self nick -> modify
                         target = user; //result name = self
                         targetID = user.uuid; //result uuid = self uuid
