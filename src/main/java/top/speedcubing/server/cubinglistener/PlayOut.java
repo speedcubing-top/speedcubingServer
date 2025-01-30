@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutMapChunkBulk;
 import net.minecraft.server.v1_8_R3.PacketPlayOutNamedEntitySpawn;
@@ -88,7 +87,7 @@ public class PlayOut {
 
                 if (target == null) { //if targetID isnt a player
                     User user = User.getUser(e.getPlayer());
-                    if(user == null) {
+                    if (user == null) {
                         return;
                     }
                     if (user.calculateNickHashUUID().equals(targetID)) { //if target = self nick -> modify

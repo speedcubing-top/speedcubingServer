@@ -12,10 +12,8 @@ import org.bukkit.entity.Player;
 import top.speedcubing.common.database.Database;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.lib.utils.StringUtils;
-import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
 import top.speedcubing.server.mulitproxy.BungeeProxy;
 import top.speedcubing.server.player.User;
-import top.speedcubing.server.speedcubingServer;
 
 public class AuthenticatorCommand implements CommandExecutor {
     private final Map<UUID, Integer> verifedCount = new HashMap<>();

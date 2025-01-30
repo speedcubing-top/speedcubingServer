@@ -1,7 +1,6 @@
 package top.speedcubing.server.cubingcmd;
 
 import org.bukkit.command.CommandSender;
-import top.speedcubing.server.player.User;
 import top.speedcubing.server.system.command.CubingCommand;
 
 public class terms extends CubingCommand {

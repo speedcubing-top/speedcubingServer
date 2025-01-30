@@ -6,6 +6,7 @@ import com.xxmicloxx.NoteBlockAPI.model.playmode.MonoStereoMode;
 import com.xxmicloxx.NoteBlockAPI.model.playmode.StereoMode;
 import com.xxmicloxx.NoteBlockAPI.songplayer.RadioSongPlayer;
 import com.xxmicloxx.NoteBlockAPI.utils.NBSDecoder;
+import java.io.File;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -15,8 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-
-import java.io.File;
 
 public class music implements CommandExecutor, Listener {
     public static Song song;
@@ -145,10 +144,12 @@ public class music implements CommandExecutor, Listener {
 
         return true;
     }
+
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         if (radioSongPlayer != null && broadcast) radioSongPlayer.addPlayer(e.getPlayer());
     }
+
     @EventHandler
     public void onPlayerQuit(PlayerQuitEvent e) {
         if (radioSongPlayer != null) radioSongPlayer.removePlayer(e.getPlayer());

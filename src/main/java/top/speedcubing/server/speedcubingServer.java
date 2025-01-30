@@ -1,14 +1,14 @@
 package top.speedcubing.server;
 
+import java.io.DataInputStream;
 import java.io.File;
 import java.security.SecureRandom;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Pattern;
-
-import com.xxmicloxx.NoteBlockAPI.NoteBlockAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
@@ -43,9 +43,9 @@ import top.speedcubing.server.bukkitcmd.staff.serverconfig;
 import top.speedcubing.server.bukkitcmd.staff.testkb;
 import top.speedcubing.server.bukkitcmd.status;
 import top.speedcubing.server.bukkitcmd.trolls.bangift;
-import top.speedcubing.server.bukkitcmd.trolls.music;
 import top.speedcubing.server.bukkitcmd.trolls.deepfry;
 import top.speedcubing.server.bukkitcmd.trolls.kaboom;
+import top.speedcubing.server.bukkitcmd.trolls.music;
 import top.speedcubing.server.bukkitcmd.trolls.sendpacket;
 import top.speedcubing.server.bukkitlistener.PostListen;
 import top.speedcubing.server.bukkitlistener.PreListen;
@@ -91,7 +91,7 @@ public class speedcubingServer extends JavaPlugin {
         registerCommands();
         registerListeners();
         CommonLib.init();
-        SocketReader.init(new HostAndPort("0.0.0.0", Bukkit.getPort() + 1000));
+        new SocketReader(new HostAndPort("0.0.0.0", Bukkit.getPort() + 1000));
 
         LanguageSystem.init();
 
@@ -215,8 +215,8 @@ public class speedcubingServer extends JavaPlugin {
         }
     }
 
-    public static void writeToInternal(byte[] b) {
-        MinecraftProxy.getProxy("internal").write(b);
+    public static CompletableFuture<DataInputStream> writeToInternal(byte[] b) {
+        return MinecraftProxy.getProxy("internal").write(b);
     }
 
     public static void restart() {

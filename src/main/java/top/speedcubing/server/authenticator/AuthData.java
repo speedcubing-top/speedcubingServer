@@ -1,6 +1,5 @@
 package top.speedcubing.server.authenticator;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import top.speedcubing.lib.utils.Preconditions;

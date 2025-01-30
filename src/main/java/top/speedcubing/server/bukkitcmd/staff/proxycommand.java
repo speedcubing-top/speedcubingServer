@@ -3,10 +3,7 @@ package top.speedcubing.server.bukkitcmd.staff;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import top.speedcubing.lib.utils.bytes.ByteArrayBuffer;
-import top.speedcubing.lib.utils.sockets.TCPClient;
 import top.speedcubing.server.mulitproxy.BungeeProxy;
-import top.speedcubing.server.speedcubingServer;
 
 public class proxycommand implements CommandExecutor {
 

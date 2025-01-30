@@ -3,11 +3,8 @@ package top.speedcubing.server.utils;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
-import org.bukkit.Bukkit;
 import top.speedcubing.common.configuration.ServerConfig;
-import top.speedcubing.common.database.Database;
 import top.speedcubing.common.events.ConfigReloadEvent;
-import top.speedcubing.common.server.MinecraftServer;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
 
 public class Configuration {
