@@ -54,7 +54,6 @@ import top.speedcubing.server.bukkitlistener.pluginchannel.FMLHSListener;
 import top.speedcubing.server.cubinglistener.CubingTick;
 import top.speedcubing.server.cubinglistener.PlayIn;
 import top.speedcubing.server.cubinglistener.PlayOut;
-import top.speedcubing.server.cubinglistener.SocketInput;
 import top.speedcubing.server.cubinglistener.SocketRead;
 import top.speedcubing.server.lang.LanguageSystem;
 import top.speedcubing.server.login.BungeePacket;
@@ -85,7 +84,6 @@ public class speedcubingServer extends JavaPlugin {
                 new CubingTick(),
                 new PlayIn(),
                 new PlayOut(),
-                new SocketInput(),
                 new SocketRead(),
                 new Configuration());
         registerCommands();

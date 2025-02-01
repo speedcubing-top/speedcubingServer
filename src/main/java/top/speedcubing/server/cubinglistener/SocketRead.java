@@ -10,6 +10,7 @@ import top.speedcubing.common.configuration.ServerConfig;
 import top.speedcubing.common.events.SocketReadEvent;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
+import top.speedcubing.server.login.BungeePacket;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 
@@ -28,6 +29,10 @@ public class SocketRead {
                 break;
             case "cfg":
                 ServerConfig.reload(false);
+                break;
+            case "bungee":
+                int i = e.getData().readInt();
+                speedcubingServer.bungeePacketStorage.put(i, new BungeePacket(e.getData().readUTF(), e.getData().readInt(), e.getData().readUTF(), e.getData().readUTF(), e.getData().readBoolean()));
                 break;
             case "demo":
                 PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
