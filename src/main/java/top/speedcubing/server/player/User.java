@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.minecraft.server.v1_8_R3.EntityPlayer;
 import net.minecraft.server.v1_8_R3.Packet;
@@ -55,8 +56,8 @@ import top.speedcubing.server.utils.RankSystem;
 
 public class User extends IDPlayer {
 
-    public static Map<Integer, User> usersByID = new HashMap<>();
-    public static Map<UUID, User> usersByUUID = new HashMap<>();
+    public static ConcurrentHashMap<Integer, User> usersByID = new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<UUID, User> usersByUUID = new ConcurrentHashMap<>();
 
 
     public static User getUser(CommandSender sender) {

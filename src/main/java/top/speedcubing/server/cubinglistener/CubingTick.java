@@ -33,7 +33,7 @@ public class CubingTick {
             );
         }
 
-        for (User user : User.usersByID.values()) {
+        for (User user : User.getUsers()) {
             if (user.listened)
                 user.writeToProxy(new ByteArrayBuffer().writeUTF("cps").writeInt(user.id).writeInt(user.leftCPS).writeInt(user.rightCPS).toByteArray());
                         /*
