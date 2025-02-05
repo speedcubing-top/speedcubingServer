@@ -1,4 +1,4 @@
-package top.speedcubing.server.utils;
+package top.speedcubing.server.configuration;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -17,8 +17,7 @@ public class Configuration {
     public static Set<Pattern> blacklistedMod = new HashSet<>();
     public static boolean removeLogs;
 
-    @CubingEventHandler
-    public void reload(ConfigReloadEvent e) {
+    public static void reload() {
         Configuration.LeftCpsLimit = ServerConfig.config.get("leftcpslimit").getAsInt();
         Configuration.RightCpsLimit = ServerConfig.config.get("rightcpslimit").getAsInt();
         Configuration.removeLogs = ServerConfig.config.get("removeLogs").getAsBoolean();
@@ -32,5 +31,10 @@ public class Configuration {
         ServerConfig.config.get("onlinecrash").getAsJsonArray().forEach(a -> Configuration.onlineCrash.add(a.getAsString()));
         Configuration.blacklistedMod.clear();
         ServerConfig.config.get("blacklistedmod").getAsJsonArray().forEach(a -> Configuration.blacklistedMod.add(Pattern.compile(a.getAsString())));
+    }
+
+    @CubingEventHandler(priority = 20)
+    public void reload(ConfigReloadEvent e) {
+        reload();
     }
 }

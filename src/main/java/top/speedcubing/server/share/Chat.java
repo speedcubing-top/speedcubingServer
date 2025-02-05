@@ -22,7 +22,7 @@ import top.speedcubing.lib.utils.SystemUtils;
 import top.speedcubing.lib.utils.TimeFormatter;
 import top.speedcubing.server.lang.Lang;
 import top.speedcubing.server.player.User;
-import top.speedcubing.server.utils.Configuration;
+import top.speedcubing.server.configuration.Configuration;
 
 public class Chat {
 

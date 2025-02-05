@@ -10,6 +10,7 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 import top.speedcubing.lib.utils.Console;
+import top.speedcubing.server.configuration.Configuration;
 
 public class LogListener {
 

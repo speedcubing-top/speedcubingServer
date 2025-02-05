@@ -9,7 +9,7 @@ import top.speedcubing.common.database.Database;
 import top.speedcubing.lib.utils.SQL.SQLConnection;
 import top.speedcubing.server.mulitproxy.BungeeProxy;
 import top.speedcubing.server.player.User;
-import top.speedcubing.server.utils.Configuration;
+import top.speedcubing.server.configuration.Configuration;
 
 public class FMLHSListener implements PluginMessageListener {
     @Override

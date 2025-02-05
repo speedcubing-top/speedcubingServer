@@ -45,7 +45,7 @@ import top.speedcubing.server.login.LoginContext;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.CommandParser;
-import top.speedcubing.server.utils.Configuration;
+import top.speedcubing.server.configuration.Configuration;
 import top.speedcubing.server.utils.RankSystem;
 
 public class PreListen implements Listener {

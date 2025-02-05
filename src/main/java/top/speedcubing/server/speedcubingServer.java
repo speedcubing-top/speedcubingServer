@@ -51,6 +51,7 @@ import top.speedcubing.server.bukkitlistener.PostListen;
 import top.speedcubing.server.bukkitlistener.PreListen;
 import top.speedcubing.server.bukkitlistener.SingleListen;
 import top.speedcubing.server.bukkitlistener.pluginchannel.FMLHSListener;
+import top.speedcubing.server.configuration.Configuration;
 import top.speedcubing.server.cubinglistener.CubingTick;
 import top.speedcubing.server.cubinglistener.PlayIn;
 import top.speedcubing.server.cubinglistener.PlayOut;
@@ -59,7 +60,6 @@ import top.speedcubing.server.lang.LanguageSystem;
 import top.speedcubing.server.login.BungeePacket;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.system.command.CubingCommandLoader;
-import top.speedcubing.server.utils.Configuration;
 import top.speedcubing.server.utils.LogListener;
 import top.speedcubing.server.utils.WordDictionary;
 
@@ -71,24 +71,33 @@ public class speedcubingServer extends JavaPlugin {
     public static boolean canRestart = true; //can Timer/Quit restart server?
     public static boolean restartable = false; //is it time to restart ?
     public static speedcubingServer instance;
+
     public static ScheduledExecutorService scheduledPool = Executors.newScheduledThreadPool(10);
+
+    public static boolean loaded = false;
 
     @Override
     public void onEnable() {
+        instance = this;
         if (!SpigotConfig.bungee) {
             System.out.println("[speedcubingServer] bungeecord shouldn't be false, shutting down server.");
             Bukkit.getServer().shutdown();
         }
-        instance = this;
+
         CubingEventManager.registerListeners(
                 new CubingTick(),
                 new PlayIn(),
                 new PlayOut(),
                 new SocketRead(),
                 new Configuration());
+
         registerCommands();
-        registerListeners();
+        registerListeners(new PreListen(), new PostListen(), new SingleListen(), new history(), new sendpacket(), new music());
+
         CommonLib.init();
+
+        Configuration.reload();
+
         new SocketReader(new HostAndPort("0.0.0.0", Bukkit.getPort() + 1000));
 
         LanguageSystem.init();
@@ -158,6 +167,7 @@ public class speedcubingServer extends JavaPlugin {
                 }
             }
         }, 0, 1);
+        loaded = true;
     }
 
     @Override
@@ -172,6 +182,10 @@ public class speedcubingServer extends JavaPlugin {
 
         CommonLib.shutdown();
         WordDictionary.dict.close();
+    }
+
+    public static Plugin getInstance() {
+        return instance;
     }
 
     private void registerCommands() {
@@ -197,14 +211,6 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("bangift").setExecutor(new bangift());
         Bukkit.getPluginCommand("ranks").setExecutor(new ranks());
         Bukkit.getPluginCommand("status").setExecutor(new status());
-    }
-
-    private void registerListeners() {
-        registerListeners(new PreListen(), new PostListen(), new SingleListen(), new history(), new sendpacket(), new music());
-    }
-
-    public static Plugin getInstance() {
-        return instance;
     }
 
     public static void registerListeners(Listener... listeners) {
