@@ -23,10 +23,6 @@ commands:
       - quit
   announce:
     usage: /announce
-  heal:
-    usage: /heal
-  proxycommand:
-    usage: /proxycommand
   nick:
     usage: /nick
   unnick:
@@ -58,8 +54,6 @@ commands:
     usage: /ranks
   music:
     usage: /music
-  serverconfig:
-    usage: /serverconfig
 
 depend:
   - speedcubingLib

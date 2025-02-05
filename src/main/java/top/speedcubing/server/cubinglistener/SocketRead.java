@@ -6,7 +6,7 @@ import net.minecraft.server.v1_8_R3.PacketPlayOutGameStateChange;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.spigotmc.RestartCommand;
-import top.speedcubing.common.configuration.ServerConfig;
+import top.speedcubing.common.events.ConfigReloadEvent;
 import top.speedcubing.common.events.SocketReadEvent;
 import top.speedcubing.lib.bukkit.PlayerUtils;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
@@ -20,30 +20,30 @@ public class SocketRead {
         String packetID = e.getPacketID();
         DataInputStream data = e.getData();
         switch (packetID) {
-            case "cpsrequest":
+            case "cpsrequest" -> {
                 int id = data.readInt();
                 User user = User.getUser(id);
                 if (user != null)
                     user.listened = data.readBoolean();
                 else speedcubingServer.bungeePacketStorage.get(id).cps = true;
-                break;
-            case "cfg":
-                ServerConfig.reload(false);
-                break;
-            case "bungee":
+            }
+            case "cfg" -> {
+                new ConfigReloadEvent().call();
+            }
+            case "bungee" -> {
                 int i = e.getData().readInt();
                 speedcubingServer.bungeePacketStorage.put(i, new BungeePacket(e.getData().readUTF(), e.getData().readInt(), e.getData().readUTF(), e.getData().readUTF(), e.getData().readBoolean()));
-                break;
-            case "demo":
+            }
+            case "demo" -> {
                 PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);
-                id = data.readInt();
+                int id = data.readInt();
                 if (id == 0)
                     User.getUsers().forEach(a -> a.sendPacket(packet));
                 else
                     User.getUser(id).sendPacket(packet);
-                break;
-            case "crash":
-                id = data.readInt();
+            }
+            case "crash" -> {
+                int id = data.readInt();
                 if (id == 0) {
                     Bukkit.getOnlinePlayers().forEach(PlayerUtils::crashAll);
                     User.getUsers().forEach(a -> {
@@ -53,12 +53,12 @@ public class SocketRead {
                     PlayerUtils.crashAll(User.getUser(id).player);
                     User.getUser(id).isCrashed = true;
                 }
-                break;
-            case "velo":
+            }
+            case "velo" -> {
                 User.getUser(data.readInt()).velocities = data.readBoolean() ? new double[]{data.readDouble(), data.readDouble()} : null;
-                break;
-            case "vanish":
-                user = User.getUser(data.readInt());
+            }
+            case "vanish" -> {
+                User user = User.getUser(data.readInt());
                 boolean vanish = data.readBoolean();
                 user.vanished = vanish;
                 if (vanish)
@@ -72,10 +72,10 @@ public class SocketRead {
                         for (Player p : Bukkit.getOnlinePlayers())
                             p.showPlayer(user.player);
                     });
-                break;
-            case "restart":
+            }
+            case "restart" -> {
                 RestartCommand.restart();
-                break;
+            }
         }
     }
 }

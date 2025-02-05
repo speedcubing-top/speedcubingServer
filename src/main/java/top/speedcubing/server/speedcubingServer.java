@@ -33,14 +33,10 @@ import top.speedcubing.server.bukkitcmd.image;
 import top.speedcubing.server.bukkitcmd.nick.nick;
 import top.speedcubing.server.bukkitcmd.nick.unnick;
 import top.speedcubing.server.bukkitcmd.ranks;
-import top.speedcubing.server.bukkitcmd.staff.announce;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.bukkitcmd.staff.freeze;
-import top.speedcubing.server.bukkitcmd.staff.heal;
 import top.speedcubing.server.bukkitcmd.staff.history;
-import top.speedcubing.server.bukkitcmd.staff.proxycommand;
-import top.speedcubing.server.bukkitcmd.staff.serverconfig;
-import top.speedcubing.server.bukkitcmd.staff.testkb;
+import top.speedcubing.server.cubingcmd.staff.testkb;
 import top.speedcubing.server.bukkitcmd.status;
 import top.speedcubing.server.bukkitcmd.trolls.bangift;
 import top.speedcubing.server.bukkitcmd.trolls.deepfry;
@@ -80,7 +76,7 @@ public class speedcubingServer extends JavaPlugin {
     public void onEnable() {
         instance = this;
         if (!SpigotConfig.bungee) {
-            System.out.println("[speedcubingServer] bungeecord shouldn't be false, shutting down server.");
+            speedcubingServer.getInstance().getLogger().warning("bungeecord shouldn't be false, shutting down server.");
             Bukkit.getServer().shutdown();
         }
 
@@ -193,17 +189,12 @@ public class speedcubingServer extends JavaPlugin {
         Bukkit.getPluginCommand("unnick").setExecutor(new unnick());
         Bukkit.getPluginCommand("discord").setExecutor(new discord());
         Bukkit.getPluginCommand("hub").setExecutor(new hub());
-        Bukkit.getPluginCommand("testkb").setExecutor(new testkb());
-        Bukkit.getPluginCommand("heal").setExecutor(new heal());
-        Bukkit.getPluginCommand("proxycommand").setExecutor(new proxycommand());
-        Bukkit.getPluginCommand("announce").setExecutor(new announce());
         Bukkit.getPluginCommand("kaboom").setExecutor(new kaboom());
         Bukkit.getPluginCommand("deepfry").setExecutor(new deepfry());
         Bukkit.getPluginCommand("freeze").setExecutor(new freeze());
         Bukkit.getPluginCommand("music").setExecutor(new music());
         Bukkit.getPluginCommand("2fa").setExecutor(new AuthenticatorCommand());
         Bukkit.getPluginCommand("image").setExecutor(new image());
-        Bukkit.getPluginCommand("serverconfig").setExecutor(new serverconfig());
         Bukkit.getPluginCommand("history").setExecutor(new history());
         Bukkit.getPluginCommand("getitemtype").setExecutor(new getitemtype());
         Bukkit.getPluginCommand("sendpacket").setExecutor(new sendpacket());

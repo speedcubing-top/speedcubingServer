@@ -4,11 +4,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import top.speedcubing.server.speedcubingServer;
 
 public class MapManager {
 
     public static World install(String fileName, String map, Difficulty difficulty, int time, boolean autoSave) throws Exception {
-        System.out.println("[MapManager] copying \"" + fileName + "\" to \"" + map + "\"");
+        speedcubingServer.getInstance().getLogger().info("[MapManager] copying \"" + fileName + "\" to \"" + map + "\"");
         new ProcessBuilder("rm", "-r", map).start().waitFor();
         String file = fileName + ".tar.gz";
         new ProcessBuilder("cp", "/storage/maps/" + file, "./").start().waitFor();

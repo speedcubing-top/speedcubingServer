@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -421,7 +422,7 @@ public class nick implements CommandExecutor, Listener {
             }
         }
         if (words.isEmpty()) {
-            System.out.println("No words found in WordNet for POS: " + pos);
+            speedcubingServer.getInstance().getLogger().warning("No words found in WordNet for POS: " + pos);
             return "unknown";
         }
         Random random = new Random();

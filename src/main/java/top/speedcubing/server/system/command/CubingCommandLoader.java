@@ -7,6 +7,7 @@ import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import org.bukkit.Bukkit;
+import top.speedcubing.server.speedcubingServer;
 
 public class CubingCommandLoader {
     public static void loadCommands(String packageName, Class<?> whateverClass) {
@@ -26,7 +27,7 @@ public class CubingCommandLoader {
                             CubingCommand command = (CubingCommand) Class.forName(className).getDeclaredConstructor().newInstance();
                             if (command.shouldLoad()) {
                                 command.load();
-                                System.out.println("Loaded command class: " + className + ", command: " + command.getAlias());
+                                speedcubingServer.getInstance().getLogger().info("Loaded command class: " + className + ", command: " + command.getAlias());
                             }
                         } catch (Exception e) {
                             e.printStackTrace();

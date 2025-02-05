@@ -3,9 +3,11 @@ package top.speedcubing.server.configuration;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
+import org.bukkit.Bukkit;
 import top.speedcubing.common.configuration.ServerConfig;
 import top.speedcubing.common.events.ConfigReloadEvent;
 import top.speedcubing.lib.eventbus.CubingEventHandler;
+import top.speedcubing.server.speedcubingServer;
 
 public class Configuration {
     public static int LeftCpsLimit = Integer.MAX_VALUE;
@@ -18,19 +20,20 @@ public class Configuration {
     public static boolean removeLogs;
 
     public static void reload() {
-        Configuration.LeftCpsLimit = ServerConfig.config.get("leftcpslimit").getAsInt();
-        Configuration.RightCpsLimit = ServerConfig.config.get("rightcpslimit").getAsInt();
-        Configuration.removeLogs = ServerConfig.config.get("removeLogs").getAsBoolean();
+        speedcubingServer.getInstance().getLogger().info("loading config");
+        Configuration.LeftCpsLimit = ServerConfig.getConfig().get("leftcpslimit").getAsInt();
+        Configuration.RightCpsLimit = ServerConfig.getConfig().get("rightcpslimit").getAsInt();
+        Configuration.removeLogs = ServerConfig.getConfig().get("removeLogs").getAsBoolean();
         Configuration.filteredText.clear();
-        ServerConfig.config.get("filteredtext").getAsJsonArray().forEach(a -> Configuration.filteredText.add(Pattern.compile(a.getAsString())));
+        ServerConfig.getConfig().get("filteredtext").getAsJsonArray().forEach(a -> Configuration.filteredText.add(Pattern.compile(a.getAsString())));
         Configuration.blockedLog.clear();
-        ServerConfig.config.get("spigotblockedlog").getAsJsonArray().forEach(a -> Configuration.blockedLog.add(Pattern.compile(a.getAsString())));
+        ServerConfig.getConfig().get("spigotblockedlog").getAsJsonArray().forEach(a -> Configuration.blockedLog.add(Pattern.compile(a.getAsString())));
         Configuration.blockedMod.clear();
-        ServerConfig.config.get("blockedmod").getAsJsonArray().forEach(a -> Configuration.blockedMod.add(Pattern.compile(a.getAsString())));
+        ServerConfig.getConfig().get("blockedmod").getAsJsonArray().forEach(a -> Configuration.blockedMod.add(Pattern.compile(a.getAsString())));
         Configuration.onlineCrash.clear();
-        ServerConfig.config.get("onlinecrash").getAsJsonArray().forEach(a -> Configuration.onlineCrash.add(a.getAsString()));
+        ServerConfig.getConfig().get("onlinecrash").getAsJsonArray().forEach(a -> Configuration.onlineCrash.add(a.getAsString()));
         Configuration.blacklistedMod.clear();
-        ServerConfig.config.get("blacklistedmod").getAsJsonArray().forEach(a -> Configuration.blacklistedMod.add(Pattern.compile(a.getAsString())));
+        ServerConfig.getConfig().get("blacklistedmod").getAsJsonArray().forEach(a -> Configuration.blacklistedMod.add(Pattern.compile(a.getAsString())));
     }
 
     @CubingEventHandler(priority = 20)
