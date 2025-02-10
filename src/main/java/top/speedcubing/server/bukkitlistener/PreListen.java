@@ -184,7 +184,7 @@ public class PreListen implements Listener {
         }
 
         //User
-        User user = new User(player, displayRank, perms, ctx);
+        User user = new User(player, displayRank, displayName, perms, ctx);
 
         //modify things
         GameProfile profile = ((CraftPlayer) player).getProfile();

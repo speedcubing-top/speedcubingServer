@@ -90,7 +90,7 @@ public class speedcubingServer extends JavaPlugin {
         registerCommands();
         registerListeners(new PreListen(), new PostListen(), new SingleListen(), new history(), new sendpacket(), new music());
 
-        CommonLib.init();
+        CommonLib.init(getLogger());
 
         Configuration.reload();
 

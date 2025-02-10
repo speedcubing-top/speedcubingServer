@@ -93,8 +93,8 @@ public class User extends JoinedPlayer {
     public Skin defaultSkin;
     public boolean isCrashed;
 
-    public User(Player player, String displayRank, Set<String> permissions, LoginContext ctx) {
-        super(player.getUniqueId(), ctx.getRow().getString("name"), ctx.getRow().getInt("id"), ctx.getRow().getString("ip"), ctx.getRealRank(), displayRank, ctx.getRow());
+    public User(Player player, String displayRank, String displayName, Set<String> permissions, LoginContext ctx) {
+        super(player.getUniqueId(), ctx.getRow().getString("name"), ctx.getRow().getInt("id"), ctx.getRow().getString("ip"), ctx.getRealRank(), displayRank, displayName, ctx.getRow());
         this.player = player;
         this.permissions = permissions;
         this.listened = ctx.getBungePacket().cps;
