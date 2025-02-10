@@ -68,7 +68,7 @@ public class CubingTick {
         }
 
         //config reload
-        if (e.getTick() % 60 * 10 == 0) {
+        if (e.getTick() % 3600 == 0) {
             new ConfigReloadEvent().call();
         }
     }
