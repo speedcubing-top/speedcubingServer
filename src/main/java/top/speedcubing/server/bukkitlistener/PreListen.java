@@ -113,8 +113,7 @@ public class PreListen implements Listener {
         Player player = e.getPlayer();
 
         try (SQLConnection connection = Database.getCubing()) {
-            SQLRow row = connection.prepare(
-                            "SELECT priority, nickpriority, perms, lang, id, name, chatfilt, guild, serverwhitelist, agreement, profile_textures_value, profile_textures_signature, nicked, skinvalue, skinsignature, nickname FROM playersdata WHERE uuid=?")
+            SQLRow row = connection.prepare("SELECT * FROM playersdata WHERE uuid=?")
                     .setString(1, player.getUniqueId().toString())
                     .executeResult().get(0);
 

@@ -6,8 +6,6 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -33,7 +31,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.util.Vector;
 import top.speedcubing.common.database.Database;
-import top.speedcubing.common.rank.IDPlayer;
+import top.speedcubing.common.player.JoinedPlayer;
 import top.speedcubing.common.rank.Rank;
 import top.speedcubing.common.rank.RankFormat;
 import top.speedcubing.common.server.MinecraftProxy;
@@ -54,7 +52,7 @@ import top.speedcubing.server.lang.LangItem;
 import top.speedcubing.server.login.LoginContext;
 import top.speedcubing.server.utils.RankSystem;
 
-public class User extends IDPlayer {
+public class User extends JoinedPlayer {
 
     public static ConcurrentHashMap<Integer, User> usersByID = new ConcurrentHashMap<>();
     public static ConcurrentHashMap<UUID, User> usersByUUID = new ConcurrentHashMap<>();
@@ -81,8 +79,6 @@ public class User extends IDPlayer {
     public String lastTabbed;
     public Set<String> permissions;
     public double[] velocities;
-    public int lang;
-    public String displayRank;
     public MinecraftProxy proxy;
     public boolean chatFilt;
     public boolean listened;
@@ -91,28 +87,20 @@ public class User extends IDPlayer {
     public Queue<Integer> leftClickQueue = new ArrayDeque<>(), rightClickQueue = new ArrayDeque<>();
     public int leftCPS, rightCPS, leftClickTick, rightClickTick;
     public boolean vanished;
-    public final boolean isStaff;
     public long lastInvClick;
-    public final String realRank;
     public long lastMove = System.currentTimeMillis();
-    public String timeZone;
     public String status;
     public Skin defaultSkin;
     public boolean isCrashed;
 
     public User(Player player, String displayRank, Set<String> permissions, LoginContext ctx) {
-        super(ctx.getRow().getString("name"), player.getUniqueId(), ctx.getRow().getInt("id"));
+        super(player.getUniqueId(), ctx.getRow().getString("name"), ctx.getRow().getInt("id"), ctx.getRow().getString("ip"), ctx.getRealRank(), displayRank, ctx.getRow());
         this.player = player;
         this.permissions = permissions;
         this.listened = ctx.getBungePacket().cps;
-        this.lang = ctx.getRow().getInt("lang");
         this.chatFilt = ctx.getRow().getBoolean("chatfilt");
-        this.realRank = ctx.getRealRank();
-        this.displayRank = displayRank;
         this.vanished = ctx.getBungePacket().vanished;
         this.proxy = MinecraftProxy.getProxy(ctx.getBungePacket().proxy);
-        this.isStaff = Rank.isStaff(realRank);
-        this.timeZone = dbSelect("timezone").getString(0);
         this.status = dbSelect("status").getString(0) == null ? "null" : dbSelect("status").getString(0);
         this.defaultSkin = new Skin(ctx.getRow().getString("profile_textures_value"), ctx.getRow().getString("profile_textures_signature"));
         this.isCrashed = false;
