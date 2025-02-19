@@ -36,6 +36,7 @@ import top.speedcubing.server.bukkitcmd.ranks;
 import top.speedcubing.server.bukkitcmd.staff.cpsdisplay;
 import top.speedcubing.server.bukkitcmd.staff.freeze;
 import top.speedcubing.server.bukkitcmd.staff.history;
+import top.speedcubing.server.cubingcmd.staff.nicklogs;
 import top.speedcubing.server.cubingcmd.staff.testkb;
 import top.speedcubing.server.bukkitcmd.status;
 import top.speedcubing.server.bukkitcmd.trolls.bangift;
@@ -88,7 +89,7 @@ public class speedcubingServer extends JavaPlugin {
                 new Configuration());
 
         registerCommands();
-        registerListeners(new PreListen(), new PostListen(), new SingleListen(), new history(), new sendpacket(), new music());
+        registerListeners(new PreListen(), new PostListen(), new SingleListen(), new history(), new sendpacket(), new music(), new nicklogs());
 
         CommonLib.init(getLogger());
 

@@ -19,19 +19,20 @@ public class bangift implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
         if (!(sender instanceof Player player)) return true;
         Player target = Bukkit.getPlayerExact(args[0]);
-        if (args.length == 1) {
-            //troll for bangift command
-            if (args[0].equals("banself")) {
-                bangift.fakeBan(player);
-                return true;
-            }
-            if (target == null) {
-                player.sendMessage("§cPlayer not found.");
-                return true;
-            }
-            openBook(player, target);
+        if (args.length != 1) {
+            player.sendMessage("§cUsage: /bangift <player>");
             return true;
         }
+        //troll for bangift command
+        if (args[0].equals("banself")) {
+            bangift.fakeBan(player);
+            return true;
+        }
+        if (target == null) {
+            player.sendMessage("§cPlayer not found.");
+            return true;
+        }
+        openBook(player, target);
         return true;
     }
 

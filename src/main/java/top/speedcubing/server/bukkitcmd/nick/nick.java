@@ -2,15 +2,6 @@ package top.speedcubing.server.bukkitcmd.nick;
 
 import edu.mit.jwi.item.IIndexWord;
 import edu.mit.jwi.item.POS;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -36,6 +27,15 @@ import top.speedcubing.server.events.player.NickEvent;
 import top.speedcubing.server.player.User;
 import top.speedcubing.server.speedcubingServer;
 import top.speedcubing.server.utils.WordDictionary;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+import java.util.UUID;
 
 public class nick implements CommandExecutor, Listener {
     public static final Map<UUID, Boolean> settingNick = new HashMap<>();
