@@ -2,6 +2,7 @@ package top.speedcubing.server.system.command;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.util.Enumeration;
 import java.util.jar.JarEntry;
@@ -21,17 +22,28 @@ public class CubingCommandLoader {
                 while (entries.hasMoreElements()) {
                     JarEntry entry = entries.nextElement();
                     String entryName = entry.getName();
-                    if (entryName.endsWith(".class") && entryName.startsWith(packageName)) {
-                        String className = entryName.replace('/', '.').substring(0, entryName.length() - 6);
-                        try {
-                            CubingCommand command = (CubingCommand) Class.forName(className).getDeclaredConstructor().newInstance();
-                            if (command.shouldLoad()) {
-                                command.load();
-                                speedcubingServer.getInstance().getLogger().info("Loaded command class: " + className + ", command: " + command.getAlias());
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                    if (!entryName.endsWith(".class") || !entryName.startsWith(packageName)) {
+                        continue;
+                    }
+                    String className = entryName.replace('/', '.').substring(0, entryName.length() - 6);
+                    Class<?> clazz;
+                    try {
+                        clazz = Class.forName(className);
+                        if (!CubingCommand.class.isAssignableFrom(clazz)) {
+                            continue;
                         }
+                    } catch (ClassNotFoundException e) {
+                        e.printStackTrace();
+                        continue;
+                    }
+                    try {
+                        CubingCommand command = (CubingCommand) clazz.getDeclaredConstructor().newInstance();
+                        if (command.shouldLoad()) {
+                            command.load();
+                            speedcubingServer.getInstance().getLogger().info("Loaded command class: " + className + ", command: " + command.getAlias());
+                        }
+                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | InstantiationException e) {
+                        e.printStackTrace();
                     }
                 }
             }
