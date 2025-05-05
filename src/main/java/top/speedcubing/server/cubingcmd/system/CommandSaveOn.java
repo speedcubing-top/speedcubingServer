@@ -14,6 +14,7 @@ public class CommandSaveOn extends CubingCommand {
         for (WorldServer worldServer : CommandSaveOff.saveOffWorlds) {
             worldServer.savingDisabled = false;
         }
+        CommandSaveOff.saveOffWorlds.clear();
         commandSender.sendMessage("OK");
     }
 }
