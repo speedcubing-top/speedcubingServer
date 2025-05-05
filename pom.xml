@@ -19,7 +19,22 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
+        <repository>
+            <id>speedcubing-public</id>
+            <url>https://repo.speedcubing.top/repository/maven-public/</url>
+        </repository>
     </repositories>
+
+    <distributionManagement>
+        <repository>
+            <id>speedcubing-public-projects-release</id>
+            <url>https://repo.speedcubing.top/repository/maven-public-projects-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>speedcubing-public-projects-snapshot</id>
+            <url>https://repo.speedcubing.top/repository/maven-public-projects-snapshot/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
     <dependencies>
         <dependency>
@@ -30,19 +45,14 @@
         </dependency>
         <dependency>
             <groupId>top.speedcubing</groupId>
-            <artifactId>speedcubingLib</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>top.speedcubing</groupId>
             <artifactId>speedcubingCommon</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>top.speedcubing</groupId>
-            <artifactId>NameDb</artifactId>
+            <artifactId>speedcubingLib</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>edu.mit</groupId>
