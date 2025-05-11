@@ -1,11 +1,11 @@
 package top.speedcubing.server.system.command;
 
+import com.google.common.collect.Sets;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
-import top.speedcubing.lib.utils.collection.Sets;
 
 public abstract class CubingCommand {
 
@@ -16,7 +16,7 @@ public abstract class CubingCommand {
     }
 
     public CubingCommand(String... command) {
-        this.alias = Sets.hashSet(command);
+        this.alias = Sets.newHashSet(command);
     }
 
     public abstract void execute(CommandSender sender, String command, String[] args);

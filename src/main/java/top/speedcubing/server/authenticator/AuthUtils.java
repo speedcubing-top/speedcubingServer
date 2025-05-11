@@ -1,5 +1,6 @@
 package top.speedcubing.server.authenticator;
 
+import com.google.common.base.Preconditions;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -9,16 +10,17 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import top.speedcubing.lib.utils.Base32;
+import org.apache.commons.codec.binary.Base32;
 
 public class AuthUtils {
+
     public static String generateSecret() {
         try {
             SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
             byte[] buffer = new byte[30];
             random.nextBytes(buffer);
             byte[] secret = Arrays.copyOf(buffer, 10);
-            return Base32.encode(secret);
+            return new String(new Base32().encode(secret));
         } catch (NoSuchProviderException | NoSuchAlgorithmException ex) {
             ex.printStackTrace();
         }
@@ -26,9 +28,7 @@ public class AuthUtils {
     }
 
     public static boolean authorize(String secret, int verificationCode) {
-        if (secret == null) {
-            throw new IllegalArgumentException("Secret cannot be null.");
-        }
+        Preconditions.checkNotNull(secret);
 
         if (verificationCode > 0 && verificationCode < 1000000) {
             return checkCode(secret, verificationCode, (new Date()).getTime());
@@ -39,7 +39,7 @@ public class AuthUtils {
 
 
     private static boolean checkCode(String secret, int code, long timestamp) {
-        byte[] decodedKey = Base32.decode(secret);
+        byte[] decodedKey = new Base32().decode(secret);
 
         long timeWindow = timestamp / TimeUnit.SECONDS.toMillis(30L);
 
