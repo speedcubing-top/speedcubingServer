@@ -73,9 +73,6 @@ public class SocketRead {
                             p.showPlayer(user.player);
                     });
             }
-            case "restart" -> {
-                RestartCommand.restart();
-            }
         }
     }
 }
