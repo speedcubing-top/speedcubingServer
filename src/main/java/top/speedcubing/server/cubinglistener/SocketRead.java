@@ -32,7 +32,7 @@ public class SocketRead {
             }
             case "bungee" -> {
                 int i = e.getData().readInt();
-                speedcubingServer.bungeePacketStorage.put(i, new BungeePacket(e.getData().readUTF(), e.getData().readInt(), e.getData().readUTF(), e.getData().readUTF(), e.getData().readBoolean()));
+                speedcubingServer.bungeePacketStorage.put(i, new BungeePacket(e.getData().readUTF(), e.getData().readUTF(), e.getData().readUTF(), e.getData().readBoolean()));
             }
             case "demo" -> {
                 PacketPlayOutGameStateChange packet = new PacketPlayOutGameStateChange(5, 0);

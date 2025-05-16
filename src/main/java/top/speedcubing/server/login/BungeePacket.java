@@ -1,16 +1,16 @@
 package top.speedcubing.server.login;
 
-import top.speedcubing.lib.utils.internet.HostAndPort;
+import top.speedcubing.common.server.MinecraftProxy;
 
 public class BungeePacket {
-    public final HostAndPort proxy;
+    public final MinecraftProxy proxy;
     public final String hor;
     public final String ver;
     public boolean cps;
     public final boolean vanished;
 
-    public BungeePacket(String proxyHost, int proxyport, String hor, String ver, boolean vanished) {
-        this.proxy = new HostAndPort(proxyHost, proxyport);
+    public BungeePacket(String proxyName, String hor, String ver, boolean vanished) {
+        this.proxy = MinecraftProxy.getProxy(proxyName);
         this.hor = hor;
         this.ver = ver;
         this.vanished = vanished;

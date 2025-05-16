@@ -100,7 +100,7 @@ public class User extends JoinedPlayer {
         this.listened = ctx.getBungePacket().cps;
         this.chatFilt = ctx.getRow().getBoolean("chatfilt");
         this.vanished = ctx.getBungePacket().vanished;
-        this.proxy = MinecraftProxy.getProxy(ctx.getBungePacket().proxy);
+        this.proxy = ctx.getBungePacket().proxy;
         this.status = dbSelect("status").getString(0) == null ? "null" : dbSelect("status").getString(0);
         this.defaultSkin = new Skin(ctx.getRow().getString("profile_textures_value"), ctx.getRow().getString("profile_textures_signature"));
         this.isCrashed = false;
