@@ -42,7 +42,11 @@ public class Chat {
 
     public static void globalChat(Collection<? extends Player> players, Player sender, Lang format, String message, String... replace) {
         format.param(replace);
+
         String filteredMessage = filter(message);
+
+        Lang unfiltered = format.clone().param(message);
+        Lang filtered = format.clone().param(filteredMessage);
 
         try (SQLConnection connection = Database.getCubing()) {
             SQLResult result = connection.select("uuid")
@@ -58,14 +62,12 @@ public class Chat {
                         continue c;
                     }
                 }
-                user.sendMessage(format, (user.chatFilt ? message : filteredMessage));
+                user.sendMessage(user.chatFilt ? filtered : unfiltered);
             }
         }
 
-        format.param(message);
-
-        MinecraftConsole.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + format.getString(0));
-        chatLogger(sender, format.getComponent(0).toPlainText());
+        MinecraftConsole.printlnColor("§7[§aChatLog§7] [§b" + sender.getWorld().getName() + "§7] " + unfiltered.getString(0));
+        chatLogger(sender, unfiltered.getComponent(0).toPlainText());
     }
 
     private static final Executor discordWebhookPool = Executors.newSingleThreadExecutor();

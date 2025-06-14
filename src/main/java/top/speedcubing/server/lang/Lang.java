@@ -1,5 +1,6 @@
 package top.speedcubing.server.lang;
 
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -54,7 +55,7 @@ public class Lang {
         Matcher matcher = pattern.matcher(unformatted.serialize());
         String result = matcher.replaceAll(r -> LanguageSystem.lang[lang].get(matcher.group(1)).getAsString());
         for (String string : param) {
-            result = result.replaceFirst("%p%", string);
+            result = result.replaceFirst("%p%", Matcher.quoteReplacement(string));
         }
         return ComponentText.unSerialize(result);
     }
